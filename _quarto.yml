@@ -1,0 +1,32 @@
+project:
+  type: website
+
+website:
+  title: "AV Parole Project"
+  description: For CSG Justice Center use only
+  favicon: img/favicon.png
+  repo-url: https://github.com/CSGJusticeCenter/avparolenetlify
+  repo-actions: [issue]
+  search:
+    location: navbar
+    type: textbox
+  navbar:
+    left:
+      - text: "National Overview"
+        menu:
+          - text: "Page 1"
+            href: page1.html
+      - text: "State Reports"
+        menu:
+          - text: "Page 2"
+            href: page2.html
+
+format:
+  html:
+    theme: united
+    css: styles.css
+    toc: true
+    toc-location: left
+
+# execute:
+#   freeze: auto

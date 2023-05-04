@@ -1,0 +1,19 @@
+---
+format:
+  html:
+    theme: united
+    css: styles.css
+    embed-resources: TRUE
+---
+
+::: {layout-ncol="2"}
+![](img/csg-logo.png){width="300"}
+
+![](img/Arnold_Ventures_logo_2021.png){width="200"}
+:::
+
+The Council of State Governments (CSG) Justice Center intends to illuminate parole release policies and practices in the United States and how they impact prison population sizes and lengths of stay, using data from the National Corrections Reporting Program (NCRP) from up to 45 states to:
+
+(1) Examine trends in their parole-eligible populations;
+(2) Conduct original empirical research on racial, ethnic, and gender disparities on the portion of sentences that are served in carceral settings past parole eligibility; and
+(3) Conduct deep dives into selected states to shed light on parole board decision-making. For these states, we will seek to identify any disparate decision-making and associated outcomes and recommend changes to policy and practice to prevent unnecessarily long prison stays while maintaining public safety.
