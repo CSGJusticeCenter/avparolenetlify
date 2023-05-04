@@ -12,7 +12,9 @@ website:
     type: textbox
   navbar:
     left:
-      - text: "National Overview"
+      - text: "Project Overview"
+        href: index.html
+      - text: "National Trends"
         menu:
           - text: "Page 1"
             href: page1.html
