@@ -32,6 +32,8 @@ library(reactable)
 library(sysfonts)
 library(extrafont)
 library(showtext)
+library(htmlwidgets)
+
 
 # CHANGE THIS TO YOUR PROJECT PATH
 csg_set_project_path(

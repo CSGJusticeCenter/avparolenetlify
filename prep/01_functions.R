@@ -1,5 +1,6 @@
 
 
+
 # theme for reactable tables
 hc_reactable_theme <-
   reactableTheme(borderColor = neutralBkgndLight,

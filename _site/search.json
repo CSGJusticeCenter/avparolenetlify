@@ -32,7 +32,7 @@
     "href": "georgia.html",
     "title": "Georgia",
     "section": "",
-    "text": "Overview\n\n\nParole Eligibility\n\n\nReleases from Prison\n\n\nSentencing\n\n\nDisparities\n\n\n\nTBD\nTBD\nTBD.\nTBD.\nTBD."
+    "text": "Overview\n\n\nParole Eligibility\n\n\nReleases from Prison\n\n\nSentencing\n\n\nDisparities\n\n\n\n\n\n\n\n\n\n\n\nTBD.\nTBD.\nTBD."
   },
   {
     "objectID": "map_explorer.html",
@@ -46,6 +46,13 @@
     "href": "national_trends.html",
     "title": "National Trends",
     "section": "",
-    "text": "TBD."
+    "text": "[Interactive Graph] People Under U.S. Correctional Supervision from X year to Y year (Prison, jail, parole, probation.\n[Interactive Graph] Prison Rate Change in X State(s) from X year to Y year (Each state will have it’s own line).\n[Interactive Graph] Racial/Ethnic/Gender Disparities in Prisons from X year to Y year.\n[Interactive Graph] Prison Population by Offense in X year.\n[Interactive Graph] The Growth of Life Sentences from X year to Y year (Life without Parole, Life with Parole.\n[Interactive Graph] X Race/Ethnicity Americans of the US Population, Total Prison Population, and Who Have Served at Least 10 years.\n[Interactive Graph] Ranked state imprisonment rates in X year."
+  },
+  {
+    "objectID": "national_trends.html#parole",
+    "href": "national_trends.html#parole",
+    "title": "National Trends",
+    "section": "Parole",
+    "text": "Parole\n\n[Visual TBD] Determinate sentencing states, indeterminate sentencing states.\n[Visual TBD] Truth in sentencing (TIS) grant program.\n[Interactive Graph] Ranked states for number of people or percentage of state poulation under US correctional supervision in X year.\n[Interactive Graph] Releases over time (conditional vs unconditional) as a percentage of all releases from X year to Y year.\n[Interactive Map] Parole violators as a percentage of all prison admissions by state in X year (Each state will have it’s own line).\n[Interactive Graph] Number of people released to parole supervision from X year to Y year for X state(s)."
   }
 ]

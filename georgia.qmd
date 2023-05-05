@@ -24,6 +24,7 @@ library(dplyr)
 library(htmlwidgets)
 library(dplyr)
 library(htmltools)
+library(reactable)
 
 # load data
 source("prep/00_library.R")
@@ -76,14 +77,77 @@ htmltools::div(
 </div><br>
 
 ```{r}
+# save charts to call in tabsetPanel in next R chunk
+
+###########
+# Overview
+###########
+
+# line chart showing the change in prison pop 
+# and the change in releases to parole over time
+state_line_pop_released_to_parole <- 
+  all_line_pop_released_to_parole$Georgia %>% 
+  hc_chart(width = 400, height = 400) %>%
+  hc_title(text = "Prison Populations and the Number of 
+           People Released to Parole by Reporting Year") 
+
+
+df <- people_released_to_parole_race %>% 
+  filter(state == "Georgia") %>% 
+  ungroup() %>% 
+  select(race, prop)
+
+state_parole_profile_race <- 
+    reactable(df,
+              style = hc_reactable_style,
+              theme = hc_reactable_theme,
+              defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                     align = "left"),
+              compact = TRUE,
+              fullWidth = FALSE,
+              columns = list(
+                race = colDef(name = "Race",
+                              minWidth = 215),
+                prop = colDef(align = "right",
+                              name = "",
+                              minWidth = 215,
+                              format = colFormat(percent = TRUE,
+                                                 digits = 1))))
+
+
+###########
+# Parole Eligibility
+###########
+
+
+
+###########
+# Releases from Prison
+###########
+
+
+
+###########
+# Sentencing
+###########
+
+
+
+###########
+# Disparities
+###########
+```
+
+
+```{r}
 # panels for different sections
 tabsetPanel(
   id = "tabsetpanel",
   tabPanel("Overview",
-    "TBD",
+    state_line_pop_released_to_parole,
   ),
   tabPanel("Parole Eligibility",
-    "TBD"
+    state_parole_profile_race
   ),
   tabPanel("Releases from Prison",
     "TBD."

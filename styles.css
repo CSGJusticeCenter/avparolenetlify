@@ -1,20 +1,17 @@
 
+/* create a narrow section that is smaller than body */
 .narrow-section {
   max-width: 750px;
   max-height: 200px;
   margin: 0 auto;
 }
 
-/*
+/* Not working well
 .highchart-wrapper {
  display: inline-block;
  margin: 0 auto;
  padding: 0;
 }
-
-
-
-
 
 .chart-row {
   display: flex;
