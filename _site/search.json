@@ -16,7 +16,35 @@
   {
     "objectID": "page2.html",
     "href": "page2.html",
-    "title": "Page 2",
+    "title": "Georgia",
+    "section": "",
+    "text": "TBD."
+  },
+  {
+    "objectID": "download_data.html",
+    "href": "download_data.html",
+    "title": "Download Data",
+    "section": "",
+    "text": "TBD."
+  },
+  {
+    "objectID": "georgia.html",
+    "href": "georgia.html",
+    "title": "Georgia",
+    "section": "",
+    "text": "TBD."
+  },
+  {
+    "objectID": "map_explorer.html",
+    "href": "map_explorer.html",
+    "title": "Map Explorer",
+    "section": "",
+    "text": "TBD."
+  },
+  {
+    "objectID": "national_trends.html",
+    "href": "national_trends.html",
+    "title": "National Trends",
     "section": "",
     "text": "TBD."
   }

@@ -1,0 +1,14 @@
+{
+  "hash": "b2c2ddab0840a210ebdefcc3d87625fb",
+  "result": {
+    "markdown": "---\ntitle: \"National Trends\" \nembed-resources: TRUE\nquarto:\n  output:\n    html:\n      css: styles.css\n---\n\n\n\n\nTBD.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

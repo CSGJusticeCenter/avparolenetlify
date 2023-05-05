@@ -13,13 +13,15 @@ website:
       - text: "Project Overview"
         href: index.html
       - text: "National Trends"
-        menu:
-          - text: "Page 1"
-            href: page1.html
+        href: national_trends.html
+      - text: "Map Explorer"
+        href: map_explorer.html
       - text: "State Reports"
         menu:
-          - text: "Page 2"
-            href: page2.html
+          - text: "Georgia"
+            href: georgia.html
+      - text: "Download Data"
+        href: download_data.html
 
 format:
   html:

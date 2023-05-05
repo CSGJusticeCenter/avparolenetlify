@@ -1,0 +1,82 @@
+.navbar {
+  position: fixed; /* make navbar position fixed */
+  top: 0; /* align navbar to top of page */
+  left: 0; /* align navbar to left side of page */
+  height: 100%; /* set navbar height to full height of page */
+  width: 200px; /* set width of navbar */
+  background-color: #333; /* set background color of navbar */
+}
+
+.navbar-nav {
+  display: block; /* set navbar items to display as a block */
+  margin: 0; /* remove margin on navbar items */
+  padding: 0; /* remove padding on navbar items */
+}
+
+.navbar-nav li {
+  display: block; /* set navbar items to display as a block */
+  margin: 0; /* remove margin on navbar items */
+  padding: 0; /* remove padding on navbar items */
+}
+
+.navbar-nav li a {
+  display: block; /* set navbar links to display as a block */
+  padding: 15px; /* add padding to navbar links */
+  color: #333; /* set color of navbar links */
+  text-decoration: none; /* remove underline on navbar links */
+  border-bottom: 1px solid #ccc; /* add a border bottom to navbar links */
+}
+
+.navbar-nav li:last-child a {
+  border-bottom: none; /* remove border bottom on last navbar link */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #555;
+    padding: 20px;
+  overflow-y: auto;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #555;
+
+}
+
+.sidebar li {
+  margin-bottom: 10px;
+  background-color: #555;
+
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px;
+  background-color: #555;
+    color: #333;
+    text-decoration: none;
+  border-radius: 5px;
+}
+
+.sidebar a:hover {
+  background-color: #555;
+    color: #fff;
+}

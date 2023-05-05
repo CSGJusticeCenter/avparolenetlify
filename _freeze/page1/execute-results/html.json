@@ -1,7 +1,7 @@
 {
-  "hash": "b60fc8e5bd5bd1f2d9353d7983c135bc",
+  "hash": "0f7316e841a2078fa7b2f1a5608e2406",
   "result": {
-    "markdown": "---\ntitle: \"Page 1\" \nembed-resources: TRUE\n---\n\n\n\n\nTBD.\n",
+    "markdown": "---\ntitle: \"Page 1\" \nembed-resources: TRUE\nquarto:\n  output:\n    html:\n      css: styles.css\n---\n\n\n\n\nTBD.\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"

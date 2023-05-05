@@ -1,6 +1,10 @@
 ---
-title: "Page 1" 
+title: "National Trends" 
 embed-resources: TRUE
+quarto:
+  output:
+    html:
+      css: styles.css
 ---
 
 ```{r setup, include=FALSE}

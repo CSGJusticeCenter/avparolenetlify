@@ -1,7 +1,7 @@
 {
-  "hash": "2b5a0782b51fdd506658b11268da07a9",
+  "hash": "6bd10ed8d9a44cdae7231d48fcb07b5a",
   "result": {
-    "markdown": "---\ntitle: \"Georgia\" \nembed-resources: TRUE\nquarto:\n  output:\n    html:\n      css: styles.css\n---\n\n\n\n\nTBD.\n",
+    "markdown": "---\ntitle: \"Map Explorer\" \nembed-resources: TRUE\nquarto:\n  output:\n    html:\n      css: styles.css\n---\n\n\n\n\nTBD.\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
