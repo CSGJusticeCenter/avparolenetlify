@@ -38,22 +38,38 @@ source("prep/dataframes.R")
 # donuts
 chart1 <- 
   all_donut_currently_eligible$Georgia %>% 
-  hc_chart(width = 300, height = 200) %>%
+  hc_chart(width = 250, height = 200) %>%
   hc_title(text = "Currently Eligible<br>for Parole") 
 
 chart2 <- 
   all_donut_future_eligible$Georgia %>% 
-  hc_chart(width = 300, height = 200) %>%
+  hc_chart(width = 250, height = 200) %>%
   hc_title(text = "Eligible for Parole<br>in the Future") 
 
-# combine charts into a single row
-htmltools::tagList(
-  htmltools::div(
-    style = "display: flex; flex-direction: row; justify-content: space-between; align-items: center;",
-    class = "highchart-wrapper",
-    chart1,
-    chart2
-  )
+chart3 <- 
+  all_donut_future_eligible$Georgia %>% 
+  hc_chart(width = 250, height = 200) %>%
+  hc_title(text = "TBD Finding") 
+
+# # combine charts into a single row
+# htmltools::tagList(
+#   htmltools::div(
+#     style = "display: flex; 
+#     flex-direction: row; 
+#     justify-content: space-between; 
+#     align-items: center;",
+#     class = "highchart-wrapper",
+#     chart1,
+#     chart2,
+#     chart3
+#   )
+# )
+# Add charts to an HTML div
+htmltools::div(
+  style = "display:flex; flex-direction: row; align-items: center;",
+  chart1,
+  chart2,
+  chart3
 )
 ```
 

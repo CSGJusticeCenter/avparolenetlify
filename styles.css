@@ -1,10 +1,11 @@
 
 .narrow-section {
-  max-width: 500px;
+  max-width: 750px;
   max-height: 200px;
   margin: 0 auto;
 }
 
+/*
 .highchart-wrapper {
  display: inline-block;
  margin: 0 auto;
@@ -15,7 +16,18 @@
 
 
 
-
+.chart-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chart-row div {
+  margin-right: 20px;
+}
+.chart-row div:last-child {
+  margin-right: 0;
+}
+*/
 
 
 
