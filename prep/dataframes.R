@@ -4,9 +4,6 @@
 load(file = paste0(sp_data_path, "/data/analysis/all_donut_currently_eligible.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_donut_future_eligible.rds"))
 
-# load packages
-source("prep/00_library.R")
-
 # Parole Overview
 load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_sex.rds"))

@@ -10,28 +10,56 @@ format:
 ---
 
 ```{r setup, include=FALSE}
-
 knitr::opts_chunk$set(
   echo = FALSE,
   warning = FALSE,
-  message = FALSE,
-  dev = "ragg_png"
+  message = FALSE
+  # dev = "ragg_png"
 )
+
+# load packages
+library(shiny)
+library(highcharter)
+library(dplyr)
+library(htmlwidgets)
+library(dplyr)
+library(htmltools)
+
+# # load data
+# source("prep/00_library.R")
+# source("prep/dataframes.R")
 ```
 
-TBD.
+<br>
+
+```{r results = "asis"}
+data(penguins, package = "palmerpenguins")
+
+hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm, group = species)) %>%
+  hc_title(text = "Penguin Body Mass vs. Flipper Length") %>%
+  hc_xAxis(title = list(text = "Body Mass (g)")) %>%
+  hc_yAxis(title = list(text = "Flipper Length (mm)")) %>%
+  htmltools::browsable()
+```
 
 ```{r}
-library(shiny)
-
+# panels for different sections
 tabsetPanel(
   id = "tabsetpanel",
-  tabPanel("Tab 1",
-    "This is the content for tab 1."
+  tabPanel("Overview",
+    "TBD",
   ),
-  tabPanel("Tab 2",
-    "This is the content for tab 2."
-  )
+  tabPanel("Parole Eligibility",
+    "TBD"
+  ),
+  tabPanel("Releases from Prison",
+    "TBD."
+  ),
+  tabPanel("Sentencing",
+    "TBD."
+  ),
+  tabPanel("Disparities",
+    "TBD."
+  ),
 )
 ```
-
