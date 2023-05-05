@@ -1,8 +1,10 @@
 {
-  "hash": "2b5a0782b51fdd506658b11268da07a9",
+  "hash": "0600f90ea12b0f5c6c46579dfec834a2",
   "result": {
-    "markdown": "---\ntitle: \"Georgia\" \nembed-resources: TRUE\nquarto:\n  output:\n    html:\n      css: styles.css\n---\n\n\n\n\nTBD.\n",
-    "supporting": [],
+    "markdown": "---\ntitle: \"Georgia\"\nformat:\n  html:\n    css: styles.css\n    embed-resources: TRUE\n    code-fold: true\n    page-layout: full\n    fig_caption: yes\n---\n\n\n\n\nTBD.\n\n\n::: {.cell}\n::: {.cell-output-display}\n```{=html}\n<div class=\"tabbable\">\n<ul class=\"nav nav-tabs shiny-tab-input\" id=\"tabsetpanel\" data-tabsetid=\"7686\">\n<li class=\"active\">\n<a href=\"#tab-7686-1\" data-toggle=\"tab\" data-bs-toggle=\"tab\" data-value=\"Tab 1\">Tab 1</a>\n</li>\n<li>\n<a href=\"#tab-7686-2\" data-toggle=\"tab\" data-bs-toggle=\"tab\" data-value=\"Tab 2\">Tab 2</a>\n</li>\n</ul>\n<div class=\"tab-content\" data-tabsetid=\"7686\">\n<div class=\"tab-pane active\" data-value=\"Tab 1\" id=\"tab-7686-1\">This is the content for tab 1.</div>\n<div class=\"tab-pane\" data-value=\"Tab 2\" id=\"tab-7686-2\">This is the content for tab 2.</div>\n</div>\n</div>\n```\n:::\n:::\n",
+    "supporting": [
+      "georgia_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],

@@ -1,10 +1,12 @@
 ---
-title: "Georgia" 
-embed-resources: TRUE
-quarto:
-  output:
-    html:
-      css: styles.css
+title: "Georgia"
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +17,21 @@ knitr::opts_chunk$set(
   message = FALSE,
   dev = "ragg_png"
 )
-
 ```
 
 TBD.
+
+```{r}
+library(shiny)
+
+tabsetPanel(
+  id = "tabsetpanel",
+  tabPanel("Tab 1",
+    "This is the content for tab 1."
+  ),
+  tabPanel("Tab 2",
+    "This is the content for tab 2."
+  )
+)
+```
+

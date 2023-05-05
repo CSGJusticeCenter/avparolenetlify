@@ -1,0 +1,115 @@
+/* css styles */
+
+/* add fonts*/
+@font-face {
+    font-family: "Graphik";
+    src: local('Graphik'), url("fonts/Graphik.ttf");
+  }
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/GraphikBold.ttf");
+  font-weight: bold;
+}
+
+html,
+body {
+  font-family: 'Graphik', sans-serif;
+  color: #3E4B4B!important;
+}
+
+/* remove rounded edges everything */
+* {
+  border-radius: 0!important;
+}
+
+
+
+
+/* change border color of drop down menu */
+.dropdown-menu {
+  border-color: #00aba0;
+}
+
+/* change border color of drop down menu when hovered*/
+.dropdown-menu li a:hover {
+  border-color: #00aba0;
+}
+
+/* NAVBAR CSS */
+
+.navbar {
+  background-color: #3E4B4B; /* change background color */
+  color: #fff; /* change font color */
+  border-radius: 0; /* remove border radius */
+  height: 60px; /* change height */
+  font-size: 1em; /* change font size */
+}
+
+.navbar-brand {
+  font-size: 1.2em; /* change font size */
+  color: #fff; /* change font color */
+  font-weight: bold; /* change font weight */
+}
+
+/*
+.navbar-nav {
+  margin-right: 0;  remove right margin
+}
+*/
+
+.navbar-nav li {
+  /*padding: 0 15px;  change padding*/
+  padding-right: 0.5em; /* add padding to the right of each list item */
+  padding-left: 0.5em; /* add padding to the left of each list item */
+}
+
+.navbar-nav li a {
+  color: #fff; /* change font color */
+    font-size: 1em; /* change font size */
+}
+
+.navbar-nav li a:hover {
+  background-color: #00aba0; /* change background color on hover */
+  color: #fff; /* change font color on hover */
+}
+
+.navbar-nav .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0.6em;
+  min-width: 200px;
+  /*margin-top: 0.5rem; adjust as needed */
+}
+
+.dropdown-menu {
+  background-color: #00aba0; /* change background color */
+}
+
+.dropdown-menu li a {
+  color: #fff; /* change font color */
+    font-size: 1em; /* change font size */
+}
+
+.dropdown-menu li a:hover {
+  background-color: #00aba0; /* change background color on hover */
+    color: #fff; /* change font color on hover */
+}
+
+.dropdown-item.active, .dropdown-item:active {
+  background-color: #00aba0; /* change active background color */
+    color: #fff; /* change active font color */
+}
+
+
+
+
+
+
+
+/* title of pages */
+.title {
+  font-size: 2em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+}
