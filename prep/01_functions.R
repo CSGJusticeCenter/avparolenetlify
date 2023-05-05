@@ -200,7 +200,7 @@ fnc_donut_chart <- function(df,
                     style = list(fontSize = "2em",
                                  color = neutralBlackText),
                     enabled = TRUE,
-                    distance= -65,
+                    distance= -60,
                     format = point_format)) %>%
     hc_add_series(type = "pie",
                   data = df,

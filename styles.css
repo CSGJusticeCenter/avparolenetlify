@@ -1,4 +1,29 @@
 
+.narrow-section {
+  max-width: 500px;
+  max-height: 200px;
+  margin: 0 auto;
+}
+
+.highchart-wrapper {
+ display: inline-block;
+ margin: 0 auto;
+ padding: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**********************************************/
 
 /* page settings */

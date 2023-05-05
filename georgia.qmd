@@ -27,20 +27,37 @@ library(htmltools)
 
 # load data
 source("prep/00_library.R")
+source("prep/01_functions.R")
 source("prep/dataframes.R")
 ```
 
 <br>
+<div class="narrow-section">
 
-```{r results = "asis"}
-data(penguins, package = "palmerpenguins")
+```{r}
+# donuts
+chart1 <- 
+  all_donut_currently_eligible$Georgia %>% 
+  hc_chart(width = 300, height = 200) %>%
+  hc_title(text = "Currently Eligible<br>for Parole") 
 
-hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm, group = species)) %>%
-  hc_title(text = "Penguin Body Mass vs. Flipper Length") %>%
-  hc_xAxis(title = list(text = "Body Mass (g)")) %>%
-  hc_yAxis(title = list(text = "Flipper Length (mm)")) %>%
-  htmltools::browsable()
+chart2 <- 
+  all_donut_future_eligible$Georgia %>% 
+  hc_chart(width = 300, height = 200) %>%
+  hc_title(text = "Eligible for Parole<br>in the Future") 
+
+# combine charts into a single row
+htmltools::tagList(
+  htmltools::div(
+    style = "display: flex; flex-direction: row; justify-content: space-between; align-items: center;",
+    class = "highchart-wrapper",
+    chart1,
+    chart2
+  )
+)
 ```
+
+</div><br>
 
 ```{r}
 # panels for different sections
