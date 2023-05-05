@@ -1,7 +1,6 @@
 ---
 format:
   html:
-    theme: flatly
     css: styles.css
     embed-resources: TRUE
 ---
