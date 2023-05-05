@@ -49,7 +49,7 @@ chart2 <-
 chart3 <- 
   all_donut_future_eligible$Georgia %>% 
   hc_chart(width = 250, height = 200) %>%
-  hc_title(text = "TBD Finding") 
+  hc_title(text = "TBD<br>Finding") 
 
 # # combine charts into a single row
 # htmltools::tagList(
