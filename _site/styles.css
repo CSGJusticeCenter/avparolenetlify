@@ -1,29 +1,63 @@
-/* css styles */
+
+/**********************************************/
+
+/* page settings */
+
+/**********************************************/
+
+body {
+  max-width: 1000px; /* set the maximum width */
+  margin: 0 auto; /* center the content horizontally */
+}
 
 /* add fonts*/
 @font-face {
-    font-family: "Graphik";
-    src: local('Graphik'), url("fonts/Graphik.ttf");
-  }
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/Graphik.ttf");
+}
 @font-face {
   font-family: "Graphik";
   src: local('Graphik'), url("fonts/GraphikBold.ttf");
   font-weight: bold;
 }
 
+
+/* remove rounded edges everything */
+*{
+  border-radius: 0!important;
+}
+
+/* change font throughout website */
 html,
 body {
   font-family: 'Graphik', sans-serif;
   color: #3E4B4B!important;
 }
 
-/* remove rounded edges everything */
-* {
-  border-radius: 0!important;
+
+
+/**********************************************/
+
+/* title settings */
+
+/**********************************************/
+
+/* title of website pages */
+.title {
+  font-size: 2em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
 }
 
 
 
+
+/**********************************************/
+
+/* navigation bar settings */
+
+/**********************************************/
 
 /* change border color of drop down menu */
 .dropdown-menu {
@@ -34,8 +68,6 @@ body {
 .dropdown-menu li a:hover {
   border-color: #00aba0;
 }
-
-/* NAVBAR CSS */
 
 .navbar {
   background-color: #3E4B4B; /* change background color */
@@ -52,20 +84,20 @@ body {
 }
 
 /*
-.navbar-nav {
-  margin-right: 0;  remove right margin
-}
+  .navbar-nav {
+    margin-right: 0;  remove right margin
+  }
 */
 
 .navbar-nav li {
   /*padding: 0 15px;  change padding*/
-  padding-right: 0.5em; /* add padding to the right of each list item */
-  padding-left: 0.5em; /* add padding to the left of each list item */
+    padding-right: 0.5em; /* add padding to the right of each list item */
+    padding-left: 0.5em; /* add padding to the left of each list item */
 }
 
 .navbar-nav li a {
   color: #fff; /* change font color */
-    font-size: 1em; /* change font size */
+  font-size: 1em; /* change font size */
 }
 
 .navbar-nav li a:hover {
@@ -105,11 +137,73 @@ body {
 
 
 
+/**********************************************/
 
-/* title of pages */
-.title {
-  font-size: 2em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
-  text-align: center;
+/* tabset panel settings */
+
+/**********************************************/
+
+/* tabset pabel basic settings */
+.nav-tabs {
+  color: #3E4B4B;
+  text-align:center;
+  font-size: 0.75em;
+  font-family: Graphik;
+  padding-top: 1em; /* add padding to top */
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ccc;
+  /*background-color: #F4F6F8; color across entire bar instead of tab items*/
 }
+
+/* spacing between menu items */
+.nav-tabs > li {
+  color: #3E4B4B;
+  float: none;
+  display: inline-block; /* maintains horizontal tab structure */
+  padding: 0px 14px; /* changes spacing between tabpanels */
+  font-family: Graphik;
+}
+
+/* make boxes/background color around text of tabs */
+.nav-tabs>li>a {
+  margin-right: 2px;
+  line-height: 1.5; /* height of tab panel buttons */
+  background-color: #F4F6F8;
+  color: #3E4B4B;
+  font-family: Graphik;
+  padding: .85em 2.5em; /* add more padding around the text */
+  text-decoration: none; /* remove underline */
+}
+
+/* Add horizontal line underneath the tabs */
+.nav-tabs::after {
+  content: "";
+  display: table;
+  clear: both;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.tab-content {
+  padding-top: 1em; /* add padding to move content down */
+  border: none; /* remove border around box */
+}
+
+/* Styling for selected tab */
+.nav-tabs>li>a,
+.nav-tabs>li>a:focus,
+.nav-tabs>li>a:hover {
+  background-color: #3E4B4B;
+  color: #fff;
+}
+
+/* Remove styling when tab is not selected */
+.nav-tabs>li>a:not(.active) {
+  background-color: #F4F6F8;
+  color: #3E4B4B;
+}
+
+
+
+
+

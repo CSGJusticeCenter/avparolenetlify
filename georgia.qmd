@@ -25,9 +25,9 @@ library(htmlwidgets)
 library(dplyr)
 library(htmltools)
 
-# # load data
-# source("prep/00_library.R")
-# source("prep/dataframes.R")
+# load data
+source("prep/00_library.R")
+source("prep/dataframes.R")
 ```
 
 <br>
