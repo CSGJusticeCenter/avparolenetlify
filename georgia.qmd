@@ -127,7 +127,7 @@ state_parole_profile_race <-
                               minWidth = 100,
                               format = colFormat(percent = TRUE,
                                                  digits = 1))))
-
+# save sex table by state
 state_parole_profile_sex <- 
 reactable(people_released_to_parole_sex_state,
           style = hc_reactable_style,
@@ -144,7 +144,7 @@ reactable(people_released_to_parole_sex_state,
                           minWidth = 100,
                           format = colFormat(percent = TRUE,
                                              digits = 1))))
-
+# save age table by state
 state_parole_profile_age <-
 reactable(people_released_to_parole_age_state,
           style = hc_reactable_style,
@@ -167,7 +167,42 @@ reactable(people_released_to_parole_age_state,
 # Parole Eligibility
 ###########
 
+# save offense pie by state
+state_pie_parole_elgibility_offense <- 
+  all_pie_parole_elgibility_offense$Georgia %>% 
+  hc_chart(width = 150, height = 75) %>% 
+  hc_chart(margin = c(0, 0, 0, 0))
 
+state_current_ped_2020_offenses <- 
+  current_ped_2020_offenses %>% 
+  filter(state == "Georgia") %>% 
+  select(-c(state, 
+            yearendpop_ped,
+            tooltip,
+            chart_label))
+
+state_table_parole_elgibility_offense <- 
+    reactable(state_current_ped_2020_offenses,
+              style = hc_reactable_style,
+              theme = hc_reactable_theme,
+              defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                     align = "left"),
+              compact = TRUE,
+              fullWidth = FALSE,
+              columns = list(
+                chart_label   = colDef(show = FALSE),
+                offgeneral    = colDef(name = "Most Serious Sentenced Offense",
+                                       minWidth = 200),
+                n = colDef(name = "Number of People",
+                           minWidth = 100,
+                           align = "right"),
+                prop   = colDef(name = "Percentage of People Eligible for
+                                Parole but not yet Released",
+                                minWidth = 175,
+                                align = "right",
+                                format = colFormat(percent = TRUE,
+                                                   digits = 1))))
+  
 
 ###########
 # Releases from Prison
@@ -199,7 +234,8 @@ tabsetPanel(
       htmltools::div(
         style = "display:flex; flex-direction: row; align-items: flex-start;",
         htmltools::div(
-          state_line_pop_released_to_parole
+          state_line_pop_released_to_parole,
+          div(id = "footnote", "Source: NCRP Year End Population (2000-2020), Annual Parole Survey (2000-2018)")
         ),
         htmltools::div(
           style = "flex: 1; margin-left: 5em; display: flex; flex-direction: column; align-items: center;",
@@ -208,7 +244,8 @@ tabsetPanel(
                          br(),
                          state_parole_profile_race,
                          state_parole_profile_sex,
-                         state_parole_profile_age)
+                         state_parole_profile_age),
+          div(id = "footnote", "Source: NCRP Releases (2020)")
         )
       )
   ),
@@ -217,8 +254,25 @@ tabsetPanel(
   tabPanel("Parole Eligibility",
   ############################   
   
-  "Parole Eligibility"
-  
+      htmltools::div(
+        style = "display:flex; flex-direction: row; align-items: flex-start;",
+        htmltools::div(
+          style = "flex: 0 0 10%;",
+                  tags$div(class = "sectiontitle", 
+                 "Most Serious Sentenced Offense for People Eligible 
+                 for Parole but not yet Released in 2020"),
+          state_pie_parole_elgibility_offense,
+              tags$div(style = "margin-top: 0em;", state_table_parole_elgibility_offense),
+          div(id = "footnote", "Source: NCRP Year End Population (2020)")
+        ),
+        htmltools::div(
+          style = "flex: 1; margin-left: 10em; display: flex; flex-direction: column; align-items: center;",
+          tags$div(class = "sectiontitle", "More info on Parole Eligibility TBD"),
+          htmltools::div(style = "display: flex; flex-direction: column; align-items: center;",
+                         br(),
+                         "More info on Parole Eligibility TBD")
+        )
+      )
   ),
   
   ############################

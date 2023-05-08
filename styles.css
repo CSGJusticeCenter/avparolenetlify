@@ -14,6 +14,16 @@
   flex: 1;
 }
 
+
+/* Body settings */
+#footnote {
+  color: #3E4B4B;
+  text-align: left;
+  font-style: italic;
+  font-size: 12px;
+  font-family: Graphik;
+}
+
 /* Not working well
 .highchart-wrapper {
  display: inline-block;
