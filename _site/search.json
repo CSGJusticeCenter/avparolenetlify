@@ -32,7 +32,7 @@
     "href": "georgia.html",
     "title": "Georgia",
     "section": "",
-    "text": "Overview\n\n\nParole Eligibility\n\n\nReleases from Prison\n\n\nSentencing\n\n\nDisparities\n\n\n\n\n\n\n\n\n\n\n\nTBD.\nTBD.\nTBD."
+    "text": "Overview\n\n\nParole Eligibility\n\n\nReleases from Prison\n\n\nSentencing\n\n\nParole Board\n\n\nDisparities\n\n\n\n\n\n\n\n\n\n\nProfile of People Released to Parole in 2020\n\n\n\n\n\n\n\n\n\n\n\n\nParole Eligibility\nReleases from Prison\nSentencing\nParole Eligibility\nDisparities"
   },
   {
     "objectID": "map_explorer.html",
@@ -54,5 +54,33 @@
     "title": "National Trends",
     "section": "Parole",
     "text": "Parole\n\n[Visual TBD] Determinate sentencing states, indeterminate sentencing states.\n[Visual TBD] Truth in sentencing (TIS) grant program.\n[Interactive Graph] Ranked states for number of people or percentage of state poulation under US correctional supervision in X year.\n[Interactive Graph] Releases over time (conditional vs unconditional) as a percentage of all releases from X year to Y year.\n[Interactive Map] Parole violators as a percentage of all prison admissions by state in X year (Each state will have it’s own line).\n[Interactive Graph] Number of people released to parole supervision from X year to Y year for X state(s)."
+  },
+  {
+    "objectID": "georgia.html#tab-1",
+    "href": "georgia.html#tab-1",
+    "title": "Georgia",
+    "section": "Tab 1",
+    "text": "Tab 1\n\n\nContent for Column 1\n\n\nContent for Column 2"
+  },
+  {
+    "objectID": "georgia.html#tab-2",
+    "href": "georgia.html#tab-2",
+    "title": "Georgia",
+    "section": "Tab 2",
+    "text": "Tab 2\n\n\nContent for Column 1\n\n\nContent for Column 2"
+  },
+  {
+    "objectID": "georgia.html#tab-3",
+    "href": "georgia.html#tab-3",
+    "title": "Georgia",
+    "section": "Tab 3",
+    "text": "Tab 3\n\n\nContent for Column 1\n\n\nContent for Column 2"
+  },
+  {
+    "objectID": "test.html",
+    "href": "test.html",
+    "title": "Example QMD with TabsetPanel and Columns",
+    "section": "",
+    "text": "panels for different sections\ntabsetPanel( id = “tabsetpanel”,\n############################ tabPanel(“Overview”, ############################\nsplitLayout( cellWidths = c(“50%”, “50%”), { # First column plot(iris[, -5], main = “Chart 1”) }, { # Second column plot(iris[, -5], main = “Chart 2”) } )\n),\n############################ tabPanel(“Parole Eligibility”, ############################\n“Parole Eligibility”\n)\n)"
   }
 ]

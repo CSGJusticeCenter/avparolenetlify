@@ -11,7 +11,7 @@ hc_reactable_theme <-
 
 hc_reactable_style <- list(
   fontFamily = "Graphik, sans-serif",
-  fontSize = "1.5rem"
+  fontSize = "0.75rem"
 )
 
 

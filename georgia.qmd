@@ -33,8 +33,8 @@ source("prep/dataframes.R")
 ```
 
 <br>
-<div class="narrow-section">
 
+::: narrow-section
 ```{r}
 # donuts
 chart1 <- 
@@ -73,8 +73,9 @@ htmltools::div(
   chart3
 )
 ```
+:::
 
-</div><br>
+<br>
 
 ```{r}
 # save charts to call in tabsetPanel in next R chunk
@@ -87,18 +88,31 @@ htmltools::div(
 # and the change in releases to parole over time
 state_line_pop_released_to_parole <- 
   all_line_pop_released_to_parole$Georgia %>% 
-  hc_chart(width = 400, height = 400) %>%
+  hc_chart(width = 500, height = 400) %>%
   hc_title(text = "Prison Populations and the Number of 
            People Released to Parole by Reporting Year") 
 
-
-df <- people_released_to_parole_race %>% 
+people_released_to_parole_race_state <- 
+  people_released_to_parole_race %>% 
   filter(state == "Georgia") %>% 
   ungroup() %>% 
   select(race, prop)
 
+people_released_to_parole_sex_state <- 
+  people_released_to_parole_sex %>% 
+  filter(state == "Georgia") %>% 
+  ungroup() %>% 
+  select(sex, prop)
+
+people_released_to_parole_age_state <- 
+  people_released_to_parole_age %>% 
+  filter(state == "Georgia") %>% 
+  ungroup() %>% 
+  select(agerlse, prop)
+
+# save race table by state
 state_parole_profile_race <- 
-    reactable(df,
+    reactable(people_released_to_parole_race_state,
               style = hc_reactable_style,
               theme = hc_reactable_theme,
               defaultColDef = colDef(format = colFormat(separators = TRUE),
@@ -107,12 +121,46 @@ state_parole_profile_race <-
               fullWidth = FALSE,
               columns = list(
                 race = colDef(name = "Race",
-                              minWidth = 215),
+                              minWidth = 250),
                 prop = colDef(align = "right",
                               name = "",
-                              minWidth = 215,
+                              minWidth = 100,
                               format = colFormat(percent = TRUE,
                                                  digits = 1))))
+
+state_parole_profile_sex <- 
+reactable(people_released_to_parole_sex_state,
+          style = hc_reactable_style,
+          theme = hc_reactable_theme,
+          defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                 align = "left"),
+          compact = TRUE,
+          fullWidth = FALSE,
+          columns = list(
+            sex  = colDef(name = "Gender",
+                          minWidth = 250),
+            prop = colDef(align = "right",
+                          name = "",
+                          minWidth = 100,
+                          format = colFormat(percent = TRUE,
+                                             digits = 1))))
+
+state_parole_profile_age <-
+reactable(people_released_to_parole_age_state,
+          style = hc_reactable_style,
+          theme = hc_reactable_theme,
+          defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                 align = "left"),
+          compact = TRUE,
+          fullWidth = FALSE,
+          columns = list(
+            agerlse = colDef(name = "Age",
+                             minWidth = 250),
+            prop = colDef(align = "right",
+                          name = "",
+                          minWidth = 100,
+                          format = colFormat(percent = TRUE,
+                                             digits = 1))))
 
 
 ###########
@@ -138,25 +186,86 @@ state_parole_profile_race <-
 ###########
 ```
 
-
 ```{r}
 # panels for different sections
 tabsetPanel(
+  
   id = "tabsetpanel",
+
+  ############################
   tabPanel("Overview",
-    state_line_pop_released_to_parole,
+  ############################
+  
+      htmltools::div(
+        style = "display:flex; flex-direction: row; align-items: flex-start;",
+        htmltools::div(
+          state_line_pop_released_to_parole
+        ),
+        htmltools::div(
+          style = "flex: 1; margin-left: 5em; display: flex; flex-direction: column; align-items: center;",
+          tags$div(class = "sectiontitle", "Profile of People Released to Parole in 2020"),
+          htmltools::div(style = "display: flex; flex-direction: column; align-items: center;",
+                         br(),
+                         state_parole_profile_race,
+                         state_parole_profile_sex,
+                         state_parole_profile_age)
+        )
+      )
   ),
+  
+  ############################
   tabPanel("Parole Eligibility",
-    state_parole_profile_race
+  ############################   
+  
+  "Parole Eligibility"
+  
   ),
+  
+  ############################
   tabPanel("Releases from Prison",
-    "TBD."
+  ############################   
+  
+  "Releases from Prison"
+  
   ),
+  
+  ############################
   tabPanel("Sentencing",
-    "TBD."
+  ############################   
+  
+  "Sentencing"
+  
   ),
+  
+  ############################
+  tabPanel("Parole Board",
+  ############################   
+  
+  "Parole Eligibility"
+  
+  ),
+  
+  ############################
   tabPanel("Disparities",
-    "TBD."
-  ),
+  ############################   
+  
+  "Disparities"
+  
+  )
+
 )
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

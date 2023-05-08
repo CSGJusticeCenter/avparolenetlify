@@ -6,6 +6,14 @@
   margin: 0 auto;
 }
 
+#tabsetpanel .split-layout {
+  display: flex;
+}
+
+#tabsetpanel .split-layout > div {
+  flex: 1;
+}
+
 /* Not working well
 .highchart-wrapper {
  display: inline-block;
@@ -40,7 +48,7 @@
 /**********************************************/
 
 body {
-  max-width: 1000px; /* set the maximum width */
+  max-width: 1200px; /* set the maximum width */
   margin: 0 auto; /* center the content horizontally */
 }
 
@@ -84,7 +92,13 @@ body {
   text-align: center;
 }
 
-
+/* title of website tabs */
+.sectiontitle {
+  font-size: 1em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+}
 
 
 /**********************************************/

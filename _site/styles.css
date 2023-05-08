@@ -1,4 +1,46 @@
 
+/* create a narrow section that is smaller than body */
+.narrow-section {
+  max-width: 750px;
+  max-height: 200px;
+  margin: 0 auto;
+}
+
+#tabsetpanel .split-layout {
+  display: flex;
+}
+
+#tabsetpanel .split-layout > div {
+  flex: 1;
+}
+
+/* Not working well
+.highchart-wrapper {
+ display: inline-block;
+ margin: 0 auto;
+ padding: 0;
+}
+
+.chart-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chart-row div {
+  margin-right: 20px;
+}
+.chart-row div:last-child {
+  margin-right: 0;
+}
+*/
+
+
+
+
+
+
+
+
 /**********************************************/
 
 /* page settings */
