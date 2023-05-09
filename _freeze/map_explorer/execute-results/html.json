@@ -2,7 +2,9 @@
   "hash": "45b41727aa6c2e635bedf34128407208",
   "result": {
     "markdown": "---\ntitle: \"Map Explorer\" \nformat:\n  html:\n    css: styles.css\n    embed-resources: TRUE\n    code-fold: true\n    page-layout: full\n    fig_caption: yes\n---\n\n\n\n\nIdeas:  \n\nInteractive choropleth map depicting the parole eligibility rates in 2020 across states using color intensity.  \n\n\n",
-    "supporting": [],
+    "supporting": [
+      "map_explorer_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],
