@@ -44,3 +44,6 @@ knitr::opts_chunk$set(
 -   \[Interactive Graph\] Releases over time (conditional vs unconditional) as a percentage of all releases from X year to Y year.
 
 -   \[Interactive Graph\] Number of people released to parole supervision from X year to Y year for X state(s).
+
+-   \[Interactive Graph or Table\] States missing parole eligibility dates (PED), states missing more than 50% of PEDs, states missing less than 50% of PEDs.
+

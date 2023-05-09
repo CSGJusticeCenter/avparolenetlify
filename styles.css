@@ -6,6 +6,12 @@
   margin: 0 auto;
 }
 
+.highlight-section {
+  max-width: 400px;
+  max-height: 100px;
+  margin: 0 auto;
+}
+
 #tabsetpanel .split-layout {
   display: flex;
 }
@@ -15,14 +21,6 @@
 }
 
 
-/* Body settings */
-#footnote {
-  color: #3E4B4B;
-  text-align: left;
-  font-style: italic;
-  font-size: 12px;
-  font-family: Graphik;
-}
 
 /* Not working well
 .highchart-wrapper {
@@ -90,7 +88,7 @@ body {
 
 /**********************************************/
 
-/* title settings */
+/* text settings */
 
 /**********************************************/
 
@@ -108,6 +106,30 @@ body {
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   text-align: center;
+}
+
+/* highlighted text underneath state name*/
+#highlighttext {
+  font-size: 0.75em; /* change font size */
+  font-family: Graphik; /* change font family */
+  text-align: center;
+  font-style: italic;
+}
+
+/* regular app text */
+#regulartext {
+  font-size: 0.8em; /* change font size */
+  font-family: Graphik; /* change font family */
+  text-align: left;
+}
+
+/* footnote */
+#footnote {
+  color: #3E4B4B;
+  text-align: left;
+  font-style: italic;
+  font-size: 0.6em;
+  font-family: Graphik;
 }
 
 
@@ -225,7 +247,7 @@ body {
 /* make boxes/background color around text of tabs */
 .nav-tabs>li>a {
   margin-right: 2px;
-  line-height: 1.5; /* height of tab panel buttons */
+  line-height: 1.6; /* height of tab panel buttons */
   background-color: #F4F6F8;
   color: #3E4B4B;
   font-family: Graphik;

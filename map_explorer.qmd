@@ -1,10 +1,12 @@
 ---
 title: "Map Explorer" 
-embed-resources: TRUE
-quarto:
-  output:
-    html:
-      css: styles.css
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -18,4 +20,8 @@ knitr::opts_chunk$set(
 
 ```
 
-TBD.
+Ideas:  
+
+Interactive choropleth map depicting the parole eligibility rates in 2020 across states using color intensity.  
+
+
