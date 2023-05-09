@@ -25,6 +25,7 @@ library(htmlwidgets)
 library(dplyr)
 library(htmltools)
 library(reactable)
+library(reactablefmtr)
 
 # load data
 source("prep/00_library.R")
@@ -52,20 +53,8 @@ chart3 <-
   hc_chart(width = 250, height = 200) %>%
   hc_title(text = "TBD<br>Finding") 
 
-# # combine charts into a single row
-# htmltools::tagList(
-#   htmltools::div(
-#     style = "display: flex; 
-#     flex-direction: row; 
-#     justify-content: space-between; 
-#     align-items: center;",
-#     class = "highchart-wrapper",
-#     chart1,
-#     chart2,
-#     chart3
-#   )
-# )
-# Add charts to an HTML div
+# combine charts into a single row
+# add charts to an HTML div
 htmltools::div(
   style = "display:flex; flex-direction: row; align-items: center;",
   chart1,
@@ -94,19 +83,19 @@ state_line_pop_released_to_parole <-
 
 people_released_to_parole_race_state <- 
   people_released_to_parole_race %>% 
-  filter(state == "Georgia") %>% 
+  dplyr::filter(state == "Georgia") %>% 
   ungroup() %>% 
   select(race, prop)
 
 people_released_to_parole_sex_state <- 
   people_released_to_parole_sex %>% 
-  filter(state == "Georgia") %>% 
+  dplyr::filter(state == "Georgia") %>% 
   ungroup() %>% 
   select(sex, prop)
 
 people_released_to_parole_age_state <- 
   people_released_to_parole_age %>% 
-  filter(state == "Georgia") %>% 
+  dplyr::filter(state == "Georgia") %>% 
   ungroup() %>% 
   select(agerlse, prop)
 
@@ -175,7 +164,7 @@ state_pie_parole_elgibility_offense <-
 
 state_current_ped_2020_offenses <- 
   current_ped_2020_offenses %>% 
-  filter(state == "Georgia") %>% 
+  dplyr::filter(state == "Georgia") %>% 
   select(-c(state, 
             yearendpop_ped,
             tooltip,
@@ -219,9 +208,8 @@ state_table_parole_elgibility_offense <-
 ###########
 # Disparities
 ###########
-```
 
-```{r}
+
 # panels for different sections
 tabsetPanel(
   
@@ -230,7 +218,7 @@ tabsetPanel(
   ############################
   tabPanel("Overview",
   ############################
-  
+
       htmltools::div(
         style = "display:flex; flex-direction: row; align-items: flex-start;",
         htmltools::div(
@@ -257,7 +245,7 @@ tabsetPanel(
       htmltools::div(
         style = "display:flex; flex-direction: row; align-items: flex-start;",
         htmltools::div(
-          style = "flex: 0 0 10%;",
+          style = "flex: 0 0 40%;",
                   tags$div(class = "sectiontitle", 
                  "Most Serious Sentenced Offense for People Eligible 
                  for Parole but not yet Released in 2020"),
@@ -279,23 +267,23 @@ tabsetPanel(
   tabPanel("Releases from Prison",
   ############################   
   
-  "Releases from Prison"
+  "More Questions: ", br(),
+  "Releases from Prison", br(),
+  "Who is being released at first eligibility?", br(),
+  "How long after eligibility does release occur?", br(),
+  "How does release vary by the person's demographic and criminal history characteristics?", br(),
+  "What is the mean and median time between parole eligibility and release for those released after the PED?", br(),
+  "Number/percentage of release types from X year to Y year.", br(),
   
   ),
   
   ############################
-  tabPanel("Sentencing",
+  tabPanel("Length of Stay",
   ############################   
   
-  "Sentencing"
-  
-  ),
-  
-  ############################
-  tabPanel("Parole Board",
-  ############################   
-  
-  "Parole Eligibility"
+  "Sentencing/Length of Stay",
+  br(),
+  "How different is actual time served compared to sentence length pronounced at court?", br()
   
   ),
   

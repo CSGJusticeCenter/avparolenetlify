@@ -21,32 +21,26 @@ knitr::opts_chunk$set(
 
 ```
 
-## Overview
+## Overview Ideas
 
--   \[Interactive Graph\] People Under U.S. Correctional Supervision from X year to Y year (Prison, jail, parole, probation.
+-   \[Interactive Graph\] People Under U.S. Correctional Supervision from X year to Y year (Prison, jail, parole, probation).
 
 -   \[Interactive Graph\] Prison Rate Change in X State(s) from X year to Y year (Each state will have it's own line).
 
 -   \[Interactive Graph\] Racial/Ethnic/Gender Disparities in Prisons from X year to Y year.
 
--   \[Interactive Graph\] Prison Population by Offense in X year.
-
--   \[Interactive Graph\] The Growth of Life Sentences from X year to Y year (Life without Parole, Life with Parole.
+-   \[Interactive Graph\] The Growth of Life Sentences from X year to Y year (Life without Parole, Life with Parole).
 
 -   \[Interactive Graph\] X Race/Ethnicity Americans of the US Population, Total Prison Population, and Who Have Served at Least 10 years.
 
--   \[Interactive Graph\] Ranked state imprisonment rates in X year.
+-   \[Interactive Graph\] Ranked state prison rates in X year.
 
-## Parole
+## Parole Ideas
+
+-   \[Interactive Graph\] Ranked states with highest parole eligibility but not yet released to parole in X year.
 
 -   \[Visual TBD\] Determinate sentencing states, indeterminate sentencing states.
 
--   \[Visual TBD\] Truth in sentencing (TIS) grant program.
-
--   \[Interactive Graph\] Ranked states for number of people or percentage of state poulation under US correctional supervision in X year.
-
 -   \[Interactive Graph\] Releases over time (conditional vs unconditional) as a percentage of all releases from X year to Y year.
-
--   \[Interactive Map\] Parole violators as a percentage of all prison admissions by state in X year (Each state will have it's own line).
 
 -   \[Interactive Graph\] Number of people released to parole supervision from X year to Y year for X state(s).

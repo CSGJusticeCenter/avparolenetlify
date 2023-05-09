@@ -20,8 +20,6 @@ website:
         menu:
           - text: "Georgia"
             href: georgia.html
-      - text: "Download Data"
-        href: download_data.html
 
 format:
   html:
