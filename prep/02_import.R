@@ -41,6 +41,11 @@ aps_parole_2002 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31327-V1/ICPSR_313
 aps_parole_2001 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31326-V1/ICPSR_31326/DS0001/31326-0001-Data.rda"))
 aps_parole_2000 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31325-V1/ICPSR_31325/DS0001/31325-0001-Data.rda"))
 
+# Load sp file
+hex <- read_sf(paste0(sp_data_path, "/data/raw/us_states_hexgrid.geojson")) %>%
+  select(state_abb = iso3166_2) %>%
+  filter(state_abb != "DC")
+
 
 
 
@@ -98,4 +103,30 @@ prison_pop_by_race_state_2020 <- prison_pop_by_race_state_2020 %>%
 
 
 
+
+##########
+# Prepare hex data for map
+##########
+
+# Reformat hex data for map
+hex_gj <- hex %>%
+  st_transform(3857) %>%
+  sf_geojson() %>%
+  fromJSON(simplifyVector = FALSE)
+
+
+
+
+
+##########
+# Save data
+##########
+
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+
+for (folder in theseFOLDERS){
+
+  save(hex_gj, file=file.path(folder, "hex_gj.rds"))
+
+}
 

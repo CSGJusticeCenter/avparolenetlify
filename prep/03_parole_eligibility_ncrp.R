@@ -8,7 +8,7 @@
 #######################################
 
 ##########
-# Parole Eligibility in 2020
+# Parole eligibility in 2020
 ##########
 
 # filter to 2020 data
@@ -34,8 +34,8 @@ parole_eligibility_table_2020 <- parole_eligibility_counts_2020 %>%
   )) %>%
   select(state, yearendpop, name, value) %>%
   pivot_wider(names_from = name, values_from = value) %>%
-  clean_names() %>%
-  select(-c(missing_count, missing_perc))
+  clean_names()
+  # select(-c(missing_count, missing_perc))
 
 # missing data
 # Arizona, Michigan, New Jersey, New Mexico
@@ -102,6 +102,9 @@ current_ped_2020_race1 <- parole_elgibility_2020 %>%
     prop = currently_eligible_for_parole/total_prison_pop_by_race,
     prop_label = paste0(round(prop*100, 0), "%")
   )
+
+
+
 
 
 ##########

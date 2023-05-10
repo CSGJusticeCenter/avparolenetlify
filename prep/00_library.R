@@ -33,6 +33,9 @@ library(sysfonts)
 library(extrafont)
 library(showtext)
 library(htmlwidgets)
+library(sf)
+library(jsonlite)
+library(geojsonsf)
 
 
 # CHANGE THIS TO YOUR PROJECT PATH
@@ -69,3 +72,25 @@ purple   <- "#c376fb"
 red      <- "#c60040"
 yellow   <- "#ffaf00"
 orange   <- "#ff6400"
+
+# define color gradient for map
+library(grDevices)
+
+# Define the middle color
+middle_color <- "#00aba0"
+
+# Define the number of colors in the gradient
+num_colors <- 5
+
+# Define the lighter and darker shades
+light_color <- "#D5F5F3"  # Lighter shade
+dark_color <- "#003474"   # Darker shade
+
+# Create the color gradient
+gradient_colors <- colorRampPalette(c(light_color, middle_color, dark_color))(num_colors)
+
+# Output the resulting colors
+gradient_colors
+
+
+

@@ -29,3 +29,7 @@ load(file = paste0(sp_data_path, "/data/analysis/race_eth_rri_table.rds"))
 
 # Predicted Probabilities
 load(file = paste0(sp_data_path, "/data/analysis/all_pp_by_variable.rds"))
+
+
+# Map
+load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))

@@ -1,5 +1,5 @@
 ---
-title: "Map Explorer" 
+title: "Parole Eligibility by State" 
 format:
   html:
     css: styles.css
@@ -18,10 +18,123 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
+source("prep/00_library.R")
+source("prep/01_functions.R")
+source("prep/dataframes.R")
 ```
 
-Ideas:  
+<br><br>
 
-Interactive choropleth map depicting the parole eligibility rates in 2020 across states using color intensity.  
+```{r}
+# create a vector of all states
+all_states <- state.name
+
+# parole_eligibility_table_2020 created in parole_eligibility_ncrp.R
+map_data <- parole_eligibility_table_2020 %>% 
+  # add missing states
+  complete(state = all_states) %>% 
+  
+  mutate(current_perc = current_perc*100,
+         future_perc  = future_perc*100,
+         missing_perc = missing_perc*100,
+         
+         state_abb = state.abb[match(state, state.name)],
+         
+         tooltip = 
+           paste0("<b>", state, "</b><br><br>",
+                  "Percentage of Prison Population<br> Currently Eligible for Release:<br>",
+                   paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
+                  "Percentage of Prison Population<br> Eligible for Release in the Future:<br>",
+                   paste(round(future_perc, 0), "%</b>", sep = ""), "<br><br>",
+                 "Percentage of Prison Population<br> with Missing Parole Eligibility Data:<br>",
+                   paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
+                 "Total Prison Population:<br>",
+                   formattable::comma(yearendpop, digits = 0)),
+                  tooltip = str_replace_all(tooltip, "NA%", "No Data")) %>% 
+  
+  mutate(datalabel = ifelse(is.na(current_perc),
+                            paste0("", state_abb, ""),
+                            paste0("<p style=", "text-align:center", ">",
+                                   state_abb, "", "<br>",
+                                   round(current_perc, 0), "%</p>")),
+         
+         currentperclabel = paste0(round(current_perc, 0), "%"),
+         currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) 
+  
+```
+
+```{r}
+# get minimum and maximum value
+min_map <- min(map_data$current_perc, na.rm = TRUE)
+max_map <- max(map_data$current_perc, na.rm = TRUE)
+
+# create hex map
+highchart(height = 575) %>%
+  
+  hc_chart(
+    borderWidth = 1,
+    borderColor = "#ccc",
+    spacingTop = 1,  # Adjust the top spacing as needed
+    spacingRight = 1,
+    spacingBottom = 30,
+    spacingLeft = 1
+  ) %>%
+  
+  hc_add_series_map(
+    map = hex_gj,
+    df = map_data,
+    joinBy = "state_abb",
+    value = "current_perc",
+    dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
+                      style = list(fontSize = "14px",
+                                   fontWeight = "regular",
+                                   fontFamily = "Graphik",
+                                   textOutline = 0)),
+    nullColor = "#e8e8e8",
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
+  
+  hc_colorAxis(min = min_map,
+               max = max_map,
+               stops = color_stops(4, gradient_colors),
+               labels = list(format = "{value}%",
+                             style = list(fontSize = "14px"))) %>%
+  
+  hc_legend(align = "right",
+            verticalAlign = "bottom",
+            layout = "vertical",
+            symbolHeight = 200,
+            symbolWidth = 25,
+            x = -25,
+            y = 0) %>%
+  
+  hc_xAxis(title = "") %>%
+  hc_yAxis(title = "") %>%
+  hc_title(
+    text = paste0("Percentage of the Prison Population Currently Eligible for Parole"),
+    align = "center",
+    # x = -30, shifts to the left
+    style = list(
+      fontWeight = "bold",
+      fontFamily = "Graphik",
+      fontSize = "2em",
+      color = "#3E4B4B",
+      useHTML = TRUE)) %>%
+  
+  hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+  hc_add_theme(hc_theme_map_jc) %>%
+  
+  hc_plotOptions(series = list(animation = FALSE,
+                               cursor = "pointer",
+                               borderWidth = 3),
+                 accessibility = list(enabled = TRUE,
+                                      keyboardNavigation = list(enabled = TRUE),
+                                      linkedDescription = paste0("TEXT"),
+                                      landmarkVerbosity = "one"),
+                 area = list(accessibility = list(description = paste0("TEXT")))
+  )
+```
 
 

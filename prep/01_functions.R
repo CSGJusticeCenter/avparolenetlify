@@ -1,7 +1,7 @@
 
 
 
-# theme for reactable tables
+# highcharts theme for reactable tables
 hc_reactable_theme <-
   reactableTheme(borderColor = neutralBkgndLight,
                  stripedColor = neutralBkgndLight,
@@ -11,10 +11,36 @@ hc_reactable_theme <-
 
 hc_reactable_style <- list(
   fontFamily = "Graphik, sans-serif",
-  fontSize = "0.75rem"
+  fontSize = "0.75rem",
+  color = "#3E4B4B"
 )
 
-
+# highcharts theme for hex map
+hc_theme_map_jc <- hc_theme_merge(
+  hc_theme_smpl(),
+  hc_theme(
+    chart = list(
+      marginTop = 75,
+      style = list(fontFamily = "Graphik",
+                   color = "#3E4B4B")
+    ),
+    caption = list(align = "right", y = 15),
+    xAxis = list(
+      labels = list(
+        style = list(fontSize = "15px"),
+        staggerLines = 2
+      ),
+      gridLineColor = "transparent"
+    ),
+    plotOptions = list(
+      series = list(states = list(inactive = list(opacity = 1))),
+      line = list(marker = list(enabled = TRUE)),
+      spline = list(marker = list(enabled = TRUE)),
+      area = list(marker = list(enabled = TRUE)),
+      areaspline = list(marker = list(enabled = TRUE))
+    )
+  )
+)
 
 # prepare annual parole survey data for analysis
 fnc_aps_prepare <- function(df){
