@@ -37,9 +37,9 @@
   {
     "objectID": "map_explorer.html",
     "href": "map_explorer.html",
-    "title": "Map Explorer",
+    "title": "Parole Eligibility by State",
     "section": "",
-    "text": "Ideas:\nInteractive choropleth map depicting the parole eligibility rates in 2020 across states using color intensity."
+    "text": "Source: NCRP Year End Population (2020)"
   },
   {
     "objectID": "national_trends.html",

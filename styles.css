@@ -1,5 +1,5 @@
 
-/* create a narrow section that is smaller than body */
+/* create a narrow or larger sections than body */
 .narrow-section {
   max-width: 750px;
   max-height: 200px;
@@ -20,7 +20,10 @@
   flex: 1;
 }
 
-
+.table-container {
+  display: flex;
+  justify-content: center;
+}
 
 /* Not working well
 .highchart-wrapper {
