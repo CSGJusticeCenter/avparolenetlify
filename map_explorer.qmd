@@ -72,8 +72,6 @@ max_map <- max(map_data$current_perc, na.rm = TRUE)
 highchart(height = 575) %>%
   
   hc_chart(
-    borderWidth = 1,
-    borderColor = "#ccc",
     spacingTop = 1,  # Adjust the top spacing as needed
     spacingRight = 1,
     spacingBottom = 30,
