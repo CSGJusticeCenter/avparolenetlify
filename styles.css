@@ -1,4 +1,29 @@
 
+
+/* Styling for tables and graphs */
+#line-graph{
+  margin-top: 0em; margin-bottom: 0;
+}
+
+#pie-graph{
+  margin-top: 0em; margin-bottom: 0;
+}
+
+
+#column1{
+  display: flex; flex-direction: row; align-items: flex-start;
+}
+
+#column2{
+  flex: 1; margin-left: 5em; display: flex; flex-direction: column; align-items: center;
+}
+
+#reactable-table{
+  display: flex; flex-direction: column; align-items: center;
+}
+
+
+
 /* create a narrow or larger sections than body */
 .narrow-section {
   max-width: 750px;
@@ -104,7 +129,7 @@ body {
 }
 
 /* title of website tabs */
-.sectiontitle {
+#section-title {
   font-size: 1em; /* change font size */
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
@@ -112,7 +137,7 @@ body {
 }
 
 /* highlighted text underneath state name*/
-#highlighttext {
+#highlight-text {
   font-size: 0.75em; /* change font size */
   font-family: Graphik; /* change font family */
   text-align: center;
@@ -120,7 +145,7 @@ body {
 }
 
 /* regular app text */
-#regulartext {
+#regular-text {
   font-size: 0.8em; /* change font size */
   font-family: Graphik; /* change font family */
   text-align: left;

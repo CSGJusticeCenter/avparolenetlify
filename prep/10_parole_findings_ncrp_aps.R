@@ -38,12 +38,30 @@
 # get prison population by report year and state
 # merge with APS data for releases to parole/entries to parole from prison
 # aps_parole_2000_2018 table created in parole_aps.R
-ncrp_aps_pop_released_to_parole_by_year <- ncrp_yearendpop %>%
+# parole_eligibility_table table created in parole_eligibility_ncrp.R
+all_ncrp_aps_pop_released_to_parole_by_year <- ncrp_yearendpop %>%
   filter(rptyear >= 2000) %>%
   group_by(rptyear, state) %>%
   summarise(total_prison_population = n()) %>%
   ungroup() %>%
   left_join(aps_parole_2000_2018,
+            by = c("state", "rptyear")) %>%
+  left_join(parole_eligibility_table,
             by = c("state", "rptyear"))
 
 
+
+
+
+
+##########
+# Save data
+##########
+
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+
+for (folder in theseFOLDERS){
+
+  save(all_ncrp_aps_pop_released_to_parole_by_year, file=file.path(folder, "all_ncrp_aps_pop_released_to_parole_by_year.rds"))
+
+}

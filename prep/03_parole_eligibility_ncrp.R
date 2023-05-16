@@ -11,13 +11,9 @@
 # Parole eligibility in 2020
 ##########
 
-# filter to 2020 data
-parole_elgibility_2020 <- ncrp_yearendpop %>%
-  filter(rptyear == 2020)
-
 # get number and percentage of eligibility statuses
-parole_eligibility_counts_2020 <- parole_elgibility_2020 %>%
-  group_by(state) %>%
+parole_eligibility_counts <- ncrp_yearendpop %>%
+  group_by(state, rptyear) %>%
   count(parelig_status) %>%
   mutate(
     prop = n/sum(n),
@@ -26,23 +22,24 @@ parole_eligibility_counts_2020 <- parole_elgibility_2020 %>%
   ungroup()
 
 # reformat for table viewing
-parole_eligibility_table_2020 <- parole_eligibility_counts_2020 %>%
+parole_eligibility_table <- parole_eligibility_counts %>%
   pivot_longer(cols = c(n, prop), names_to = "type", values_to = "value") %>%
   mutate(name = case_when(
     type == "n"    ~ paste(parelig_status, "count"),
     type == "prop" ~ paste(parelig_status, "perc.")
   )) %>%
-  select(state, yearendpop, name, value) %>%
+  select(state, rptyear, yearendpop, name, value) %>%
   pivot_wider(names_from = name, values_from = value) %>%
   clean_names()
-  # select(-c(missing_count, missing_perc))
+
+# filter to 2020
+parole_eligibility_table_2020 <- parole_eligibility_table %>%
+  filter(rptyear == 2020)
 
 # missing data
 # Arizona, Michigan, New Jersey, New Mexico
 parole_eligibility_missing_states_2020 <-
   paste(state.name[!state.name %in% parole_eligibility_table_2020$state], collapse = ", ")
-
-
 
 
 
@@ -115,8 +112,9 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(parole_eligibility_table_2020,           file=file.path(folder, "parole_eligibility_table_2020.rds"))
-  save(current_ped_2020_offenses,               file=file.path(folder, "current_ped_2020_offenses.rds"))
-  save(current_ped_2020_race,                   file=file.path(folder, "current_ped_2020_race.rds"))
+  save(parole_eligibility_table,      file=file.path(folder, "parole_eligibility_table.rds"))
+  save(parole_eligibility_table_2020, file=file.path(folder, "parole_eligibility_table_2020.rds"))
+  save(current_ped_2020_offenses,     file=file.path(folder, "current_ped_2020_offenses.rds"))
+  save(current_ped_2020_race,         file=file.path(folder, "current_ped_2020_race.rds"))
 
 }

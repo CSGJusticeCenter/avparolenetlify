@@ -51,7 +51,8 @@ fnc_aps_prepare <- function(df){
            rptyear,
            endisrel,
            enmanrel,
-           enreltsr) %>%
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
     mutate(released_to_parole =
              rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
                      na.rm = TRUE),
@@ -72,7 +73,8 @@ fnc_aps_prepare_pre2008 <- function(df){
            rptyear,
            endisrel,
            enmanrel,
-           enreltsr) %>%
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
     mutate(released_to_parole =
              rowSums(.[c("endisrel", "enmanrel")],
                      na.rm = TRUE),

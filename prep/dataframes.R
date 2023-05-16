@@ -10,6 +10,7 @@ load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_sex.r
 load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_age.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_age_median.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_education_median.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_ncrp_aps_pop_released_to_parole_by_year.rds"))
 
 
 # Parole Eligibility

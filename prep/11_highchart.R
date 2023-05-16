@@ -156,12 +156,13 @@ all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense,
 ########################################
 
 # Get list of states
-states <- unique(ncrp_aps_pop_released_to_parole_by_year$state)
+# all_ncrp_aps_pop_released_to_parole_by_year created in parole_findings_ncrp_aps.R
+states <- unique(all_ncrp_aps_pop_released_to_parole_by_year$state)
 
 # How many people are being released at first eligibility?
 all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 
-  df1 <- ncrp_aps_pop_released_to_parole_by_year %>%
+  df1 <- all_ncrp_aps_pop_released_to_parole_by_year %>%
     filter(state == x)
 
   highcharts <-
@@ -171,29 +172,20 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
              labels = list(format = "{value}")) %>%
     hc_yAxis(labels = list(format = "{value:,.0f}")) %>%
 
-    hc_series(list(name = "Prison Population", data = df1$total_prison_population),
-              list(name = "Released to Parole", data = df1$released_to_parole)) %>%
+    hc_series(list(name = "Prison Population",
+                   data = df1$total_prison_population),
+              list(name = "Returned to Prison with Revocation",
+                   data = df1$incarcerated_from_parole),
+              list(name = "Released from Prison to Parole",
+                   data = df1$released_to_parole),
+              list(name = "Parole Eligible but not Released from Prison",
+                   data = df1$current_count)) %>%
 
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
 
-    # make legend icons circles this isnt working right now it could be because of this version of highcharter
-    # hc_legend(symbolRadius = 6, symbolHeight = 12, symbolWidth = 12) %>%
-
     hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
-    # hc_accessibility(
-    #   enabled = TRUE,
-    #   keyboardNavigation = list(enabled = TRUE),
-    #   series = list(
-    #     describeSingleSeries = TRUE,
-    #     pointDescriptionEnabled = TRUE,
-    #     pointDescriptionFormatter = JS("function(point) {
-    #     var index = point.index + 1;
-    #     var seriesName = point.series.name;
-    #     var yValue = Highcharts.numberFormat(point.y);
-    #     return index + ', ' + seriesName + ', ' + yValue + '.';
-    #   }")
-    #   )
+
 
   return(highcharts)
 })
