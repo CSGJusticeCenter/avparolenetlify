@@ -375,167 +375,167 @@ table_pp_by_sentlgth <-
 ```
 
 ```{r}
-# tabsetPanel(
-#   id = "tabsetpanel",
-#   
-#   #####################################
-#   
-#   tabPanel("Overview",
-#            
-#   #####################################
-#            
-#            ############
-#            # Column 1
-#            ############
-#            div(id = "column1",
-#                div(id = "line-graph", state_line_pop_released_to_parole,
-#                div(id = "footnote", "Source: NCRP Year End Population (2000-2020), Annual Parole Survey (2000-2018)"), br(),
-#                state_table_pop_released_to_parole
-#              ),
-# 
-#            ############
-#            # Column 2
-#            ############
-#              div(id = "column2",
-#                div(id = "section-title", "Profile of People Released to Parole in 2020"),
-#                div(id = "reactable-table", state_parole_profile_race, state_parole_profile_sex, state_parole_profile_age,),
-#                div(id = "footnote", "Source: NCRP Releases (2020). Methodology: 
-#                    Found people with less than sentence length served and released 
-#                    unconditionally or conditionally. Removed releases labeled as 
-#                    Other release (including death, transfer, AWOL, escape).")
-#              )
-#            )
-#   ),
-#   
-#   #####################################
-#   
-#     tabPanel("Parole Eligibility",
-#              
-#   #####################################
-#            
-#            ############
-#            # Column 1
-#            ############
-#            div(id = "column1",
-#                div(style = "flex: 0 0 40%;",
-#                div(id = "pie-graph", state_pie_parole_elgibility_offense), br(),
-#                div(id = "footnote", "Source: NCRP Year End Population"), br(),
-#                div(id = "reactable-table", state_table_parole_elgibility_offense),
-#              ),
-# 
-#            ############
-#            # Column 2
-#            ############
-#              div(id = "column2",
-#                div(id = "section-title", "More Info on Parole Eligibility TBD"),
-#                div(id = "regular-text",
-#                        "Ideas: ", br(), br(),
-#                        "Is the PED missing? If so, is the data missing because they aren't 
-#                        parole eligible or because the data wasn't entered?", br()
-#                    )
-#              )
-#            )
-#   ),
-# 
-#   #####################################
-#   
-#   tabPanel("Releases from Prison",
-#            
-#   #####################################  
-#   
-#            ############
-#            # Column 1
-#            ############
-#            div(id = "column1",
-#                div(style = "flex: 0 0 40%;",
-#                div(id = "pie-graph", state_pie_released_at_ped),
-#                div(id = "footnote", "Source: NCRP Releases (2020)"), br(),
-#                div(id = "reactable-table", "TABLE FOR ABOVE INFO"), br(),
-#                div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
-#                div(id = "reactable-table", 
-#                    table_pp_by_race,
-#                    table_pp_by_sex,
-#                    table_pp_by_offgeneral,
-#                    table_pp_by_sentlgth),
-#                div(id = "footnote", "Source: NCRP Year End Population (2020). Methodology:
-#                    Predicted probabilities are calculated using logistic regression
-#                    --predicts the probabilities of being released within 1 year
-#                    based on various predictor variables such as sex, race, admtype,
-#                    offgeneral, and sentlgth."),
-#              ),
-# 
-#            ############
-#            # Column 2
-#            ############
-#              div(id = "column2",
-#                div(id = "section-title", "More Info on Releases from Prison TBD"),
-#                div(id = "regular-text",
-#                    "Ideas: ", br(), br(),
-#                    "Who (demographics and criminal history) is being released
-#                    at first eligibility?", br(), br(),
-# 
-#                    "How long after eligibility does release occur?", br(), br(),
-# 
-#                    "How does release vary by the person's demographic and
-#                    criminal history  characteristics?", br(), br(),
-# 
-#                    "What is the mean and median time between parole eligibility
-#                    and release for all terms, terms with release bfore PED, and
-#                    terms with release after PED?", br(), br(),
-# 
-#                    "Number/percentage of release types (conditional vs unconditional)
-#                    from X year to Y year.", br(), br(),
-# 
-#                    "What is the mean and median time between parole eligibility
-#                    and release for those released after the PED, by maximum
-#                    sentence length? (When max sentence length is 1) up to 2 years,
-#                    2) 2 to 5 years, 3) 5 to 10 years, 4) 10 to 15 years, and
-#                    5) 15 years to less than life)", br(), br(),
-# 
-#                    "From 2000 to 2020, of the people eligible for release in
-#                    that year who were released after their PED, what percentage
-#                    are released in one year? Will do this by demographics and
-#                    criminal history. For example, there will be a trend line
-#                    for Black, Hispanic, and White individuals showing the
-#                    number of people released within one year from 2000-2020.", br()
-#                )
-#              )
-#            )
-#   ),
-#   
-#   #####################################
-#   
-#   tabPanel("Sentencing/Length of Stay",
-#            
-#   #####################################
-#   
-#            div(id = "regular-text",
-#                "Ideas:", br(),br(),
-#                "The growth or decline of life sentences from X year to Y year 
-#                (life without parole).", br(), br(),
-#                "How different is actual time served compared to sentence length 
-#                pronounced at court?", br(), br(),
-#                "Length of stay by most serious sentenced offense, maximum sentence 
-#                length, demographics.", br(), br(),
-#                "Bar graph showing the proportion of individuals who served at least 10 
-#                years by demographics and most serious sentenced offense.", br(), br()
-#            )
-#   ),
-#   
-#   #####################################
-#   
-#   tabPanel("Racial/Ethnic Disparities",
-#            
-#   #####################################
-#   
-#            div(id = "regular-text",
-#                "Ideas:", br(),br(),
-#                "This page will show a breakdown of racial/ethnic/gender disparities in 
-#                parole eligibility, length of stay, maximum sentence length, etc.", br(), br()
-#            )
-#   )
-# )
-# 
+tabsetPanel(
+  id = "tabsetpanel",
+  
+  #####################################
+  
+  tabPanel("Overview",
+           
+  #####################################
+           
+           ############
+           # Column 1
+           ############
+           div(id = "column1",
+               div(id = "line-graph", state_line_pop_released_to_parole,
+               div(id = "footnote", "Source: NCRP Year End Population (2000-2020), Annual Parole Survey (2000-2018)"), br(),
+               state_table_pop_released_to_parole
+             ),
+
+           ############
+           # Column 2
+           ############
+             div(id = "column2",
+               div(id = "section-title", "Profile of People Released to Parole in 2020"),
+               div(id = "reactable-table", state_parole_profile_race, state_parole_profile_sex, state_parole_profile_age,),
+               div(id = "footnote", "Source: NCRP Releases (2020). Methodology: 
+                   Found people with less than sentence length served and released 
+                   unconditionally or conditionally. Removed releases labeled as 
+                   Other release (including death, transfer, AWOL, escape).")
+             )
+           )
+  ),
+  
+  #####################################
+  
+    tabPanel("Parole Eligibility",
+             
+  #####################################
+           
+           ############
+           # Column 1
+           ############
+           div(id = "column1",
+               div(style = "flex: 0 0 40%;",
+               div(id = "pie-graph", state_pie_parole_elgibility_offense), br(),
+               div(id = "footnote", "Source: NCRP Year End Population"), br(),
+               div(id = "reactable-table", state_table_parole_elgibility_offense),
+             ),
+
+           ############
+           # Column 2
+           ############
+             div(id = "column2",
+               div(id = "section-title", "More Info on Parole Eligibility TBD"),
+               div(id = "regular-text",
+                       "Ideas: ", br(), br(),
+                       "Is the PED missing? If so, is the data missing because they aren't 
+                       parole eligible or because the data wasn't entered?", br()
+                   )
+             )
+           )
+  ),
+
+  #####################################
+  
+  tabPanel("Releases from Prison",
+           
+  #####################################  
+  
+           ############
+           # Column 1
+           ############
+           div(id = "column1",
+               div(style = "flex: 0 0 40%;",
+               div(id = "pie-graph", state_pie_released_at_ped),
+               div(id = "footnote", "Source: NCRP Releases (2020)"), br(),
+               div(id = "reactable-table", "TABLE FOR ABOVE INFO"), br(),
+               div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
+               div(id = "reactable-table", 
+                   table_pp_by_race,
+                   table_pp_by_sex,
+                   table_pp_by_offgeneral,
+                   table_pp_by_sentlgth),
+               div(id = "footnote", "Source: NCRP Year End Population (2020). Methodology:
+                   Predicted probabilities are calculated using logistic regression
+                   --predicts the probabilities of being released within 1 year
+                   based on various predictor variables such as sex, race, admtype,
+                   offgeneral, and sentlgth."),
+             ),
+
+           ############
+           # Column 2
+           ############
+             div(id = "column2",
+               div(id = "section-title", "More Info on Releases from Prison TBD"),
+               div(id = "regular-text",
+                   "Ideas: ", br(), br(),
+                   "Who (demographics and criminal history) is being released
+                   at first eligibility?", br(), br(),
+
+                   "How long after eligibility does release occur?", br(), br(),
+
+                   "How does release vary by the person's demographic and
+                   criminal history  characteristics?", br(), br(),
+
+                   "What is the mean and median time between parole eligibility
+                   and release for all terms, terms with release bfore PED, and
+                   terms with release after PED?", br(), br(),
+
+                   "Number/percentage of release types (conditional vs unconditional)
+                   from X year to Y year.", br(), br(),
+
+                   "What is the mean and median time between parole eligibility
+                   and release for those released after the PED, by maximum
+                   sentence length? (When max sentence length is 1) up to 2 years,
+                   2) 2 to 5 years, 3) 5 to 10 years, 4) 10 to 15 years, and
+                   5) 15 years to less than life)", br(), br(),
+
+                   "From 2000 to 2020, of the people eligible for release in
+                   that year who were released after their PED, what percentage
+                   are released in one year? Will do this by demographics and
+                   criminal history. For example, there will be a trend line
+                   for Black, Hispanic, and White individuals showing the
+                   number of people released within one year from 2000-2020.", br()
+               )
+             )
+           )
+  ),
+  
+  #####################################
+  
+  tabPanel("Sentencing/Length of Stay",
+           
+  #####################################
+  
+           div(id = "regular-text",
+               "Ideas:", br(),br(),
+               "The growth or decline of life sentences from X year to Y year 
+               (life without parole).", br(), br(),
+               "How different is actual time served compared to sentence length 
+               pronounced at court?", br(), br(),
+               "Length of stay by most serious sentenced offense, maximum sentence 
+               length, demographics.", br(), br(),
+               "Bar graph showing the proportion of individuals who served at least 10 
+               years by demographics and most serious sentenced offense.", br(), br()
+           )
+  ),
+  
+  #####################################
+  
+  tabPanel("Racial/Ethnic Disparities",
+           
+  #####################################
+  
+           div(id = "regular-text",
+               "Ideas:", br(),br(),
+               "This page will show a breakdown of racial/ethnic/gender disparities in 
+               parole eligibility, length of stay, maximum sentence length, etc.", br(), br()
+           )
+  )
+)
+
 
 ```
 
