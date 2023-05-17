@@ -278,6 +278,12 @@ fnc_pie_chart <- function(df,
              enabled = TRUE,
              y = -10,
              format = point_format)) %>%
+    hc_chart(plotBackgroundColor = "none",
+             plotBorderWidth = 0,
+             plotShadow = FALSE,
+             margin = c(0, 0, 0, 0),
+             spacing = c(0, 0, 0, 0)) %>%
+    hc_yAxis(maxPadding = 0) %>%
 
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%

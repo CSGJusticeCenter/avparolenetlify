@@ -47,7 +47,8 @@ parole_eligibility_missing_states_2020 <-
 # Offenses for those in prison but not released in 2020
 ##########
 
-current_ped_2020_offenses <- parole_elgibility_2020 %>%
+current_ped_2020_offenses <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
   filter(parelig_status == "Current") %>%
   filter(!is.na(offgeneral)) %>%
   group_by(state) %>%
@@ -66,14 +67,16 @@ current_ped_2020_offenses <- parole_elgibility_2020 %>%
                   paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
          chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"))
 
-pop_2020_race <- parole_elgibility_2020 %>%
+pop_2020_race <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
   filter(parelig_status != "Missing") %>%
   filter(!is.na(race)) %>%
   group_by(state, race) %>%
   count(race) %>%
   select(state, race, total_prison_pop_by_race = n)
 
-current_ped_2020_race <- parole_elgibility_2020 %>%
+current_ped_2020_race <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
   filter(parelig_status == "Current") %>%
   filter(!is.na(race)) %>%
   group_by(state) %>%
@@ -88,7 +91,8 @@ current_ped_2020_race <- parole_elgibility_2020 %>%
                           race, "</b><br>",
                           prop_label, "<br>"))
 
-current_ped_2020_race1 <- parole_elgibility_2020 %>%
+current_ped_2020_race1 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
   filter(parelig_status == "Current") %>%
   filter(!is.na(race)) %>%
   group_by(state, race) %>%
