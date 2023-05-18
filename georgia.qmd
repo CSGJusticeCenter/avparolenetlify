@@ -294,8 +294,14 @@ state_table_released_at_ped <-
                         header2 = "Number of People", 
                         header3 = "Percentage of Prison Population")
 
+state_time_between_release_ped <- 
+  all_time_between_release_ped$Georgia %>% 
+  hc_chart(width = 500, height = 400) 
 
-
+state_time_between_release_ped_by_race <- 
+all_time_between_release_ped_by_race$Georgia %>% 
+  hc_title(text = "Time from PED to Release by Race and Ethnicity") %>% 
+  hc_chart(width = 500, height = 400)
 
 #####
 # Predicted Probabilities
@@ -445,7 +451,7 @@ tabsetPanel(
            div(id = "column1",
                div(style = "flex: 0 0 40%;",
                div(id = "pie-graph", state_pie_parole_elgibility_offense), 
-               div(id = "footnote", "Source: NCRP Year End Population"), br(),
+               div(id = "footnote", "Source: NCRP Year End Population (2020)"), br(),
                div(id = "reactable-table", state_table_parole_elgibility_offense),
                ),
 
@@ -473,12 +479,45 @@ tabsetPanel(
            # Column 1
            ############
            div(id = "column1",
-               div(style = "flex: 0 0 40%;",
+               div(id = "first-graph", state_time_between_release_ped,
+               div(id = "footnote", "Source: NCRP Releases (2020)"), br(), br(),
                div(id = "pie-graph", state_pie_released_at_ped),
                div(id = "reactable-table", state_table_released_at_ped), 
                div(id = "footnote", "Source: NCRP Releases (2020)"), br(), br(),
+             ),
+
+           ############
+           # Column 2
+           ############
+             div(id = "column2",
+               div(id = "bar-graph", state_time_between_release_ped_by_race),
+               div(id = "footnote", "Source: NCRP Releases (2020)"), br(), br(),
+               div(id = "section-title", "More Info on Releases from Prison TBD"),
+               div(id = "regular-text", 
+                    "Ideas: ", br(), br(),
+                    "Who (demographics and criminal history) is being released
+                     at first eligibility?", br(), br(),
+                   
+                    "How long after eligibility does release occur?", br(), br(),
+                   
+                    "How does release vary by the person's demographic and
+                     criminal history  characteristics?", br(), br(),
+              
+                    "What is the mean and median time between parole eligibility
+                     and release for all terms, terms with release bfore PED, and
+                     terms with release after PED?", br(), br(),
+              
+                    "Number/percentage of release types (conditional vs unconditional)
+                     from X year to Y year.", br(), br(),
+              
+                    "What is the mean and median time between parole eligibility
+                     and release for those released after the PED, by maximum
+                     sentence length? (When max sentence length is 1) up to 2 years,
+                     2) 2 to 5 years, 3) 5 to 10 years, 4) 10 to 15 years, and
+                     5) 15 years to less than life)"), br(), br(),
+               
                div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
-               div(id = "reactable-table", 
+               div(id = "reactable-table",
                    table_pp_by_race,
                    table_pp_by_sex,
                    table_pp_by_offgeneral,
@@ -487,48 +526,12 @@ tabsetPanel(
                    Predicted probabilities are calculated using logistic regression
                    --predicts the probabilities of being released within 1 year
                    based on various predictor variables such as sex, race, admtype,
-                   offgeneral, and sentlgth."),
-               ),
-
-           ############
-           # Column 2
-           ############
-             div(id = "column2",
-               div(id = "section-title", "More Info on Releases from Prison TBD"),
-               div(id = "regular-text",
-                   "Ideas: ", br(), br(),
-                   "Who (demographics and criminal history) is being released
-                   at first eligibility?", br(), br(),
-
-                   "How long after eligibility does release occur?", br(), br(),
-
-                   "How does release vary by the person's demographic and
-                   criminal history  characteristics?", br(), br(),
-
-                   "What is the mean and median time between parole eligibility
-                   and release for all terms, terms with release bfore PED, and
-                   terms with release after PED?", br(), br(),
-
-                   "Number/percentage of release types (conditional vs unconditional)
-                   from X year to Y year.", br(), br(),
-
-                   "What is the mean and median time between parole eligibility
-                   and release for those released after the PED, by maximum
-                   sentence length? (When max sentence length is 1) up to 2 years,
-                   2) 2 to 5 years, 3) 5 to 10 years, 4) 10 to 15 years, and
-                   5) 15 years to less than life)", br(), br(),
-
-                   "From 2000 to 2020, of the people eligible for release in
-                   that year who were released after their PED, what percentage
-                   are released in one year? Will do this by demographics and
-                   criminal history. For example, there will be a trend line
-                   for Black, Hispanic, and White individuals showing the
-                   number of people released within one year from 2000-2020.", br()
-               )
+                   offgeneral, and sentlgth.")
              )
            )
   ),
   
+
   #####################################
   
   tabPanel("Sentencing/Length of Stay",

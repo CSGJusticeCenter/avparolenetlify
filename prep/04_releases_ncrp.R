@@ -53,9 +53,9 @@ ncrp_releases_clean <- ncrp_releases %>%
          time_between_mandatoryrelease_release = mand_prisrel_year_clean - relyr) %>%
 
   mutate(released_at_ped_status = case_when(
-    time_between_release_ped < 0 ~ "Released before Parole Eligibility",
-    time_between_release_ped == 0 ~ "Released at Parole Eligibility",
-    time_between_release_ped > 0 ~ "Released after Parole Eligibility",
+    time_between_release_ped < 0 ~ "Released Before Parole Eligibility Year",
+    time_between_release_ped == 0 ~ "Released on Parole Eligibility Year",
+    time_between_release_ped > 0 ~ "Released After Parole Eligibility Year",
     is.na(time_between_release_ped) ~ NA))
 
 
@@ -219,6 +219,98 @@ people_released_to_parole_education_median <- ncrp_releases_2020 %>%
   select(data, everything())
 
 
+
+
+########################################
+
+# Histogram of time between release and PED
+
+########################################
+
+ncrp_time_between_release_ped <- ncrp_releases_2020 %>%
+  # remove states with NA's
+  filter(!is.na(released_at_ped_status) & state != "Illinois") %>%
+  # combine years greater than 10 or less than -10
+  mutate(
+    time_between_release_ped_combined = case_when(
+      time_between_release_ped > 5 ~ "More than 10 Years After PED",
+      time_between_release_ped < -5 ~ "More than 10 Years Before PED",
+      TRUE ~ as.character(time_between_release_ped)),
+    time_between_release_ped_combined = factor(time_between_release_ped_combined,
+                                               levels = c("More than 10 Years Before PED",
+                                                          "-5",
+                                                          "-4",
+                                                          "-3",
+                                                          "-2",
+                                                          "-1",
+                                                          "0",
+                                                          "1",
+                                                          "2",
+                                                          "3",
+                                                          "4",
+                                                          "5",
+                                                          "More than 10 Years After PED"))
+  ) %>%
+  group_by(state) %>%
+  count(time_between_release_ped_combined) %>%
+  mutate(
+    prop = n / sum(n),
+    prop_label = paste0(round(prop * 100, 0), "%"),
+    tooltip = paste0("<b>", state, "</b><br><br>",
+              "Years between Release and PED: <b>",
+              time_between_release_ped_combined,
+              "</b><br><br>",
+              "Number of People: <b>",
+              scales::comma(n),
+              "</b><br><br>",
+              "Percentage of Prison Population: <b>",
+              prop_label, "</b></b>", sep = ""))
+
+
+
+
+########################################
+
+# Bar graph of proportion of population by demographic released year of PED
+
+########################################
+
+ncrp_time_between_release_ped_by_race <-
+  ncrp_releases_2020 %>%
+  filter(!is.na(time_between_release_ped)) %>%
+  filter(race == "Hispanic, any race" |
+         race == "White, non-Hispanic" |
+         race == "Black, non-Hispanic") %>%
+  mutate(time_between_release_ped_overall =
+           case_when(
+             time_between_release_ped > 1 ~ "Released After 1 Year of PED",
+             time_between_release_ped <= 1 ~ "Released Before or on Year of PED",
+             is.na(time_between_release_ped) ~ "No PED Data"
+           )
+         ) %>%
+  group_by(state, race) %>%
+  count(time_between_release_ped_overall) %>%
+  mutate(
+    prop = n / sum(n),
+    prop_label = paste0(round(prop * 100, 0), "%"),
+    tooltip = paste0("<b>", state, "</b><br><br><b>",
+                     time_between_release_ped_overall,
+                     "</b><br><br>",
+                     "Number of People: <b>",
+                     scales::comma(n),
+                     "</b><br><br>",
+                     "Percentage of Prison Population: <b>",
+                     prop_label, "</b></b>", sep = ""))
+
+
+
+
+
+
+
+
+
+
 ##########
 # Save data
 ##########
@@ -229,12 +321,16 @@ for (folder in theseFOLDERS){
 
   save(ncrp_released_at_ped,                        file=file.path(folder, "ncrp_released_at_ped.rds"))
   save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
+  save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
 
   save(people_released_to_parole_race,              file=file.path(folder, "people_released_to_parole_race.rds"))
   save(people_released_to_parole_sex,               file=file.path(folder, "people_released_to_parole_sex.rds"))
   save(people_released_to_parole_age,               file=file.path(folder, "people_released_to_parole_age.rds"))
   save(people_released_to_parole_age_median,        file=file.path(folder, "people_released_to_parole_age_median.rds"))
   save(people_released_to_parole_education_median,  file=file.path(folder, "people_released_to_parole_education_median.rds"))
+
+  save(ncrp_time_between_release_ped,               file=file.path(folder, "ncrp_time_between_release_ped.rds"))
+  save(ncrp_time_between_release_ped_by_race,       file=file.path(folder, "ncrp_time_between_release_ped_by_race.rds"))
 
 
 }

@@ -1,5 +1,17 @@
 
 /* styling for tables and graphs */
+#first-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
+#bar-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
 #line-graph{
   margin-top: 0em;
   margin-bottom: 0;
@@ -166,6 +178,7 @@ body {
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   text-align: center;
+  color: #3E4B4B;
 }
 
 /* highlighted text underneath state name*/

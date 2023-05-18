@@ -229,6 +229,110 @@ all_pie_released_at_ped <- setNames(all_pie_released_at_ped, states)
 
 
 
+# What is the mean and median time between parole eligibility and release for
+# those released after the PED, by maximum sentence length?
+
+# Get list of states
+states <- unique(ncrp_time_between_release_ped$state)
+
+all_time_between_release_ped <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_time_between_release_ped %>% filter(state == x)
+
+  # Modify labels for "More than 10 years before PED" and "More than 10 years after PED"
+  df1$time_between_release_ped_combined <-
+    gsub("More than 10", "More than 10\n", df1$time_between_release_ped_combined)
+
+  highcharts <- df1 %>%
+    hchart(
+      hcaes(x = time_between_release_ped_combined, y = n),
+      type = "column"
+    ) %>%
+    hc_xAxis(
+      title = list(text = "Years Between Release and PED"),
+      labels = list(
+        style = list(width = "100px"),
+        formatter = JS("function() { return this.value.replace(/\\n/g, '<br/>'); }")
+      )
+    ) %>%
+    hc_yAxis(title = list(text = "Count")) %>%
+    hc_title(text = "Years from Parole Eligibility to Release") %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4  # manually show bar bc of low values
+      ),
+      accessibility = list(
+        enabled = TRUE,
+        keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD",
+        landmarkVerbosity = "one"
+      ),
+      area = list(accessibility = list(description = "TBD"))
+    )
+
+  return(highcharts)
+})
+
+all_time_between_release_ped <- setNames(all_time_between_release_ped, states)
+
+
+
+
+
+
+# Bar graph of proportion of population by demographic released year of PED
+
+# Get list of states
+states <- unique(ncrp_time_between_release_ped_by_race$state)
+
+all_time_between_release_ped_by_race <- map(.x = states, .f = function(x) {
+  df1 <- ncrp_time_between_release_ped_by_race %>% filter(state == x)
+
+  highcharts <- highchart() %>%
+    hc_chart(type = "column") %>%
+    hc_xAxis(categories = c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) %>%
+    hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
+    hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released Before or on Year of PED"),
+                  name = "Released Before or on Year of PED",
+                  type = "column",
+                  hcaes(x = race, y = prop * 100)) %>%
+    hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released After 1 Year of PED"),
+                  name = "Released After 1 Year of PED",
+                  type = "column",
+                  hcaes(x = race, y = prop * 100)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_plotOptions(series = list(animation = FALSE, cursor = "pointer", borderWidth = 3),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD"))
+    )
+
+  return(highcharts)
+})
+
+all_time_between_release_ped_by_race <- setNames(all_time_between_release_ped_by_race, states)
+
+all_time_between_release_ped_by_race$Georgia
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # # How long after eligibility does release occur?
@@ -295,11 +399,14 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_donut_currently_eligible,      file=file.path(folder, "all_donut_currently_eligible.rds"))
-  save(all_donut_future_eligible,         file=file.path(folder, "all_donut_future_eligible.rds"))
+  save(all_donut_currently_eligible,         file=file.path(folder, "all_donut_currently_eligible.rds"))
+  save(all_donut_future_eligible,            file=file.path(folder, "all_donut_future_eligible.rds"))
 
-  save(all_pie_parole_elgibility_offense, file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))
-  save(all_pie_released_at_ped,           file=file.path(folder, "all_pie_released_at_ped.rds"))
-  save(all_line_pop_released_to_parole,   file=file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_pie_parole_elgibility_offense,    file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))
+  save(all_pie_released_at_ped,              file=file.path(folder, "all_pie_released_at_ped.rds"))
+  save(all_line_pop_released_to_parole,      file=file.path(folder, "all_line_pop_released_to_parole.rds"))
+
+  save(all_time_between_release_ped,         file=file.path(folder, "all_time_between_release_ped.rds"))
+  save(all_time_between_release_ped_by_race, file=file.path(folder, "all_time_between_release_ped_by_race.rds"))
 
 }
