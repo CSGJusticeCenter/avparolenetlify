@@ -256,12 +256,10 @@ state_table_parole_elgibility_offense <-
                 offgeneral    = colDef(name = "Most Serious Sentenced Offense",
                                        minWidth = 200),
                 n = colDef(name = "Number of People",
-                           minWidth = 100,
-                           align = "right"),
+                           minWidth = 100),
                 prop   = colDef(name = "Percentage of People Eligible for
                                 Parole but not yet Released",
                                 minWidth = 175,
-                                align = "right",
                                 format = colFormat(percent = TRUE,
                                                    digits = 1))))
   
@@ -270,10 +268,38 @@ state_table_parole_elgibility_offense <-
 # Releases from Prison
 ###########
 
+#####
+# Releases Depending on PED
+#####
+
+# pie chart
 state_pie_released_at_ped <- 
   all_pie_released_at_ped$Georgia %>% 
   hc_chart(width = 75, height = 75) %>% 
   hc_title(text = "Timing of Release by Parole Eligibility in 2020")
+
+# reactable table data under pie chart
+df1 <-
+  ncrp_released_at_ped %>% 
+  filter(state == "Georgia") %>% 
+  ungroup() %>% 
+  select(released_at_ped_status,
+         n,
+         prop)
+
+# reactable table under pie chart
+state_table_released_at_ped <- 
+  fnc_reactable_table_3(df1, "released_at_ped_status", 
+                        header1 = "Timing of Release", 
+                        header2 = "Number of People", 
+                        header3 = "Percentage of Prison Population")
+
+
+
+
+#####
+# Predicted Probabilities
+#####
 
 df1 <- all_pp_by_variable %>%
   filter(state == "Georgia") %>% 
@@ -398,7 +424,7 @@ tabsetPanel(
            ############
              div(id = "column2",
                div(id = "section-title", "Profile of People Released to Parole in 2020"),
-               div(id = "reactable-table", state_parole_profile_race, state_parole_profile_sex, state_parole_profile_age,),
+               div(id = "reactable-table", state_parole_profile_race, state_parole_profile_sex, state_parole_profile_age),
                div(id = "footnote", "Source: NCRP Releases (2020). Methodology: 
                    Found people with less than sentence length served and released 
                    unconditionally or conditionally. Removed releases labeled as 
@@ -449,8 +475,8 @@ tabsetPanel(
            div(id = "column1",
                div(style = "flex: 0 0 40%;",
                div(id = "pie-graph", state_pie_released_at_ped),
-               div(id = "footnote", "Source: NCRP Releases (2020)"), br(),
-               div(id = "reactable-table", "TABLE FOR ABOVE INFO"), br(),
+               div(id = "reactable-table", state_table_released_at_ped), 
+               div(id = "footnote", "Source: NCRP Releases (2020)"), br(), br(),
                div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
                div(id = "reactable-table", 
                    table_pp_by_race,

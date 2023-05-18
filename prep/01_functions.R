@@ -1,6 +1,10 @@
 
 
 
+###################
+# Reactable
+###################
+
 # highcharts theme for reactable tables
 hc_reactable_theme <-
   reactableTheme(borderColor = neutralBkgndLight,
@@ -14,6 +18,67 @@ hc_reactable_style <- list(
   fontSize = "0.75rem",
   color = "#3E4B4B"
 )
+
+# custom function to create reactable table with 3 columns
+fnc_reactable_table_3 <- function(df, column_name, header1, header2, header3){
+
+  column_names <- names(df)
+  column_names[1] <- column_name
+
+  reactable(
+    df,
+    style = hc_reactable_style,
+    theme = hc_reactable_theme,
+    defaultColDef = colDef(
+      format = colFormat(separators = TRUE),
+      align = "left"
+    ),
+    compact = TRUE,
+    fullWidth = FALSE,
+    columns = setNames(
+      list(
+        colDef(name = header1, minWidth = 250),
+        colDef(name = header2, minWidth = 90),
+        colDef(
+          name = header3,
+          minWidth = 90,
+          format = colFormat(percent = TRUE, digits = 0)
+        )
+      ),
+      column_names
+    )
+  )
+}
+
+# custom function to create reactable table with 2 columns
+fnc_reactable_table_2 <- function(df, column_name, header1, header2){
+
+  column_names <- names(df)
+  column_names[1] <- column_name
+
+  reactable(
+    df,
+    style = hc_reactable_style,
+    theme = hc_reactable_theme,
+    defaultColDef = colDef(
+      format = colFormat(separators = TRUE),
+      align = "left"
+    ),
+    compact = TRUE,
+    fullWidth = FALSE,
+    columns = setNames(
+      list(
+        colDef(name = header1, minWidth = 250),
+        colDef(
+          name = header3,
+          minWidth = 90,
+          format = colFormat(percent = TRUE, digits = 0)
+        )
+      ),
+      column_names
+    )
+  )
+}
 
 # highcharts theme for hex map
 hc_theme_map_jc <- hc_theme_merge(
@@ -42,67 +107,12 @@ hc_theme_map_jc <- hc_theme_merge(
   )
 )
 
-# prepare annual parole survey data for analysis
-fnc_aps_prepare <- function(df){
-
-  df <- df %>%
-    mutate(rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-# prepare annual parole survey data for analysis
-# before 2008, there was no enreltsr variable so make NA
-fnc_aps_prepare_pre2008 <- function(df){
-
-  df <- df %>%
-    mutate(enreltsr = NA,
-           rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
 
 
-# custom function to create parole eligibility status
-# if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
-# if year of parole eligibility is more than or equal to year reported to NCRP, then "eligible for parole in the future"
-# if year of parole eligibility NA, then "missing data on parole eligibility"
-fnc_create_parelig_status <- function(df){
 
-  lev_parelig_status <- c("Current", "Future", "Missing")
-
-  df %>%
-    mutate(
-      parelig_status = case_when(
-        parelig_year <  rptyear ~ lev_parelig_status[1],
-        parelig_year >= rptyear ~ lev_parelig_status[2],
-        is.na(parelig_year)     ~ lev_parelig_status[3]),
-      parelig_status = factor(parelig_status,
-                              levels = lev_parelig_status))
-
-}
+###################
+# Plots
+###################
 
 # Highcharts theme for plots
 hc_theme_jc <- hc_theme(#colors = c("#D25E2D", "#EDB799", "#C7E8F5", "#236ca7", "#D6C246", "#dcdcdc"),
@@ -116,12 +126,12 @@ hc_theme_jc <- hc_theme(#colors = c("#D25E2D", "#EDB799", "#C7E8F5", "#236ca7", 
                style = list(fontFamily = "Graphik",
                             fontWeight = "bold",
                             color = neutralBlackText,
-                            fontSize   = "16px")),
+                            fontSize   = "18px")),
   subtitle = list(align = "center",
                   style = list(fontFamily = "Graphik",
                                fontWeight = "bold",
                                color = neutralBlackText,
-                               fontSize   = "14px")),
+                               fontSize   = "16px")),
   chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
   legend = list(align = "center", verticalAlign = "top"),
   xAxis = list(labels = list(enabled = TRUE),
@@ -297,3 +307,71 @@ fnc_pie_chart <- function(df,
                    area = list(accessibility = list(description = accessibility_text)))
 }
 
+
+
+
+###################
+# Data prep
+###################
+
+# prepare annual parole survey data for analysis
+fnc_aps_prepare <- function(df){
+
+  df <- df %>%
+    mutate(rptyear = as.numeric(rptyear)) %>%
+    select(state,
+           rptyear,
+           endisrel,
+           enmanrel,
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
+    mutate(released_to_parole =
+             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
+                     na.rm = TRUE),
+           released_to_parole =
+             ifelse(released_to_parole == 0, NA, released_to_parole))
+
+  return(df)
+}
+
+# prepare annual parole survey data for analysis
+# before 2008, there was no enreltsr variable so make NA
+fnc_aps_prepare_pre2008 <- function(df){
+
+  df <- df %>%
+    mutate(enreltsr = NA,
+           rptyear = as.numeric(rptyear)) %>%
+    select(state,
+           rptyear,
+           endisrel,
+           enmanrel,
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
+    mutate(released_to_parole =
+             rowSums(.[c("endisrel", "enmanrel")],
+                     na.rm = TRUE),
+           released_to_parole =
+             ifelse(released_to_parole == 0, NA, released_to_parole))
+
+  return(df)
+}
+
+
+# custom function to create parole eligibility status
+# if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
+# if year of parole eligibility is more than or equal to year reported to NCRP, then "eligible for parole in the future"
+# if year of parole eligibility NA, then "missing data on parole eligibility"
+fnc_create_parelig_status <- function(df){
+
+  lev_parelig_status <- c("Current", "Future", "Missing")
+
+  df %>%
+    mutate(
+      parelig_status = case_when(
+        parelig_year <  rptyear ~ lev_parelig_status[1],
+        parelig_year >= rptyear ~ lev_parelig_status[2],
+        is.na(parelig_year)     ~ lev_parelig_status[3]),
+      parelig_status = factor(parelig_status,
+                              levels = lev_parelig_status))
+
+}
