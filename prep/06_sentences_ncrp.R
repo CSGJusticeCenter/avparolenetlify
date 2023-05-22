@@ -43,14 +43,14 @@ ncrp_sentences <- ncrp_admissions %>%
 ########################################
 
 # Subset to 2020 report
-ncrp_violent_10yrs_2020 <- ncrp_releases_clean %>%
+ncrp_10yrs_2020 <- ncrp_releases_clean %>%
   filter(rptyear == 2020) %>%
   filter(reltype == "Conditional release" |
          reltype == "Unconditional release") %>%
   filter(!is.na(time_between_release_admissions)) %>%
   filter(!is.na(race)) %>%
   filter(race != "Other race(s), non-Hispanic") %>%
-  filter(offgeneral == "Violent") %>%
+  # filter(offgeneral == "Violent") %>%
   mutate(served_10plus_years =
            case_when(time_between_release_admissions >= 10 ~ "Served at Least 10 Years",
                      time_between_release_admissions < 10 ~ "Served Less Than 10 Years")) %>%
@@ -62,5 +62,13 @@ ncrp_violent_10yrs_2020 <- ncrp_releases_clean %>%
 
 
 
+
+
+
+########################################
+
+# Change in Life/LWOP over time
+
+########################################
 
 

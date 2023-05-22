@@ -183,7 +183,7 @@ state_parole_profile_race <-
               fullWidth = FALSE,
               columns = list(
                 race = colDef(name = "Race",
-                              minWidth = 250),
+                              minWidth = 225),
                 n = colDef(align = "right",
                               name = "",
                               minWidth = 100),
@@ -203,7 +203,7 @@ reactable(people_released_to_parole_sex_state,
           fullWidth = FALSE,
           columns = list(
             sex  = colDef(name = "Gender",
-                          minWidth = 250),
+                          minWidth = 225),
             n = colDef(align = "right", name = "", minWidth = 100),
             prop = colDef(align = "right",
                           name = "",
@@ -221,7 +221,7 @@ reactable(people_released_to_parole_age_state,
           fullWidth = FALSE,
           columns = list(
             agerlse = colDef(name = "Age",
-                             minWidth = 250),
+                             minWidth = 225),
             n = colDef(align = "right", name = "", minWidth = 100),
             prop = colDef(align = "right",
                           name = "",
@@ -562,6 +562,7 @@ tabsetPanel(
                div(id = "section-title", "More Info on Sentencing/LOS TBD"),
                div(id = "regular-text",
                    "Ideas:", br(),br(),
+                   "Familiar faces", br(), br(),
                    "The growth or decline of life sentences from X year to Y year
                    (life without parole).", br(), br(),
                    "How different is actual time served compared to sentence length
