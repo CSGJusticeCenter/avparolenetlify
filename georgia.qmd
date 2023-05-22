@@ -158,19 +158,19 @@ people_released_to_parole_race_state <-
   people_released_to_parole_race %>% 
   dplyr::filter(state == "Georgia") %>% 
   ungroup() %>% 
-  select(race, prop)
+  select(race, n = total_race, prop)
 
 people_released_to_parole_sex_state <- 
   people_released_to_parole_sex %>% 
   dplyr::filter(state == "Georgia") %>% 
   ungroup() %>% 
-  select(sex, prop)
+  select(sex, n = total_sex, prop)
 
 people_released_to_parole_age_state <- 
   people_released_to_parole_age %>% 
   dplyr::filter(state == "Georgia") %>% 
   ungroup() %>% 
-  select(agerlse, prop)
+  select(agerlse, n = total_agerlse, prop)
 
 # save race table by state
 state_parole_profile_race <- 
@@ -184,6 +184,9 @@ state_parole_profile_race <-
               columns = list(
                 race = colDef(name = "Race",
                               minWidth = 250),
+                n = colDef(align = "right",
+                              name = "",
+                              minWidth = 100),
                 prop = colDef(align = "right",
                               name = "",
                               minWidth = 100,
@@ -201,6 +204,7 @@ reactable(people_released_to_parole_sex_state,
           columns = list(
             sex  = colDef(name = "Gender",
                           minWidth = 250),
+            n = colDef(align = "right", name = "", minWidth = 100),
             prop = colDef(align = "right",
                           name = "",
                           minWidth = 100,
@@ -218,6 +222,7 @@ reactable(people_released_to_parole_age_state,
           columns = list(
             agerlse = colDef(name = "Age",
                              minWidth = 250),
+            n = colDef(align = "right", name = "", minWidth = 100),
             prop = colDef(align = "right",
                           name = "",
                           minWidth = 100,
@@ -547,7 +552,7 @@ tabsetPanel(
                div(style = "flex: 0 0 40%;",
                div(id = "bar-graph", state_bar_prop_sentence_length), 
                div(id = "footnote", "Source: NCRP Admissions (2020)"), br(),
-               div(id = "reactable-table", "Table for info above"),
+               div(id = "reactable-table", ""),
                ),
 
            ############

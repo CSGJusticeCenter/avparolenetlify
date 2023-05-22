@@ -50,7 +50,8 @@ ncrp_releases_clean <- ncrp_releases %>%
 
          time_between_release_ped = relyr - parelig_year_clean,
          time_between_ped_admission = parelig_year_clean - admityr,
-         time_between_mandatoryrelease_release = mand_prisrel_year_clean - relyr) %>%
+         time_between_mandatoryrelease_release = mand_prisrel_year_clean - relyr,
+         time_between_release_admissions = relyr - admityr) %>%
 
   mutate(released_at_ped_status = case_when(
     time_between_release_ped < 0 ~ "Released Before Parole Eligibility Year",
