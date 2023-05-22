@@ -55,11 +55,27 @@ hex <- read_sf(paste0(sp_data_path, "/data/raw/us_states_hexgrid.geojson")) %>%
 ##########
 
 # rename df names and clean variable names
-ncrp_term_records <- da38492.0001 %>% clean_names()
+ncrp_term_records <- da38492.0001 %>% clean_names() %>%
+  mutate(
+    state        = str_sub(state, 6, -1),
+    offgeneral   = str_sub(offgeneral, 5, -1),
+    offdetail    = str_sub(offdetail, 5, -1),
+    admtype      = str_sub(admtype, 5, -1),
+    race         = str_sub(race, 5, -1),
+    sex          = str_sub(sex, 5, -1),
+    sentlgth     = str_sub(sentlgth, 5, -1))
 
 ncrp_admissions <- da38492.0002 %>% clean_names() %>%
   # create parole eligibility status with custom function
-  fnc_create_parelig_status()
+  fnc_create_parelig_status() %>%
+  mutate(
+    state        = str_sub(state, 6, -1),
+    offgeneral   = str_sub(offgeneral, 5, -1),
+    offdetail    = str_sub(offdetail, 5, -1),
+    admtype      = str_sub(admtype, 5, -1),
+    race         = str_sub(race, 5, -1),
+    sex          = str_sub(sex, 5, -1),
+    sentlgth     = str_sub(sentlgth, 5, -1))
 
 ncrp_releases   <- da38492.0003 %>% clean_names() %>%
   mutate(

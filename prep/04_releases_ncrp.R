@@ -2,9 +2,9 @@
 # Project: AV Parole
 # File: releases_ncrp.R
 # Authors: Mari Roberts
-# Date last updated: May 3, 2023 (MAR)
+# Date last updated: May 22, 2023 (MAR)
 # Description:
-#    Releases from prison tables and graphics for shiny app
+#    Releases from prison tables and graphics for app
 #######################################
 
 
@@ -283,7 +283,7 @@ ncrp_time_between_release_ped_by_race <-
          race == "Black, non-Hispanic") %>%
   mutate(time_between_release_ped_overall =
            case_when(
-             time_between_release_ped > 1 ~ "Released After 1 Year of PED",
+             time_between_release_ped > 1 ~ "Released After Year of PED",
              time_between_release_ped <= 1 ~ "Released Before or on Year of PED",
              is.na(time_between_release_ped) ~ "No PED Data"
            )
@@ -301,6 +301,16 @@ ncrp_time_between_release_ped_by_race <-
                      "</b><br><br>",
                      "Percentage of Prison Population: <b>",
                      prop_label, "</b></b>", sep = ""))
+
+
+
+
+
+########################################
+
+# Grouped bar chart of conditional and unconditional releases
+
+########################################
 
 
 

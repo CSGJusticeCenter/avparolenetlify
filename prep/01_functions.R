@@ -115,7 +115,7 @@ hc_theme_map_jc <- hc_theme_merge(
 ###################
 
 # Highcharts theme for plots
-hc_theme_jc <- hc_theme(#colors = c("#D25E2D", "#EDB799", "#C7E8F5", "#236ca7", "#D6C246", "#dcdcdc"),
+hc_theme_jc <- hc_theme(
 
   # colors = c(orange, yellow, red, purple, darkblue, teal, blue, neutralBkgndMedium),
   colors = c(orange, yellow, purple, darkblue, teal, blue),

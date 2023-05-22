@@ -399,7 +399,12 @@ table_pp_by_sentlgth <-
 # Sentencing
 ###########
 
+#####
+# Distribution of Sentence Lengths in Prison in 2020
+#####
 
+state_bar_prop_sentence_length <- 
+  all_state_bar_prop_sentence_length$Georgia 
 
 ###########
 # Disparities
@@ -492,16 +497,27 @@ tabsetPanel(
              div(id = "column2",
                div(id = "bar-graph", state_time_between_release_ped_by_race),
                div(id = "footnote", "Source: NCRP Releases (2020)"), br(), br(),
+               div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
+               div(id = "reactable-table",
+                   table_pp_by_race,
+                   table_pp_by_sex,
+                   table_pp_by_offgeneral,
+                   table_pp_by_sentlgth),
+               div(id = "footnote", "Source: NCRP Year End Population (2020). Methodology:
+                   Predicted probabilities are calculated using logistic regression
+                   --predicts the probabilities of being released within 1 year
+                   based on various predictor variables such as sex, race, admtype,
+                   offgeneral, and sentlgth.")
+             )
+           ),
                div(id = "section-title", "More Info on Releases from Prison TBD"),
                div(id = "regular-text", 
                     "Ideas: ", br(), br(),
                     "Who (demographics and criminal history) is being released
                      at first eligibility?", br(), br(),
                    
-                    "How long after eligibility does release occur?", br(), br(),
-                   
-                    "How does release vary by the person's demographic and
-                     criminal history  characteristics?", br(), br(),
+                    "How does release vary by the person's criminal history  
+                     characteristics?", br(), br(),
               
                     "What is the mean and median time between parole eligibility
                      and release for all terms, terms with release bfore PED, and
@@ -515,20 +531,6 @@ tabsetPanel(
                      sentence length? (When max sentence length is 1) up to 2 years,
                      2) 2 to 5 years, 3) 5 to 10 years, 4) 10 to 15 years, and
                      5) 15 years to less than life)"), br(), br(),
-               
-               div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
-               div(id = "reactable-table",
-                   table_pp_by_race,
-                   table_pp_by_sex,
-                   table_pp_by_offgeneral,
-                   table_pp_by_sentlgth),
-               div(id = "footnote", "Source: NCRP Year End Population (2020). Methodology:
-                   Predicted probabilities are calculated using logistic regression
-                   --predicts the probabilities of being released within 1 year
-                   based on various predictor variables such as sex, race, admtype,
-                   offgeneral, and sentlgth.")
-             )
-           )
   ),
   
 
@@ -537,17 +539,34 @@ tabsetPanel(
   tabPanel("Sentencing/Length of Stay",
            
   #####################################
-  
-           div(id = "regular-text",
-               "Ideas:", br(),br(),
-               "The growth or decline of life sentences from X year to Y year 
-               (life without parole).", br(), br(),
-               "How different is actual time served compared to sentence length 
-               pronounced at court?", br(), br(),
-               "Length of stay by most serious sentenced offense, maximum sentence 
-               length, demographics.", br(), br(),
-               "Bar graph showing the proportion of individuals who served at least 10 
-               years by demographics and most serious sentenced offense.", br(), br()
+
+           ############
+           # Column 1
+           ############
+           div(id = "column1",
+               div(style = "flex: 0 0 40%;",
+               div(id = "bar-graph", state_bar_prop_sentence_length), 
+               div(id = "footnote", "Source: NCRP Admissions (2020)"), br(),
+               div(id = "reactable-table", "Table for info above"),
+               ),
+
+           ############
+           # Column 2
+           ############
+             div(id = "column2",
+               div(id = "section-title", "More Info on Sentencing/LOS TBD"),
+               div(id = "regular-text",
+                   "Ideas:", br(),br(),
+                   "The growth or decline of life sentences from X year to Y year
+                   (life without parole).", br(), br(),
+                   "How different is actual time served compared to sentence length
+                   pronounced at court?", br(), br(),
+                   "Length of stay by most serious sentenced offense, maximum sentence
+                   length, demographics.", br(), br(),
+                   "Bar graph showing the proportion of individuals who served at least 10
+                   years by demographics and most serious sentenced offense.", br(), br()
+                   )
+             )
            )
   ),
   

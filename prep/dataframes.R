@@ -28,6 +28,10 @@ load(file = paste0(sp_data_path, "/data/analysis/ncrp_released_at_ped.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/ncrp_time_between_release_ped_by_race.rds"))
 
 
+# Sentencing
+load(file = paste0(sp_data_path, "/data/analysis/all_state_bar_prop_sentence_length.rds"))
+
+
 # RRI
 load(file = paste0(sp_data_path, "/data/analysis/race_eth_rri_table.rds"))
 

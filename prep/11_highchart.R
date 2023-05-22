@@ -4,7 +4,7 @@
 # Authors: Mari Roberts
 # Date last updated: May 3, 2023 (MAR)
 # Description:
-#    Pre-generate highchart graphics for shiny app
+#    Pre-generate highchart graphics for app
 #######################################
 
 # set options so that y axis has comma separator
@@ -245,8 +245,11 @@ all_time_between_release_ped <- map(.x = states, .f = function(x) {
 
   highcharts <- df1 %>%
     hchart(
-      hcaes(x = time_between_release_ped_combined, y = n),
-      type = "column"
+      hcaes(x = time_between_release_ped_combined, y = n,
+            color = ifelse(time_between_release_ped_combined %in% c("More than 10\n Years Before PED",
+                                                                    "-5", "-4", "-3", "-2", "-1", "0"),
+                           teal, orange)),
+      type = "column",
     ) %>%
     hc_xAxis(
       title = list(text = "Years Between Release and PED"),
@@ -300,14 +303,22 @@ all_time_between_release_ped_by_race <- map(.x = states, .f = function(x) {
     hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released Before or on Year of PED"),
                   name = "Released Before or on Year of PED",
                   type = "column",
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular")),
                   hcaes(x = race, y = prop * 100)) %>%
-    hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released After 1 Year of PED"),
-                  name = "Released After 1 Year of PED",
+    hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released After Year of PED"),
+                  name = "Released After Year of PED",
                   type = "column",
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular")),
                   hcaes(x = race, y = prop * 100)) %>%
     hc_add_theme(hc_theme_jc) %>%
+    hc_colors(colors = c(teal, orange)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_plotOptions(series = list(animation = FALSE, cursor = "pointer", borderWidth = 3),
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
                    accessibility = list(enabled = TRUE,
                                         keyboardNavigation = list(enabled = TRUE),
                                         linkedDescription = "TBD",
@@ -320,12 +331,71 @@ all_time_between_release_ped_by_race <- map(.x = states, .f = function(x) {
 
 all_time_between_release_ped_by_race <- setNames(all_time_between_release_ped_by_race, states)
 
-all_time_between_release_ped_by_race$Georgia
 
 
 
 
 
+# ncrp_sentences created in sentences_ncrp.R
+
+# Get list of states
+states <- unique(ncrp_sentences$state)
+
+all_state_bar_prop_sentence_length <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_sentences %>%
+    filter(state == x) %>%
+    filter(rptyear == "2020")
+
+  # define the desired order of the X-axis categories
+  x_axis_order <- c(
+    "< 1 year",
+    "1-1.9 years",
+    "2-4.9 years",
+    "5-9.9 years",
+    "10-24.9 years",
+    ">=25 years",
+    "Life, LWOP, Life plus additional years, Death"
+  )
+
+  # Modify labels for "More than 10 years before PED" and "More than 10 years after PED"
+  df1$sentlgth <-
+    gsub("Life, LWOP, Life plus additional years, Death",
+         "Life, LWOP, Life plus\nadditional years, Death", df1$sentlgth)
+
+  highcharts <- highchart() %>%
+    hc_chart(type = "column") %>%
+    hc_xAxis(categories = x_axis_order,
+             labels = list(
+               style = list(width = "100px"),
+               formatter = JS("function() { return this.value.replace(/\\n/g, '<br/>'); }")
+             )) %>%
+    hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
+    hc_title(text = "Distribution of Sentence Lengths in Prison in 2020") %>%
+    hc_add_series(data = df1,
+                  name = "Released Before or on Year of PED",
+                  type = "column",
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular")),
+                  hcaes(x = sentlgth, y = prop * 100,
+                        color = ifelse(sentlgth %in% c("Life, LWOP, Life plus\nadditional years, Death"),
+                                       red, purple))) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_plotOptions(series = list(animation = FALSE, cursor = "pointer", borderWidth = 3,
+                                 minPointLength = 1),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
+
+  return(highcharts)
+})
+
+all_state_bar_prop_sentence_length <- setNames(all_state_bar_prop_sentence_length, states)
+all_state_bar_prop_sentence_length$Georgia
 
 
 
@@ -409,4 +479,6 @@ for (folder in theseFOLDERS){
   save(all_time_between_release_ped,         file=file.path(folder, "all_time_between_release_ped.rds"))
   save(all_time_between_release_ped_by_race, file=file.path(folder, "all_time_between_release_ped_by_race.rds"))
 
+  save(all_state_bar_prop_sentence_length,   file=file.path(folder, "all_state_bar_prop_sentence_length.rds"))
 }
+
