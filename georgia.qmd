@@ -472,6 +472,7 @@ tabsetPanel(
                div(id = "section-title", "More Info on Parole Eligibility TBD"),
                div(id = "regular-text",
                        "Ideas: ", br(), br(),
+                       "Admin types for people eligible for parole and people who already failed parole and eligible for parole",
                        "Is the PED missing? If so, is the data missing because they aren't 
                        parole eligible or because the data wasn't entered?", br()
                    )
