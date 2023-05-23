@@ -366,6 +366,7 @@ fnc_create_parelig_status <- function(df){
   lev_parelig_status <- c("Current", "Future", "Missing")
 
   df %>%
+    mutate(time_between_ped_rptyear = rptyear - parelig_year) %>%
     mutate(
       parelig_status = case_when(
         parelig_year <  rptyear ~ lev_parelig_status[1],
