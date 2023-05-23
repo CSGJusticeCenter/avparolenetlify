@@ -42,14 +42,14 @@ map_data <- parole_eligibility_table_2020 %>%
          
          tooltip = 
            paste0("<b>", state, "</b><br><br>",
-                  "Percentage of Prison Population<br> Currently Eligible for Release:<br>",
+                  "Percentage of Prison Population<br> Currently Eligible for Release:<br><b>",
                    paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
-                  "Percentage of Prison Population<br> Eligible for Parole in the Next 5 Years:<br>",
+                  "Percentage of Prison Population<br> Eligible for Parole in the Next 5 Years:<br><b>",
                    paste(round(future_perc, 0), "%</b>", sep = ""), "<br><br>",
-                 "Percentage of Prison Population<br> with Missing Parole Eligibility Data:<br>",
+                 "Percentage of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
                    paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
-                 "Total Prison Population:<br>",
-                   formattable::comma(yearendpop, digits = 0)),
+                 "Total Prison Population:<br><b>",
+                   formattable::comma(yearendpop, digits = 0), "</b>"),
                   tooltip = str_replace_all(tooltip, "NA%", "No Data")) %>% 
   
   mutate(datalabel = ifelse(is.na(current_perc),
@@ -156,7 +156,7 @@ reactable(table_data,
           columnGroups = list(
               colGroup(name = "Currently Eligible for Parole", 
                        columns = c("current_perc", "current_count")),
-              colGroup(name = "Eligible for Parole in the Future",
+              colGroup(name = "Eligible for Parole in the Next 5 Years",
                        columns = c("future_perc", "future_count")),
               colGroup(name = "Missing Parole Eligibility Data", 
                        columns = c("missing_perc", "missing_count"))
