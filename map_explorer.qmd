@@ -44,7 +44,7 @@ map_data <- parole_eligibility_table_2020 %>%
            paste0("<b>", state, "</b><br><br>",
                   "Percentage of Prison Population<br> Currently Eligible for Release:<br>",
                    paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
-                  "Percentage of Prison Population<br> Eligible for Release in the Future:<br>",
+                  "Percentage of Prison Population<br> Eligible for Parole in the Next 5 Years:<br>",
                    paste(round(future_perc, 0), "%</b>", sep = ""), "<br><br>",
                  "Percentage of Prison Population<br> with Missing Parole Eligibility Data:<br>",
                    paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",

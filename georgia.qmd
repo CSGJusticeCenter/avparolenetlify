@@ -57,7 +57,7 @@ chart1 <-
 chart2 <- 
   all_donut_future_eligible$Georgia %>% 
   hc_chart(width = 250, height = 200) %>%
-  hc_title(text = "Eligible for Parole<br>in the Next 5 Years")  ###### ACTUALLY DO THIS
+  hc_title(text = "Eligible for Parole<br>in the Next 5 Years") 
 
 chart3 <- 
   all_donut_future_eligible$Georgia %>% 
