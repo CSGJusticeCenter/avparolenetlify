@@ -35,7 +35,7 @@ num_people_1_5_years <- sum(parole_eligibility_table_2020$future_1_5_years_count
 ```{r}
 htmltools::div(
 div(id = "important-text", 
-    HTML("Understanding the impact of prison sentencing systems and parole on countless lives and the opportunity to reduce prison popualtions and improve public safety.<br><br>")))
+    HTML("Understanding the impact of prison sentencing systems and the opportunity to reduce prison populations and improve lives and public safety.<br><br>")))
 
 # combine info in one row and center
 # highlighted national trends numbers

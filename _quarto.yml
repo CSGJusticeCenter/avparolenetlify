@@ -14,11 +14,11 @@ website:
         href: index.html
       - text: "National Trends"
         href: national_trends.html
-      - text: "Final Reports"
+      - text: "State Reports"
         menu:
           - text: "Georgia"
             href: georgia.html
-      - text: "Draft Reports"
+      - text: "Drafts"
         menu:
           - text: "Georgia"
             href: georgia_all.html

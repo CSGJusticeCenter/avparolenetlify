@@ -174,14 +174,15 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 
     hc_series(list(name = "Prison Population",
                    data = df1$total_prison_population),
-              list(name = "Returned to Prison with Revocation",
-                   data = df1$incarcerated_from_parole),
+              # list(name = "Returned to Prison with Revocation",
+              #      data = df1$incarcerated_from_parole),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
               list(name = "Parole Eligible but not Released from Prison",
                    data = df1$current_count)) %>%
 
     hc_add_theme(hc_theme_jc) %>%
+    hc_colors(colors = c(teal, yellow, orange)) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
 
     hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
@@ -191,7 +192,7 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 })
 
 all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
-
+all_line_pop_released_to_parole$Georgia
 
 
 

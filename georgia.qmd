@@ -27,17 +27,205 @@ library(htmltools)
 library(reactable)
 library(reactablefmtr)
 library(htmltools)
+library(tippy)
 
 # load data
 source("prep/00_library.R")
 source("prep/01_functions.R")
 source("prep/dataframes.R")
+
+prison_sentencing_system_info <- HTML("Prison Sentencing<br>System&#9432;")
+prison_sentencing_system_tooltip <- 
+  HTML("To compare the degrees of indeterminacy, or unpredictability
+   of time served, prison-sentencing systems of different jurisdictions,
+   we use a qualitative ranking framework based on the Robina Institute's
+   Prison-release Discretion And Prison Population Size Report.<br><br>
+   <b>High indeterminacy:</b> More than 60-80 percent indeterminacy (first prospect of
+   release at 20-39.99 percent of judicial maximum)")
+
+state_for_report <- "Georgia"
+prison_sentencing_system <- HTML("Highly<br>Indeterminate")
+parole_eligibility_criteria <-  HTML(
+"- Parole consideration is typically automatic for most people in prison.<br><br>
+ - In general, parole consideration occurs after serving 1/3 of the total sentence.<br><br>
+ - For misdemeanor sentences, a minimum of 6 months must be served.<br><br>
+ - For felony sentences, a minimum of 9 months must be served.<br><br>
+ - People in prison serving a sentence of 21 years or more (excluding life sentences) become eligible after serving a 7-year term.<br><br>
+ - People in prison convicted of certain serious crimes such as aggravated assault, incest, or drug trafficking are not eligible for parole until they have served either 7 years or 1/3 of the prison term, whichever comes first.<br>")
 ```
 
+
+```{r}
+# data prep by tab
+
+###################
+
+# Highlights
+
+###################
+
+state_data <- parole_eligibility_table_2020 %>% filter(state == state_for_report)
+num_people_current   <- sum(state_data$current_count, na.rm = TRUE)
+num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
+
+
+###################
+
+# Overview
+
+###################
+
+# line chart showing the change in prison pop 
+# and the change in releases to parole over time
+state_line_pop_released_to_parole <- 
+  all_line_pop_released_to_parole[[state_for_report]] %>% 
+  hc_chart(width = 500, height = 400) %>%
+  hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility") 
+  # hc_subtitle(text = "And this is a subtitle with more information",
+  #             style = list(fontStyle = "italic"),
+  #             align = 'left', y = 400, x = 0)
+```
+
+
+```{r}
+###################
+
+# Parole eligibility
+
+###################
+
+
+
+
+
+
+###################
+
+# Releases
+
+###################
+
+
+
+
+
+
+
+###################
+
+# Disparities
+
+###################
+
+
+
+
+```
+
+::: less-narrow-section
+```{r}
+# combine info in one row and center
+# highlighted trends numbers
+htmltools::div(
+  style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
+  div(id = "highlight-text", 
+      style = "padding-left: .9em; padding-right: 1em;",
+      formattable::comma(num_people_current, digits = 0)
+  ),
+  div(id = "highlight-text",
+      style = "padding-left: 2.2em; padding-right: 2.4em;",
+      formattable::comma(num_people_1_5_years, digits = 0)
+  ),
+  div(style = "display: block; 
+              padding-left: 1em; 
+              padding-right: 1em; 
+              color: #ff6400; 
+              font-size: 1.25em; 
+              font-family: Graphik; 
+              font-weight: bold; 
+              text-align: center;",
+      prison_sentencing_system)
+)
+
+# combine info in one row and center
+# highlighted titles for trends numbers
+htmltools::div(
+  style = "display:flex; flex-direction: row; align-items: center; justify-content: center; ",
+  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
+      HTML("Currently Eligible for<br>Parole but in Prison")
+      ),
+  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
+      HTML("Eligible for Parole in<br>the next 1-5 years")
+      ),
+  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
+      tippy(prison_sentencing_system_info,
+            placement = "bottom",
+            flip = TRUE,
+            theme = "light",
+            tooltip = prison_sentencing_system_tooltip)
+      )
+)
+```
+</style>
 <br>
 
-::: narrow-section
 ```{r}
-
+tags$style(type = "text/css", ".nav-tabs {justify-content: center;}")
+tabsetPanel(
+  id = "tabsetpanel",
+  
+  
+  #####################################
+  
+  tabPanel("Overview",
+           
+  #####################################
+  
+  br(),
+  div(id = "line-graph", state_line_pop_released_to_parole),
+  br()
+  
+  ),
+  
+  #####################################
+  
+  tabPanel("Parole Eligibility",
+           
+  #####################################
+  
+  br(),
+  div(id = "section-title", "How is Parole Release Eligibility Determined?"),
+  br(),
+  div(id = "regular-text", parole_eligibility_criteria),
+  br(),
+  
+  ),
+  
+  #####################################
+  
+  tabPanel("Releases from Prison",
+           
+  #####################################
+  
+  
+  ),
+  
+  #####################################
+  
+  tabPanel("Disparities",
+           
+  #####################################
+  
+  
+  ),
+  
+)
 ```
-:::
+::: 
+
+
+
+
+
+
+

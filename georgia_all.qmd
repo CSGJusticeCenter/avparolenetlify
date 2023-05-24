@@ -66,8 +66,6 @@ htmltools::div(
 ```
 :::
 
-<br><br>
-
 ```{r}
 # save charts to call in tabsetPanel in next R chunk
 

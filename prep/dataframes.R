@@ -5,11 +5,11 @@ load(file = paste0(sp_data_path, "/data/analysis/all_donut_currently_eligible.rd
 load(file = paste0(sp_data_path, "/data/analysis/all_donut_future_eligible.rds"))
 
 # Parole Overview
-load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_sex.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_age.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_age_median.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/people_released_to_parole_education_median.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/ncrp_people_released_early_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/ncrp_people_released_early_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/ncrp_people_released_early_age.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/ncrp_people_released_early_age_median.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/ncrp_people_released_early_education_median.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_ncrp_aps_pop_released_to_parole_by_year.rds"))
 
 
@@ -42,3 +42,4 @@ load(file = paste0(sp_data_path, "/data/analysis/all_pp_by_variable.rds"))
 
 # Map
 load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))
+

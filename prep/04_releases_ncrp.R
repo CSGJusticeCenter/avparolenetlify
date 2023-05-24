@@ -138,7 +138,7 @@ ncrp_released_at_ped <- ncrp_releases_2020 %>%
 ########################################
 
 # Get people on parole characteristics (race)
-people_released_to_parole_race <- ncrp_releases_2020 %>%
+ncrp_people_released_early_race <- ncrp_releases_2020 %>%
   filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
   filter(!is.na(race)) %>%
   filter(state != "Alabama") %>%
@@ -150,7 +150,7 @@ people_released_to_parole_race <- ncrp_releases_2020 %>%
 
 
 # Get people on parole characteristics (sex)
-people_released_to_parole_sex <- ncrp_releases_2020 %>%
+ncrp_people_released_early_sex <- ncrp_releases_2020 %>%
   filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
   filter(!is.na(sex)) %>%
   # filter(state != "Alabama") %>%
@@ -162,7 +162,7 @@ people_released_to_parole_sex <- ncrp_releases_2020 %>%
 
 
 # Get people on parole characteristics (age)
-people_released_to_parole_age <- ncrp_releases_2020 %>%
+ncrp_people_released_early_age <- ncrp_releases_2020 %>%
   filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
   filter(!is.na(agerlse)) %>%
   # filter(state != "Alabama") %>%
@@ -174,7 +174,7 @@ people_released_to_parole_age <- ncrp_releases_2020 %>%
 
 
 # Get people on parole characteristics (education)
-people_released_to_parole_age_median <- ncrp_releases_2020 %>%
+ncrp_people_released_early_age_median <- ncrp_releases_2020 %>%
   filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
   filter(!is.na(agerlse)) %>%
   # filter(state != "Alabama") %>%
@@ -200,7 +200,7 @@ people_released_to_parole_age_median <- ncrp_releases_2020 %>%
 
 
 # Get people on parole characteristics (education)
-people_released_to_parole_education_median <- ncrp_releases_2020 %>%
+ncrp_people_released_early_education_median <- ncrp_releases_2020 %>%
   filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
   filter(!is.na(education)) %>%
   # filter(state != "Alabama") %>%
@@ -334,11 +334,11 @@ for (folder in theseFOLDERS){
   save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
   save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
 
-  save(people_released_to_parole_race,              file=file.path(folder, "people_released_to_parole_race.rds"))
-  save(people_released_to_parole_sex,               file=file.path(folder, "people_released_to_parole_sex.rds"))
-  save(people_released_to_parole_age,               file=file.path(folder, "people_released_to_parole_age.rds"))
-  save(people_released_to_parole_age_median,        file=file.path(folder, "people_released_to_parole_age_median.rds"))
-  save(people_released_to_parole_education_median,  file=file.path(folder, "people_released_to_parole_education_median.rds"))
+  save(ncrp_people_released_early_race,              file=file.path(folder, "ncrp_people_released_early_race.rds"))
+  save(ncrp_people_released_early_sex,               file=file.path(folder, "ncrp_people_released_early_sex.rds"))
+  save(ncrp_people_released_early_age,               file=file.path(folder, "ncrp_people_released_early_age.rds"))
+  save(ncrp_people_released_early_age_median,        file=file.path(folder, "ncrp_people_released_early_age_median.rds"))
+  save(ncrp_people_released_early_education_median,  file=file.path(folder, "ncrp_people_released_early_education_median.rds"))
 
   save(ncrp_time_between_release_ped,               file=file.path(folder, "ncrp_time_between_release_ped.rds"))
   save(ncrp_time_between_release_ped_by_race,       file=file.path(folder, "ncrp_time_between_release_ped_by_race.rds"))

@@ -1,103 +1,99 @@
-
-/* create a narrow section that is smaller than body */
-.narrow-section {
-  max-width: 750px;
-  max-height: 200px;
-  margin: 0 auto;
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
 }
 
-#tabsetpanel .split-layout {
-  display: flex;
-}
-
-#tabsetpanel .split-layout > div {
-  flex: 1;
-}
-
-/* Not working well
-.highchart-wrapper {
- display: inline-block;
- margin: 0 auto;
- padding: 0;
-}
-
-.chart-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.chart-row div {
-  margin-right: 20px;
-}
-.chart-row div:last-child {
-  margin-right: 0;
-}
-*/
-
-
-
-
-
-
-
-
-/**********************************************/
-
-/* page settings */
-
-/**********************************************/
-
-body {
-  max-width: 1000px; /* set the maximum width */
-  margin: 0 auto; /* center the content horizontally */
-}
-
-/* add fonts*/
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/Graphik.ttf");
-}
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/GraphikBold.ttf");
-  font-weight: bold;
-}
-
-
-/* remove rounded edges everything */
-*{
-  border-radius: 0!important;
-}
-
-/* change font throughout website */
-html,
-body {
-  font-family: 'Graphik', sans-serif;
-  color: #3E4B4B!important;
-}
-
-
-
-/**********************************************/
-
-/* title settings */
-
-/**********************************************/
-
-/* title of website pages */
-.title {
-  font-size: 2em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
   text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
 
+/**********************************************/
+
+/* tabset panel settings */
+
+/**********************************************/
+
+/* tabset panel basic settings */
+.nav-tabs {
+  background-color: #fff; /* color across entire bar instead of tab items*/
+  text-align:center;
+  font-size: 0.75em;
+  font-family: Graphik;
+  padding-top: 1em; /* add padding to top */
+  padding-bottom: 0.5em;
+}
+
+/* spacing between menu items */
+.nav-tabs > li {
+  background-color: #fff;
+  float: none;
+  display: inline-block; /* maintains horizontal tab structure */
+  padding: 0px 14px; /* changes spacing between tabpanels */
+  font-family: Graphik;
+}
+
+/* make boxes/background color around text of tabs */
+.nav-tabs>li>a {
+  margin-right: 2px;
+  line-height: 1.6; /* height of tab panel buttons */
+  background-color: #F4F6F8;
+  color: #3E4B4B;
+  font-family: Graphik;
+  padding: .85em 2.5em; /* add more padding around the text */
+  text-decoration: none; /* remove underline */
+}
+
+.tab-content {
+  padding-top: 1em; /* add padding to move content down */
+  border: none; /* remove border around box */
+}
+
+/* Styling for selected tab */
+.nav-tabs>li>a,
+.nav-tabs>li>a:focus,
+.nav-tabs>li>a:hover {
+  background-color: #3E4B4B;
+  color: #fff;
+}
+
+/* Remove styling when tab is not selected */
+.nav-tabs>li>a:not(.active) {
+  background-color: #F4F6F8;
+  color: #3E4B4B;
+}
+
+/* Add horizontal line underneath the tabs */
+.nav-tabs::after {
+  content: "";
+  display: table;
+  clear: both;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+}
 
 
 /**********************************************/
 
-/* navigation bar settings */
+/* navbar settings */
 
 /**********************************************/
 
@@ -124,12 +120,6 @@ body {
   color: #fff; /* change font color */
   font-weight: bold; /* change font weight */
 }
-
-/*
-  .navbar-nav {
-    margin-right: 0;  remove right margin
-  }
-*/
 
 .navbar-nav li {
   /*padding: 0 15px;  change padding*/
@@ -178,74 +168,210 @@ body {
 
 
 
+/**********************************************/
+
+/* page settings */
 
 /**********************************************/
 
-/* tabset panel settings */
+body {
+  max-width: 1200px; /* set the maximum width */
+  margin: 0 auto; /* center the content horizontally */
+}
+
+/* add fonts*/
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/Graphik.ttf");
+}
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/GraphikBold.ttf");
+  font-weight: bold;
+}
+
+
+/* remove rounded edges everything */
+*{
+  border-radius: 0!important;
+}
+
+/* change font throughout website */
+html,
+body {
+  font-family: 'Graphik', sans-serif;
+  color: #3E4B4B!important;
+}
+
+.narrow-section {
+  max-width: 750px;
+  min-height: 100px;
+  margin: 0 auto;
+}
+
+.less-narrow-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-top: 1em;
+}
+
+.highlight-section {
+  max-width: 400px;
+  max-height: 100px;
+  margin: 0 auto;
+}
+
+
+
+
+
+
+
 
 /**********************************************/
 
-/* tabset pabel basic settings */
-.nav-tabs {
+/* text styling */
+
+/**********************************************/
+
+/* title of website pages */
+.title {
+  font-size: 2em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+}
+
+/* title of website tabs */
+#section-title {
+  font-size: 1em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
   color: #3E4B4B;
-  text-align:center;
-  font-size: 0.75em;
+}
+
+#graph-title {
+  font-size: 1.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+
+/* text underneath state and national trends highlighting findings */
+#important-text {
+  font-size: 1em; /* change font size */
+  font-family: Graphik; /* change font family */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+/* highlighted text underneath state name*/
+#highlight-text {
+  font-size: 2.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  color: teal;
+}
+
+/* regular app text */
+#regular-text {
+  font-size: 0.75em; /* change font size */
+  font-family: Graphik; /* change font family */
+  text-align: left;
+}
+
+/* bold app text */
+#bold-text {
+  font-size: 0.8em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+}
+
+/* footnote */
+#footnote {
+  color: #3E4B4B;
+  text-align: left;
+  font-style: italic;
+  font-size: 0.6em;
   font-family: Graphik;
-  padding-top: 1em; /* add padding to top */
-  padding-bottom: 0.5em;
-  border-bottom: 1px solid #ccc;
-  /*background-color: #F4F6F8; color across entire bar instead of tab items*/
-}
-
-/* spacing between menu items */
-.nav-tabs > li {
-  color: #3E4B4B;
-  float: none;
-  display: inline-block; /* maintains horizontal tab structure */
-  padding: 0px 14px; /* changes spacing between tabpanels */
-  font-family: Graphik;
-}
-
-/* make boxes/background color around text of tabs */
-.nav-tabs>li>a {
-  margin-right: 2px;
-  line-height: 1.5; /* height of tab panel buttons */
-  background-color: #F4F6F8;
-  color: #3E4B4B;
-  font-family: Graphik;
-  padding: .85em 2.5em; /* add more padding around the text */
-  text-decoration: none; /* remove underline */
-}
-
-/* Add horizontal line underneath the tabs */
-.nav-tabs::after {
-  content: "";
-  display: table;
-  clear: both;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
-}
-
-.tab-content {
-  padding-top: 1em; /* add padding to move content down */
-  border: none; /* remove border around box */
-}
-
-/* Styling for selected tab */
-.nav-tabs>li>a,
-.nav-tabs>li>a:focus,
-.nav-tabs>li>a:hover {
-  background-color: #3E4B4B;
-  color: #fff;
-}
-
-/* Remove styling when tab is not selected */
-.nav-tabs>li>a:not(.active) {
-  background-color: #F4F6F8;
-  color: #3E4B4B;
 }
 
 
 
 
 
+
+/**********************************************/
+
+/* styling for tables and graphs */
+
+/**********************************************/
+
+#first-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
+#bar-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
+#line-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+  display: flex;
+  justify-content: center;
+}
+
+#pie-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
+#reactable-table{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* center table on page */
+.table-container {
+  display: flex;
+  justify-content: center;
+}
+
+/**********************************************/
+
+/* columns settings */
+
+/**********************************************/
+
+/* allowing flexible positioning and alignment
+   specifies that the main axis runs horizontally from left to right
+   aligns the items at the start of the cross-axis, which means they will be
+   aligned to the top of the container
+*/
+#column1{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between; /* Adjust the justify-content property */
+}
+
+/* main axis runs vertically
+*/
+#column2{
+  flex: 1; margin-left: 5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
