@@ -31,16 +31,17 @@ num_people_current   <- sum(parole_eligibility_table_2020$current_count, na.rm =
 num_people_1_5_years <- sum(parole_eligibility_table_2020$future_1_5_years_count, na.rm = TRUE)
 ```
 
-<br>
-
-
 ::: narrow-section
 ```{r}
+htmltools::div(
+div(id = "important-text", 
+    HTML("Understanding the impact of prison sentencing systems and parole on countless lives and the opportunity to reduce prison popualtions and improve public safety.<br><br>")))
+
 # combine info in one row and center
 # highlighted national trends numbers
 htmltools::div(
   style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
-  div(style = "margin-right: 2em;", 
+  div(style = "margin-right: 2.7em;", 
       id = "highlight-text", 
       formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", 
@@ -53,15 +54,14 @@ htmltools::div(
 htmltools::div(
   style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
   div(style = "margin-right: 10em;", 
-      id = "important-text", 
+      id = "bold-text", 
       HTML("Currently Eligible for<br>Parole but in Prison")),
-  div(id = "important-text", 
+  div(id = "bold-text", 
       HTML("Eligible for Parole in<br>the next 1-5 years"))
 )
 
 ```
 :::
-
 
 <br><br>
 
@@ -82,11 +82,11 @@ map_data <- parole_eligibility_table_2020 %>%
          
          tooltip = 
            paste0("<b>", state, "</b><br><br>",
-                  "Percentage of Prison Population<br> Currently Eligible for Release:<br><b>",
+                  "Percent of Prison Population<br> Currently Eligible for Release:<br><b>",
                    paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
-                  "Percentage of Prison Population<br> Eligible for Parole in the Next 5 Years:<br><b>",
+                  "Percent of Prison Population<br> Eligible for Parole in the Next 1-5 Years:<br><b>",
                    paste(round(future_1_5_years_perc, 0), "%</b>", sep = ""), "<br><br>",
-                 "Percentage of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
+                 "Percent of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
                    paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
                  "Total Prison Population:<br><b>",
                    formattable::comma(yearendpop, digits = 0), "</b>"),
@@ -108,14 +108,9 @@ min_map <- min(map_data$current_perc, na.rm = TRUE)
 max_map <- max(map_data$current_perc, na.rm = TRUE)
 
 # create hex map
-map_percent <- highchart(height = 575) %>%
+map_percent <- highchart(height = 580) %>%
   
-  hc_chart(
-    spacingTop = 1,  # Adjust the top spacing as needed
-    spacingRight = 1,
-    spacingBottom = 30,
-    spacingLeft = 1
-  ) %>%
+  hc_chart(marginTop = -6) %>% 
   
   hc_add_series_map(
     map = hex_gj,
@@ -149,16 +144,6 @@ map_percent <- highchart(height = 575) %>%
   
   hc_xAxis(title = "") %>%
   hc_yAxis(title = "") %>%
-  hc_title(
-    text = paste0("Percentage of People in Prison Currently Eligible for Parole"),
-    align = "center",
-    # x = -30, shifts to the left
-    style = list(
-      fontWeight = "bold",
-      fontFamily = "Graphik",
-      fontSize = "2em",
-      color = "#3E4B4B",
-      useHTML = TRUE)) %>%
   
   hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
   hc_add_theme(hc_theme_map_jc) %>%
@@ -184,7 +169,7 @@ map_data <- parole_eligibility_table_2020 %>%
            paste0("<b>", state, "</b><br><br>",
                   "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
                    paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
-                  "Number of People in Prison<br> Eligible for Parole in the Next 5 Years:<br><b>",
+                  "Number of People in Prison<br> Eligible for Parole in the Next 1-5 Years:<br><b>",
                    paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
                  "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
                    paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
@@ -202,14 +187,9 @@ map_data <- parole_eligibility_table_2020 %>%
          currentcountlabel = str_replace_all(currentcountlabel, "NA%", "No Data")) 
 
 # create hex map for counts
-map_count <- highchart(height = 575) %>%
+map_count <- highchart(height = 580) %>%
   
-  hc_chart(
-    spacingTop = 1,  # Adjust the top spacing as needed
-    spacingRight = 1,
-    spacingBottom = 30,
-    spacingLeft = 1
-  ) %>%
+  hc_chart(marginTop = -6) %>% 
   
   hc_add_series_map(
     map = hex_gj,
@@ -241,16 +221,6 @@ map_count <- highchart(height = 575) %>%
   
   hc_xAxis(title = "") %>%
   hc_yAxis(title = "") %>%
-  hc_title(
-    text = paste0("Number of People in Prison Currently Eligible for Parole"),
-    align = "center",
-    # x = -30, shifts to the left
-    style = list(
-      fontWeight = "bold",
-      fontFamily = "Graphik",
-      fontSize = "2em",
-      color = "#3E4B4B",
-      useHTML = TRUE)) %>%
   
   hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
   hc_add_theme(hc_theme_map_jc) %>%
@@ -267,20 +237,26 @@ map_count <- highchart(height = 575) %>%
 ```
 
 ```{r}
-tags$style(type = "text/css", ".nav-tabs { justify-content: center; }")
+htmltools::div(
+div(id = "graph-title", 
+    HTML("People Currently Eligible for Parole but in Prison")))
+```
+
+```{r}
+tags$style(type = "text/css", ".nav-tabs { justify-content: center; border-bottom: 1px solid #fff;}")
 tabsetPanel(
   id = "tabsetpanelmap",
-  tabPanel("Percent",
+  tabPanel("Percent of People",
            br(),
            map_percent
            ),
-  tabPanel("Count", 
+  tabPanel("Number of People",
            br(),
            map_count)
 )
 ```
 
-<br><br>
+<br>
 
 <div class="table-container">
 ```{r}
@@ -302,7 +278,7 @@ reactable(table_data,
           columnGroups = list(
               colGroup(name = "Currently Eligible for Parole", 
                        columns = c("current_perc", "current_count")),
-              colGroup(name = "Eligible for Parole in the Next 5 Years",
+              colGroup(name = "Eligible for Parole in the Next 1-5 Years",
                        columns = c("future_1_5_years_perc", "future_1_5_years_count")),
               colGroup(name = "Missing Parole Eligibility Data", 
                        columns = c("missing_perc", "missing_count"))
@@ -311,19 +287,19 @@ reactable(table_data,
             state         = colDef(name = "State", 
                                    minWidth = 130, 
                                    align = "left"),
-            current_perc  = colDef(name = "Percentage of Prison Population", 
+            current_perc  = colDef(name = "Percent of Prison Population", 
                                    format = colFormat(percent = TRUE, 
                                                       digits = 1),
                                    style = list(position = "sticky", 
                                                 borderRight = "1px solid #d3d3d3"),
                                    headerStyle = list(fontWeight = "normal")),
-            future_1_5_years_perc   = colDef(name = "Percentage of Prison Population", 
+            future_1_5_years_perc   = colDef(name = "Percent of Prison Population", 
                                    format = colFormat(percent = TRUE, 
                                                       digits = 1),
                                    style = list(position = "sticky", 
                                                 borderRight = "1px solid #d3d3d3"),
                                    headerStyle = list(fontWeight = "normal")),
-            missing_perc  = colDef(name = "Percentage of Prison Population", 
+            missing_perc  = colDef(name = "Percent of Prison Population", 
                                    format = colFormat(percent = TRUE, 
                                                       digits = 1),
                                    headerStyle = list(fontWeight = "normal")),

@@ -1,8 +1,10 @@
 {
-  "hash": "4f8581cced7ee3459646a724ff81cb38",
+  "hash": "fdbd53c8d8af8685a754ab7919cf5ebf",
   "result": {
-    "markdown": "---\ntitle: \"Georgia\"\nformat:\n  html:\n    css: styles.css\n    embed-resources: TRUE\n    code-fold: true\n    page-layout: full\n    fig_caption: yes\n---\n\n\n\n\n::: highlight-section\n\n::: {.cell}\n::: {.cell-output-display}\n```{=html}\n<div style=\"display: flex; flex-direction: column; align-items: center;\">\n<div id=\"highlight-text\">Georgia's prison-sentencing system is highly indeterminate overall.</div>\n</div>\n```\n:::\n:::\n\n:::\n\n::: narrow-section\n\n<br>\n\n\n::: {.cell}\n\n:::\n\n:::\n",
-    "supporting": [],
+    "markdown": "---\ntitle: \"Georgia\"\nformat:\n  html:\n    css: styles.css\n    embed-resources: TRUE\n    code-fold: true\n    page-layout: full\n    fig_caption: yes\n---\n\n\n\n\n<br>\n\n::: narrow-section\n\n::: {.cell}\n\n:::\n\n:::\n",
+    "supporting": [
+      "georgia_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],

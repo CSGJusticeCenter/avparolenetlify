@@ -34,15 +34,6 @@ source("prep/01_functions.R")
 source("prep/dataframes.R")
 ```
 
-::: highlight-section
-```{r}
-htmltools::div(
-  style = "display: flex; flex-direction: column; align-items: center;",
-  div(id = "highlight-text", "The Robina Institute classifies Georgia's prison-sentencing system as highly indeterminate overall.")
-)
-```
-:::
-
 ::: narrow-section
 
 <br>
