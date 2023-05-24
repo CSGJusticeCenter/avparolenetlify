@@ -14,12 +14,14 @@ website:
         href: index.html
       - text: "National Trends"
         href: national_trends.html
-      - text: "Map Explorer"
-        href: map_explorer.html
       - text: "State Reports"
         menu:
           - text: "Georgia"
             href: georgia.html
+      - text: "Full Reports"
+        menu:
+          - text: "Georgia"
+            href: georgia_all.html
 
 format:
   html:

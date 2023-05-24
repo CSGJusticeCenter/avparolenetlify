@@ -75,6 +75,7 @@
   margin: 0 auto;
 }
 
+
 .highlight-section {
   max-width: 400px;
   max-height: 100px;
@@ -181,12 +182,20 @@ body {
   color: #3E4B4B;
 }
 
-/* highlighted text underneath state name*/
-#highlight-text {
+/* text underneath state and national trends highlighting findings */
+#important-text {
   font-size: 0.75em; /* change font size */
   font-family: Graphik; /* change font family */
   text-align: center;
-  font-style: italic;
+  color: #3E4B4B;
+}
+
+/* highlighted text underneath state name*/
+#highlight-text {
+  font-size: 2.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  color: #3E4B4B;
 }
 
 /* regular app text */
