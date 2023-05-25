@@ -95,6 +95,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   mutate(
     state = str_sub(state, 6, -1),
     offgeneral = str_sub(offgeneral, 5, -1),
+    admtype = str_sub(admtype, 5, -1),
     race = str_sub(race, 5, -1)) %>%
   # create parole eligibility status with custom function
   fnc_create_parelig_status()

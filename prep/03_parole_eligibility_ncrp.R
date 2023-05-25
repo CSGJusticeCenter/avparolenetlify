@@ -7,8 +7,9 @@
 #    Parole eligibility tables and graphics for shiny app
 #######################################
 
+
 ##########
-# Parole eligibility in 2020
+# NCRP - Parole eligibility in 2020
 ##########
 
 # get number and percentage of eligibility statuses
@@ -44,7 +45,7 @@ parole_eligibility_missing_states_2020 <-
 
 
 ##########
-# Offenses for those in prison but not released in 2020
+# NCRP - Offenses for those in prison but not released in 2020
 ##########
 
 current_ped_2020_offenses <- ncrp_yearendpop %>%
@@ -103,6 +104,35 @@ current_ped_2020_race1 <- ncrp_yearendpop %>%
     prop = currently_eligible_for_parole/total_prison_pop_by_race,
     prop_label = paste0(round(prop*100, 0), "%")
   )
+
+
+
+
+##########
+# NCRP - Parole eligibility by adm type
+##########
+
+parole_eligibility_rate_by_admtype <- ncrp_yearendpop %>%
+  filter(!is.na(parelig_status) & !is.na(admtype) &
+           admtype != "Other admission (including unsentenced, transfer, AWOL/escapee return)") %>%
+  group_by(state, rptyear, parelig_status) %>%
+  count(admtype) %>%
+  mutate(
+    prop = n/sum(n),
+    yearendpop = sum(n),
+    prop = prop*100) %>%
+  ungroup() %>%
+  mutate(tooltip =
+           case_when(admtype == "New court commitment" ~
+                       paste0("<b>", state, "</b><br>",
+                              "New court commitment:<br>",
+                              paste(round(prop, 1), "%</b>", sep = ""), "<br>"),
+                     admtype == "Parole return/revocation" ~
+                       paste0("<b>", state, "</b><br>",
+                              "Parole return/revocation:<br>",
+                              paste(round(prop, 1), "%</b>", sep = ""), "<br>")))
+
+
 
 
 
