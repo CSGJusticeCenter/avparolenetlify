@@ -210,7 +210,7 @@ body {
 }
 
 .less-narrow-section {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding-top: 1em;
 }
@@ -242,6 +242,7 @@ body {
   text-align: center;
 }
 
+
 /* title of website tabs */
 #section-title {
   font-size: 1em; /* change font size */
@@ -250,6 +251,16 @@ body {
   text-align: center;
   color: #3E4B4B;
 }
+
+/* title of section under tabs */
+#big-section-title {
+  font-size: 1.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
 
 #graph-title {
   font-size: 1.5em; /* change font size */

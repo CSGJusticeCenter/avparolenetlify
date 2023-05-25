@@ -34,8 +34,87 @@ source("prep/00_library.R")
 source("prep/01_functions.R")
 source("prep/dataframes.R")
 
+state_for_report <- "Georgia"
+
+
+
+pe_length <- c("1/3", "6", "9", "7", "7 or 1/3")
+pe_unit   <- c("Term", "Months", "Months", "Years", "Years or Term")
+pe_sentence <- c("Generally when parole consideration occurs",
+                 "Must be served for misdemeanor sentences",
+                 "Must be served for felony sentences",
+                 "Must be served for a sentence of 21 years or more (excluding life sentences)",
+                 "Must be served for convictions of serious crimes such as aggravated assault, incest, or drug trafficking")
+pe_criteria <- data.frame(pe_length, pe_unit, pe_sentence)
+
+library(reactable)
+library(tidyr)
+
+pe1 <- c("1/3 Term", "Generally when parole consideration occurs")
+pe2 <- c("6 Months", "Must be served for misdemeanor sentences")
+pe3 <- c("9 Months", "Must be served for felony sentences")
+pe4 <- c("7 Years", "Must be served for a sentence of 21 years or more (excluding life sentences)")
+pe5 <- c("7 Years or 1/3 Term", "Must be served for convictions of serious crimes such as aggravated assault, incest, or drug trafficking")
+
+# Reshape the data into a long format
+df1 <- data.frame(pe1, pe2, pe3)
+df2 <- data.frame(pe4, pe5)
+
+pe_criteria_table1 <- reactable(
+  data = df1,
+  style = hc_reactable_style,
+  theme = reactableTheme(borderColor = "#fff",
+                 stripedColor = "#fff",
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center")),
+  columns = list(
+    pe1 = colDef(align = "center", name = "", minWidth = 80),
+    pe2 = colDef(align = "center", name = "", minWidth = 80),
+    pe3 = colDef(align = "center", name = "", minWidth = 80)
+  ),
+  rowStyle = function(index) {
+    if (index %in% c(1)) {
+      list(fontWeight = "bold",
+           fontSize = "20px",
+           marginBottom = "-10px")
+    } else if (index %in% c(2)) {
+      list(fontSize = "14px")
+    }
+  }
+)
+
+pe_criteria_table2 <- reactable(
+  data = df2,
+  style = hc_reactable_style,
+  theme = reactableTheme(borderColor = "#fff",
+                 stripedColor = "#fff",
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center")),
+  columns = list(
+    pe4 = colDef(align = "center", name = "", minWidth = 80),
+    pe5 = colDef(align = "center", name = "", minWidth = 80)
+  ),
+  rowStyle = function(index) {
+    if (index %in% c(1)) {
+      list(fontWeight = "bold",
+           fontSize = "20px",
+           marginBottom = "-10px")
+    } else if (index %in% c(2)) {
+      list(fontSize = "14px")
+    }
+  }
+)
+
+```
+
+
+```{r}
 prison_sentencing_system <- HTML("Highly<br>Indeterminate")
+
 prison_sentencing_system_info <- HTML("Prison Sentencing<br>System&#9432;")
+
 prison_sentencing_system_tooltip <- 
   HTML("To compare the degrees of indeterminacy, or unpredictability
    of time served, of prison-sentencing systems of different jurisdictions,
@@ -44,18 +123,26 @@ prison_sentencing_system_tooltip <-
    <b>High indeterminacy:</b> More than 60-80 percent indeterminacy (first prospect of
    release at 20-39.99 percent of judicial maximum)")
 
-state_for_report <- "Georgia"
+# make the tippy accessible
+prison_sentencing_system_info <- paste0('<span aria-label="', prison_sentencing_system_tooltip, '" tabindex="0" role="button">', prison_sentencing_system_info, '</span>')
 
-parole_eligibility_criteria <- HTML('
-<ul style="margin-top: 10px; margin-bottom: 10px; list-style-position: outside; padding-left: 20px;">
-    <li style="margin-bottom: 5px;">Parole consideration is typically automatic for most people in prison.</li>
-    <li style="margin-bottom: 5px;">In general, parole consideration occurs after serving 1/3 of the total sentence.</li>
-    <li style="margin-bottom: 5px;">For misdemeanor sentences, a minimum of 6 months must be served.</li>
-    <li style="margin-bottom: 5px;">For felony sentences, a minimum of 9 months must be served.</li>
-    <li style="margin-bottom: 5px;">People in prison serving a sentence of 21 years or more (excluding life sentences) become eligible after serving a 7-year term.</li>
-    <li style="margin-bottom: 5px;">People in prison convicted of certain serious crimes such as aggravated assault, incest, or drug trafficking are not eligible for parole until they have served either 7 years or 1/3 of the prison term, whichever comes first.</li>
-</ul>')
 
+
+
+
+
+
+
+# parole_eligibility_criteria <- HTML('
+# <ul style="margin-top: 10px; margin-bottom: 10px; list-style-position: outside; padding-left: 20px;">
+#     <li style="margin-bottom: 5px;">Parole consideration is typically automatic for most people in prison.</li>
+#     <li style="margin-bottom: 5px;">In general, parole consideration occurs after serving 1/3 of the total sentence.</li>
+#     <li style="margin-bottom: 5px;">For misdemeanor sentences, a minimum of 6 months must be served.</li>
+#     <li style="margin-bottom: 5px;">For felony sentences, a minimum of 9 months must be served.</li>
+#     <li style="margin-bottom: 5px;">People in prison serving a sentence of 21 years or more (excluding life sentences) become eligible after serving a 7-year term.</li>
+#     <li style="margin-bottom: 5px;">People in prison convicted of certain serious crimes such as aggravated assault, incest, or drug trafficking are not eligible for parole until they have served either 7 years or 1/3 of the prison term, whichever comes first.</li>
+# </ul>')
+parole_eligibility_criteria <- c("Parole consideration is typically automatic for most people in prison. In general, parole consideration occurs after serving 1/3 of the total sentence.")
 ```
 
 
@@ -97,43 +184,16 @@ state_line_pop_released_to_parole <-
 
 ###################
 
-state_bar_parole_eligibility_rate_by_admtype <- 
-  all_bar_parole_eligibility_rate_by_admtype[[state_for_report]] %>% 
-  hc_chart(width = 450, height = 300) %>%
-  hc_title(text = "Percent of People Eligible for Parole by Admission Type") 
-
-```
-
-
-```{r}
-###################
-
-# Parole eligibility
-
-###################
-
-
-
-
-
-
-###################
-
-# Releases
-
-###################
-
-
-
-
-
-
-
-###################
-
-# Disparities
-
-###################
+state_time_between_release_ped_2020 <- 
+  all_time_between_release_ped_2020[[state_for_report]] %>% 
+  hc_chart(width = 475, height = 300) %>% 
+  hc_title(text = "Number of Years Between Parole Eligibility Year and Release Year") 
+  
+# pie chart
+state_pie_released_at_ped_2020 <- 
+  all_pie_released_at_ped_2020$Georgia %>% 
+  hc_chart(width = 475, height = 300) %>% 
+  hc_colors(colors = c(orange, yellow, teal)) 
 
 
 
@@ -219,15 +279,18 @@ tabsetPanel(
      ############
      div(id = "column1",
          div(style = "flex: 0 0 50%;",
-             div(id = "section-title", "How is Parole Release Eligibility Determined?"), 
-             div(id = "regular-text", parole_eligibility_criteria)
+             div(id = "section-title", "How is Parole Release Eligibility Determined?"), br(),
+             div(id = "regular-text", parole_eligibility_criteria),
+             div(id = "reactable-table", pe_criteria_table1),
+             div(id = "reactable-table", pe_criteria_table2),
          ),
          
          ############
          # Column 2
          ############
          div(id = "column2",
-             div("GRAPH ABOUT ELIGIBILITY")
+             div(id = "section-title", "Timing of Parole Eligibility and Release in 2020"),
+             div(id = "pie-graph", state_pie_released_at_ped_2020)
          )
      ),
   

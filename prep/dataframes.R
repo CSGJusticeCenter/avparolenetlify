@@ -21,11 +21,11 @@ load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_eligibility_rate
 
 
 # Releases from Prison
-load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_time_between_release_ped.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_time_between_release_ped_by_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/ncrp_released_at_ped.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_time_between_release_ped_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_time_between_release_ped_2020_by_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/ncrp_released_at_ped_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/ncrp_time_between_release_ped_by_race.rds"))
 
 

@@ -1,7 +1,7 @@
 {
-  "hash": "9c949c9db69be89b47561e4b20559beb",
+  "hash": "11fbc1878f259554438a9eac8451d619",
   "result": {
-    "markdown": "---\ntitle: \"Test\"\nformat:\n  html:\n    css: styles.css\n    embed-resources: TRUE\n    code-fold: true\n    page-layout: full\n    fig_caption: yes\n---\n\n\n\n\nThis is a \n\n::: {.cell-output-display}\n```{=html}\n<span class=\"tippy html-widget html-fill-item-overflow-hidden html-fill-item\" height=\"464px\" id=\"htmlwidget-4e78eb3d911f137e4fae\" width=\"100%\"></span>\n<script type=\"application/json\" data-for=\"htmlwidget-4e78eb3d911f137e4fae\">{\"x\":{\"opts\":{\"content\":\"Definition of word that pops up in a box upon hovering\"},\"text\":\"word.\"},\"evals\":[],\"jsHooks\":[]}</script>\n```\n:::\n",
+    "markdown": "---\ntitle: \"Untitled\"\neditor: visual\n---\n\n::: {.cell}\n::: {.cell-output-display}\n```{=html}\n<span class=\"tippy html-widget html-fill-item-overflow-hidden html-fill-item\" height=\"464px\" id=\"htmlwidget-19b8afe910bbaf961831\" width=\"100%\"></span>\n<script type=\"application/json\" data-for=\"htmlwidget-19b8afe910bbaf961831\">{\"x\":{\"opts\":{\"content\":\"This is an accessible tooltip.\"},\"text\":\"<span aria-label=\\\"This is an accessible tooltip.\\\">Accessible Tooltip<\\/span>\"},\"evals\":[],\"jsHooks\":[]}</script>\n```\n:::\n:::\n",
     "supporting": [
       "test_files"
     ],

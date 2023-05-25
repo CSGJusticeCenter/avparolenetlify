@@ -109,7 +109,7 @@ current_ped_2020_race1 <- ncrp_yearendpop %>%
 
 
 ##########
-# NCRP - Parole eligibility by adm type
+# NCRP - Parole eligibility by adm type and year
 ##########
 
 parole_eligibility_rate_by_admtype <- ncrp_yearendpop %>%
@@ -131,7 +131,6 @@ parole_eligibility_rate_by_admtype <- ncrp_yearendpop %>%
                        paste0("<b>", state, "</b><br>",
                               "Parole return/revocation:<br>",
                               paste(round(prop, 1), "%</b>", sep = ""), "<br>")))
-
 
 
 

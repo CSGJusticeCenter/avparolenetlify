@@ -279,6 +279,8 @@ fnc_pie_chart <- function(df,
 
   df %>%
     hchart("pie",
+           # margin = c(0, NA, 0, NA), not working
+           # size = "70%", makes too big
            hcaes(x = x_variable, y = y_variable),
            dataLabels = list(
              style = list(fontSize = "1.25em",
@@ -286,7 +288,7 @@ fnc_pie_chart <- function(df,
                           alignTo = "connectors",
                           color = neutralBlackText),
              enabled = TRUE,
-             y = -10,
+             # y = -10,
              format = point_format)) %>%
     hc_chart(plotBackgroundColor = "none",
              plotBorderWidth = 0,
@@ -297,7 +299,8 @@ fnc_pie_chart <- function(df,
 
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_plotOptions(series = list(animation = FALSE,
+    hc_plotOptions(pie = list(startAngle = 100),
+                   series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3),
                    accessibility = list(enabled = TRUE,

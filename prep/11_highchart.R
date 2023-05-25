@@ -310,10 +310,10 @@ all_line_pop_released_to_parole$Georgia
 # How many people are being released at first eligibility?
 
 # Get list of states
-states <- unique(ncrp_released_at_ped$state)
+states <- unique(ncrp_released_at_ped_2020$state)
 
-all_pie_released_at_ped <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped %>% filter(state == x)
+all_pie_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_released_at_ped_2020 %>% filter(state == x)
   highcharts <- fnc_pie_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
@@ -322,8 +322,8 @@ all_pie_released_at_ped <- map(.x = states,  .f = function(x) {
   return(highcharts)
 })
 
-all_pie_released_at_ped <- setNames(all_pie_released_at_ped, states)
-
+all_pie_released_at_ped_2020 <- setNames(all_pie_released_at_ped_2020, states)
+all_pie_released_at_ped_2020$Georgia
 
 
 # What is the mean and median time between parole eligibility and release for
@@ -332,9 +332,9 @@ all_pie_released_at_ped <- setNames(all_pie_released_at_ped, states)
 # Get list of states
 states <- unique(ncrp_time_between_release_ped$state)
 
-all_time_between_release_ped <- map(.x = states, .f = function(x) {
+all_time_between_release_ped_2020 <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_time_between_release_ped %>% filter(state == x)
+  df1 <- ncrp_time_between_release_ped_2020 %>% filter(state == x)
 
   # Modify labels for "More than 10 years before PED" and "More than 10 years after PED"
   df1$time_between_release_ped_combined <-
@@ -349,14 +349,13 @@ all_time_between_release_ped <- map(.x = states, .f = function(x) {
       type = "column",
     ) %>%
     hc_xAxis(
-      title = list(text = "Years Between Release and PED"),
+      title = list(text = "Years Between Parole Eligibility Year and Release Year"),
       labels = list(
         style = list(width = "100px"),
         formatter = JS("function() { return this.value.replace(/\\n/g, '<br/>'); }")
       )
     ) %>%
-    hc_yAxis(title = list(text = "Count")) %>%
-    hc_title(text = "Years from Parole Eligibility to Release") %>%
+    hc_yAxis(title = list(text = "Number of People")) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_plotOptions(
@@ -378,7 +377,7 @@ all_time_between_release_ped <- map(.x = states, .f = function(x) {
   return(highcharts)
 })
 
-all_time_between_release_ped <- setNames(all_time_between_release_ped, states)
+all_time_between_release_ped_2020 <- setNames(all_time_between_release_ped_2020, states)
 
 
 
@@ -390,7 +389,7 @@ all_time_between_release_ped <- setNames(all_time_between_release_ped, states)
 # Get list of states
 states <- unique(ncrp_time_between_release_ped_by_race$state)
 
-all_time_between_release_ped_by_race <- map(.x = states, .f = function(x) {
+all_time_between_release_ped_2020_by_race <- map(.x = states, .f = function(x) {
   df1 <- ncrp_time_between_release_ped_by_race %>% filter(state == x)
 
   highcharts <- highchart() %>%
@@ -426,7 +425,7 @@ all_time_between_release_ped_by_race <- map(.x = states, .f = function(x) {
   return(highcharts)
 })
 
-all_time_between_release_ped_by_race <- setNames(all_time_between_release_ped_by_race, states)
+all_time_between_release_ped_2020_by_race <- setNames(all_time_between_release_ped_2020_by_race, states)
 
 
 
@@ -556,8 +555,6 @@ all_state_bar_prop_sentence_length$Georgia
 
 
 
-
-
 ##########
 # Save data
 ##########
@@ -570,12 +567,12 @@ for (folder in theseFOLDERS){
   # save(all_donut_future_eligible,            file=file.path(folder, "all_donut_future_eligible.rds"))
 
   save(all_pie_parole_elgibility_offense,    file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))
-  save(all_pie_released_at_ped,              file=file.path(folder, "all_pie_released_at_ped.rds"))
+  save(all_pie_released_at_ped_2020,              file=file.path(folder, "all_pie_released_at_ped_2020.rds"))
   save(all_line_pop_released_to_parole,      file=file.path(folder, "all_line_pop_released_to_parole.rds"))
   save(all_bar_parole_eligibility_rate_by_admtype, file=file.path(folder, "all_bar_parole_eligibility_rate_by_admtype.rds"))
 
-  save(all_time_between_release_ped,         file=file.path(folder, "all_time_between_release_ped.rds"))
-  save(all_time_between_release_ped_by_race, file=file.path(folder, "all_time_between_release_ped_by_race.rds"))
+  save(all_time_between_release_ped_2020,         file=file.path(folder, "all_time_between_release_ped_2020.rds"))
+  save(all_time_between_release_ped_2020_by_race, file=file.path(folder, "all_time_between_release_ped_2020_by_race.rds"))
 
   save(all_state_bar_prop_sentence_length,   file=file.path(folder, "all_state_bar_prop_sentence_length.rds"))
 }

@@ -1,20 +1,16 @@
 ---
-title: "Test"
-format:
-  html:
-    css: styles.css
-    embed-resources: TRUE
-    code-fold: true
-    page-layout: full
-    fig_caption: yes
+title: "Untitled"
+editor: visual
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+library(htmltools)
 library(tippy)
+
+tooltip_text <- "This is an accessible tooltip."
+accessible_tooltip <- paste0('<span aria-label="', tooltip_text, '">Accessible Tooltip</span>')
+tippy(accessible_tooltip, tooltip = tooltip_text)
 ```
 
-This is a 
-```{r echo = FALSE, results='asis'}
-tippy("word.", tooltip = "Definition of word that pops up in a box upon hovering")
-```
+
+

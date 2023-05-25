@@ -106,7 +106,7 @@ ncrp_releases_2020 <- ncrp_releases_clean %>%
 # !is.na(relyr)) # removes a lot of data
 
 # How many people are being released at first eligibility?
-ncrp_released_at_ped <- ncrp_releases_2020 %>%
+ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   filter(!is.na(released_at_ped_status) & state != "Illinois") %>%
   group_by(state) %>%
@@ -228,7 +228,7 @@ ncrp_people_released_early_education_median <- ncrp_releases_2020 %>%
 
 ########################################
 
-ncrp_time_between_release_ped <- ncrp_releases_2020 %>%
+ncrp_time_between_release_ped_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   filter(!is.na(released_at_ped_status) & state != "Illinois") %>%
   # combine years greater than 10 or less than -10
@@ -276,7 +276,7 @@ ncrp_time_between_release_ped <- ncrp_releases_2020 %>%
 
 ########################################
 
-ncrp_time_between_release_ped_by_race <-
+ncrp_time_between_release_ped_2020_by_race <-
   ncrp_releases_2020 %>%
   filter(!is.na(time_between_release_ped)) %>%
   filter(race == "Hispanic, any race" |
@@ -330,7 +330,7 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(ncrp_released_at_ped,                        file=file.path(folder, "ncrp_released_at_ped.rds"))
+  save(ncrp_released_at_ped_2020,                        file=file.path(folder, "ncrp_released_at_ped_2020.rds"))
   save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
   save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
 
@@ -340,8 +340,8 @@ for (folder in theseFOLDERS){
   save(ncrp_people_released_early_age_median,        file=file.path(folder, "ncrp_people_released_early_age_median.rds"))
   save(ncrp_people_released_early_education_median,  file=file.path(folder, "ncrp_people_released_early_education_median.rds"))
 
-  save(ncrp_time_between_release_ped,               file=file.path(folder, "ncrp_time_between_release_ped.rds"))
-  save(ncrp_time_between_release_ped_by_race,       file=file.path(folder, "ncrp_time_between_release_ped_by_race.rds"))
+  save(ncrp_time_between_release_ped_2020,               file=file.path(folder, "ncrp_time_between_release_ped_2020.rds"))
+  save(ncrp_time_between_release_ped_2020_by_race,       file=file.path(folder, "ncrp_time_between_release_ped_2020_by_race.rds"))
 
 
 }
