@@ -238,7 +238,44 @@ all_pie_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
 
 all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense, states)
 
+states <- unique(current_ped_2020_offenses$state)
 
+all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
+  df1 <- current_ped_2020_offenses %>%
+    filter(state == x) %>%
+    arrange(desc(prop))
+  xaxis_order <- df1$offgeneral
+  highcharts <-
+    highchart() %>%
+    hc_chart(margin = c(80, 0, 50, 0)) %>%
+    hc_add_series(df1, type = "column",
+                  hcaes(x = factor(offgeneral), y = prop*100, color = offgeneral),
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontSize = "14px",
+                                                 fontWeight = "bold",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = xaxis_order) %>%
+    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
+
+  return(highcharts)
+})
+
+all_bar_parole_elgibility_offense <- setNames(all_bar_parole_elgibility_offense, states)
+all_bar_parole_elgibility_offense$Georgia
 
 
 
@@ -278,7 +315,7 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_colors(colors = c(teal, yellow, orange)) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
-
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
 
 
@@ -286,7 +323,6 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 })
 
 all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
-all_line_pop_released_to_parole$Georgia
 
 
 
@@ -324,6 +360,55 @@ all_pie_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
 
 all_pie_released_at_ped_2020 <- setNames(all_pie_released_at_ped_2020, states)
 all_pie_released_at_ped_2020$Georgia
+
+all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_released_at_ped_2020 %>% filter(state == x) %>%
+    mutate(released_at_ped_status =
+             factor(released_at_ped_status,
+                    levels = c("Released After Parole Eligibility Year",
+                               "Released on Parole Eligibility Year",
+                               "Released Before Parole Eligibility Year"
+                               )))
+  highcharts <-
+    df1 %>%
+    hchart(
+      'bar',
+      hcaes(x = 'state',
+            y = 'prop',
+            group = 'released_at_ped_status'),
+      stacking = "percent",
+      dataLabels = list(
+        style = list(fontSize = "1.25em",
+                     fontWeight = "bold",
+                     color = neutralBlackText),
+        enabled = TRUE,
+        format = "{point.prop_label}")
+    ) %>%
+    hc_add_theme(hc_theme_jc_minimal) %>%
+    hc_colors(c(yellow, teal, orange)) %>%
+    hc_xAxis(title = list(text = "")) %>%
+    hc_yAxis(title = list(text = "")) %>%
+    #hc_legend(enabled = FALSE) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
+  return(highcharts)
+})
+
+all_bar_released_at_ped_2020 <- setNames(all_bar_released_at_ped_2020, states)
+
+
+
+
+
+
+
 
 
 # What is the mean and median time between parole eligibility and release for
@@ -491,7 +576,6 @@ all_state_bar_prop_sentence_length <- map(.x = states, .f = function(x) {
 })
 
 all_state_bar_prop_sentence_length <- setNames(all_state_bar_prop_sentence_length, states)
-all_state_bar_prop_sentence_length$Georgia
 
 
 
@@ -566,14 +650,16 @@ for (folder in theseFOLDERS){
   # save(all_donut_currently_eligible,         file=file.path(folder, "all_donut_currently_eligible.rds"))
   # save(all_donut_future_eligible,            file=file.path(folder, "all_donut_future_eligible.rds"))
 
-  save(all_pie_parole_elgibility_offense,    file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))
-  save(all_pie_released_at_ped_2020,              file=file.path(folder, "all_pie_released_at_ped_2020.rds"))
-  save(all_line_pop_released_to_parole,      file=file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_pie_parole_elgibility_offense,          file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))
+  save(all_bar_parole_elgibility_offense,          file=file.path(folder, "all_bar_parole_elgibility_offense.rds"))
+  save(all_pie_released_at_ped_2020,               file=file.path(folder, "all_pie_released_at_ped_2020.rds"))
+  save(all_bar_released_at_ped_2020,               file=file.path(folder, "all_bar_released_at_ped_2020.rds"))
+  save(all_line_pop_released_to_parole,            file=file.path(folder, "all_line_pop_released_to_parole.rds"))
   save(all_bar_parole_eligibility_rate_by_admtype, file=file.path(folder, "all_bar_parole_eligibility_rate_by_admtype.rds"))
 
-  save(all_time_between_release_ped_2020,         file=file.path(folder, "all_time_between_release_ped_2020.rds"))
-  save(all_time_between_release_ped_2020_by_race, file=file.path(folder, "all_time_between_release_ped_2020_by_race.rds"))
+  save(all_time_between_release_ped_2020,          file=file.path(folder, "all_time_between_release_ped_2020.rds"))
+  save(all_time_between_release_ped_2020_by_race,  file=file.path(folder, "all_time_between_release_ped_2020_by_race.rds"))
 
-  save(all_state_bar_prop_sentence_length,   file=file.path(folder, "all_state_bar_prop_sentence_length.rds"))
+  save(all_state_bar_prop_sentence_length,         file=file.path(folder, "all_state_bar_prop_sentence_length.rds"))
 }
 

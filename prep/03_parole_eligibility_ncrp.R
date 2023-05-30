@@ -52,6 +52,9 @@ current_ped_2020_offenses <- ncrp_yearendpop %>%
   filter(rptyear == 2020) %>%
   filter(parelig_status == "Current") %>%
   filter(!is.na(offgeneral)) %>%
+  mutate(offgeneral = ifelse(
+    offgeneral == "Other/unspecified", "Other or Unspecified", offgeneral
+  )) %>%
   group_by(state) %>%
   count(offgeneral) %>%
   mutate(
@@ -66,7 +69,8 @@ current_ped_2020_offenses <- ncrp_yearendpop %>%
                   scales::comma(n), "</b><br><br>",
                   "Percentage of Prison Population with Parole<br>Eligibility but not yet Released: <br><b>",
                   paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
-         chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"))
+         chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"),
+         prop_label = paste0(round(prop*100, 0), "%"))
 
 pop_2020_race <- ncrp_yearendpop %>%
   filter(rptyear == 2020) %>%

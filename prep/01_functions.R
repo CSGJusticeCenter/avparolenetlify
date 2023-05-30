@@ -16,7 +16,7 @@ hc_reactable_theme <-
 hc_reactable_style <- list(
   fontFamily = "Graphik, sans-serif",
   fontSize = "0.75rem",
-  color = "#3E4B4B"
+  color = neutralBlackText
 )
 
 # custom function to create reactable table with 3 columns
@@ -87,7 +87,7 @@ hc_theme_map_jc <- hc_theme_merge(
     chart = list(
       marginTop = 75,
       style = list(fontFamily = "Graphik",
-                   color = "#3E4B4B")
+                   color = neutralBlackText)
     ),
     caption = list(align = "right", y = 15),
     xAxis = list(
@@ -115,42 +115,99 @@ hc_theme_map_jc <- hc_theme_merge(
 ###################
 
 # Highcharts theme for plots
+# hc_theme_jc <- hc_theme(
+#
+#   # colors = c(orange, yellow, red, purple, darkblue, teal, blue, neutralBkgndMedium),
+#   colors = c(orange, yellow, purple, darkblue, teal, blue),
+#
+#   chart = list(style = list(fontFamily = "Graphik",
+#                             color      = neutralBlackText)),
+#   title = list(align = "center",
+#                style = list(fontFamily = "Graphik",
+#                             fontWeight = "bold",
+#                             color = neutralBlackText,
+#                             fontSize   = "18px")),
+#   subtitle = list(align = "center",
+#                   style = list(fontFamily = "Graphik",
+#                                fontWeight = "bold",
+#                                color = neutralBlackText,
+#                                fontSize   = "16px")),
+#   chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
+#   legend = list(align = "center", verticalAlign = "top"),
+#   xAxis = list(labels = list(enabled = TRUE),
+#                gridLineColor = "transparent",
+#                lineColor = "transparent",
+#                minorGridLineColor = "transparent",
+#                tickColor = "transparent"),
+#   yAxis = list(labels = list(enabled = TRUE),
+#                gridLineColor = "transparent",
+#                lineColor = "transparent",
+#                majorGridLineColor = "transparent",
+#                minorGridLineColor = "transparent",
+#                tickColor = "transparent"),
+#   plotOptions = list(line = list(marker = list(enabled = FALSE)),
+#                      spline = list(marker = list(enabled = FALSE)),
+#                      area = list(marker = list(enabled = FALSE)),
+#                      areaspline = list(marker = list(enabled = FALSE)),
+#                      arearange = list(marker = list(enabled = FALSE)),
+#                      bubble = list(maxSize = "10%")))
+# Highcharts theme for plots
 hc_theme_jc <- hc_theme(
-
-  # colors = c(orange, yellow, red, purple, darkblue, teal, blue, neutralBkgndMedium),
   colors = c(orange, yellow, purple, darkblue, teal, blue),
-
-  chart = list(style = list(fontFamily = "Graphik",
-                            color      = neutralBlackText)),
-  title = list(align = "center",
-               style = list(fontFamily = "Graphik",
-                            fontWeight = "bold",
-                            color = neutralBlackText,
-                            fontSize   = "18px")),
-  subtitle = list(align = "center",
-                  style = list(fontFamily = "Graphik",
-                               fontWeight = "bold",
-                               color = neutralBlackText,
-                               fontSize   = "16px")),
   chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
-  legend = list(align = "center", verticalAlign = "top"),
-  xAxis = list(labels = list(enabled = TRUE),
-               gridLineColor = "transparent",
-               lineColor = "transparent",
-               minorGridLineColor = "transparent",
-               tickColor = "transparent"),
-  yAxis = list(labels = list(enabled = TRUE),
-               gridLineColor = "transparent",
-               lineColor = "transparent",
-               majorGridLineColor = "transparent",
-               minorGridLineColor = "transparent",
-               tickColor = "transparent"),
-  plotOptions = list(line = list(marker = list(enabled = FALSE)),
-                     spline = list(marker = list(enabled = FALSE)),
-                     area = list(marker = list(enabled = FALSE)),
-                     areaspline = list(marker = list(enabled = FALSE)),
-                     arearange = list(marker = list(enabled = FALSE)),
-                     bubble = list(maxSize = "10%")))
+  title = list(
+    align = "center",
+    style = list(
+      fontFamily = "Graphik",
+      fontWeight = "bold",
+      color = neutralBlackText,
+      fontSize = "18px"
+    )
+  ),
+  subtitle = list(
+    align = "center",
+    style = list(
+      fontFamily = "Graphik",
+      fontWeight = "bold",
+      color = neutralBlackText,
+      fontSize = "16px"
+    )
+  ),
+  legend = list(
+    align = "center",
+    verticalAlign = "top",
+    itemStyle = list(color = neutralBlackText)
+  ),
+  xAxis = list(
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText)),
+    gridLineColor = "transparent",
+    lineColor = "transparent",
+    minorGridLineColor = "transparent",
+    tickColor = "transparent"
+  ),
+  yAxis = list(
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText)),
+    gridLineColor = "transparent",
+    lineColor = "transparent",
+    majorGridLineColor = "transparent",
+    minorGridLineColor = "transparent",
+    tickColor = "transparent"
+  ),
+  plotOptions = list(
+    line = list(marker = list(enabled = FALSE)),
+    spline = list(marker = list(enabled = FALSE)),
+    area = list(marker = list(enabled = FALSE)),
+    areaspline = list(marker = list(enabled = FALSE)),
+    arearange = list(marker = list(enabled = FALSE)),
+    bubble = list(maxSize = "10%"),
+    column = list(
+      dataLabels = list(
+        style = list(color = neutralBlackText)
+      )
+    )
+  )
+)
+
 
 # Highcharts theme for plots
 hc_theme_jc_pie <- hc_theme(
@@ -202,6 +259,44 @@ hc_theme_jc_pie <- hc_theme(
          areaspline = list(marker = list(enabled = FALSE)),
          arearange = list(marker = list(enabled = FALSE)),
          bubble = list(maxSize = "10%")))
+
+# Highcharts theme for plots
+hc_theme_jc_minimal <- hc_theme(
+
+  # colors = c(orange, yellow, red, purple, darkblue, teal, blue, neutralBkgndMedium),
+  colors = c(orange, yellow, purple, darkblue, teal, blue),
+
+  chart = list(style = list(fontFamily = "Graphik",
+                            color      = neutralBlackText)),
+  title = list(align = "center",
+               style = list(fontFamily = "Graphik",
+                            fontWeight = "bold",
+                            color = neutralBlackText,
+                            fontSize   = "18px")),
+  subtitle = list(align = "center",
+                  style = list(fontFamily = "Graphik",
+                               fontWeight = "bold",
+                               color = neutralBlackText,
+                               fontSize   = "16px")),
+  chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
+  legend = list(align = "center", verticalAlign = "top"),
+  xAxis = list(labels = list(enabled = FALSE),
+               gridLineColor = "transparent",
+               lineColor = "transparent",
+               minorGridLineColor = "transparent",
+               tickColor = "transparent"),
+  yAxis = list(labels = list(enabled = FALSE),
+               gridLineColor = "transparent",
+               lineColor = "transparent",
+               majorGridLineColor = "transparent",
+               minorGridLineColor = "transparent",
+               tickColor = "transparent"),
+  plotOptions = list(line = list(marker = list(enabled = FALSE)),
+                     spline = list(marker = list(enabled = FALSE)),
+                     area = list(marker = list(enabled = FALSE)),
+                     areaspline = list(marker = list(enabled = FALSE)),
+                     arearange = list(marker = list(enabled = FALSE)),
+                     bubble = list(maxSize = "10%")))
 
 # Highcharts download buttons
 hc_setup <- function(x) {
@@ -293,12 +388,12 @@ fnc_pie_chart <- function(df,
     hc_chart(plotBackgroundColor = "none",
              plotBorderWidth = 0,
              plotShadow = FALSE,
-             margin = c(0, 0, 0, 0),
+             margin = c(18, 0, 18, 0),
              spacing = c(0, 0, 0, 0)) %>%
     hc_yAxis(maxPadding = 0) %>%
-
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(pie = list(startAngle = 100),
                    series = list(animation = FALSE,
                                  cursor = "pointer",
