@@ -1,4 +1,6 @@
 
+load(file = paste0(sp_data_path, "/data/analysis/robinainfo.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/robinadefinitions.rds"))
 
 # State Donuts
 load(file = paste0(sp_data_path, "/data/analysis/all_donut_currently_eligible.rds"))

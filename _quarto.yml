@@ -17,7 +17,7 @@ website:
       - text: "State Reports"
         menu:
           - text: "Georgia"
-            href: georgia.html
+            href: state_report_Georgia.html
       - text: "Drafts"
         menu:
           - text: "Georgia"

@@ -37,7 +37,7 @@ library(htmlwidgets)
 library(sf)
 library(jsonlite)
 library(geojsonsf)
-
+library(openxlsx)
 
 # CHANGE THIS TO YOUR PROJECT PATH
 csg_set_project_path(

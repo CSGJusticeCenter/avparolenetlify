@@ -247,7 +247,7 @@ all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
   xaxis_order <- df1$offgeneral
   highcharts <-
     highchart() %>%
-    hc_chart(margin = c(80, 0, 50, 0)) %>%
+    hc_chart(margin = c(90, 0, 50, 0)) %>%
     hc_add_series(df1, type = "column",
                   hcaes(x = factor(offgeneral), y = prop*100, color = offgeneral),
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
@@ -415,7 +415,7 @@ all_bar_released_at_ped_2020 <- setNames(all_bar_released_at_ped_2020, states)
 # those released after the PED, by maximum sentence length?
 
 # Get list of states
-states <- unique(ncrp_time_between_release_ped$state)
+states <- unique(ncrp_time_between_release_ped_2020$state)
 
 all_time_between_release_ped_2020 <- map(.x = states, .f = function(x) {
 
@@ -472,10 +472,10 @@ all_time_between_release_ped_2020 <- setNames(all_time_between_release_ped_2020,
 # Bar graph of proportion of population by demographic released year of PED
 
 # Get list of states
-states <- unique(ncrp_time_between_release_ped_by_race$state)
+states <- unique(ncrp_time_between_release_ped_2020_by_race$state)
 
 all_time_between_release_ped_2020_by_race <- map(.x = states, .f = function(x) {
-  df1 <- ncrp_time_between_release_ped_by_race %>% filter(state == x)
+  df1 <- ncrp_time_between_release_ped_2020_by_race %>% filter(state == x)
 
   highcharts <- highchart() %>%
     hc_chart(type = "column") %>%
@@ -578,62 +578,6 @@ all_state_bar_prop_sentence_length <- map(.x = states, .f = function(x) {
 all_state_bar_prop_sentence_length <- setNames(all_state_bar_prop_sentence_length, states)
 
 
-
-
-
-
-
-
-
-# # How long after eligibility does release occur?
-#
-# # Get list of states
-# states <- unique(ncrp_releases_clean$state)
-#
-# data1 <- ncrp_releases_clean %>% filter(state == "Georgia") %>%
-#   select(names())
-#
-# # Calculate time difference
-# time_diff <- data1$time_between_release_ped
-#
-# # Create ordered time difference variable
-# time_diff_ordered <-
-#   factor(time_diff,
-#          levels = c(sort(unique(time_diff[time_diff < 0]),
-#                          decreasing = FALSE), 0,
-#                     sort(unique(time_diff[time_diff > 0]))))
-#
-# # Calculate count and percentages
-# count <- table(time_diff_ordered)
-# percent <- count / sum(count) * 100
-#
-# # Create Highchart
-# library(highcharter)
-#
-# highchart() %>%
-#   hc_chart(type = "column") %>%
-#   hc_title(text = "Distribution of release years relative to parole eligibility") %>%
-#   hc_xAxis(categories = levels(time_diff_ordered), title = list(text = "Year(s) Delay")) %>%
-#   hc_add_series(name = "Percentage", data = percent) %>%
-#   hc_plotOptions(column = list(color = "#00aba0")) %>%
-#   hc_legend(enabled = FALSE) %>%
-#   hc_tooltip(pointFormat = "<b>{point.y}%</b> releases with <b>{point.category} year(s)</b> delay") %>%
-#   hc_yAxis(title = list(text = "Percentage of all releases"), labels = list(format = "{value}%"))
-#
-#
-#
-#
-# all_bar_release_vs_ped <- map(.x = states,  .f = function(x) {
-#   df1 <- ncrp_released_at_ped %>% filter(state == x)
-#   highcharts <-
-#     fnc_pct_bar_chart()
-#   return(highcharts)
-# })
-#
-# all_bar_release_vs_ped <- setNames(all_bar_release_vs_ped, states)
-#
-#
-#
 
 
 

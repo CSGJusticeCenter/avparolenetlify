@@ -7,6 +7,10 @@
 #    Import NCRP data (admissions, population, year end population)
 #######################################
 
+# load prison sentencing system info from Robina
+robinainfo <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
+robinadefinitions <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
+
 # load NCRP data
 # https://www.icpsr.umich.edu/web/NACJD/studies/38492
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0001/38492-0001-Data.rda"))
@@ -144,6 +148,8 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 for (folder in theseFOLDERS){
 
   save(hex_gj, file=file.path(folder, "hex_gj.rds"))
+  save(robinadefinitions, file=file.path(folder, "robinadefinitions.rds"))
+  save(robinainfo, file=file.path(folder, "robinainfo.rds"))
 
 }
 

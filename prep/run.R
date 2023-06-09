@@ -10,4 +10,6 @@ source("prep/08_disparities_ncrp.R")
 source("prep/09_parole_aps.R")
 source("prep/10_parole_findings_ncrp_aps.R")
 source("prep/11_highchart.R")
-source("prep/12_map.R")
+
+# render all QMDs
+# quarto_render()
