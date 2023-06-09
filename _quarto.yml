@@ -18,10 +18,6 @@ website:
         menu:
           - text: "Georgia"
             href: state_report_Georgia.html
-      - text: "Drafts"
-        menu:
-          - text: "Georgia"
-            href: georgia_all.html
 
 format:
   html:
