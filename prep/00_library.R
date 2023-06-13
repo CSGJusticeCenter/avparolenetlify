@@ -2,9 +2,9 @@
 # Project: AV Parole
 # File: library.R
 # Authors: Mari Roberts
-# Date last updated: May 5, 2023 (MAR)
+# Date last updated: June 12, 2023 (MAR)
 # Description:
-#    Load packages and custom functions
+#    Load packages, colors, fonts
 #######################################
 
 ##########

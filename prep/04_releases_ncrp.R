@@ -9,7 +9,7 @@
 
 
 
-ncrp_releases_clean <- ncrp_releases %>%
+ncrp_sentlgth_timesrvd_rel <- ncrp_releases %>%
 
   # create order for sentence length and time served length
   # for example, <1 is 1 and 1-1.9 is 2, and so on
@@ -70,7 +70,7 @@ ncrp_releases_clean <- ncrp_releases %>%
 ########################################
 
 # count number of people released to parole by year and state
-ncrp_released_to_parole <- ncrp_releases_clean %>%
+ncrp_released_to_parole <- ncrp_sentlgth_timesrvd_rel %>%
   filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
   filter(state != "Alabama") %>%
   filter(reltype != "Other release (including death, transfer, AWOL, escape)") %>%
@@ -98,7 +98,7 @@ ncrp_released_to_parole <- ncrp_releases_clean %>%
 
 
 # Subset to 2020 report
-ncrp_releases_2020 <- ncrp_releases_clean %>%
+ncrp_releases_2020 <- ncrp_sentlgth_timesrvd_rel %>%
   filter(rptyear == 2020)
 # filter(!is.na(admityr) &
 # !is.na(parelig_year_clean) &
@@ -125,7 +125,49 @@ ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
+# How many people are being released at first eligibility by adm type?
+ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
+  # remove states with NA's
+  filter(!is.na(released_at_ped_status) &
+         !is.na(admtype) &
+           state != "Illinois") %>%
+  group_by(state, admtype) %>%
+  count(released_at_ped_status) %>%
+  mutate(prop = n/sum(n),
+         prop_label = paste0(round(prop*100, 0), "%"),
+         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Timing of Release: <b>",
+                  released_at_ped_status,
+                  "</b><br><br>",
+                  "Number of People: <b>",
+                  scales::comma(n),
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
 
+# How many people are being released at first eligibility by offgeneral?
+ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
+  # remove states with NA's
+  filter(!is.na(released_at_ped_status) &
+           !is.na(offgeneral) &
+           state != "Illinois") %>%
+  group_by(state, offgeneral) %>%
+  count(released_at_ped_status) %>%
+  mutate(prop = n/sum(n),
+         prop_label = paste0(round(prop*100, 0), "%"),
+         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Timing of Release: <b>",
+                  released_at_ped_status,
+                  "</b><br><br>",
+                  "Number of People: <b>",
+                  scales::comma(n),
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
 
 
 
@@ -307,14 +349,6 @@ ncrp_time_between_release_ped_2020_by_race <-
 
 
 
-########################################
-
-# Grouped bar chart of conditional and unconditional releases
-
-########################################
-
-
-
 
 
 
@@ -330,9 +364,9 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(ncrp_released_at_ped_2020,                        file=file.path(folder, "ncrp_released_at_ped_2020.rds"))
-  save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
-  save(ncrp_released_to_parole,                     file=file.path(folder, "ncrp_released_to_parole.rds"))
+  save(ncrp_released_at_ped_2020,                    file=file.path(folder, "ncrp_released_at_ped_2020.rds"))
+  save(ncrp_released_to_parole,                      file=file.path(folder, "ncrp_released_to_parole.rds"))
+  save(ncrp_released_to_parole,                      file=file.path(folder, "ncrp_released_to_parole.rds"))
 
   save(ncrp_people_released_early_race,              file=file.path(folder, "ncrp_people_released_early_race.rds"))
   save(ncrp_people_released_early_sex,               file=file.path(folder, "ncrp_people_released_early_sex.rds"))
@@ -340,8 +374,8 @@ for (folder in theseFOLDERS){
   save(ncrp_people_released_early_age_median,        file=file.path(folder, "ncrp_people_released_early_age_median.rds"))
   save(ncrp_people_released_early_education_median,  file=file.path(folder, "ncrp_people_released_early_education_median.rds"))
 
-  save(ncrp_time_between_release_ped_2020,               file=file.path(folder, "ncrp_time_between_release_ped_2020.rds"))
-  save(ncrp_time_between_release_ped_2020_by_race,       file=file.path(folder, "ncrp_time_between_release_ped_2020_by_race.rds"))
+  save(ncrp_time_between_release_ped_2020,           file=file.path(folder, "ncrp_time_between_release_ped_2020.rds"))
+  save(ncrp_time_between_release_ped_2020_by_race,   file=file.path(folder, "ncrp_time_between_release_ped_2020_by_race.rds"))
 
 
 }

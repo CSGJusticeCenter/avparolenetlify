@@ -1,3 +1,84 @@
+#######################################
+# Project: AV Parole
+# File: functions.R
+# Authors: Mari Roberts
+# Date last updated: June 12, 2023 (MAR)
+# Description:
+#    Custom functions
+#######################################
+
+
+
+###################
+# Data prep
+###################
+
+# prepare annual parole survey data for analysis
+fnc_aps_prepare <- function(df){
+
+  df <- df %>%
+    mutate(rptyear = as.numeric(rptyear)) %>%
+    select(state,
+           rptyear,
+           endisrel,
+           enmanrel,
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
+    mutate(released_to_parole =
+             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
+                     na.rm = TRUE),
+           released_to_parole =
+             ifelse(released_to_parole == 0, NA, released_to_parole))
+
+  return(df)
+}
+
+# prepare annual parole survey data for analysis
+# before 2008, there was no enreltsr variable so make NA
+fnc_aps_prepare_pre2008 <- function(df){
+
+  df <- df %>%
+    mutate(enreltsr = NA,
+           rptyear = as.numeric(rptyear)) %>%
+    select(state,
+           rptyear,
+           endisrel,
+           enmanrel,
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
+    mutate(released_to_parole =
+             rowSums(.[c("endisrel", "enmanrel")],
+                     na.rm = TRUE),
+           released_to_parole =
+             ifelse(released_to_parole == 0, NA, released_to_parole))
+
+  return(df)
+}
+
+
+# custom function to create parole eligibility status
+# if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
+# if year of parole eligibility is more than or equal to year reported to NCRP, then "eligible for parole in the future"
+# if year of parole eligibility NA, then "missing data on parole eligibility"
+fnc_create_parelig_status <- function(df){
+
+  df %>%
+    mutate(time_between_ped_rptyear = parelig_year - rptyear) %>%
+    mutate(
+      parelig_status = case_when(
+        parelig_year <=  rptyear ~ "Current",
+        parelig_year > rptyear & time_between_ped_rptyear <= 5  ~ "Future 1-5 Years",
+        parelig_year > rptyear & time_between_ped_rptyear > 5  ~ "Future 6+ Years",
+        is.na(parelig_year) ~ "Missing"),
+      parelig_status = factor(parelig_status,
+                              levels = c("Current",
+                                         "Future 1-5 Years",
+                                         "Future 6+ Years",
+                                         "Missing")))
+
+}
+
+
 
 
 
@@ -406,73 +487,3 @@ fnc_pie_chart <- function(df,
 }
 
 
-
-
-###################
-# Data prep
-###################
-
-# prepare annual parole survey data for analysis
-fnc_aps_prepare <- function(df){
-
-  df <- df %>%
-    mutate(rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-# prepare annual parole survey data for analysis
-# before 2008, there was no enreltsr variable so make NA
-fnc_aps_prepare_pre2008 <- function(df){
-
-  df <- df %>%
-    mutate(enreltsr = NA,
-           rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-
-# custom function to create parole eligibility status
-# if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
-# if year of parole eligibility is more than or equal to year reported to NCRP, then "eligible for parole in the future"
-# if year of parole eligibility NA, then "missing data on parole eligibility"
-fnc_create_parelig_status <- function(df){
-
-  df %>%
-    mutate(time_between_ped_rptyear = parelig_year - rptyear) %>%
-    mutate(
-      parelig_status = case_when(
-        parelig_year <=  rptyear ~ "Current",
-        parelig_year > rptyear & time_between_ped_rptyear <= 5  ~ "Future 1-5 Years",
-        parelig_year > rptyear & time_between_ped_rptyear > 5  ~ "Future 6+ Years",
-        is.na(parelig_year) ~ "Missing"),
-      parelig_status = factor(parelig_status,
-                              levels = c("Current",
-                                         "Future 1-5 Years",
-                                         "Future 6+ Years",
-                                         "Missing")))
-
-}

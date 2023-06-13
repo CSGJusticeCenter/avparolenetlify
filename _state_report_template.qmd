@@ -429,27 +429,55 @@ tabsetPanel(
            
   #####################################
   
-  br(), 
-
-   ############
-   # Set up for columns/Column 1
-   ############
-   div(id = "column1",
-       div(style = "flex: 0 0 50%;",
-           div(id = "pie-graph", state_pie_released_at_ped_2020), br(), br()
-       ),
-       
-       ############
-       # Column 2
-       ############
-       div(id = "column2",
-           div(id = "section-title", "TBD")
-       )
-   ),
+  br(),
   
-  br()
+  navlistPanel(
+     #id = "tabsetpanelgraph",
+      tabPanel("Parole Return/Revocation",
+               br(),
+               state_pie_released_at_ped_2020
+               ),
+      tabPanel("New Crime",
+               br(),
+               state_pie_released_at_ped_2020)
+    ),
+  
+  br(),
   
   ),
+  
+  # br(), 
+  # 
+  #  ############
+  #  # Set up for columns/Column 1
+  #  ############
+  #  div(id = "column1",
+  #      div(style = "flex: 0 0 50%;",
+  #          # div(id = "pie-graph", state_pie_released_at_ped_2020), br(), br()
+  #          # tags$style(type = "text/css", ".nav-tabs { justify-content: center; border-bottom: 1px solid #fff;}"),
+  #             tabsetPanel(
+  #               id = "tabsetpanelgraph",
+  #               tabPanel("Parole Return/Revocation",
+  #                        br(),
+  #                        state_pie_released_at_ped_2020
+  #                        ),
+  #               tabPanel("New Crime",
+  #                        br(),
+  #                        state_pie_released_at_ped_2020)
+  #             )
+  #      ),
+  #      
+  #      ############
+  #      # Column 2
+  #      ############
+  #      div(id = "column2",
+  #          div(id = "section-title", "TBD")
+  #      )
+  #  ),
+  # 
+  # br()
+  # 
+  # ),
   
   #####################################
   

@@ -583,6 +583,28 @@ all_state_bar_prop_sentence_length <- setNames(all_state_bar_prop_sentence_lengt
 
 
 
+
+
+ncrp_sentlgth_timesrvd_rel
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##########
 # Save data
 ##########

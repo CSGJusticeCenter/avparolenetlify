@@ -33,5 +33,5 @@ replace_write_qmd <- function(state) {
 # iterate over replacement values and write new qmds
 walk(states_qmd, replace_write_qmd)
 
-# render all QMDs
-quarto::quarto_render()
+# # render all QMDs
+# quarto::quarto_render()

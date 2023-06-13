@@ -39,8 +39,19 @@ parole_eligibility_table_2020 <- parole_eligibility_table %>%
 
 # missing data
 # Arizona, Michigan, New Jersey, New Mexico
-parole_eligibility_missing_states_2020 <-
-  paste(state.name[!state.name %in% parole_eligibility_table_2020$state], collapse = ", ")
+missing_states <- state.name[!state.name %in% parole_eligibility_table_2020$state]
+
+# create a new dataframe with the missing states and NA values
+missing_data <- tibble(state = missing_states)
+missing_data <- missing_data %>% mutate(rptyear = 2020)
+
+# combine the missing data with the original dataframe
+parole_eligibility_table_2020 <- bind_rows(parole_eligibility_table_2020, missing_data) %>%
+  arrange(state)
+
+
+
+
 
 
 
@@ -136,7 +147,57 @@ parole_eligibility_rate_by_admtype <- ncrp_yearendpop %>%
                               "Parole return/revocation:<br>",
                               paste(round(prop, 1), "%</b>", sep = ""), "<br>")))
 
+# get number and percentage of eligibility statuses by adm type (new court committment by parole eligibility status)
+parole_eligibility_admtype_counts <- ncrp_yearendpop %>%
+  filter(admtype == "Parole return/revocation" |
+           admtype == "New court commitment") %>%
+  group_by(state, rptyear, admtype) %>%
+  count(parelig_status) %>%
+  mutate(
+    prop = n/sum(n),
+    yearendpop = sum(n)
+  ) %>%
+  ungroup()
 
+# reformat for table viewing
+parole_eligibility_admtype_table <- parole_eligibility_admtype_counts %>%
+  pivot_longer(cols = c(n, prop), names_to = "type", values_to = "value") %>%
+  mutate(name = case_when(
+    type == "n"    ~ paste(parelig_status, "count"),
+    type == "prop" ~ paste(parelig_status, "perc.")
+  )) %>%
+  select(state, rptyear, admtype, yearendpop, name, value) %>%
+  pivot_wider(names_from = name, values_from = value) %>%
+  clean_names()
+
+# filter to 2020
+parole_eligibility_admtype_table_2020 <- parole_eligibility_admtype_table %>%
+  filter(rptyear == 2020)
+
+parole_eligibility_admtype_table_2020 <- parole_eligibility_admtype_table_2020 %>%
+  pivot_wider(names_from = admtype,
+              values_from = c(yearendpop,
+                              missing_count,
+                              missing_perc,
+                              current_count,
+                              current_perc,
+                              future_1_5_years_count,
+                              future_1_5_years_perc,
+                              future_6_years_count,
+                              future_6_years_perc),
+              names_sep = "_")
+
+# missing data
+# Arizona, Michigan, New Jersey, New Mexico
+missing_states <- state.name[!state.name %in% parole_eligibility_admtype_table_2020$state]
+
+# create a new dataframe with the missing states and NA values
+missing_data <- tibble(state = missing_states)
+missing_data <- missing_data %>% mutate(rptyear = 2020)
+
+# combine the missing data with the original dataframe
+parole_eligibility_admtype_table_2020 <- bind_rows(parole_eligibility_admtype_table_2020, missing_data) %>%
+  arrange(state)
 
 
 

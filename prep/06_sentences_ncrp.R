@@ -67,7 +67,7 @@ ncrp_10yrs_2020 <- ncrp_releases_clean %>%
 
 ########################################
 
-# Change in Life/LWOP over time
+# Proportion of sentence served
 
 ########################################
 

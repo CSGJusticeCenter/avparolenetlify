@@ -1,3 +1,43 @@
+
+
+
+#tabsetpanelgraph {
+  border-bottom: 1px solid #fff;
+}
+
+/*
+#tabsetpanelgraph {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #fff;
+  float: left;
+  width: 50%;
+  height: 100%;
+}*/
+/*
+#tabsetpanelgraph {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-bottom: 1px solid #fff;
+}*/
+
+/*
+#tabsetpanelgraph .nav-tabs {
+  flex-direction: column;
+}
+#tabsetpanelgraph .nav-tabs .nav-item {
+  width: 100%;
+}
+#tabsetpanelgraph .nav-tabs .nav-link {
+  text-align: center;
+}*/
+
+
+
+
+
+
 .tooltip {
   position: relative;
   display: inline-block;

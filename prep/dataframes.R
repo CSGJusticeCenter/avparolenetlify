@@ -1,6 +1,34 @@
 
+# Robina Institute information
 load(file = paste0(sp_data_path, "/data/analysis/robinainfo.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/robinadefinitions.rds"))
+
+# Timing of release from parole eligibility year by adm type and offense type
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_publicorder_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_property_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_other_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_drugs_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_newcrime_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_parolereturn_2020.rds"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # State Donuts
 load(file = paste0(sp_data_path, "/data/analysis/all_donut_currently_eligible.rds"))
