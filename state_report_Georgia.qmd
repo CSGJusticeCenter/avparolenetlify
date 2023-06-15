@@ -38,7 +38,6 @@ source("prep/dataframes.R")
 state_for_report <- "Georgia"
 ```
 
-
 ```{r}
 prison_sentencing_system_info <- HTML("Prison Sentencing<br>System&#9432;")
 
