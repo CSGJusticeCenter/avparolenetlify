@@ -8,7 +8,7 @@
 #    by race, sex, admtype, offgeneral, sentlngth
 
 # Input:
-# ncrp_releases_clean - created in releases_ncrp.R
+# ncrp_sentlgth_timesrvd_rel - created in releases_ncrp.R
 
 # Output
 # all_pp_by_variable - used for app
@@ -20,8 +20,8 @@ library(broom)
 library(broom.helpers)
 
 # prepare data for analysis
-# ncrp_releases_clean created in releases_ncrp.R
-ncrp_pp_model_data <- ncrp_releases_clean %>%
+# ncrp_sentlgth_timesrvd_rel created in releases_ncrp.R
+ncrp_pp_model_data <- ncrp_sentlgth_timesrvd_rel %>%
   # filter to 2020 report year
   # remove releases that were classified as "other"
   filter(rptyear == 2020) %>%

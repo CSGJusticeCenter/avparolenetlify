@@ -3,6 +3,27 @@
 load(file = paste0(sp_data_path, "/data/analysis/robinainfo.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/robinadefinitions.rds"))
 
+# Timing of release from parole eligibility year by adm type
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_admtype_2020.rds"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Timing of release from parole eligibility year by adm type and offense type
 load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_pie_released_at_ped_publicorder_2020.rds"))

@@ -173,18 +173,43 @@ pe_criteria_table2 <- reactable(
   }
 )
 
-# pie chart
-state_pie_released_at_ped_2020 <- 
-  all_pie_released_at_ped_2020[[state_for_report]] %>% 
-  hc_size(height = 180, width = 475) %>% 
-  hc_colors(colors = c(orange, yellow, teal)) %>% 
-  hc_title(text = "Timing of Parole Eligibility and Release in 2020")
 
-# bar chart for most serious sentenced offense
-state_bar_parole_elgibility_offense <- 
-  all_bar_parole_elgibility_offense[[state_for_report]] %>% 
-  hc_size(height = 300, width = 475) %>% 
-  hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
+
+
+
+###################
+
+# Releases from Prison
+
+###################
+
+
+# # pie chart overall
+# state_pie_released_at_ped_2020 <- 
+#   all_pie_released_at_ped_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release in 2020")
+# 
+# # pie chart new crime
+# state_pie_released_at_ped_newcrime_2020 <- 
+#   all_pie_released_at_ped_newcrime_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release for People in Prison for Parole Returns/Revocations in 2020")
+# 
+# # pie chart parole return/revocation
+# state_pie_released_at_ped_parolereturn_2020 <- 
+#   all_pie_released_at_ped_parolereturn_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release for People in Prison for New Crimes in 2020")
+# 
+# # bar chart for most serious sentenced offense
+# state_bar_parole_elgibility_offense <- 
+#   all_bar_parole_elgibility_offense[[state_for_report]] %>% 
+#   hc_size(height = 300, width = 475) %>% 
+#   hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
 
 # # bar chart - using pie instead
 # state_bar_released_at_ped_2020 <- 
@@ -198,12 +223,12 @@ state_bar_parole_elgibility_offense <-
 #   hc_size(height = 300, width = 475) %>% 
 #   hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
 
-###################
 
-# Releases from Prison
-
-###################
-
+# save adm type by release timing by state
+state_bar_released_at_ped_admtype_2020 <-
+  all_bar_released_at_ped_admtype_2020[[state_for_report]] %>%
+  hc_size(height = 300, width = 475) %>%
+  hc_title(text = "Timing of Release by Parole Eligibility and Admission Type in 2020")
 
 
 
@@ -431,18 +456,27 @@ tabsetPanel(
   
   br(),
   
-  navlistPanel(
-     #id = "tabsetpanelgraph",
-      tabPanel("Parole Return/Revocation",
-               br(),
-               state_pie_released_at_ped_2020
-               ),
-      tabPanel("New Crime",
-               br(),
-               state_pie_released_at_ped_2020)
-    ),
+  div(id = "graphcontainer", 
+      state_bar_released_at_ped_admtype_2020
+      
+      )
   
-  br(),
+  # tabsetPanel(
+  #     id = "tabsetpanelgraph",
+  #     tabPanel("Parole Return/Revocation",
+  #              br(),
+  #              state_pie_released_at_ped_2020
+  #              ),
+  #     tabPanel("Parole Return/Revocation",
+  #              br(),
+  #              state_pie_released_at_ped_parolereturn_2020
+  #              ),
+  #     tabPanel("New Crime",
+  #              br(),
+  #              state_pie_released_at_ped_newcrime_2020)
+  #   ),
+  # 
+  # br(),
   
   ),
   

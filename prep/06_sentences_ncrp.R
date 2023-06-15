@@ -43,7 +43,7 @@ ncrp_sentences <- ncrp_admissions %>%
 ########################################
 
 # Subset to 2020 report
-ncrp_10yrs_2020 <- ncrp_releases_clean %>%
+ncrp_10yrs_2020 <- ncrp_sentlgth_timesrvd_rel %>%
   filter(rptyear == 2020) %>%
   filter(reltype == "Conditional release" |
          reltype == "Unconditional release") %>%

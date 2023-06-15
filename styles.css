@@ -426,3 +426,13 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+
+#graphcontainer{
+  max-width: 600px;
+  margin: 0 auto; /* center the content horizontally */
+}
+
+#tabsetpanel{
+  margin: 0 auto; /* center the content horizontally */
+}
