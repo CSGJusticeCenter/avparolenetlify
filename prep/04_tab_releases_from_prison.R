@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: ncrp_releases.R
 # Authors: Mari Roberts
-# Date last updated: June 12, 2023 (MAR)
+# Date last updated: June 16, 2023 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -74,8 +74,8 @@ ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
   filter(!is.na(released_at_ped_status)) %>%
   group_by(state) %>%
   count(released_at_ped_status) %>%
-  mutate(prop = n/sum(n),
-         prop_label = paste0(round(prop*100, 0), "%"),
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
          chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
@@ -95,8 +95,8 @@ ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
            !is.na(admtype)) %>%
   group_by(state, admtype) %>%
   count(released_at_ped_status) %>%
-  mutate(prop = n/sum(n),
-         prop_label = paste0(round(prop*100, 0), "%"),
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
          chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
@@ -116,8 +116,8 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
            !is.na(offgeneral)) %>%
   group_by(state, offgeneral) %>%
   count(released_at_ped_status) %>%
-  mutate(prop = n/sum(n),
-         prop_label = paste0(round(prop*100, 0), "%"),
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
          chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
@@ -138,51 +138,81 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
 
 ##################
 
+# assign x axis order
+desired_order <- c("Released Before Parole Eligibility Year",
+                   "Released on Parole Eligibility Year",
+                   "Released After Parole Eligibility Year")
+
 # Get list of states
 states <- unique(ncrp_released_at_ped_2020$state)
 
-all_pie_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_2020 %>% filter(state == x)
-  highcharts <- fnc_pie_chart(df = df1,
+all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_released_at_ped_2020 %>% filter(state == x) %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_2020 <- setNames(all_pie_released_at_ped_2020, states)
+all_bar_released_at_ped_2020 <- setNames(all_bar_released_at_ped_2020, states)
+all_bar_released_at_ped_2020$California
+
+
+
+
 
 # Get list of states
 states <- unique(ncrp_released_at_ped_admtype_2020$state)
 
-all_pie_released_at_ped_parolereturn_2020 <- map(.x = states,  .f = function(x) {
+all_bar_released_at_ped_parolereturn_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_admtype_2020 %>%
     filter(state == x) %>%
-    filter(admtype == "Parole return/revocation")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(admtype == "Parole return/revocation") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_parolereturn_2020 <- setNames(all_pie_released_at_ped_parolereturn_2020, states)
+all_bar_released_at_ped_parolereturn_2020 <- setNames(all_bar_released_at_ped_parolereturn_2020, states)
+all_bar_released_at_ped_parolereturn_2020$California
 
-all_pie_released_at_ped_newcrime_2020 <- map(.x = states,  .f = function(x) {
+
+
+
+
+
+all_bar_released_at_ped_newcrime_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_admtype_2020 %>%
     filter(state == x) %>%
-    filter(admtype == "New court commitment")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(admtype == "New court commitment") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_newcrime_2020 <- setNames(all_pie_released_at_ped_newcrime_2020, states)
+all_bar_released_at_ped_newcrime_2020 <- setNames(all_bar_released_at_ped_newcrime_2020, states)
+all_bar_released_at_ped_newcrime_2020$California
+
+
+
+
 
 # Get list of states
 states <- unique(ncrp_released_at_ped_admtype_2020$state)
@@ -201,19 +231,19 @@ all_bar_released_at_ped_admtype_2020 <- map(.x = states,  .f = function(x) {
                   type = "column",
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontWeight = "regular")),
-                  hcaes(x = admtype, y = prop * 100)) %>%
+                  hcaes(x = admtype, y = prop)) %>%
     hc_add_series(data = subset(df1, released_at_ped_status == "Released on Parole Eligibility Year"),
                   name = "Released on Parole Eligibility Year",
                   type = "column",
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontWeight = "regular")),
-                  hcaes(x = admtype, y = prop * 100)) %>%
+                  hcaes(x = admtype, y = prop)) %>%
     hc_add_series(data = subset(df1, released_at_ped_status == "Released After Parole Eligibility Year"),
                   name = "Released After Parole Eligibility Year",
                   type = "column",
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontWeight = "regular")),
-                  hcaes(x = admtype, y = prop * 100)) %>%
+                  hcaes(x = admtype, y = prop)) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_colors(colors = c(yellow, teal, orange)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
@@ -233,8 +263,7 @@ all_bar_released_at_ped_admtype_2020 <- map(.x = states,  .f = function(x) {
 })
 
 all_bar_released_at_ped_admtype_2020 <- setNames(all_bar_released_at_ped_admtype_2020, states)
-
-all_bar_released_at_ped_admtype_2020$California
+all_bar_released_at_ped_admtype_2020$Georgia
 
 
 
@@ -258,19 +287,27 @@ states <- ncrp_released_at_ped_offgeneral_2020 %>%
   pull(state) %>%
   unique()
 
-all_pie_released_at_ped_drugs_2020 <- map(.x = states,  .f = function(x) {
+all_bar_released_at_ped_drugs_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
     filter(state == x) %>%
-    filter(offgeneral == "Drugs")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(offgeneral == "Drugs") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_drugs_2020 <- setNames(all_pie_released_at_ped_drugs_2020, states)
+all_bar_released_at_ped_drugs_2020 <- setNames(all_bar_released_at_ped_drugs_2020, states)
+all_bar_released_at_ped_drugs_2020$California
+
+
+
+
 
 # Get list of states
 states <- ncrp_released_at_ped_offgeneral_2020 %>%
@@ -278,19 +315,28 @@ states <- ncrp_released_at_ped_offgeneral_2020 %>%
   pull(state) %>%
   unique()
 
-all_pie_released_at_ped_other_2020 <- map(.x = states,  .f = function(x) {
+all_bar_released_at_ped_other_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
     filter(state == x) %>%
-    filter(offgeneral == "Other/unspecified")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(offgeneral == "Other/unspecified") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_other_2020 <- setNames(all_pie_released_at_ped_other_2020, states)
+all_bar_released_at_ped_other_2020 <- setNames(all_bar_released_at_ped_other_2020, states)
+all_bar_released_at_ped_other_2020$California
+
+
+
+
+
 
 # Get list of states
 states <- ncrp_released_at_ped_offgeneral_2020 %>%
@@ -298,19 +344,28 @@ states <- ncrp_released_at_ped_offgeneral_2020 %>%
   pull(state) %>%
   unique()
 
-all_pie_released_at_ped_property_2020 <- map(.x = states,  .f = function(x) {
+all_bar_released_at_ped_property_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
     filter(state == x) %>%
-    filter(offgeneral == "Property")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(offgeneral == "Property") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_property_2020 <- setNames(all_pie_released_at_ped_property_2020, states)
+all_bar_released_at_ped_property_2020 <- setNames(all_bar_released_at_ped_property_2020, states)
+all_bar_released_at_ped_property_2020$California
+
+
+
+
+
 
 # Get list of states
 states <- ncrp_released_at_ped_offgeneral_2020 %>%
@@ -318,38 +373,87 @@ states <- ncrp_released_at_ped_offgeneral_2020 %>%
   pull(state) %>%
   unique()
 
-all_pie_released_at_ped_publicorder_2020 <- map(.x = states,  .f = function(x) {
+all_bar_released_at_ped_publicorder_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
     filter(state == x) %>%
-    filter(offgeneral == "Public order")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(offgeneral == "Public order") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_publicorder_2020 <- setNames(all_pie_released_at_ped_publicorder_2020, states)
+all_bar_released_at_ped_publicorder_2020 <- setNames(all_bar_released_at_ped_publicorder_2020, states)
+all_bar_released_at_ped_publicorder_2020$California
+
+
+
+
 
 # Get list of states
 states <- ncrp_released_at_ped_offgeneral_2020 %>%
   filter(offgeneral == "Violent") %>%
   pull(state) %>%
   unique()
-all_pie_released_at_ped_violent_2020 <- map(.x = states,  .f = function(x) {
+all_bar_released_at_ped_violent_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
     filter(state == x) %>%
-    filter(offgeneral == "Violent")
-  highcharts <- fnc_pie_chart(df = df1,
+    filter(offgeneral == "Violent") %>%
+    arrange(match(released_at_ped_status, desired_order))
+  highcharts <- fnc_percent_bar_chart(df = df1,
                               x_variable = "released_at_ped_status",
                               y_variable = "prop",
-                              point_format = "{point.chart_label}",
+                              point_format = "{point.prop_label}",
                               accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_colors(colors = c(yellow, teal, orange))
   return(highcharts)
 })
 
-all_pie_released_at_ped_violent_2020 <- setNames(all_pie_released_at_ped_violent_2020, states)
+all_bar_released_at_ped_violent_2020 <- setNames(all_bar_released_at_ped_violent_2020, states)
+all_bar_released_at_ped_violent_2020$California
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################
+
+# Released to Parole Over Time
+
+########################################
+
+# count number of people released to parole by year and state
+ncrp_released_to_parole <- ncrp_sentlgth_timesrvd_rel %>%
+  filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
+  filter(state != "Alabama") %>%
+  filter(reltype != "Other release (including death, transfer, AWOL, escape)") %>%
+  group_by(rptyear, state) %>%
+  summarise(releases_to_parole = n())
+
+
+
 
 
 
@@ -363,24 +467,22 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_pie_released_at_ped_2020,
-       file=file.path(folder, "all_pie_released_at_ped_2020.rds"))
-  save(all_pie_released_at_ped_publicorder_2020,
-       file=file.path(folder, "all_pie_released_at_ped_publicorder_2020.rds"))
-  save(all_pie_released_at_ped_property_2020,
-       file=file.path(folder, "all_pie_released_at_ped_property_2020.rds"))
-  save(all_pie_released_at_ped_other_2020,
-       file=file.path(folder, "all_pie_released_at_ped_other_2020.rds"))
-  save(all_pie_released_at_ped_drugs_2020,
-       file=file.path(folder, "all_pie_released_at_ped_drugs_2020.rds"))
-  save(all_pie_released_at_ped_newcrime_2020,
-       file=file.path(folder, "all_pie_released_at_ped_newcrime_2020.rds"))
-  save(all_pie_released_at_ped_parolereturn_2020,
-       file=file.path(folder, "all_pie_released_at_ped_parolereturn_2020.rds"))
+  save(all_bar_released_at_ped_2020,
+       file=file.path(folder, "all_bar_released_at_ped_2020.rds"))
+  save(all_bar_released_at_ped_publicorder_2020,
+       file=file.path(folder, "all_bar_released_at_ped_publicorder_2020.rds"))
+  save(all_bar_released_at_ped_property_2020,
+       file=file.path(folder, "all_bar_released_at_ped_property_2020.rds"))
+  save(all_bar_released_at_ped_other_2020,
+       file=file.path(folder, "all_bar_released_at_ped_other_2020.rds"))
+  save(all_bar_released_at_ped_drugs_2020,
+       file=file.path(folder, "all_bar_released_at_ped_drugs_2020.rds"))
+  save(all_bar_released_at_ped_newcrime_2020,
+       file=file.path(folder, "all_bar_released_at_ped_newcrime_2020.rds"))
+  save(all_bar_released_at_ped_parolereturn_2020,
+       file=file.path(folder, "all_bar_released_at_ped_parolereturn_2020.rds"))
 
   save(all_bar_released_at_ped_admtype_2020,
        file=file.path(folder, "all_bar_released_at_ped_admtype_2020.rds"))
-
-
 
 }

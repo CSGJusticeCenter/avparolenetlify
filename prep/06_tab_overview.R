@@ -1,4 +1,5 @@
 
+
 ##########
 # Annual Parole Survey Series in 2018 data for analysis
 ##########
@@ -187,3 +188,91 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
   filter(state != "District of Columbia" &
            state != "Federal" &
            !is.na(state))
+
+
+
+
+
+
+
+########################################
+
+# Line graph data showing the change in prison population
+# and change in people released to parole
+
+########################################
+
+# get prison population by report year and state
+# merge with APS data for releases to parole/entries to parole from prison
+# aps_parole_2000_2018 table created in parole_aps.R
+# parole_eligibility_table table created in parole_eligibility_ncrp.R
+all_ncrp_aps_pop_released_to_parole_by_year <- ncrp_yearendpop %>%
+  filter(rptyear >= 2000) %>%
+  group_by(rptyear, state) %>%
+  summarise(total_prison_population = n()) %>%
+  ungroup() %>%
+  left_join(aps_parole_2000_2018,
+            by = c("state", "rptyear")) %>%
+  left_join(parole_eligibility_table,
+            by = c("state", "rptyear"))
+
+# get list of states
+states <- unique(all_ncrp_aps_pop_released_to_parole_by_year$state)
+
+all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
+
+  df1 <- all_ncrp_aps_pop_released_to_parole_by_year %>%
+    filter(state == x)
+
+  highcharts <-
+
+    highchart() %>%
+    hc_xAxis(categories = df1$rptyear,
+             labels = list(format = "{value}")) %>%
+    hc_yAxis(labels = list(format = "{value:,.0f}")) %>%
+
+    hc_series(list(name = "Prison Population",
+                   data = df1$total_prison_population),
+              # list(name = "Returned to Prison with Revocation",
+              #      data = df1$incarcerated_from_parole),
+              list(name = "Released from Prison to Parole",
+                   data = df1$released_to_parole),
+              list(name = "Parole Eligible but not Released from Prison",
+                   data = df1$current_count)) %>%
+
+    hc_add_theme(hc_theme_jc) %>%
+    hc_colors(colors = c(teal, yellow, orange)) %>%
+    hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
+
+
+  return(highcharts)
+})
+
+all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
+
+
+
+########################################
+
+# Profile of People on Parole
+
+########################################
+
+# more code examples in 04_releases_ncrp.R
+
+
+
+
+##########
+# Save data
+##########
+
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+
+for (folder in theseFOLDERS){
+
+  save(all_line_pop_released_to_parole, file=file.path(folder, "all_line_pop_released_to_parole.rds"))
+
+}

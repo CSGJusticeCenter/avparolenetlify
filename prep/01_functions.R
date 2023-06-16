@@ -476,7 +476,7 @@ fnc_pie_chart <- function(df,
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(pie = list(startAngle = 100),
+    hc_plotOptions(#pie = list(startAngle = 100),
                    series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3),
@@ -487,4 +487,39 @@ fnc_pie_chart <- function(df,
                    area = list(accessibility = list(description = accessibility_text)))
 }
 
+# Create bar chart with labels
+fnc_percent_bar_chart <- function(df,
+                          x_variable,
+                          y_variable,
+                          point_format,
+                          accessibility_text) {
+
+  df$x_variable <- get(x_variable, df)
+  df$y_variable <- get(y_variable, df)
+
+  df %>%
+    hchart("column",
+           hcaes(x = x_variable, y = y_variable),
+           dataLabels = list(
+             style = list(fontWeight = "regular",
+                          color = neutralBlackText),
+             enabled = TRUE,
+             format = point_format)) %>%
+    hc_yAxis(labels = list(format = "{value}%"),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = "")) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 colorByPoint = TRUE),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+}
 

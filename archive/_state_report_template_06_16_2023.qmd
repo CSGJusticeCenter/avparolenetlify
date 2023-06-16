@@ -35,7 +35,7 @@ source("prep/00_library.R")
 source("prep/01_functions.R")
 source("prep/dataframes.R")
 
-state_for_report <- "Georgia"
+state_for_report <- "change_me"
 ```
 
 
@@ -65,7 +65,7 @@ prison_sentencing_system_tooltip <-
 # make the tippy accessible
 prison_sentencing_system_info <- paste0('<span aria-label="', prison_sentencing_system_tooltip, '" tabindex="0" role="button">', prison_sentencing_system_info, '</span>')
 
-parole_eligibility_criteria <- subset(robinainfo, state == state_for_report)$parole_eligibility_criteria
+parole_eligibility_criteria <- c("While the grant of parole is discretionary, consideration for parole is often not; most people in prison are entitled to automatic consideration for parole. In general, this occurs after serving 1/3 of the total sentence. However, there are minimums depending on the sentence.")
 ```
 
 
@@ -93,7 +93,7 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 # and the change in releases to parole over time
 state_line_pop_released_to_parole <- 
   all_line_pop_released_to_parole[[state_for_report]] %>% 
-  hc_size(width = 600, height = 500) %>%
+  # hc_size(width = 500, height = 400) %>%
   hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
 
 
@@ -104,7 +104,74 @@ state_line_pop_released_to_parole <-
 
 ###################
 
+# create table about parole eligibility
+pe_length <- c("1/3", "6", "9", "7", "7 or 1/3")
+pe_unit   <- c("Term", "Months", "Months", "Years", "Years or Term")
+pe_sentence <- c("Generally when parole consideration occurs",
+                 "Must be served for misdemeanor sentences",
+                 "Must be served for felony sentences",
+                 "Must be served for a sentence of 21 years or more (excluding life sentences)",
+                 "Must be served for convictions of serious crimes such as aggravated assault, incest, or drug trafficking")
+pe_criteria <- data.frame(pe_length, pe_unit, pe_sentence)
 
+pe1 <- c("1/3 Term", "Generally when parole consideration occurs")
+pe2 <- c("6 Months", "Must be served for misdemeanor sentences")
+pe3 <- c("9 Months", "Must be served for felony sentences")
+pe4 <- c("7 Years", "Must be served for a sentence of 21 years or more (excluding life sentences)")
+pe5 <- c("7 Years or 1/3 Term", "Must be served for convictions of serious crimes such as aggravated assault, incest, or drug trafficking")
+
+# Reshape the data into a long format
+df1 <- data.frame(pe1, pe2, pe3)
+df2 <- data.frame(pe4, pe5)
+
+pe_criteria_table1 <- reactable(
+  data = df1,
+  sortable = FALSE,
+  style = hc_reactable_style,
+  theme = reactableTheme(borderColor = "#fff",
+                 stripedColor = "#fff",
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center")),
+  columns = list(
+    pe1 = colDef(align = "center", name = "", minWidth = 80),
+    pe2 = colDef(align = "center", name = "", minWidth = 80),
+    pe3 = colDef(align = "center", name = "", minWidth = 80)
+  ),
+  rowStyle = function(index) {
+    if (index %in% c(1)) {
+      list(fontWeight = "bold",
+           fontSize = "20px",
+           marginBottom = "-10px")
+    } else if (index %in% c(2)) {
+      list(fontSize = "14px")
+    }
+  }
+)
+
+pe_criteria_table2 <- reactable(
+  data = df2,
+  sortable = FALSE,
+  style = hc_reactable_style,
+  theme = reactableTheme(borderColor = "#fff",
+                 stripedColor = "#fff",
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center")),
+  columns = list(
+    pe4 = colDef(align = "center", name = "", minWidth = 80),
+    pe5 = colDef(align = "center", name = "", minWidth = 80)
+  ),
+  rowStyle = function(index) {
+    if (index %in% c(1)) {
+      list(fontWeight = "bold",
+           fontSize = "20px",
+           marginBottom = "-10px")
+    } else if (index %in% c(2)) {
+      list(fontSize = "14px")
+    }
+  }
+)
 
 
 
@@ -115,6 +182,47 @@ state_line_pop_released_to_parole <-
 # Releases from Prison
 
 ###################
+
+
+# # pie chart overall
+# state_pie_released_at_ped_2020 <- 
+#   all_pie_released_at_ped_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release in 2020")
+# 
+# # pie chart new crime
+# state_pie_released_at_ped_newcrime_2020 <- 
+#   all_pie_released_at_ped_newcrime_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release for People in Prison for Parole Returns/Revocations in 2020")
+# 
+# # pie chart parole return/revocation
+# state_pie_released_at_ped_parolereturn_2020 <- 
+#   all_pie_released_at_ped_parolereturn_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release for People in Prison for New Crimes in 2020")
+# 
+# # bar chart for most serious sentenced offense
+# state_bar_parole_elgibility_offense <- 
+#   all_bar_parole_elgibility_offense[[state_for_report]] %>% 
+#   hc_size(height = 300, width = 475) %>% 
+#   hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
+
+# # bar chart - using pie instead
+# state_bar_released_at_ped_2020 <- 
+#   all_bar_released_at_ped_2020[[state_for_report]] %>% 
+#   hc_colors(colors = c(orange, teal, yellow)) %>% 
+#   hc_size(height = 150, width = 400)
+
+# # save offense pie by state
+# state_pie_parole_elgibility_offense <- 
+#   all_pie_parole_elgibility_offense[[state_for_report]] %>% 
+#   hc_size(height = 300, width = 475) %>% 
+#   hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
+
 
 # save adm type by release timing by state
 state_bar_released_at_ped_admtype_2020 <-
@@ -274,105 +382,110 @@ htmltools::div(
       )
 )
 ```
-:::
+
 
 <br>
 
-::: panel-tabset 
-
-## Overview
-
-<center>
 ```{r}
-div(id = "body-section", state_line_pop_released_to_parole)
+tags$style(type = "text/css", ".nav-tabs {justify-content: center;}")
+tabsetPanel(
+  id = "tabsetpanel",
+  
+  
+  #####################################
+  
+  tabPanel("Overview",
+           
+  #####################################
+  
+    br(),
+    div(id = "body-section", 
+        state_line_pop_released_to_parole),
+    br()
+  
+  ),
+  
+  #####################################
+
+  tabPanel("Parole Eligibility",
+         
+  #####################################
+  
+  div(id = "body-section", br(),
+      div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
+      div(id = "regular-text", parole_eligibility_criteria),
+      div(id = "reactable-table", pe_criteria_table1),
+      div(id = "reactable-table", pe_criteria_table2), br(), br(),
+      div(id = "big-section-title", "People who are Eligible for Parole but Still in Prison"), br()
+   )
+
+  ),
+  
+  #####################################
+
+  tabPanel("Length of Stay",
+
+  #####################################
+
+  br()
+
+  ),
+  
+  #####################################
+  
+  tabPanel("Releases from Prison",
+           
+  #####################################
+  
+  br(),
+  
+  div(id = "body-section", 
+      state_bar_released_at_ped_admtype_2020
+      
+      )
+  
+  # tabsetPanel(
+  #     id = "tabsetpanelgraph",
+  #     tabPanel("Parole Return/Revocation",
+  #              br(),
+  #              state_pie_released_at_ped_2020
+  #              ),
+  #     tabPanel("Parole Return/Revocation",
+  #              br(),
+  #              state_pie_released_at_ped_parolereturn_2020
+  #              ),
+  #     tabPanel("New Crime",
+  #              br(),
+  #              state_pie_released_at_ped_newcrime_2020)
+  #   ),
+  # 
+  # br(),
+  
+  ),
+  
+  #####################################
+  
+  tabPanel("Disparities",
+           
+  #####################################
+  
+  br(),
+  div(id = "body-section", 
+      div(id = "bar-graph", state_time_between_release_ped_by_race),
+      div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
+           div(id = "reactable-table",
+               table_pp_by_race,
+               table_pp_by_sex,
+               table_pp_by_offgeneral,
+               table_pp_by_sentlgth)
+      ),
+  br()
+  )
+  
+)
 ```
-</center>
-<br>
-
-
-
-
-
-
-## Parole Eligibility
-
-<center>
-```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
-    div(id = "regular-text", parole_eligibility_criteria),
-    # div(id = "reactable-table", pe_criteria_table1),
-    # div(id = "reactable-table", pe_criteria_table2), br(), br(),
-    div(id = "big-section-title", "People who are Eligible for Parole but Still in Prison"), br()
- )
-```
-</center>
-<br>
-
-
-
-
-
-
-## Length of Stay
-
-<center>
-```{r}
-
-
-```
-</center>
-<br>
-
-
-
-
-
-
-## Releases from Prison
-
-<center>
-```{r}
-div(id = "body-section", state_bar_released_at_ped_admtype_2020)
-```
-</center>
-<br>
-
-
-
-
-
-
-## Disparities
-
-<center>
-```{r}
-div(id = "body-section", 
-    div(id = "bar-graph", state_time_between_release_ped_by_race),
-    div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
-         div(id = "reactable-table",
-             table_pp_by_race,
-             table_pp_by_sex,
-             table_pp_by_offgeneral,
-             table_pp_by_sentlgth)
-    )
-```
-</center>
-<br>
-:::
-
+::: 
 
 ---
 title: "`r state_for_report`"
 ---
-
-
-
-
-
-
-
-
-
-
-

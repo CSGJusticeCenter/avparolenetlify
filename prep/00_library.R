@@ -53,6 +53,12 @@ sp_data_path <- csg_get_project_path("AVParole")
 font_add("Graphik",     regular = "fonts/Graphik.ttf")
 font_add("GraphikBold", regular = "fonts/GraphikBold.ttf")
 
+# set options so that y axis has comma separator
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$thousandsSep <- ","
+options(highcharter.lang = hcoptslang)
+
+
 ###################
 # Colors
 ###################
