@@ -15,9 +15,7 @@ website:
       - text: "National Trends"
         href: national_trends.html
       - text: "State Reports"
-        menu:
-          - text: "Georgia"
-            href: state_report_Georgia.html
+        href: state_report_links.html
 
 format:
   html:

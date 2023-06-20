@@ -440,4 +440,27 @@ body {
 
 #tabsetpanel{
   margin: 0 auto; /* center the content horizontally */
+  justify-content: center;
 }
+
+
+.panel-tabset .nav-item {
+  margin: 0 auto;
+  justify-content: center;
+  background-color: #fff;
+  font-size: 1em;
+  font-family: Graphik;
+  font-weight: bold;
+  color: #3E4B4B;
+  border: none;
+  margin-bottom: -5px;
+}
+
+/* highlights at the top of state report */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 10px; /* Adjust the gap value as per your preference */
+}
+

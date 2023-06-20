@@ -14,8 +14,8 @@ library(tidyverse)
 # save working directory
 wd <- getwd()
 
-# states <- state.name
-states <- c("Florida", "Georgia", "Pennsylvania")
+# get list of 50 states
+states <- state.name
 
 # read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

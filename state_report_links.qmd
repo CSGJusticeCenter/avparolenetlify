@@ -1,0 +1,63 @@
+---
+title: "State Reports" 
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+<br>
+
+[Alabama](https://avparoleproject.netlify.app/state_report_Alabama)  
+[Alaska](https://avparoleproject.netlify.app/state_report_Alaska)  
+[Arizona](https://avparoleproject.netlify.app/state_report_Arizona)  
+[Arkansas](https://avparoleproject.netlify.app/state_report_Arkansas)  
+[California](https://avparoleproject.netlify.app/state_report_California)  
+[Colorado](https://avparoleproject.netlify.app/state_report_Colorado)  
+[Connecticut](https://avparoleproject.netlify.app/state_report_Connecticut)  
+[Delaware](https://avparoleproject.netlify.app/state_report_Delaware)  
+[Florida](https://avparoleproject.netlify.app/state_report_Florida)  
+[Georgia](https://avparoleproject.netlify.app/state_report_Georgia)  
+[Hawaii](https://avparoleproject.netlify.app/state_report_Hawaii)  
+[Idaho](https://avparoleproject.netlify.app/state_report_Idaho)  
+[Illinois](https://avparoleproject.netlify.app/state_report_Illinois)  
+[Indiana](https://avparoleproject.netlify.app/state_report_Indiana)  
+[Iowa](https://avparoleproject.netlify.app/state_report_Iowa)  
+[Kansas](https://avparoleproject.netlify.app/state_report_Kansas)  
+[Kentucky](https://avparoleproject.netlify.app/state_report_Kentucky)  
+[Louisiana](https://avparoleproject.netlify.app/state_report_Louisiana)  
+[Maine](https://avparoleproject.netlify.app/state_report_Maine)  
+[Maryland](https://avparoleproject.netlify.app/state_report_Maryland)  
+[Massachusetts](https://avparoleproject.netlify.app/state_report_Massachusetts)  
+[Michigan](https://avparoleproject.netlify.app/state_report_Michigan)  
+[Minnesota](https://avparoleproject.netlify.app/state_report_Minnesota)  
+[Mississippi](https://avparoleproject.netlify.app/state_report_Mississippi)  
+[Missouri](https://avparoleproject.netlify.app/state_report_Missouri)  
+[Montana](https://avparoleproject.netlify.app/state_report_Montana)  
+[Nebraska](https://avparoleproject.netlify.app/state_report_Nebraska)  
+[Nevada](https://avparoleproject.netlify.app/state_report_Nevada)  
+[New Hampshire](https://avparoleproject.netlify.app/state_report_New_Hampshire)  
+[New Jersey](https://avparoleproject.netlify.app/state_report_New_Jersey)  
+[New Mexico](https://avparoleproject.netlify.app/state_report_New_Mexico)  
+[New York](https://avparoleproject.netlify.app/state_report_New_York)  
+[North Carolina](https://avparoleproject.netlify.app/state_report_North_Carolina)  
+[North Dakota](https://avparoleproject.netlify.app/state_report_North_Dakota)  
+[Ohio](https://avparoleproject.netlify.app/state_report_Ohio)  
+[Oklahoma](https://avparoleproject.netlify.app/state_report_Oklahoma)  
+[Oregon](https://avparoleproject.netlify.app/state_report_Oregon)  
+[Pennsylvania](https://avparoleproject.netlify.app/state_report_Pennsylvania)  
+[Rhode Island](https://avparoleproject.netlify.app/state_report_Rhode_Island)  
+[South Carolina](https://avparoleproject.netlify.app/state_report_South_Carolina)  
+[South Dakota](https://avparoleproject.netlify.app/state_report_South_Dakota)  
+[Tennessee](https://avparoleproject.netlify.app/state_report_Tennessee)  
+[Texas](https://avparoleproject.netlify.app/state_report_Texas)  
+[Utah](https://avparoleproject.netlify.app/state_report_Utah)  
+[Vermont](https://avparoleproject.netlify.app/state_report_Vermont)  
+[Virginia](https://avparoleproject.netlify.app/state_report_Virginia)  
+[Washington](https://avparoleproject.netlify.app/state_report_Washington)  
+[West Virginia](https://avparoleproject.netlify.app/state_report_West_Virginia)  
+[Wisconsin](https://avparoleproject.netlify.app/state_report_Wisconsin)  
+[Wyoming](https://avparoleproject.netlify.app/state_report_Wyoming)  

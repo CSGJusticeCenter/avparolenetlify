@@ -78,7 +78,12 @@ parole_eligibility_criteria <- subset(robinainfo, state == state_for_report)$par
 
 ###################
 
-state_data <- parole_eligibility_table_2020 %>% filter(state == state_for_report)
+if (state_for_report %in% unique(parole_eligibility_table_2020$state)) {
+  state_data <- parole_eligibility_table_2020 %>% filter(state == state_for_report)
+} else {
+  state_data <- "No Data"
+}
+
 num_people_current   <- sum(state_data$current_count, na.rm = TRUE)
 num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 
@@ -91,10 +96,14 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 
 # line chart showing the change in prison pop 
 # and the change in releases to parole over time
-state_line_pop_released_to_parole <- 
-  all_line_pop_released_to_parole[[state_for_report]] %>% 
-  hc_size(width = 600, height = 500) %>%
-  hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
+if (state_for_report %in% names(all_line_pop_released_to_parole)) {
+  state_line_pop_released_to_parole <- 
+    all_line_pop_released_to_parole[[state_for_report]] %>% 
+    hc_size(width = 600, height = 500) %>%
+    hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
+} else {
+  state_line_pop_released_to_parole <- "No Data"
+}
 
 
 
@@ -117,10 +126,14 @@ state_line_pop_released_to_parole <-
 ###################
 
 # save adm type by release timing by state
-state_bar_released_at_ped_admtype_2020 <-
-  all_bar_released_at_ped_admtype_2020[[state_for_report]] %>%
-  hc_size(height = 300, width = 475) %>%
-  hc_title(text = "Timing of Release by Parole Eligibility and Admission Type in 2020")
+if (state_for_report %in% names(all_bar_released_at_ped_admtype_2020)) {
+  state_bar_released_at_ped_admtype_2020 <- 
+    all_bar_released_at_ped_admtype_2020[[state_for_report]] %>%
+    hc_size(height = 300, width = 475) %>%
+    hc_title(text = "Timing of Release by Parole Eligibility and Admission Type in 2020")
+} else {
+  state_bar_released_at_ped_admtype_2020 <- "No Data"
+}
 
 
 
@@ -131,10 +144,15 @@ state_bar_released_at_ped_admtype_2020 <-
 ###################
 
 # graph showing the time from PED to release by race and ethnicity
-state_time_between_release_ped_by_race <- 
-all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
-  hc_title(text = "Time from PED to Release by Race and Ethnicity") %>% 
-  hc_size(height = 300, width = 475) 
+if (state_for_report %in% names(all_time_between_release_ped_2020_by_race)) {
+  state_time_between_release_ped_by_race <- 
+    all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
+    hc_title(text = "Time from PED to Release by Race and Ethnicity") %>% 
+    hc_size(height = 300, width = 475)
+} else {
+  state_time_between_release_ped_by_race <- "No Data"
+}
+
 
 #####
 # Predicted Probabilities
@@ -230,53 +248,34 @@ table_pp_by_sentlgth <-
 
 ```
 
-::: tab-section
+::: narrow-section
 ```{r}
-# combine info in one row and center
-# highlighted trends numbers
 htmltools::div(
-  style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
-  div(id = "highlight-text", 
-      style = "padding-left: .9em; padding-right: 1em;",
-      formattable::comma(num_people_current, digits = 0)
-  ),
-  div(id = "highlight-text",
-      style = "padding-left: 2.2em; padding-right: 2.4em;",
-      formattable::comma(num_people_1_5_years, digits = 0)
-  ),
-  div(style = "display: block; 
-              padding-left: 1em; 
-              padding-right: 1em; 
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center;",
+  div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
+  div(id = "highlight-text", formattable::comma(num_people_1_5_years, digits = 0)),
+  div(style ="display: block; 
               color: #ff6400; 
               font-size: 1.25em; 
               font-family: Graphik; 
               font-weight: bold; 
               text-align: center;",
-      prison_sentencing_system)
-)
-
-# combine info in one row and center
-# highlighted titles for trends numbers
-htmltools::div(
-  style = "display:flex; flex-direction: row; align-items: center; justify-content: center; ",
-  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
-      HTML("Currently Eligible for<br>Parole but in Prison")
-      ),
-  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
-      HTML("Eligible for Parole in<br>the next 1-5 years")
-      ),
-  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
-      tippy(prison_sentencing_system_info,
-            placement = "bottom",
-            flip = TRUE,
-            theme = "light",
-            tooltip = prison_sentencing_system_tooltip)
-      )
+      prison_sentencing_system),
+  div(id = "bold-text", HTML("Currently Eligible for<br>Parole but in Prison")),
+  div(id = "bold-text", HTML("Eligible for Parole in<br>the next 1-5 years")),
+  div(id = "bold-text", tippy(prison_sentencing_system_info,
+                              placement = "bottom",
+                              flip = TRUE,
+                              theme = "light",
+                              tooltip = prison_sentencing_system_tooltip))
 )
 ```
 :::
 
 <br>
+
+
 
 ::: panel-tabset 
 

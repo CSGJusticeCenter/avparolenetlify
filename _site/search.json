@@ -1,31 +1,10 @@
 [
   {
-    "objectID": "archive/national_trends_ideas.html",
-    "href": "archive/national_trends_ideas.html",
-    "title": "National Trends",
+    "objectID": "Florida_notes.html",
+    "href": "Florida_notes.html",
+    "title": "Untitled",
     "section": "",
-    "text": "[Interactive Graph] People Under U.S. Correctional Supervision from X year to Y year (Prison, jail, parole, probation).\n[Interactive Graph] Prison Rate Change in X State(s) from X year to Y year (Each state will have it’s own line).\n[Interactive Graph] Racial/Ethnic/Gender Disparities in Prisons from X year to Y year.\n[Interactive Graph] The Growth of Life Sentences from X year to Y year (Life without Parole, Life with Parole).\n[Interactive Graph] X Race/Ethnicity Americans of the US Population, Total Prison Population, and Who Have Served at Least 10 years.\n[Interactive Graph] Ranked state prison rates in X year."
-  },
-  {
-    "objectID": "archive/national_trends_ideas.html#parole-ideas",
-    "href": "archive/national_trends_ideas.html#parole-ideas",
-    "title": "National Trends",
-    "section": "Parole Ideas",
-    "text": "Parole Ideas\n\n[Interactive Graph] Ranked states with highest parole eligibility but not yet released to parole in X year.\n[Visual TBD] Determinate sentencing states, indeterminate sentencing states.\n[Interactive Graph] Releases over time (conditional vs unconditional) as a percentage of all releases from X year to Y year.\n[Interactive Graph] Number of people released to parole supervision from X year to Y year for X state(s).\n[Interactive Graph or Table] States missing parole eligibility dates (PED), states missing more than 50% of PEDs, states missing less than 50% of PEDs."
-  },
-  {
-    "objectID": "georgia.html",
-    "href": "georgia.html",
-    "title": "Georgia",
-    "section": "",
-    "text": "18,701\n10,107\nHighlyIndeterminate\n\n\n\n\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOverview\n\n\nParole Eligibility\n\n\nReleases from Prison\n\n\nDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\nParole consideration is typically automatic for most people in prison.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPeople who are Eligible for Parole\n\n\n\nInfo TBD"
-  },
-  {
-    "objectID": "georgia_all.html",
-    "href": "georgia_all.html",
-    "title": "Georgia",
-    "section": "",
-    "text": "Overview\n\n\nParole Eligibility\n\n\nReleases from Prison\n\n\nSentencing/Length of Stay\n\n\nRacial/Ethnic Disparities\n\n\n\n\n\n\n\n\nSource: NCRP Year End Population (2000-2020), Annual Parole Survey (2000-2018)\n\n\n\n\n\nProfile of People Released to Parole in 2020\n\n\n\n\n\n\n\n\nSource: NCRP Releases (2020). Methodology: \n                   Found people with less than sentence length served and released \n                   unconditionally or conditionally. Removed releases labeled as \n                   Other release (including death, transfer, AWOL, escape).\n\n\n\n\n\n\n\n\n\n\nSource: NCRP Year End Population (2020)\n\n\n\n\n\n\n\nMore Info on Parole Eligibility TBD\n\nIdeas: \n\n\nAdmin types for people eligible for parole and people who already failed parole and eligible for parole\nIs the PED missing? If so, is the data missing because they aren't \n                       parole eligible or because the data wasn't entered?\n\n\n\n\n\n\n\n\n\n\nSource: NCRP Releases (2020)\n\n\n\n\n\n\n\n\n\n\nSource: NCRP Releases (2020)\n\n\n\n\n\n\n\n\nSource: NCRP Releases (2020)\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020\n\n\n\n\n\n\n\n\n\n\n\nSource: NCRP Year End Population (2020). Methodology:\n                   Predicted probabilities are calculated using logistic regression\n                   --predicts the probabilities of being released within 1 year\n                   based on various predictor variables such as sex, race, admtype,\n                   offgeneral, and sentlgth.\n\n\nMore Info on Releases from Prison TBD\n\nIdeas: \n\n\nWho (demographics and criminal history) is being released\n                     at first eligibility?\n\n\nHow does release vary by the person's criminal history  \n                     characteristics?\n\n\nWhat is the mean and median time between parole eligibility\n                     and release for all terms, terms with release bfore PED, and\n                     terms with release after PED?\n\n\nNumber/percentage of release types (conditional vs unconditional)\n                     from X year to Y year.\n\n\nWhat is the mean and median time between parole eligibility\n                     and release for those released after the PED, by maximum\n                     sentence length? (When max sentence length is 1) up to 2 years,\n                     2) 2 to 5 years, 3) 5 to 10 years, 4) 10 to 15 years, and\n                     5) 15 years to less than life)\n\n\n\n\n\n\n\n\n\n\n\nSource: NCRP Admissions (2020)\n\n\n\n\nMore Info on Sentencing/LOS TBD\n\nIdeas:\n\n\nFamiliar faces\n\n\nThe growth or decline of life sentences from X year to Y year\n                   (life without parole).\n\n\nHow different is actual time served compared to sentence length\n                   pronounced at court?\n\n\nLength of stay by most serious sentenced offense, maximum sentence\n                   length, demographics.\n\n\nBar graph showing the proportion of individuals who served at least 10\n                   years by demographics and most serious sentenced offense.\n\n\n\n\n\n\n\n\nIdeas:\n\n\nThis page will show a breakdown of racial/ethnic/gender disparities in \n               parole eligibility, length of stay, maximum sentence length, etc."
+    "text": "Just some notes about Florida"
   },
   {
     "objectID": "index.html",
@@ -42,45 +21,360 @@
     "text": "Understanding the impact of prison sentencing systems and the opportunity to reduce prison populations and improve lives and public safety.\n\n\n\n\n147,439\n177,648\n\n\n\n\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\nPeople Currently Eligible for Parole but in Prison\n\n\n\n\n\n\n\n\n\n\n\n\nPercent of People\n\n\nNumber of People"
   },
   {
+    "objectID": "state_report_Alabama.html",
+    "href": "state_report_Alabama.html",
+    "title": "Alabama",
+    "section": "",
+    "text": "0\n0\nExtremely HighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Alaska.html",
+    "href": "state_report_Alaska.html",
+    "title": "Alaska",
+    "section": "",
+    "text": "0\n0\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Arizona.html",
+    "href": "state_report_Arizona.html",
+    "title": "Arizona",
+    "section": "",
+    "text": "0\n0\nExtremely LowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Arkansas.html",
+    "href": "state_report_Arkansas.html",
+    "title": "Arkansas",
+    "section": "",
+    "text": "0\n0\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_California.html",
+    "href": "state_report_California.html",
+    "title": "California",
+    "section": "",
+    "text": "8,899\n24,189\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Colorado.html",
+    "href": "state_report_Colorado.html",
+    "title": "Colorado",
+    "section": "",
+    "text": "2,828\n5,979\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Connecticut.html",
+    "href": "state_report_Connecticut.html",
+    "title": "Connecticut",
+    "section": "",
+    "text": "1,035\n2,595\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Delaware.html",
+    "href": "state_report_Delaware.html",
+    "title": "Delaware",
+    "section": "",
+    "text": "0\n0\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
     "objectID": "state_report_Florida.html",
     "href": "state_report_Florida.html",
     "title": "Florida",
     "section": "",
-    "text": "616\n462\nExtremely LowIndeterminacy\n\n\n\n\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+    "text": "616\n462\nExtremely LowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
   },
   {
     "objectID": "state_report_Georgia.html",
     "href": "state_report_Georgia.html",
     "title": "Georgia",
     "section": "",
-    "text": "18,701\n10,107\nHighIndeterminacy\n\n\n\n\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+    "text": "18,701\n10,107\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Hawaii.html",
+    "href": "state_report_Hawaii.html",
+    "title": "Hawaii",
+    "section": "",
+    "text": "824\n1,135\nExtremely HighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Idaho.html",
+    "href": "state_report_Idaho.html",
+    "title": "Idaho",
+    "section": "",
+    "text": "3,129\n4,036\nModerateIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Illinois.html",
+    "href": "state_report_Illinois.html",
+    "title": "Illinois",
+    "section": "",
+    "text": "48\n1\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Indiana.html",
+    "href": "state_report_Indiana.html",
+    "title": "Indiana",
+    "section": "",
+    "text": "2,737\n12,808\nModerateIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Iowa.html",
+    "href": "state_report_Iowa.html",
+    "title": "Iowa",
+    "section": "",
+    "text": "0\n0\nExtremely HighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Kansas.html",
+    "href": "state_report_Kansas.html",
+    "title": "Kansas",
+    "section": "",
+    "text": "103\n445\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Kentucky.html",
+    "href": "state_report_Kentucky.html",
+    "title": "Kentucky",
+    "section": "",
+    "text": "6,812\n5,758\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_links.html",
+    "href": "state_report_links.html",
+    "title": "State Reports",
+    "section": "",
+    "text": "Alabama\nAlaska\nArizona\nArkansas\nCalifornia\nColorado\nConnecticut\nDelaware\nFlorida\nGeorgia\nHawaii\nIdaho\nIllinois\nIndiana\nIowa\nKansas\nKentucky\nLouisiana\nMaine\nMaryland\nMassachusetts\nMichigan\nMinnesota\nMississippi\nMissouri\nMontana\nNebraska\nNevada\nNew Hampshire\nNew Jersey\nNew Mexico\nNew York\nNorth Carolina\nNorth Dakota\nOhio\nOklahoma\nOregon\nPennsylvania\nRhode Island\nSouth Carolina\nSouth Dakota\nTennessee\nTexas\nUtah\nVermont\nVirginia\nWashington\nWest Virginia\nWisconsin\nWyoming"
+  },
+  {
+    "objectID": "state_report_Louisiana.html",
+    "href": "state_report_Louisiana.html",
+    "title": "Louisiana",
+    "section": "",
+    "text": "3,650\n6,109\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Maine.html",
+    "href": "state_report_Maine.html",
+    "title": "Maine",
+    "section": "",
+    "text": "0\n0\nExtremely LowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Maryland.html",
+    "href": "state_report_Maryland.html",
+    "title": "Maryland",
+    "section": "",
+    "text": "1,279\n851\nModerateIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Massachusetts.html",
+    "href": "state_report_Massachusetts.html",
+    "title": "Massachusetts",
+    "section": "",
+    "text": "2,058\n2,971\nModerateIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Michigan.html",
+    "href": "state_report_Michigan.html",
+    "title": "Michigan",
+    "section": "",
+    "text": "0\n0\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Minnesota.html",
+    "href": "state_report_Minnesota.html",
+    "title": "Minnesota",
+    "section": "",
+    "text": "88\n75\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Mississippi.html",
+    "href": "state_report_Mississippi.html",
+    "title": "Mississippi",
+    "section": "",
+    "text": "1,078\n3,279\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Missouri.html",
+    "href": "state_report_Missouri.html",
+    "title": "Missouri",
+    "section": "",
+    "text": "4,335\n2,332\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Montana.html",
+    "href": "state_report_Montana.html",
+    "title": "Montana",
+    "section": "",
+    "text": "848\n528\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Nebraska.html",
+    "href": "state_report_Nebraska.html",
+    "title": "Nebraska",
+    "section": "",
+    "text": "114\n149\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Nevada.html",
+    "href": "state_report_Nevada.html",
+    "title": "Nevada",
+    "section": "",
+    "text": "2,395\n5,471\nExtremely HighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_New Hampshire.html",
+    "href": "state_report_New Hampshire.html",
+    "title": "New Hampshire",
+    "section": "",
+    "text": "565\n684\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_New Jersey.html",
+    "href": "state_report_New Jersey.html",
+    "title": "New Jersey",
+    "section": "",
+    "text": "0\n0\nModerateIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_New Mexico.html",
+    "href": "state_report_New Mexico.html",
+    "title": "New Mexico",
+    "section": "",
+    "text": "0\n0\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_New York.html",
+    "href": "state_report_New York.html",
+    "title": "New York",
+    "section": "",
+    "text": "2,173\n9,631\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_North Carolina.html",
+    "href": "state_report_North Carolina.html",
+    "title": "North Carolina",
+    "section": "",
+    "text": "2,038\n17,992\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_North Dakota.html",
+    "href": "state_report_North Dakota.html",
+    "title": "North Dakota",
+    "section": "",
+    "text": "237\n926\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Ohio.html",
+    "href": "state_report_Ohio.html",
+    "title": "Ohio",
+    "section": "",
+    "text": "0\n0\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Oklahoma.html",
+    "href": "state_report_Oklahoma.html",
+    "title": "Oklahoma",
+    "section": "",
+    "text": "6,338\n1,391\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Oregon.html",
+    "href": "state_report_Oregon.html",
+    "title": "Oregon",
+    "section": "",
+    "text": "1\n4\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
   },
   {
     "objectID": "state_report_Pennsylvania.html",
     "href": "state_report_Pennsylvania.html",
     "title": "Pennsylvania",
     "section": "",
-    "text": "7,730\n14,103\nNA\n\n\n\n\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+    "text": "7,730\n14,103\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
   },
   {
-    "objectID": "test.html",
-    "href": "test.html",
-    "title": "AV Parole Project",
+    "objectID": "state_report_Rhode Island.html",
+    "href": "state_report_Rhode Island.html",
+    "title": "Rhode Island",
     "section": "",
-    "text": "18,701\n10,107\nHighIndeterminacy\n\n\n\n\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\nWhile the grant of parole is discretionary, consideration for parole is often not; most people in prison are entitled to automatic consideration for parole. In general, this occurs after serving 1/3 of the total sentence. However, there are minimums depending on the sentence.\n\n\n\n\n\n\n\n\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+    "text": "863\n400\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
   },
   {
-    "objectID": "test.html#mtcars",
-    "href": "test.html#mtcars",
-    "title": "AV Parole Project",
-    "section": "MTCars",
-    "text": "MTCars\n\n\n                   mpg cyl disp  hp drat    wt  qsec vs am gear carb\nMazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4\nMazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4\nDatsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1\nHornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1\nHornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2\nValiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1"
+    "objectID": "state_report_South Carolina.html",
+    "href": "state_report_South Carolina.html",
+    "title": "South Carolina",
+    "section": "",
+    "text": "1,859\n6,130\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
   },
   {
-    "objectID": "test.html#cars",
-    "href": "test.html#cars",
-    "title": "AV Parole Project",
-    "section": "Cars",
-    "text": "Cars\n\n\n  speed dist\n1     4    2\n2     4   10\n3     7    4\n4     7   22\n5     8   16\n6     9   10"
+    "objectID": "state_report_South Dakota.html",
+    "href": "state_report_South Dakota.html",
+    "title": "South Dakota",
+    "section": "",
+    "text": "256\n427\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Tennessee.html",
+    "href": "state_report_Tennessee.html",
+    "title": "Tennessee",
+    "section": "",
+    "text": "8,244\n7,779\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Texas.html",
+    "href": "state_report_Texas.html",
+    "title": "Texas",
+    "section": "",
+    "text": "51,739\n24,704\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Utah.html",
+    "href": "state_report_Utah.html",
+    "title": "Utah",
+    "section": "",
+    "text": "0\n0\nExtremely HighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Vermont.html",
+    "href": "state_report_Vermont.html",
+    "title": "Vermont",
+    "section": "",
+    "text": "0\n0\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Virginia.html",
+    "href": "state_report_Virginia.html",
+    "title": "Virginia",
+    "section": "",
+    "text": "1,586\n293\nNA\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Washington.html",
+    "href": "state_report_Washington.html",
+    "title": "Washington",
+    "section": "",
+    "text": "0\n0\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_West Virginia.html",
+    "href": "state_report_West Virginia.html",
+    "title": "West Virginia",
+    "section": "",
+    "text": "1,539\n2,943\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Wisconsin.html",
+    "href": "state_report_Wisconsin.html",
+    "title": "Wisconsin",
+    "section": "",
+    "text": "0\n0\nLowIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo Data\n\n\n\n\n\n\n\n\n\n\n\nNo Data\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
+  },
+  {
+    "objectID": "state_report_Wyoming.html",
+    "href": "state_report_Wyoming.html",
+    "title": "Wyoming",
+    "section": "",
+    "text": "694\n961\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nOverviewParole EligibilityLength of StayReleases from PrisonDisparities\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\n\nPeople who are Eligible for Parole but Still in Prison\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPredicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"
   }
 ]
