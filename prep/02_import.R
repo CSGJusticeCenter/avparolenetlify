@@ -10,6 +10,8 @@
 # load prison sentencing system info from Robina
 robinainfo <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
 robinadefinitions <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
+robinaparoleeligibility <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "eligibility")
+
 
 # load NCRP data
 # https://www.icpsr.umich.edu/web/NACJD/studies/38492
@@ -150,6 +152,7 @@ for (folder in theseFOLDERS){
   save(hex_gj, file=file.path(folder, "hex_gj.rds"))
   save(robinadefinitions, file=file.path(folder, "robinadefinitions.rds"))
   save(robinainfo, file=file.path(folder, "robinainfo.rds"))
+  save(robinaparoleeligibility, file=file.path(folder, "robinaparoleeligibility.rds"))
 
 }
 

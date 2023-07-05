@@ -276,10 +276,11 @@ body {
 
 /* title of website pages */
 .title {
-  font-size: 2em; /* change font size */
+  font-size: 2.5em; /* change font size */
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   text-align: center;
+  color: #3E4B4B;
 }
 
 
@@ -294,7 +295,15 @@ body {
 
 /* title of section under tabs */
 #big-section-title {
-  font-size: 1.5em; /* change font size */
+  font-size: 1.8em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+#medium-section-title {
+  font-size: 1em; /* change font size */
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   text-align: center;
@@ -329,9 +338,10 @@ body {
 
 /* regular app text */
 #regular-text {
-  font-size: 0.75em; /* change font size */
+  font-size: 0.9em; /* change font size */
   font-family: Graphik; /* change font family */
   text-align: left;
+  color: #3E4B4B
 }
 
 /* bold app text */
@@ -340,6 +350,7 @@ body {
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   text-align: center;
+  color: #3E4B4B
 }
 
 /* footnote */
@@ -382,10 +393,8 @@ body {
   justify-content: center;
 }
 
-#pie-graph{
-  margin-top: 0em;
-  margin-bottom: 0;
-  padding: 0px;
+#pie-chart{
+
 }
 
 #reactable-table{
@@ -442,7 +451,6 @@ body {
   margin: 0 auto; /* center the content horizontally */
   justify-content: center;
 }
-
 
 .panel-tabset .nav-item {
   margin: 0 auto;

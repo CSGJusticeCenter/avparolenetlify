@@ -1,13 +1,14 @@
 ############################################
 # Project: AV Parole Project
 # File: generate_state_reports.R
-# Last updated: June 1, 2023
+# Last updated: July 5, 2023
 # Author: Mari Roberts
 
 # Generate html documents for each state
-# based on state_report_template.qmd
+# based on _state_report_template.qmd
 ############################################
 
+# load packages for generating state report QMDs
 library(rmarkdown)
 library(tidyverse)
 

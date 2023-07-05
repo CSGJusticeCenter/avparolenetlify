@@ -179,65 +179,65 @@
 
 
 
-########################################
-
-# Most serious sentenced offense for people eligible for parole but not yet released
-
-########################################
-
-# get list of states
-states <- unique(current_ped_2020_offenses$state)
-
-all_pie_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_2020_offenses %>% filter(state == x)
-  highcharts <- fnc_pie_chart(df = df1,
-                              x_variable = "offgeneral",
-                              y_variable = "prop",
-                              point_format = "{point.chart_label}",
-                              accessibility_text = "TBD.")
-  return(highcharts)
-})
-
-all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense, states)
-
-states <- unique(current_ped_2020_offenses$state)
-
-all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_2020_offenses %>%
-    filter(state == x) %>%
-    arrange(desc(prop))
-  xaxis_order <- df1$offgeneral
-  highcharts <-
-    highchart() %>%
-    hc_chart(margin = c(90, 0, 50, 0)) %>%
-    hc_add_series(df1, type = "column",
-                  hcaes(x = factor(offgeneral), y = prop*100, color = offgeneral),
-                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
-                                    style = list(fontSize = "14px",
-                                                 fontWeight = "bold",
-                                                 fontFamily = "Graphik",
-                                                 textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = "TBD",
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = "TBD")))
-
-  return(highcharts)
-})
-
-all_bar_parole_elgibility_offense <- setNames(all_bar_parole_elgibility_offense, states)
-all_bar_parole_elgibility_offense$Georgia
+# ########################################
+#
+# # Most serious sentenced offense for people eligible for parole but not yet released
+#
+# ########################################
+#
+# # get list of states
+# states <- unique(current_ped_2020_offenses$state)
+#
+# all_pie_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
+#   df1 <- current_ped_2020_offenses %>% filter(state == x)
+#   highcharts <- fnc_pie_chart(df = df1,
+#                               x_variable = "offgeneral",
+#                               y_variable = "prop",
+#                               point_format = "{point.chart_label}",
+#                               accessibility_text = "TBD.")
+#   return(highcharts)
+# })
+#
+# all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense, states)
+#
+# states <- unique(current_ped_2020_offenses$state)
+#
+# all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
+#   df1 <- current_ped_2020_offenses %>%
+#     filter(state == x) %>%
+#     arrange(desc(prop))
+#   xaxis_order <- df1$offgeneral
+#   highcharts <-
+#     highchart() %>%
+#     hc_chart(margin = c(90, 0, 50, 0)) %>%
+#     hc_add_series(df1, type = "column",
+#                   hcaes(x = factor(offgeneral), y = prop*100, color = offgeneral),
+#                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+#                                     style = list(fontSize = "14px",
+#                                                  fontWeight = "bold",
+#                                                  fontFamily = "Graphik",
+#                                                  textOutline = 0))) %>%
+#     hc_xAxis(categories = xaxis_order) %>%
+#     hc_yAxis(labels = list(enabled = FALSE)) %>%
+#     hc_add_theme(hc_theme_jc) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_legend(enabled = FALSE) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_plotOptions(series = list(animation = FALSE,
+#                                  cursor = "pointer",
+#                                  borderWidth = 3,
+#                                  minPointLength = 4),
+#                    accessibility = list(enabled = TRUE,
+#                                         keyboardNavigation = list(enabled = TRUE),
+#                                         linkedDescription = "TBD",
+#                                         landmarkVerbosity = "one"),
+#                    area = list(accessibility = list(description = "TBD")))
+#
+#   return(highcharts)
+# })
+#
+# all_bar_parole_elgibility_offense <- setNames(all_bar_parole_elgibility_offense, states)
+# all_bar_parole_elgibility_offense$Georgia
 
 
 

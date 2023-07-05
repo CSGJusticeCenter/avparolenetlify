@@ -1,0 +1,72 @@
+---
+title: "Test"
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+
+library(highcharter)
+library(htmlwidgets)
+library(dplyr)
+library(htmltools)
+
+# Load the Pokemon dataset
+data(penguins, package = "palmerpenguins")
+data(diamonds, economics_long, package = "ggplot2")
+
+graph <- hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm , group = species)) %>% 
+  hc_size(height = 100, width = 200)
+```
+
+
+::: panel-tabset 
+
+## Tab 1
+
+```{r}
+hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm , group = species)) %>% 
+  hc_size(height = 200, width = 200)
+```
+
+## Tab 1a
+
+<center>
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
+    # div(id = "reactable-table", pe_criteria_table1),
+    # div(id = "reactable-table", pe_criteria_table2), br(), br(),
+    div(id = "big-section-title", "People who are Eligible for Parole but Still in Prison"), br(), br(), br()
+)
+```
+
+```{r}
+div(id = "body-section", 
+    div(id = "big-section-title", "Most Serious Sentenced Offense for People who are Parole Eligible but Still in Prison"), br(),
+    div(id = "pie-chart", graph), br()
+)
+```
+</center>
+<br>
+
+
+## Tab 2
+
+```{r}
+hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm , group = species)) %>% 
+  hc_size(height = 500, width = 600)
+```
+
+:::

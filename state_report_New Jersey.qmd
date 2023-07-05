@@ -40,10 +40,13 @@ state_for_report <- "New Jersey"
 
 
 ```{r}
+# create title for prison sentencing information
 prison_sentencing_system_info <- HTML("Prison Sentencing<br>System&#9432;")
 
+# get prison sentencing information for state
 prison_sentencing_system_name <- subset(robinainfo, state == state_for_report)$prison_sentencing_system
-  
+
+# reformat text depending on prison sentencing information
 prison_sentencing_system <- 
   case_when(
     prison_sentencing_system_name == "Extremely High Indeterminacy" ~ HTML("Extremely High<br>Indeterminacy"),
@@ -52,8 +55,10 @@ prison_sentencing_system <-
     prison_sentencing_system_name == "Low Indeterminacy"            ~ HTML("Low<br>Indeterminacy"),
     prison_sentencing_system_name == "Extremely Low Indeterminacy"  ~ HTML("Extremely Low<br>Indeterminacy"))
 
+# get prison sentencing information's definition
 prison_sentencing_system_definition <- subset(robinadefinitions, term == prison_sentencing_system_name)$definition 
 
+# assemble all prison sentencing information for the state
 prison_sentencing_system_tooltip <- 
   HTML(paste0("To compare the degrees of indeterminacy, or unpredictability
    of time served, of prison-sentencing systems of different jurisdictions,
@@ -62,10 +67,11 @@ prison_sentencing_system_tooltip <-
    prison_sentencing_system_name, "</b>: ",
    prison_sentencing_system_definition, "."))
 
-# make the tippy accessible
+# make the information accessible
 prison_sentencing_system_info <- paste0('<span aria-label="', prison_sentencing_system_tooltip, '" tabindex="0" role="button">', prison_sentencing_system_info, '</span>')
 
-parole_eligibility_criteria <- subset(robinainfo, state == state_for_report)$parole_eligibility_criteria
+# get parole eligibility information
+parole_eligibility_criteria <- subset(robinaparoleeligibility, state == state_for_report)$general_rules_of_release_eligibility
 ```
 
 
@@ -99,7 +105,7 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 if (state_for_report %in% names(all_line_pop_released_to_parole)) {
   state_line_pop_released_to_parole <- 
     all_line_pop_released_to_parole[[state_for_report]] %>% 
-    hc_size(width = 600, height = 500) %>%
+    hc_size(width = 550, height = 400) %>%
     hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
 } else {
   state_line_pop_released_to_parole <- "No Data"
@@ -113,10 +119,33 @@ if (state_for_report %in% names(all_line_pop_released_to_parole)) {
 
 ###################
 
+# save bar chart of people eligible for parole but still in prison by state
+if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
+  state_bar_parole_elgibility_race <- 
+    all_bar_parole_elgibility_race[[state_for_report]] %>% 
+    hc_size(width = 500, height = 350) %>% 
+    hc_title(text = "People who are Parole Eligible but Still in Prison by Race in 2020")
+} else {
+  state_bar_parole_elgibility_race <- "No Data"
+}
 
+# save pie chart of most serious sentenced offense by state
+if (state_for_report %in% names(all_pie_parole_elgibility_offense)) {
+  state_pie_parole_elgibility_offense <- 
+    all_pie_parole_elgibility_offense[[state_for_report]] %>% 
+    hc_size(width = 600, height = 300) %>% 
+    hc_title(text = "Most Serious Sentenced Offense for People who are Parole Eligible but Still in Prison in 2020")
+} else {
+  state_pie_parole_elgibility_offense <- "No Data"
+}
 
-
-
+# save sentence about serious offense by state
+if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
+  state_sentence_parole_elgibility_offense <- 
+    all_sentence_parole_elgibility_offense[[state_for_report]]
+} else {
+  state_sentence_parole_elgibility_offense <- ""
+}
 
 
 ###################
@@ -147,7 +176,7 @@ if (state_for_report %in% names(all_bar_released_at_ped_admtype_2020)) {
 if (state_for_report %in% names(all_time_between_release_ped_2020_by_race)) {
   state_time_between_release_ped_by_race <- 
     all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
-    hc_title(text = "Time from PED to Release by Race and Ethnicity") %>% 
+    hc_title(text = "Time from PED to Release by Race and Ethnicity in 2020") %>% 
     hc_size(height = 300, width = 475)
 } else {
   state_time_between_release_ped_by_race <- "No Data"
@@ -279,12 +308,26 @@ htmltools::div(
 
 ::: panel-tabset 
 
-## Overview
+## Parole Eligibility
 
 <center>
 ```{r}
-div(id = "body-section", state_line_pop_released_to_parole)
+div(id = "body-section", br(),
+    div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
+    div(id = "regular-text", parole_eligibility_criteria), br(), br(),
+    div(id = "big-section-title", "People who are Eligible for Parole"), br(), 
+    div(id = "bar-chart", state_bar_parole_elgibility_race), br()
+)
 ```
+
+```{r}
+div(id = "body-section", 
+    div(id = "big-section-title", "Offenses"), br(),
+    div(id = "regular-text", state_sentence_parole_elgibility_offense), br(), 
+    div(id = "pie-chart", state_pie_parole_elgibility_offense), br()
+)
+```
+
 </center>
 <br>
 
@@ -293,17 +336,13 @@ div(id = "body-section", state_line_pop_released_to_parole)
 
 
 
-## Parole Eligibility
+## Prison Population
 
 <center>
 ```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
-    div(id = "regular-text", parole_eligibility_criteria),
-    # div(id = "reactable-table", pe_criteria_table1),
-    # div(id = "reactable-table", pe_criteria_table2), br(), br(),
-    div(id = "big-section-title", "People who are Eligible for Parole but Still in Prison"), br()
- )
+div(id = "body-section", 
+    div(id = "line-chart", state_line_pop_released_to_parole)
+    )
 ```
 </center>
 <br>
@@ -347,7 +386,7 @@ div(id = "body-section", state_bar_released_at_ped_admtype_2020)
 <center>
 ```{r}
 div(id = "body-section", 
-    div(id = "bar-graph", state_time_between_release_ped_by_race),
+    div(id = "bar-graph", state_time_between_release_ped_by_race), br(), 
     div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
          div(id = "reactable-table",
              table_pp_by_race,
@@ -358,8 +397,8 @@ div(id = "body-section",
 ```
 </center>
 <br>
-:::
 
+:::
 
 ---
 title: "`r state_for_report`"

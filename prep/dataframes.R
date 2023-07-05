@@ -2,6 +2,11 @@
 # Robina Institute information
 load(file = paste0(sp_data_path, "/data/analysis/robinainfo.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/robinadefinitions.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/robinaparoleeligibility.rds"))
+
+
+
+
 
 # Map
 load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))
@@ -19,6 +24,12 @@ load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole
 
 # Parole Eligibility
 load(file = paste0(sp_data_path, "/data/analysis/parole_eligibility_table_2020.rds"))
+
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_race.rds"))
+
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_offense.rds"))
 
 
 
