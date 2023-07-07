@@ -15,8 +15,9 @@ load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))
 
 
 
-# Overview
+# Prison Population
 load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_pe_type_2020.rds"))
 
 
 

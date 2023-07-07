@@ -334,11 +334,11 @@ hc_theme_jc_line <- hc_theme(
     # tickColor = "transparent"
   ),
   plotOptions = list(
-    line = list(marker = list(enabled = FALSE)),
-    spline = list(marker = list(enabled = FALSE)),
-    area = list(marker = list(enabled = FALSE)),
-    areaspline = list(marker = list(enabled = FALSE)),
-    arearange = list(marker = list(enabled = FALSE)),
+    # line = list(marker = list(enabled = FALSE)),
+    # spline = list(marker = list(enabled = FALSE)),
+    # area = list(marker = list(enabled = FALSE)),
+    # areaspline = list(marker = list(enabled = FALSE)),
+    # arearange = list(marker = list(enabled = FALSE)),
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(

@@ -96,7 +96,7 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 
 ###################
 
-# Overview
+# Prison Population
 
 ###################
 
@@ -111,6 +111,15 @@ if (state_for_report %in% names(all_line_pop_released_to_parole)) {
   state_line_pop_released_to_parole <- "No Data"
 }
 
+# stacked bar chart showing the  proportion of parole eligibility types
+if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
+  state_stackedbar_pe_type_2020 <- 
+    all_stackedbar_pe_type_2020[[state_for_report]] %>% 
+    hc_size(height = 200) %>%
+    hc_title(text = "Distribution of Parole Eligibility Status Among the Prison Population")
+} else {
+  state_stackedbar_pe_type_2020 <- "No Data"
+}
 
 
 ###################
@@ -341,7 +350,9 @@ div(id = "body-section",
 <center>
 ```{r}
 div(id = "body-section", 
-    div(id = "line-chart", state_line_pop_released_to_parole)
+    div(id = "big-section-title", "Prison Population"), br(),
+    div(id = "bar-chart", state_stackedbar_pe_type_2020), br(), br(),
+    div(id = "line-chart", state_line_pop_released_to_parole), br()
     )
 ```
 </center>
@@ -386,7 +397,7 @@ div(id = "body-section", state_bar_released_at_ped_admtype_2020)
 <center>
 ```{r}
 div(id = "body-section", 
-    div(id = "bar-graph", state_time_between_release_ped_by_race), br(), 
+    div(id = "bar-graph", state_time_between_release_ped_by_race), br(), br(),
     div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
          div(id = "reactable-table",
              table_pp_by_race,
