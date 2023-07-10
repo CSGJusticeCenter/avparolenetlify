@@ -546,38 +546,47 @@ fnc_pie_chart <- function(df,
 }
 
 # Create bar chart with labels
-fnc_percent_bar_chart <- function(df,
-                          x_variable,
-                          y_variable,
-                          point_format,
-                          accessibility_text) {
+fnc_percent_bar_chart_pestatus_admtype <-
 
-  df$x_variable <- get(x_variable, df)
-  df$y_variable <- get(y_variable, df)
+  function(df, point_format, accessibility_text) {
 
-  df %>%
-    hchart("column",
-           hcaes(x = x_variable, y = y_variable),
-           dataLabels = list(
-             style = list(fontWeight = "regular",
-                          color = neutralBlackText),
-             enabled = TRUE,
-             format = point_format)) %>%
-    hc_yAxis(labels = list(format = "{value}%"),
-             title = list(text = ""),
-             min = 0, max = 100) %>%
-    hc_xAxis(title = list(text = "")) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 colorByPoint = TRUE),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
+    highcharts <- highchart() %>%
+      hc_chart(type = "column") %>%
+      hc_xAxis(categories = c("New court commitment",
+                              "Parole return/revocation")) %>%
+      hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
+      hc_add_series(data = subset(df, released_at_ped_status == "Released Before Parole Eligibility Year"),
+                    name = "Released Before Parole Eligibility Year",
+                    type = "column",
+                    dataLabels = list(enabled = TRUE, format = point_format,
+                                      style = list(fontWeight = "regular")),
+                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_series(data = subset(df, released_at_ped_status == "Released on Parole Eligibility Year"),
+                    name = "Released on Parole Eligibility Year",
+                    type = "column",
+                    dataLabels = list(enabled = TRUE, format = point_format,
+                                      style = list(fontWeight = "regular")),
+                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_series(data = subset(df, released_at_ped_status == "Released After Parole Eligibility Year"),
+                    name = "Released After Parole Eligibility Year",
+                    type = "column",
+                    dataLabels = list(enabled = TRUE, format = point_format,
+                                      style = list(fontWeight = "regular")),
+                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_theme(hc_theme_jc) %>%
+      hc_colors(colors = c(purple, teal, orange)) %>%
+      hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+      hc_exporting(enabled = TRUE) %>%
+      hc_plotOptions(series = list(animation = FALSE,
+                                   cursor = "pointer",
+                                   borderWidth = 3,
+                                   minPointLength = 4),
+                     accessibility = list(enabled = TRUE,
+                                          keyboardNavigation = list(enabled = TRUE),
+                                          linkedDescription = accessibility_text,
+                                          landmarkVerbosity = "one"),
+                     area = list(accessibility = list(description = accessibility_text))
+      )
+
 }
 

@@ -56,6 +56,7 @@ all_time_between_release_ped_2020_by_race <- map(.x = states, .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_colors(colors = c(teal, orange)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,

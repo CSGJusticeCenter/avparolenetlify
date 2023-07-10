@@ -105,7 +105,7 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 if (state_for_report %in% names(all_line_pop_released_to_parole)) {
   state_line_pop_released_to_parole <- 
     all_line_pop_released_to_parole[[state_for_report]] %>% 
-    hc_size(width = 550, height = 400) %>%
+    hc_size(width = 600, height = 400) %>%
     hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
 } else {
   state_line_pop_released_to_parole <- "No Data"
@@ -132,7 +132,7 @@ if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
 if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
   state_bar_parole_elgibility_race <- 
     all_bar_parole_elgibility_race[[state_for_report]] %>% 
-    hc_size(width = 500, height = 350) %>% 
+    hc_size(width = 600, height = 350) %>% 
     hc_title(text = "People who are Parole Eligible but Still in Prison by Race in 2020")
 } else {
   state_bar_parole_elgibility_race <- "No Data"
@@ -164,16 +164,64 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 ###################
 
 # save adm type by release timing by state
-if (state_for_report %in% names(all_bar_released_at_ped_admtype_2020)) {
-  state_bar_released_at_ped_admtype_2020 <- 
-    all_bar_released_at_ped_admtype_2020[[state_for_report]] %>%
+if (state_for_report %in% names(all_bar_released_at_ped_2020)) {
+  state_bar_released_at_ped_2020 <- 
+    all_bar_released_at_ped_2020[[state_for_report]] %>%
     hc_size(height = 300, width = 475) %>%
-    hc_title(text = "Timing of Release by Parole Eligibility and Admission Type in 2020")
+    hc_title(text = "Timing of Release for All Offenses: Parole Revocation vs. New Crime")
 } else {
-  state_bar_released_at_ped_admtype_2020 <- "No Data"
+  state_bar_released_at_ped_2020 <- "No Data"
 }
 
+# save other offense by release timing by state
+if (state_for_report %in% names(all_bar_released_at_ped_violent_2020)) {
+  state_bar_released_at_ped_violent_2020 <- 
+    all_bar_released_at_ped_violent_2020[[state_for_report]] %>%
+    hc_size(height = 300, width = 475) %>%
+    hc_title(text = "Timing of Release for Violent Offenses: Parole Revocation vs. New Crime")
+} else {
+  state_bar_released_at_ped_violent_2020 <- "No Data"
+}
 
+# save publicorder offense by release timing by state
+if (state_for_report %in% names(all_bar_released_at_ped_publicorder_2020)) {
+  state_bar_released_at_ped_publicorder_2020 <- 
+    all_bar_released_at_ped_publicorder_2020[[state_for_report]] %>%
+    hc_size(height = 300, width = 475) %>%
+    hc_title(text = "Timing of Release for Public Order Offenses: Parole Revocation vs. New Crime")
+} else {
+  state_bar_released_at_ped_publicorder_2020 <- "No Data"
+}
+
+# save property offense by release timing by state
+if (state_for_report %in% names(all_bar_released_at_ped_property_2020)) {
+  state_bar_released_at_ped_property_2020 <- 
+    all_bar_released_at_ped_property_2020[[state_for_report]] %>%
+    hc_size(height = 300, width = 475) %>%
+    hc_title(text = "Timing of Release for Property Offenses: Parole Revocation vs. New Crime")
+} else {
+  state_bar_released_at_ped_property_2020 <- "No Data"
+}
+
+# save drug offense by release timing by state
+if (state_for_report %in% names(all_bar_released_at_ped_drugs_2020)) {
+  state_bar_released_at_ped_drugs_2020 <- 
+    all_bar_released_at_ped_drugs_2020[[state_for_report]] %>%
+    hc_size(height = 300, width = 475) %>%
+    hc_title(text = "Timing of Release for Drug Offenses: Parole Revocation vs. New Crime")
+} else {
+  state_bar_released_at_ped_drugs_2020 <- "No Data"
+}
+
+# save other offense by release timing by state
+if (state_for_report %in% names(all_bar_released_at_ped_other_2020)) {
+  state_bar_released_at_ped_other_2020 <- 
+    all_bar_released_at_ped_other_2020[[state_for_report]] %>%
+    hc_size(height = 300, width = 475) %>%
+    hc_title(text = "Timing of Release for Other Offenses: Parole Revocation vs. New Crime")
+} else {
+  state_bar_released_at_ped_other_2020 <- "No Data"
+}
 
 ###################
 
@@ -325,13 +373,9 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
     div(id = "regular-text", parole_eligibility_criteria), br(), br(),
     div(id = "big-section-title", "People who are Eligible for Parole"), br(), 
-    div(id = "bar-chart", state_bar_parole_elgibility_race), br()
-)
-```
-
-```{r}
-div(id = "body-section", 
-    div(id = "big-section-title", "Offenses"), br(),
+    div(id = "bar-chart", state_bar_parole_elgibility_race), br(),
+    
+    # div(id = "big-section-title", "Offenses"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_offense), br(), 
     div(id = "pie-chart", state_pie_parole_elgibility_offense), br()
 )
@@ -349,7 +393,7 @@ div(id = "body-section",
 
 <center>
 ```{r}
-div(id = "body-section", 
+div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population"), br(),
     div(id = "bar-chart", state_stackedbar_pe_type_2020), br(), br(),
     div(id = "line-chart", state_line_pop_released_to_parole), br()
@@ -376,17 +420,37 @@ div(id = "body-section",
 
 
 
-
-
 ## Releases from Prison
 
-<center>
 ```{r}
-div(id = "body-section", state_bar_released_at_ped_admtype_2020)
-```
-</center>
-<br>
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Comparing Timing of Release by Reason for Incarceration"), br()
+    )
 
+tabsetPanel(
+  id = "tabsetpanel",
+  tabPanel("Overview",
+           br(),
+           div(id = "body-section", state_bar_released_at_ped_2020)
+           ),
+  tabPanel("Violent",
+           br(),
+           div(id = "body-section", state_bar_released_at_ped_violent_2020)
+           ),
+  tabPanel("Property",
+           br(),
+           div(id = "body-section", state_bar_released_at_ped_property_2020)
+           ),
+  tabPanel("Drug",
+           br(),
+           div(id = "body-section", state_bar_released_at_ped_drugs_2020)
+           ),
+  tabPanel("Other",
+           br(),
+           div(id = "body-section", state_bar_released_at_ped_other_2020)
+           )
+)
+```
 
 
 
@@ -396,7 +460,7 @@ div(id = "body-section", state_bar_released_at_ped_admtype_2020)
 
 <center>
 ```{r}
-div(id = "body-section", 
+div(id = "body-section", br(),
     div(id = "bar-graph", state_time_between_release_ped_by_race), br(), br(),
     div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
          div(id = "reactable-table",

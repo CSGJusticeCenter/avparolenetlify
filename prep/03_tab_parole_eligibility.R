@@ -1,8 +1,8 @@
 #######################################
 # Project: AV Parole
-# File: parole_eligibility_ncrp.R
+# File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: May 23, 2023 (MAR)
+# Date last updated: July 10, 2023 (MAR)
 # Description:
 #    Parole eligibility tables and graphics for shiny app
 #######################################
