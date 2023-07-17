@@ -117,16 +117,25 @@ states <- unique(current_ped_2020_race$state)
 
 # generate bar chart about most serious sentenced offense in 2020 by state
 all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
+
+  # filter data
   df1 <- current_ped_2020_race %>%
     filter(state == x) %>%
     arrange(desc(prop))
   xaxis_order <- df1$race
 
+  # assign color for each race
+  df1$color <- case_when(df1$race == "Black, non-Hispanic" ~ yellow,
+                         df1$race == "White, non-Hispanic" ~ orange,
+                         df1$race == "Hispanic, any race" ~ teal,
+                         df1$race == "Other race(s), non-Hispanic" ~ purple)
+  df1$color <- htmltools::parseCssColors(df1$color)
+
   highcharts <-
     highchart() %>%
-    #hc_chart(margin = c(100, 0, 50, 0)) %>%
     hc_add_series(df1, type = "column",
-                  hcaes(x = factor(race), y = prop*100, color = race),
+                  hcaes(x = factor(race), y = prop*100, color = color
+                        ),
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontSize = "14px",
                                                  fontWeight = "bold",
@@ -152,6 +161,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 })
 
 all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, states)
+
 
 
 

@@ -267,6 +267,11 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
 
 
+
+
+
+
+
 ########################################
 
 # Proportion of prison population who are parole eligible
@@ -371,7 +376,38 @@ all_stackedbar_pe_type_2020 <- map(.x = states,  .f = function(x) {
 })
 
 all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
-all_stackedbar_pe_type_2020$Georgia
+
+
+
+
+
+
+
+####################
+# Sentence about parole eligible prison population
+####################
+
+# get list of states
+states <- unique(ncrp_pe_type_2020$state)
+
+# generate sentence about most serious sentenced offense in 2020 by state
+all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_pe_type_2020 %>%
+    filter(state == x &
+           count_type == "Currently Eligible<br>for Parole")
+
+  sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
+                      " people who were eligible for parole but not released from prison, constituting ",
+                      df1$prop_label, " of the parole-eligible prison population.")
+  return(sentences)
+})
+
+all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibility_population, states)
+
+
+
+
 
 
 ##########
@@ -382,7 +418,8 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_line_pop_released_to_parole, file=file.path(folder, "all_line_pop_released_to_parole.rds"))
-  save(all_stackedbar_pe_type_2020,     file=file.path(folder, "all_stackedbar_pe_type_2020.rds"))
+  save(all_line_pop_released_to_parole,           file=file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_stackedbar_pe_type_2020,               file=file.path(folder, "all_stackedbar_pe_type_2020.rds"))
+  save(all_sentence_parole_elgibility_population, file=file.path(folder, "all_sentence_parole_elgibility_population.rds"))
 
 }

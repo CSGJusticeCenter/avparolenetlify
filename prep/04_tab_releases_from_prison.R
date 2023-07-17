@@ -1,6 +1,6 @@
 #######################################
 # Project: AV Parole
-# File: ncrp_releases.R
+# File: tab_releases_from_prison.R
 # Authors: Mari Roberts
 # Date last updated: July 10, 2023 (MAR)
 # Description:
@@ -13,56 +13,6 @@
 # Timing of release overall, by adm type, and by offense type
 
 ##################
-
-ncrp_sentlgth_timesrvd_rel <- ncrp_releases %>%
-
-  # create order for sentence length and time served length
-  # for example, <1 is 1 and 1-1.9 is 2, and so on
-  mutate(
-    sentlgth_order = case_when(
-      sentlgth == "< 1 year"      ~ 1,
-      sentlgth == "1-1.9 years"   ~ 2,
-      sentlgth == "2-4.9 years"   ~ 3,
-      sentlgth == "5-9.9 years"   ~ 4,
-      sentlgth == "10-24.9 years" ~ 5,
-      sentlgth == ">=25 years"    ~ 5,
-      sentlgth == "Life, LWOP, Life plus additional years, Death" ~ 5,
-      TRUE ~ NA),
-    timesrvd_rel_order = case_when(
-      timesrvd_rel == "< 1 year"      ~ 1,
-      timesrvd_rel == "1-1.9 years"   ~ 2,
-      timesrvd_rel == "2-4.9 years"   ~ 3,
-      timesrvd_rel == "5-9.9 years"   ~ 4,
-      timesrvd_rel == ">=10 years"    ~ 5,
-      TRUE ~ NA)) %>%
-
-  # determine differences between time served and sentenced length
-  # calculate actual time served
-  mutate(
-    timesrvd_rel_vs_sentlgth = case_when(
-      is.na(timesrvd_rel_order) | is.na(sentlgth_order) ~ NA,
-      timesrvd_rel_order == sentlgth_order ~ "Full Sentence Length Served",
-      timesrvd_rel_order > sentlgth_order  ~ "More than Sentence Length Served",
-      timesrvd_rel_order < sentlgth_order  ~ "Less than Sentence Length Served"),
-    time_served = relyr - admityr) %>%
-
-  # https://www.icpsr.umich.edu/web/NACJD/studies/38492/datasets/0003/variables/PARELIG_YEAR?archive=nacjd
-  # remove parelig_year/mand_prisrel_year 2100
-  mutate(parelig_year_clean =
-           ifelse(parelig_year <= 2105, parelig_year, NA),
-         mand_prisrel_year_clean =
-           ifelse(mand_prisrel_year <= 2105, mand_prisrel_year, NA),
-
-         time_between_release_ped = relyr - parelig_year_clean,
-         time_between_ped_admission = parelig_year_clean - admityr,
-         time_between_mandatoryrelease_release = mand_prisrel_year_clean - relyr,
-         time_between_release_admissions = relyr - admityr) %>%
-
-  mutate(released_at_ped_status = case_when(
-    time_between_release_ped < 0 ~ "Released Before Parole Eligibility Year",
-    time_between_release_ped == 0 ~ "Released on Parole Eligibility Year",
-    time_between_release_ped > 0 ~ "Released After Parole Eligibility Year",
-    is.na(time_between_release_ped) ~ NA))
 
 # Subset to 2020 report
 ncrp_releases_2020 <- ncrp_sentlgth_timesrvd_rel %>%
@@ -345,6 +295,106 @@ ncrp_released_to_parole <- ncrp_sentlgth_timesrvd_rel %>%
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Subset to 2020 report
+ncrp_release_type <- ncrp_sentlgth_timesrvd_rel %>%
+  filter(admtype == "Parole return/revocation" |
+           admtype == "New court commitment") %>%
+  filter(reltype == "Unconditional release" |
+           reltype == "Conditional release") %>%
+  filter(!is.na(proportion_served))
+
+df1 <- ncrp_los %>%
+  group_by(state, rptyear) %>%
+  count(reltype) %>%
+  mutate(
+    prop = n/sum(n),
+    yearendpop = sum(n),
+    prop = prop*100,
+    prop_label = paste0(round(prop, 0), "%")) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Release Type: <b>",
+                  reltype,
+                  "</b><br><br>",
+                  "Number of People: <b>",
+                  scales::comma(n),
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
+df1 <- df1 %>% filter(state == "California") %>%
+  filter(rptyear >= 2015) %>%
+  select(reltype, rptyear, n)
+df1
+
+# df1 <- ncrp_los %>%
+#   group_by(state, admtype, rptyear) %>%
+#   count(reltype) %>%
+#   mutate(
+#     prop = n/sum(n),
+#     yearendpop = sum(n),
+#     prop = prop*100,
+#     prop_label = paste0(round(prop, 0), "%")) %>%
+#   mutate(tooltip =
+#            paste0("<b>", state, "</b><br><br>",
+#                   "Release Type: <b>",
+#                   reltype,
+#                   "</b><br><br>",
+#                   "Number of People: <b>",
+#                   scales::comma(n),
+#                   "</b><br><br>",
+#                   "Percentage of People: <b>",
+#                   prop_label, "</b></b>", sep = ""))
+#
+# df1 <- df1 %>% filter(state == "Alabama") %>%
+#   filter(rptyear >= 2018) %>%
+#   select(reltype, rptyear, prop)
+# df1
+# highchart() %>%
+#   hc_chart(type = "column", polar = FALSE) %>%
+#   hc_xAxis(categories = df1$rptyear) %>%
+#   hc_add_series(
+#     name = "Conditional Release",
+#     data = subset(df1, reltype == "Conditional release" & admtype == "New court commitment")$prop,
+#     stack = "A",
+#     color = yellow
+#   ) %>%
+#   hc_add_series(
+#     name = "Conditional Release",
+#     data = subset(df1, reltype == "Conditional release" & admtype == "Parole return/revocation")$prop,
+#     stack = "B",
+#     linkedTo = "previous",
+#     color = yellow
+#   ) %>%
+#   hc_add_series(
+#     name = "Unconditional Release",
+#     data = subset(df1, reltype == "Unconditional release" & admtype == "New court commitment")$prop,
+#     stack = "A",
+#     color = teal
+#   ) %>%
+#   hc_add_series(
+#     name = "Unconditional Release",
+#     data = subset(df1, reltype == "Unconditional release" & admtype == "Parole return/revocation")$prop,
+#     stack = "B",
+#     linkedTo = "previous",
+#     color = teal
+#   ) %>%
+#   hc_plotOptions(column = list(
+#     stacking = "normal"))
 
 
 

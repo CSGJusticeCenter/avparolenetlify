@@ -14,6 +14,7 @@ load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))
 # Prison Population
 load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_pe_type_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_population.rds"))
 
 
 
@@ -31,7 +32,24 @@ load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_
 
 
 
-# Timing of release from parole eligibility year by adm type and offense type
+
+# Length of Stay
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_overview_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_publicorder_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_property_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_other_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_drugs_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_violent_2020.rds"))
+
+
+
+
+
+
+
+
+
+# Releases from Prison
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_publicorder_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_property_2020.rds"))

@@ -545,7 +545,7 @@ fnc_pie_chart <- function(df,
                    area = list(accessibility = list(description = accessibility_text)))
 }
 
-# Create bar chart with labels
+# Create bar chart with labels showing PE status by adm type
 fnc_percent_bar_chart_pestatus_admtype <-
 
   function(df, point_format, accessibility_text) {
@@ -590,3 +590,46 @@ fnc_percent_bar_chart_pestatus_admtype <-
 
 }
 
+# Create bar chart with labels showing sentence duration by adm type
+fnc_percent_bar_chart_sentence_admtype <-
+  function(df, point_format, accessibility_text) {
+
+    highcharts <- highchart() %>%
+      hc_chart(type = "column") %>%
+      hc_xAxis(categories = c("New court commitment",
+                              "Parole return/revocation")) %>%
+      hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
+      hc_add_series(data = subset(df, timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served"),
+                    name = "Less than Sentence Length Served",
+                    type = "column",
+                    dataLabels = list(enabled = TRUE, format = point_format,
+                                      style = list(fontWeight = "regular")),
+                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_series(data = subset(df, timesrvd_rel_vs_sentlgth == "Full Sentence Length Served"),
+                    name = "Full Sentence Length Served",
+                    type = "column",
+                    dataLabels = list(enabled = TRUE, format = point_format,
+                                      style = list(fontWeight = "regular")),
+                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_series(data = subset(df, timesrvd_rel_vs_sentlgth == "More than Sentence Length Served"),
+                    name = "More than Sentence Length Served",
+                    type = "column",
+                    dataLabels = list(enabled = TRUE, format = point_format,
+                                      style = list(fontWeight = "regular")),
+                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_theme(hc_theme_jc) %>%
+      hc_colors(colors = c(purple, yellow, orange)) %>%
+      hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+      hc_exporting(enabled = TRUE) %>%
+      hc_plotOptions(series = list(animation = FALSE,
+                                   cursor = "pointer",
+                                   borderWidth = 3,
+                                   minPointLength = 4),
+                     accessibility = list(enabled = TRUE,
+                                          keyboardNavigation = list(enabled = TRUE),
+                                          linkedDescription = accessibility_text,
+                                          landmarkVerbosity = "one"),
+                     area = list(accessibility = list(description = accessibility_text))
+      )
+
+  }
