@@ -1,22 +1,10 @@
 
-
-
+/* remove line under tabs */
 #tabsetpanel {
   border-bottom: 1px solid #fff;
 }
 
-
-
-#tabsetpanelgraph {
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid #fff;
-  float: left;
-  width: 50%;
-  height: 100%;
-}
-
-
+/* tool tip settings for robina institute prison sentencing system */
 .tooltip {
   position: relative;
   display: inline-block;
@@ -105,7 +93,7 @@
   content: "";
   display: table;
   clear: both;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #3E4B4B;
   margin-bottom: 10px;
 }
 
@@ -279,6 +267,9 @@ body {
   font-weight: bold; /* change font weight */
   text-align: center;
   color: #3E4B4B;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #medium-section-title {

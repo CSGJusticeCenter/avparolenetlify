@@ -484,7 +484,6 @@ div(id = "body-section", br(),
     div(id = "pie-chart",          state_pie_parole_elgibility_offense), br()
 )
 ```
-
 </center>
 <br>
 
