@@ -1,5 +1,4 @@
 
-
 /******************************************************************************/
 /* Overview
 /******************************************************************************/
@@ -278,11 +277,51 @@ color: #fff;
 
 
 
+
 /******************************************************************************/
-/* All tab items
+/* TABS - Parole Eligibility, Releases from Prison, etc. */
 /******************************************************************************/
 
 .nav-tabs {
+  background-color: #fff;
+  text-align:center;
+  font-size: .95em;
+  font-family: Graphik;
+  margin: 0 auto;
+  justify-content: center;
+  padding-bottom: 0.1em;
+}
+
+.tab-content {
+  border: none;
+}
+
+.nav-tabs .nav-link {
+  color: #3E4B4B;
+  background-color: white;
+}
+
+.nav-tabs .nav-link.active {
+  color: white;
+  background-color: #3E4B4B;
+}
+
+.nav-tabs .nav-link:hover {
+  color: white;
+  background-color: #3E4B4B;
+}
+
+
+
+
+
+
+/******************************************************************************/
+/* TABS - Offense types NOT WORKING
+/******************************************************************************/
+
+/* tabs that look like buttons for filtering visualizations */
+#tabsetpanel {
   border-bottom: 1px solid #fff;
   justify-content: center;
   background-color: #fff;
@@ -291,72 +330,21 @@ color: #fff;
   font-family: Graphik;
 }
 
-.tab-content {
-  border: none; /* remove border around box */
-}
-
-
-
-
-
-/******************************************************************************/
-/* Broad tab items
-/******************************************************************************/
-
-/* Styling for the .panel-tabset */
-.panel-tabset .nav-link {
-  color: #3E4B4B;
-  border-radius: 10px;
-  padding: 6px 12px;
-  background-color: #fff;
-  text-align:center;
-  font-size: 1em;
-  font-family: Graphik;
-  margin: 0 auto;
-  justify-content: center;
-  padding-bottom: 0.1em;
-}
-
-.panel-tabset .nav-link.active {
-  background-color: #3E4B4B;
-  font-weight: bold;
-  color: #fff;
-  font-size: 1em;
-  font-family: Graphik;
-}
-
-
-
-
-
-/******************************************************************************/
-/* Nested items
-/******************************************************************************/
-
-.panel-tabset .nav-pills .nav-link {
+/* this was working and then stopped but it didn't work for the second set of tabs */
+#tabsetpanel .nav-tabs>li>a:not(.active) {
   background-color: #F4F6F8;
-  color: #637070;
-  text-align:center;
-  font-size: .85em;
-  font-family: Graphik;
-  margin: 0 auto;
-  justify-content: center;
-  padding-bottom: 0.1em;
-  border: 1px solid #637070;
+  color: #3E4B4B;
+  text-decoration: none;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: 1px solid #3E4B4B;
 }
 
-.panel-tabset .nav-pills .nav-link.active {
-  background-color: #637070;
+#tabsetpanel .nav-tabs>li>a.active {
+  background-color: #3E4B4B;
   color: #F4F6F8;
-  text-align:center;
-  font-size: .85em;
-  font-family: Graphik;
-  margin: 0 auto;
-  justify-content: center;
-  padding-bottom: 0.1em;
-  border: 1px solid #637070;
+  text-decoration: none;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: 1px solid #3E4B4B;
 }
-
-
-
-

@@ -1,72 +1,56 @@
 ---
-title: "Test"
 format:
   html:
-    css: styles.css
+    css: styles_test.css
     embed-resources: TRUE
     code-fold: true
     page-layout: full
     fig_caption: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  dev = "ragg_png"
-)
+:::: {.panel-tabset .nav-pills}
 
-library(highcharter)
-library(htmlwidgets)
-library(dplyr)
-library(htmltools)
+## Parole Eligibility
 
-# Load the Pokemon dataset
-data(penguins, package = "palmerpenguins")
-data(diamonds, economics_long, package = "ggplot2")
+## Prison Population
 
-graph <- hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm , group = species)) %>% 
-  hc_size(height = 100, width = 200)
-```
+## Length of Stay
 
+::: {.panel-tabset}
 
-::: panel-tabset 
+### Overview
 
-## Tab 1
+### Violent
 
-```{r}
-hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm , group = species)) %>% 
-  hc_size(height = 200, width = 200)
-```
+### Property
 
-## Tab 1a
+### Drug
 
-<center>
-```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
-    # div(id = "reactable-table", pe_criteria_table1),
-    # div(id = "reactable-table", pe_criteria_table2), br(), br(),
-    div(id = "big-section-title", "People who are Eligible for Parole but Still in Prison"), br(), br(), br()
-)
-```
+### Public Order
 
-```{r}
-div(id = "body-section", 
-    div(id = "big-section-title", "Most Serious Sentenced Offense for People who are Parole Eligible but Still in Prison"), br(),
-    div(id = "pie-chart", graph), br()
-)
-```
-</center>
-<br>
+### Other
 
-
-## Tab 2
-
-```{r}
-hchart(penguins, "scatter", hcaes(x = body_mass_g, y = flipper_length_mm , group = species)) %>% 
-  hc_size(height = 500, width = 600)
-```
 
 :::
+
+## Releases from Prison
+
+::: {.panel-tabset}
+
+### Overview
+
+### Violent
+
+### Property
+
+### Drug
+
+### Public Order
+
+### Other
+
+:::
+
+## Disparities
+
+::::

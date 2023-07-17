@@ -243,18 +243,32 @@ div(id = "graph-title",
 ```
 
 ```{r}
-tags$style(type = "text/css", ".nav-tabs { justify-content: center; border-bottom: 1px solid #fff;}")
-tabsetPanel(
-  id = "tabsetpanelmap",
-  tabPanel("Overview",
-           br(),
-           map_percent
-           ),
-  tabPanel("Number of People",
-           br(),
-           map_count)
-)
+# tags$style(type = "text/css", ".nav-tabs { justify-content: center; border-bottom: 1px solid #fff;}")
+# tabsetPanel(
+#   id = "tabsetpanelmap",
+#   tabPanel("Overview",
+#            br(),
+#            map_percent
+#            ),
+#   tabPanel("Number of People",
+#            br(),
+#            map_count)
+# )
 ```
+
+::: {.panel-tabset}
+
+## Proportion of People
+```{r}
+map_percent
+```
+
+## Number of People
+```{r}
+map_count
+```
+
+:::
 
 <br>
 
