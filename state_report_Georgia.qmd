@@ -467,7 +467,7 @@ htmltools::div(
 
 
 
-::: panel-tabset 
+:::: panel-tabset 
 
 ## Parole Eligibility
 
@@ -518,39 +518,70 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Length of Stay"), br()
     )
-
-tabsetPanel(
-  id = "tabsetpanel",
-  tabPanel("Overview",
-           br(),
-           div(id = "body-section", state_bar_sentence_overview_2020)
-           ),
-  tabPanel("Violent",
-           br(),
-           div(id = "body-section", state_bar_sentence_violent_2020)
-           ),
-  tabPanel("Property",
-           br(),
-           div(id = "body-section", state_bar_sentence_property_2020)
-           ),
-  tabPanel("Public Order",
-           br(),
-           div(id = "body-section", state_bar_sentence_publicorder_2020)
-           ),
-  tabPanel("Drug",
-           br(),
-           div(id = "body-section", state_bar_sentence_drugs_2020)
-           ),
-  tabPanel("Other",
-           br(),
-           div(id = "body-section", state_bar_sentence_other_2020)
-           )
-)
+# tabsetPanel(
+#   id = "tabsetpanel",
+#   tabPanel("Overview",
+#            br(),
+#            div(id = "body-section", state_bar_sentence_overview_2020)
+#            ),
+#   tabPanel("Violent",
+#            br(),
+#            div(id = "body-section", state_bar_sentence_violent_2020)
+#            ),
+#   tabPanel("Property",
+#            br(),
+#            div(id = "body-section", state_bar_sentence_property_2020)
+#            ),
+#   tabPanel("Public Order",
+#            br(),
+#            div(id = "body-section", state_bar_sentence_publicorder_2020)
+#            ),
+#   tabPanel("Drug",
+#            br(),
+#            div(id = "body-section", state_bar_sentence_drugs_2020)
+#            ),
+#   tabPanel("Other",
+#            br(),
+#            div(id = "body-section", state_bar_sentence_other_2020)
+#            )
+# )
 ```
 </center>
 <br>
 
+::: {.panel-tabset}
 
+### Overview
+```{r}
+div(id = "body-section", state_bar_sentence_overview_2020)
+```
+
+### Violent
+```{r}
+div(id = "body-section", state_bar_sentence_violent_2020)
+```
+
+### Property
+```{r}
+div(id = "body-section", state_bar_sentence_property_2020)
+```
+
+### Public Order
+```{r}
+div(id = "body-section", state_bar_sentence_publicorder_2020)
+```
+
+### Drug
+```{r}
+div(id = "body-section", state_bar_sentence_drugs_2020)
+```
+
+### Other
+```{r}
+div(id = "body-section", state_bar_sentence_other_2020)
+```
+
+:::
 
 
 
@@ -562,34 +593,69 @@ tabsetPanel(
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Type by Admission Type in 2020"), br(),
+    "TBD Visualization: Conditional vs Unconditional Releases",
     br(), br(),
     div(id = "big-section-title", "Timing of Release by Offense Type in 2020"), br()
     )
 
-tabsetPanel(
-  id = "tabsetpanel",
-  tabPanel("Overview",
-           br(),
-           div(id = "body-section", state_bar_released_at_ped_2020)
-           ),
-  tabPanel("Violent",
-           br(),
-           div(id = "body-section", state_bar_released_at_ped_violent_2020)
-           ),
-  tabPanel("Property",
-           br(),
-           div(id = "body-section", state_bar_released_at_ped_property_2020)
-           ),
-  tabPanel("Drug",
-           br(),
-           div(id = "body-section", state_bar_released_at_ped_drugs_2020)
-           ),
-  tabPanel("Other",
-           br(),
-           div(id = "body-section", state_bar_released_at_ped_other_2020)
-           )
-)
+# tabsetPanel(
+#   id = "tabsetpanel",
+#   tabPanel("Overview",
+#            br(),
+#            div(id = "body-section", state_bar_released_at_ped_2020)
+#            ),
+#   tabPanel("Violent",
+#            br(),
+#            div(id = "body-section", state_bar_released_at_ped_violent_2020)
+#            ),
+#   tabPanel("Property",
+#            br(),
+#            div(id = "body-section", state_bar_released_at_ped_property_2020)
+#            ),
+#   tabPanel("Drug",
+#            br(),
+#            div(id = "body-section", state_bar_released_at_ped_drugs_2020)
+#            ),
+#   tabPanel("Other",
+#            br(),
+#            div(id = "body-section", state_bar_released_at_ped_other_2020)
+#            )
+# )
 ```
+
+::: {.panel-tabset}
+
+### Overview
+```{r}
+div(id = "body-section", state_bar_released_at_ped_2020)
+```
+
+### Violent
+```{r}
+div(id = "body-section", state_bar_released_at_ped_violent_2020)
+```
+
+### Property
+```{r}
+div(id = "body-section", state_bar_released_at_ped_property_2020)
+```
+
+### Public Order
+```{r}
+div(id = "body-section", state_bar_released_at_ped_publicorder_2020)
+```
+
+### Drug
+```{r}
+div(id = "body-section", state_bar_released_at_ped_drugs_2020)
+```
+
+### Other
+```{r}
+div(id = "body-section", state_bar_released_at_ped_other_2020)
+```
+
+:::
 
 
 
@@ -600,6 +666,7 @@ tabsetPanel(
 <center>
 ```{r}
 div(id = "body-section", br(),
+    div(id = "big-section-title", "Racial and Ethnic Disparities"), br(),
     div(id = "bar-graph",      state_time_between_release_ped_by_race), br(), br(),
     div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
        div(id = "reactable-table",
@@ -612,7 +679,7 @@ div(id = "body-section", br(),
 </center>
 <br>
 
-:::
+::::
 
 ---
 title: "`r state_for_report`"
