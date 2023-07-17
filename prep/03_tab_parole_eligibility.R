@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: July 10, 2023 (MAR)
+# Date last updated: July 17, 2023 (MAR)
 # Description:
 #    Parole eligibility tables and graphics for shiny app
 #######################################
@@ -105,6 +105,10 @@ current_ped_2020_race <- ncrp_yearendpop %>%
                           race, "</b><br>",
                           prop_label, "<br>"))
 
+
+
+
+
 ####################
 # Bar chart about parole eligibility by race
 ####################
@@ -151,6 +155,29 @@ all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, state
 
 
 
+
+
+####################
+# Sentence about race and parole eligibility
+####################
+
+# get list of states
+states <- unique(current_ped_2020_race$state)
+
+# generate sentence about most serious sentenced offense in 2020 by state
+all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
+  df1 <- current_ped_2020_race %>%
+    filter(state == x) %>%
+    arrange(desc(n)) %>%
+    slice(1)
+  sentences <- paste0("In 2020, ", df1$race,
+                      " people constituted the most number of people eligible for parole but still in prison, accounting for ",
+                      df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
+  return(sentences)
+})
+
+all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_race, states)
+
 # # get population by race in 2020
 # pop_2020_race <- ncrp_yearendpop %>%
 #   filter(rptyear == 2020) %>%
@@ -174,6 +201,9 @@ all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, state
 #   )
 
 
+
+
+
 ####################
 # Sentence about most serious offense
 ####################
@@ -195,6 +225,10 @@ all_sentence_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
 
 all_sentence_parole_elgibility_offense <- setNames(all_sentence_parole_elgibility_offense, states)
 
+
+
+
+
 ####################
 # Pie chart about most serious offense
 ####################
@@ -214,6 +248,10 @@ all_pie_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
 })
 
 all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense, states)
+
+
+
+
 
 ####################
 # Bar chart about most serious offense
@@ -362,6 +400,7 @@ for (folder in theseFOLDERS){
   save(current_ped_2020_race,                  file=file.path(folder, "current_ped_2020_race.rds"))
 
   save(all_bar_parole_elgibility_race,         file=file.path(folder, "all_bar_parole_elgibility_race.rds"))
+  save(all_sentence_parole_elgibility_race,    file=file.path(folder, "all_sentence_parole_elgibility_race.rds"))
 
   save(all_bar_parole_elgibility_offense,      file=file.path(folder, "all_bar_parole_elgibility_offense.rds"))
   save(all_pie_parole_elgibility_offense,      file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))

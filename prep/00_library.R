@@ -64,7 +64,6 @@ options(highcharter.lang = hcoptslang)
 ###################
 
 # neutral colors
-# neutralBkgndLight    <- "#F4F6F6"
 neutralBkgndLight    <- "#e7e7e7"
 neutralBkgndMedium   <- "#DADFDF"
 neutralBkgndDisabled <- "#B2B9B9"

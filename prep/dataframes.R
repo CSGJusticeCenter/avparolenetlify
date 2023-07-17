@@ -22,6 +22,7 @@ load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_pe_type_2020.rds
 # Parole Eligibility
 load(file = paste0(sp_data_path, "/data/analysis/parole_eligibility_table_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_offense.rds"))

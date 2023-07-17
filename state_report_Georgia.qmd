@@ -128,7 +128,7 @@ if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
 
 ###################
 
-# save bar chart of people eligible for parole but still in prison by state
+# save bar chart of people eligible for parole but still in prison by race and state
 if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
   state_bar_parole_elgibility_race <- 
     all_bar_parole_elgibility_race[[state_for_report]] %>% 
@@ -136,6 +136,14 @@ if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
     hc_title(text = "People who are Parole Eligible but Still in Prison by Race in 2020")
 } else {
   state_bar_parole_elgibility_race <- "No Data"
+}
+
+# save sentence about PE by race and by state
+if (state_for_report %in% names(all_sentence_parole_elgibility_race)) {
+  state_sentence_parole_elgibility_race <- 
+    all_sentence_parole_elgibility_race[[state_for_report]]
+} else {
+  state_sentence_parole_elgibility_race <- ""
 }
 
 # save pie chart of most serious sentenced offense by state
@@ -167,7 +175,7 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 if (state_for_report %in% names(all_bar_released_at_ped_2020)) {
   state_bar_released_at_ped_2020 <- 
     all_bar_released_at_ped_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 475) %>%
+    hc_size(height = 300, width = 500) %>%
     hc_title(text = "Timing of Release for All Offenses: Parole Revocation vs. New Crime")
 } else {
   state_bar_released_at_ped_2020 <- "No Data"
@@ -177,7 +185,7 @@ if (state_for_report %in% names(all_bar_released_at_ped_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_violent_2020)) {
   state_bar_released_at_ped_violent_2020 <- 
     all_bar_released_at_ped_violent_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 475) %>%
+    hc_size(height = 300, width = 500) %>%
     hc_title(text = "Timing of Release for Violent Offenses: Parole Revocation vs. New Crime")
 } else {
   state_bar_released_at_ped_violent_2020 <- "No Data"
@@ -187,7 +195,7 @@ if (state_for_report %in% names(all_bar_released_at_ped_violent_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_publicorder_2020)) {
   state_bar_released_at_ped_publicorder_2020 <- 
     all_bar_released_at_ped_publicorder_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 475) %>%
+    hc_size(height = 300, width = 500) %>%
     hc_title(text = "Timing of Release for Public Order Offenses: Parole Revocation vs. New Crime")
 } else {
   state_bar_released_at_ped_publicorder_2020 <- "No Data"
@@ -197,7 +205,7 @@ if (state_for_report %in% names(all_bar_released_at_ped_publicorder_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_property_2020)) {
   state_bar_released_at_ped_property_2020 <- 
     all_bar_released_at_ped_property_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 475) %>%
+    hc_size(height = 300, width = 500) %>%
     hc_title(text = "Timing of Release for Property Offenses: Parole Revocation vs. New Crime")
 } else {
   state_bar_released_at_ped_property_2020 <- "No Data"
@@ -207,7 +215,7 @@ if (state_for_report %in% names(all_bar_released_at_ped_property_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_drugs_2020)) {
   state_bar_released_at_ped_drugs_2020 <- 
     all_bar_released_at_ped_drugs_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 475) %>%
+    hc_size(height = 300, width = 500) %>%
     hc_title(text = "Timing of Release for Drug Offenses: Parole Revocation vs. New Crime")
 } else {
   state_bar_released_at_ped_drugs_2020 <- "No Data"
@@ -217,7 +225,7 @@ if (state_for_report %in% names(all_bar_released_at_ped_drugs_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_other_2020)) {
   state_bar_released_at_ped_other_2020 <- 
     all_bar_released_at_ped_other_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 475) %>%
+    hc_size(height = 300, width = 500) %>%
     hc_title(text = "Timing of Release for Other Offenses: Parole Revocation vs. New Crime")
 } else {
   state_bar_released_at_ped_other_2020 <- "No Data"
@@ -233,8 +241,8 @@ if (state_for_report %in% names(all_bar_released_at_ped_other_2020)) {
 if (state_for_report %in% names(all_time_between_release_ped_2020_by_race)) {
   state_time_between_release_ped_by_race <- 
     all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
-    hc_title(text = "Time from PED to Release by Race and Ethnicity in 2020") %>% 
-    hc_size(height = 300, width = 475)
+    hc_title(text = "Timing of Release for People Eligible for Parole by Race and Ethnicity in 2020") %>% 
+    hc_size(height = 300, width = 500)
 } else {
   state_time_between_release_ped_by_race <- "No Data"
 }
@@ -373,9 +381,10 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
     div(id = "regular-text", parole_eligibility_criteria), br(), br(),
     div(id = "big-section-title", "People who are Eligible for Parole"), br(), 
+    
+    div(id = "regular-text", state_sentence_parole_elgibility_race), br(), 
     div(id = "bar-chart", state_bar_parole_elgibility_race), br(),
     
-    # div(id = "big-section-title", "Offenses"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_offense), br(), 
     div(id = "pie-chart", state_pie_parole_elgibility_offense), br()
 )
