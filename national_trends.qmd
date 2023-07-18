@@ -27,15 +27,17 @@ library(shiny)
 ```
 
 ```{r}
+page_summary <- "With the support of Arnold Ventures, the Council of State Governments (CSG) Justice Center analyzed data from the National Corrections Reporting Program (NCRP) and Robina Institute of Criminal Law and Criminal Justice to gain deeper insights into the relationship between parole practices and prison populations. The study specifically focused on understanding the dynamics of parole eligibility and lengths of stay, with a specific emphasis on examining racial, ethnic, and gender disparities."
+  
 num_people_current   <- sum(parole_eligibility_table_2020$current_count, na.rm = TRUE)
 num_people_1_5_years <- sum(parole_eligibility_table_2020$future_1_5_years_count, na.rm = TRUE)
 ```
 
 ::: narrow-section
 ```{r}
-htmltools::div(
-div(id = "important-text", 
-    HTML("Understanding the impact of prison sentencing systems and the opportunity to reduce prison populations and improve lives and public safety.<br><br>")))
+div(id = "body-section",
+    div(id = "regular-text", page_summary, br(), br(), br())
+    )
 
 # combine info in one row and center
 # highlighted national trends numbers
@@ -237,23 +239,7 @@ map_count <- highchart(height = 580) %>%
 ```
 
 ```{r}
-htmltools::div(
-div(id = "graph-title", 
-    HTML("People Currently Eligible for Parole but in Prison")))
-```
-
-```{r}
-# tags$style(type = "text/css", ".nav-tabs { justify-content: center; border-bottom: 1px solid #fff;}")
-# tabsetPanel(
-#   id = "tabsetpanelmap",
-#   tabPanel("Overview",
-#            br(),
-#            map_percent
-#            ),
-#   tabPanel("Number of People",
-#            br(),
-#            map_count)
-# )
+div(div(id = "graph-title", HTML("People Currently Eligible for Parole but in Prison")))
 ```
 
 ::: {.panel-tabset}
