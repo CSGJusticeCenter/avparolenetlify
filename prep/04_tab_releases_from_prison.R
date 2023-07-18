@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases_from_prison.R
 # Authors: Mari Roberts
-# Date last updated: July 10, 2023 (MAR)
+# Date last updated: July 18, 2023 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -11,14 +11,15 @@
 
 # Data cleaning for:
 # Timing of release overall, by adm type, and by offense type
+# Released before parole eligibility (PE) year, on PE year, after PE year
 
 ##################
 
-# Subset to 2020 report
+# subset to 2020 report
 ncrp_releases_2020 <- ncrp_sentlgth_timesrvd_rel %>%
   filter(rptyear == 2020)
 
-# How many people are being released at first eligibility?
+# df showing the number and prop of people by adm type and timing of release
 ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   filter(!is.na(released_at_ped_status)) %>%
@@ -40,7 +41,7 @@ ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
-# How many people are being released at first eligibility by adm type?
+# df showing the number and prop of people by adm type and timing of release
 ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   dplyr::filter(!is.na(released_at_ped_status) &
@@ -63,7 +64,7 @@ ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
-# How many people are being released at first eligibility by offgeneral?
+# df showing the number and prop of people by adm type, offense type, and timing of release
 ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   filter(!is.na(released_at_ped_status) &
@@ -91,22 +92,21 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
 
 # Highcharts for:
 # Timing of release overall, by adm type, and by offense type
+# Create a grouped percent bar chart for each offense type
 
 ##################
-
-
-########
-# Overall
-########
 
 # assign x axis order
 desired_order <- c("Released Before Parole Eligibility Year",
                    "Released on Parole Eligibility Year",
                    "Released After Parole Eligibility Year")
 
-# Get list of states
+# get list of states
 states <- unique(ncrp_released_at_ped_2020$state)
 
+########
+# Overall
+########
 all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_2020 %>% filter(state == x) %>%
     arrange(match(released_at_ped_status, desired_order))
@@ -118,146 +118,36 @@ all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
 })
 
 all_bar_released_at_ped_2020 <- setNames(all_bar_released_at_ped_2020, states)
-all_bar_released_at_ped_2020$Georgia
-
-
-
-
 
 ########
-# Drugs
+# Other/unspecified
 ########
-
-# Get list of states
-states <- ncrp_released_at_ped_offgeneral_2020 %>%
-  filter(offgeneral == "Drugs") %>%
-  pull(state) %>%
-  unique()
-
-all_bar_released_at_ped_drugs_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
-    filter(state == x) %>%
-    filter(offgeneral == "Drugs") %>%
-    arrange(match(released_at_ped_status, desired_order))
-  highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                         point_format = "{point.prop_label}",
-                                         accessibility_text = "TBD.")
-  return(highcharts)
-})
-
-all_bar_released_at_ped_drugs_2020 <- setNames(all_bar_released_at_ped_drugs_2020, states)
-all_bar_released_at_ped_drugs_2020$California
-
-
-
-
-
-########
-# Other
-########
-
-# Get list of states
-states <- ncrp_released_at_ped_offgeneral_2020 %>%
-  filter(offgeneral == "Other/unspecified") %>%
-  pull(state) %>%
-  unique()
-
-all_bar_released_at_ped_other_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
-    filter(state == x) %>%
-    filter(offgeneral == "Other/unspecified") %>%
-    arrange(match(released_at_ped_status, desired_order))
-  highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                         point_format = "{point.prop_label}",
-                                         accessibility_text = "TBD.")
-  return(highcharts)
-})
-
-all_bar_released_at_ped_other_2020 <- setNames(all_bar_released_at_ped_other_2020, states)
-all_bar_released_at_ped_other_2020$Georgia
-
-
-
-
+all_bar_released_at_ped_other_2020 <-
+  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Other/unspecified")
 
 ########
 # Property
 ########
-
-# Get list of states
-states <- ncrp_released_at_ped_offgeneral_2020 %>%
-  filter(offgeneral == "Property") %>%
-  pull(state) %>%
-  unique()
-
-all_bar_released_at_ped_property_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
-    filter(state == x) %>%
-    filter(offgeneral == "Property") %>%
-    arrange(match(released_at_ped_status, desired_order))
-  highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                         point_format = "{point.prop_label}",
-                                         accessibility_text = "TBD.")
-  return(highcharts)
-})
-
-all_bar_released_at_ped_property_2020 <- setNames(all_bar_released_at_ped_property_2020, states)
-all_bar_released_at_ped_property_2020$Georgia
-
-
-
-
-
-########
-# Public Order
-########
-
-# Get list of states
-states <- ncrp_released_at_ped_offgeneral_2020 %>%
-  filter(offgeneral == "Public order") %>%
-  pull(state) %>%
-  unique()
-
-all_bar_released_at_ped_publicorder_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
-    filter(state == x) %>%
-    filter(offgeneral == "Public order") %>%
-    arrange(match(released_at_ped_status, desired_order))
-  highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                         point_format = "{point.prop_label}",
-                                         accessibility_text = "TBD.")
-  return(highcharts)
-})
-
-all_bar_released_at_ped_publicorder_2020 <- setNames(all_bar_released_at_ped_publicorder_2020, states)
-all_bar_released_at_ped_publicorder_2020$Georgia
-
-
-
-
+all_bar_released_at_ped_property_2020 <-
+  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Property")
 
 ########
 # Violent
 ########
+all_bar_released_at_ped_violent_2020 <-
+  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Violent")
 
-# Get list of states
-states <- ncrp_released_at_ped_offgeneral_2020 %>%
-  filter(offgeneral == "Violent") %>%
-  pull(state) %>%
-  unique()
-all_bar_released_at_ped_violent_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
-    filter(state == x) %>%
-    filter(offgeneral == "Violent") %>%
-    arrange(match(released_at_ped_status, desired_order))
-  highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                                       point_format = "{point.prop_label}",
-                                                       accessibility_text = "TBD.")
-  return(highcharts)
-})
+########
+# Public Order
+########
+all_bar_released_at_ped_publicorder_2020 <-
+  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Public order")
 
-all_bar_released_at_ped_violent_2020 <- setNames(all_bar_released_at_ped_violent_2020, states)
-all_bar_released_at_ped_violent_2020$Georgia
+########
+# Drugs
+########
+all_bar_released_at_ped_drugs_2020 <-
+  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Drugs")
 
 
 
@@ -279,37 +169,17 @@ all_bar_released_at_ped_violent_2020$Georgia
 
 
 
-########################################
-
-# Released to Parole Over Time
-
-########################################
-
-# count number of people released to parole by year and state
-ncrp_released_to_parole <- ncrp_sentlgth_timesrvd_rel %>%
-  filter(timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served") %>%
-  filter(state != "Alabama") %>%
-  filter(reltype != "Other release (including death, transfer, AWOL, escape)") %>%
-  group_by(rptyear, state) %>%
-  summarise(releases_to_parole = n())
 
 
 
+##################
 
+# Highcharts for:
+# Unconditional vs conditional release
 
+##################
 
-
-
-
-
-
-
-
-
-
-
-
-# Subset to 2020 report
+# subset to 2020 report
 ncrp_release_type <- ncrp_sentlgth_timesrvd_rel %>%
   filter(admtype == "Parole return/revocation" |
            admtype == "New court commitment") %>%
@@ -317,7 +187,7 @@ ncrp_release_type <- ncrp_sentlgth_timesrvd_rel %>%
            reltype == "Conditional release") %>%
   filter(!is.na(proportion_served))
 
-df1 <- ncrp_los %>%
+df1 <- ncrp_release_type %>%
   group_by(state, rptyear) %>%
   count(reltype) %>%
   mutate(

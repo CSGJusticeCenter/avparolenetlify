@@ -549,7 +549,7 @@ div(id = "body-section", state_bar_sentence_other_2020)
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Type by Admission Type in 2020"), br(),
     "TBD Visualization: Conditional vs Unconditional Releases",
-    br(), br(),
+    br(), br(), br(), br(), 
     div(id = "big-section-title", "Timing of Release by Offense Type in 2020"), br()
     )
 ```
@@ -595,13 +595,18 @@ div(id = "body-section", state_bar_released_at_ped_other_2020)
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Racial and Ethnic Disparities"), br(),
-    div(id = "bar-graph",      state_time_between_release_ped_by_race), br(), br(),
-    div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
-       div(id = "reactable-table",
-           table_pp_by_race,
-           table_pp_by_sex,
-           table_pp_by_offgeneral,
-           table_pp_by_sentlgth)
+    div(id = "regular-text",      "Black people were X times less/more likely than White people to be released on or before their parole eligibility year."), br(), 
+    div(id = "regular-text",      "Hispanic people were X times less/more likely than White people to be released on or before their parole eligibility year."), br(), br(), 
+
+    div(id = "regular-text",      "For every White person who is released after their parole eligibility year, X Black people are released after their parole eligibility year."), br(), 
+    div(id = "regular-text",      "For every White person who is released after their parole eligibility year, X Hispanic people are released after their parole eligibility year."), br(), 
+    div(id = "bar-graph",         state_time_between_release_ped_by_race), br(), br(),
+    div(id = "section-title",    "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
+     div(id = "reactable-table",
+         table_pp_by_race,
+         table_pp_by_sex,
+         table_pp_by_offgeneral,
+         table_pp_by_sentlgth)
     )
 ```
 </center>

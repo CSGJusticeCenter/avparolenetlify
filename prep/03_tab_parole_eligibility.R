@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: July 17, 2023 (MAR)
+# Date last updated: July 18, 2023 (MAR)
 # Description:
 #    Parole eligibility tables and graphics for shiny app
 #######################################
@@ -10,11 +10,12 @@
 
 ################################################################################
 
-# NCRP - Parole eligibility in 2020
+# Reactable table
+# Parole eligibility in 2020
 
 ################################################################################
 
-# get number and percentage of eligibility statuses
+# get number and prop of people by eligibility statuses, by state and report year
 parole_eligibility_counts <- ncrp_yearendpop %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
@@ -39,13 +40,10 @@ parole_eligibility_table <- parole_eligibility_counts %>%
 parole_eligibility_table_2020 <- parole_eligibility_table %>%
   filter(rptyear == 2020)
 
-# missing data
+# find missing data
 # Arizona, Michigan, New Jersey, New Mexico
-missing_states <- state.name[!state.name %in% parole_eligibility_table_2020$state]
-
-# create a new dataframe with the missing states and NA values
-missing_data <- tibble(state = missing_states)
-missing_data <- missing_data %>% mutate(rptyear = 2020)
+missing_data <- tibble(state = setdiff(state.name, parole_eligibility_table_2020$state),
+                       rptyear = 2020)
 
 # combine the missing data with the original dataframe
 parole_eligibility_table_2020 <- bind_rows(parole_eligibility_table_2020, missing_data) %>%
@@ -59,11 +57,11 @@ parole_eligibility_table_2020 <- bind_rows(parole_eligibility_table_2020, missin
 
 ################################################################################
 
-# NCRP - Offenses for those in prison but not released in 2020
+# Most serious sentenced offenses for those in prison but not released in 2020
 
 ################################################################################
 
-# get most serious sentenced offense for people eligible for parole but still in prison
+# most serious sentenced offense for people eligible for parole but still in prison
 current_ped_2020_offenses <- ncrp_yearendpop %>%
   filter(rptyear == 2020) %>%
   filter(parelig_status == "Current") %>%
@@ -88,7 +86,7 @@ current_ped_2020_offenses <- ncrp_yearendpop %>%
          chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"),
          prop_label = paste0(round(prop*100, 0), "%"))
 
-# get parole eligible population by race in 2020
+# parole eligible population but still in prison by race in 2020
 current_ped_2020_race <- ncrp_yearendpop %>%
   filter(rptyear == 2020) %>%
   filter(parelig_status == "Current") %>%
@@ -113,9 +111,10 @@ current_ped_2020_race <- ncrp_yearendpop %>%
 # Bar chart about parole eligibility by race
 ####################
 
+# get states
 states <- unique(current_ped_2020_race$state)
 
-# generate bar chart about most serious sentenced offense in 2020 by state
+# generate bar chart showing parole eligible populations by race and state in 2020
 all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 
   # filter data
@@ -174,7 +173,7 @@ all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, state
 # get list of states
 states <- unique(current_ped_2020_race$state)
 
-# generate sentence about most serious sentenced offense in 2020 by state
+# generate sentence about parole eligible populations by race and state in 2020
 all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_2020_race %>%
     filter(state == x) %>%
@@ -188,27 +187,7 @@ all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 
 all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_race, states)
 
-# # get population by race in 2020
-# pop_2020_race <- ncrp_yearendpop %>%
-#   filter(rptyear == 2020) %>%
-#   filter(parelig_status != "Missing") %>%
-#   filter(!is.na(race)) %>%
-#   group_by(state) %>%
-#   count(race) %>%
-#   select(state, race, total_prison_pop_by_race = n)
-#
-# current_ped_2020_race1 <- ncrp_yearendpop %>%
-#   filter(rptyear == 2020) %>%
-#   filter(parelig_status == "Current") %>%
-#   filter(!is.na(race)) %>%
-#   group_by(state, race) %>%
-#   count(race) %>%
-#   rename(currently_eligible_for_parole = n) %>%
-#   left_join(pop_2020_race, by = c("state", "race")) %>%
-#   mutate(
-#     prop = currently_eligible_for_parole/total_prison_pop_by_race,
-#     prop_label = paste0(round(prop*100, 0), "%")
-#   )
+
 
 
 
@@ -263,11 +242,14 @@ all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense,
 
 
 
+
+
 ####################
 # Bar chart about most serious offense
 # Same as above but in bar chart form
 ####################
 
+# get list of states
 states <- unique(current_ped_2020_offenses$state)
 
 # generate bar chart about most serious sentenced offense in 2020 by state
@@ -278,7 +260,6 @@ all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
   xaxis_order <- df1$offgeneral
   highcharts <-
     highchart() %>%
-    #hc_chart(margin = c(90, 0, 50, 0)) %>%
     hc_add_series(df1, type = "column",
                   hcaes(x = factor(offgeneral), y = prop*100, color = offgeneral),
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
@@ -390,6 +371,7 @@ missing_data <- missing_data %>% mutate(rptyear = 2020)
 # combine the missing data with the original dataframe
 parole_eligibility_admtype_table_2020 <- bind_rows(parole_eligibility_admtype_table_2020, missing_data) %>%
   arrange(state)
+
 
 
 

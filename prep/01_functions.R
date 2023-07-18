@@ -83,7 +83,7 @@ fnc_create_parelig_status <- function(df){
 
 
 ###################
-# Reactable
+# Plots
 ###################
 
 # highcharts theme for reactable tables
@@ -99,67 +99,6 @@ hc_reactable_style <- list(
   fontSize = "0.75rem",
   color = neutralBlackText
 )
-
-# custom function to create reactable table with 3 columns
-fnc_reactable_table_3 <- function(df, column_name, header1, header2, header3){
-
-  column_names <- names(df)
-  column_names[1] <- column_name
-
-  reactable(
-    df,
-    style = hc_reactable_style,
-    theme = hc_reactable_theme,
-    defaultColDef = colDef(
-      format = colFormat(separators = TRUE),
-      align = "left"
-    ),
-    compact = TRUE,
-    fullWidth = FALSE,
-    columns = setNames(
-      list(
-        colDef(name = header1, minWidth = 250),
-        colDef(name = header2, minWidth = 90),
-        colDef(
-          name = header3,
-          minWidth = 90,
-          format = colFormat(percent = TRUE, digits = 0)
-        )
-      ),
-      column_names
-    )
-  )
-}
-
-# custom function to create reactable table with 2 columns
-fnc_reactable_table_2 <- function(df, column_name, header1, header2){
-
-  column_names <- names(df)
-  column_names[1] <- column_name
-
-  reactable(
-    df,
-    style = hc_reactable_style,
-    theme = hc_reactable_theme,
-    defaultColDef = colDef(
-      format = colFormat(separators = TRUE),
-      align = "left"
-    ),
-    compact = TRUE,
-    fullWidth = FALSE,
-    columns = setNames(
-      list(
-        colDef(name = header1, minWidth = 250),
-        colDef(
-          name = header3,
-          minWidth = 90,
-          format = colFormat(percent = TRUE, digits = 0)
-        )
-      ),
-      column_names
-    )
-  )
-}
 
 # highcharts theme for hex map
 hc_theme_map_jc <- hc_theme_merge(
@@ -189,50 +128,7 @@ hc_theme_map_jc <- hc_theme_merge(
 )
 
 
-
-
-###################
-# Plots
-###################
-
-# Highcharts theme for plots
-# hc_theme_jc <- hc_theme(
-#
-#   # colors = c(orange, yellow, red, purple, darkblue, teal, blue, neutralBkgndMedium),
-#   colors = c(orange, yellow, purple, darkblue, teal, blue),
-#
-#   chart = list(style = list(fontFamily = "Graphik",
-#                             color      = neutralBlackText)),
-#   title = list(align = "center",
-#                style = list(fontFamily = "Graphik",
-#                             fontWeight = "bold",
-#                             color = neutralBlackText,
-#                             fontSize   = "18px")),
-#   subtitle = list(align = "center",
-#                   style = list(fontFamily = "Graphik",
-#                                fontWeight = "bold",
-#                                color = neutralBlackText,
-#                                fontSize   = "16px")),
-#   chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
-#   legend = list(align = "center", verticalAlign = "top"),
-#   xAxis = list(labels = list(enabled = TRUE),
-#                gridLineColor = "transparent",
-#                lineColor = "transparent",
-#                minorGridLineColor = "transparent",
-#                tickColor = "transparent"),
-#   yAxis = list(labels = list(enabled = TRUE),
-#                gridLineColor = "transparent",
-#                lineColor = "transparent",
-#                majorGridLineColor = "transparent",
-#                minorGridLineColor = "transparent",
-#                tickColor = "transparent"),
-#   plotOptions = list(line = list(marker = list(enabled = FALSE)),
-#                      spline = list(marker = list(enabled = FALSE)),
-#                      area = list(marker = list(enabled = FALSE)),
-#                      areaspline = list(marker = list(enabled = FALSE)),
-#                      arearange = list(marker = list(enabled = FALSE)),
-#                      bubble = list(maxSize = "10%")))
-# Highcharts theme for plots
+# highcharts theme for plots
 hc_theme_jc <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
@@ -327,18 +223,8 @@ hc_theme_jc_line <- hc_theme(
   ),
   yAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText))
-    # gridLineColor = "transparent",
-    # lineColor = "transparent",
-    # majorGridLineColor = "transparent",
-    # minorGridLineColor = "transparent",
-    # tickColor = "transparent"
   ),
   plotOptions = list(
-    # line = list(marker = list(enabled = FALSE)),
-    # spline = list(marker = list(enabled = FALSE)),
-    # area = list(marker = list(enabled = FALSE)),
-    # areaspline = list(marker = list(enabled = FALSE)),
-    # arearange = list(marker = list(enabled = FALSE)),
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
@@ -348,7 +234,7 @@ hc_theme_jc_line <- hc_theme(
   )
 )
 
-# Highcharts theme for pie plots
+# highcharts theme for pie plots
 hc_theme_jc_pie <- hc_theme(
   colors = c(teal, neutralBkgndMedium),
   chart =
@@ -588,6 +474,26 @@ fnc_percent_bar_chart_pestatus_admtype <-
                      area = list(accessibility = list(description = accessibility_text))
       )
 
+}
+
+# create all percent bar chart for each admission type and offense type
+fnc_create_all_percent_bar_chart_pestatus_admtype <- function(selected_offgeneral) {
+  states <- ncrp_released_at_ped_offgeneral_2020 %>%
+    filter(offgeneral == selected_offgeneral) %>%
+    pull(state) %>%
+    unique()
+
+  all_bar <- map(states, function(x) {
+    df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
+      filter(state == x, offgeneral == selected_offgeneral) %>%
+      arrange(match(released_at_ped_status, desired_order))
+    highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
+                                                         point_format = "{point.prop_label}",
+                                                         accessibility_text = "TBD.")
+    return(highcharts)
+  })
+
+  return(setNames(all_bar, states))
 }
 
 # Create bar chart with labels showing sentence duration by adm type
