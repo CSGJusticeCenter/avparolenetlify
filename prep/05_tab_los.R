@@ -16,8 +16,12 @@
 
 # assign x axis order
 desired_order <- c("Less than Sentence Length Served",
-                   "Full Sentence Length Served",
-                   "More than Sentence Length Served")
+                   "Full Sentence Length Served"
+                   #"More than Sentence Length Served"
+                   )
+
+ncrp_sentlgth_timesrvd_rel <- ncrp_sentlgth_timesrvd_rel %>%
+filter(timesrvd_rel_vs_sentlgth!= "More than Sentence Length Served") # remove bc likely a data error
 
 ########
 # Overview

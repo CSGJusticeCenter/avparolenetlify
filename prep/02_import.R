@@ -166,6 +166,8 @@ ncrp_sentlgth_timesrvd_rel <- ncrp_releases %>%
       timesrvd_rel_order < sentlgth_order  ~ "Less than Sentence Length Served"),
     time_served = relyr - admityr) %>%
 
+  # remove "more than sentenced served" as this is likely a data error??????????
+
   # https://www.icpsr.umich.edu/web/NACJD/studies/38492/datasets/0003/variables/PARELIG_YEAR?archive=nacjd
   # remove parelig_year/mand_prisrel_year 2100
   mutate(parelig_year_clean =

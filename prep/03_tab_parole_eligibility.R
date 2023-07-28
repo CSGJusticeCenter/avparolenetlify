@@ -202,13 +202,25 @@ states <- unique(current_ped_2020_offenses$state)
 
 # generate sentence about most serious sentenced offense in 2020 by state
 all_sentence_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
+  # df1 <- current_ped_2020_offenses %>%
+  #   filter(state == x) %>%
+  #   arrange(desc(n)) %>%
+  #   slice(1)
+  # sentences <- paste0("In 2020, ", tolower(df1$offgeneral),
+  #                     " offenses constituted the most serious sentenced offense for individuals eligible for parole but still in prison, accounting for ",
+  #                     df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
   df1 <- current_ped_2020_offenses %>%
     filter(state == x) %>%
-    arrange(desc(n)) %>%
-    slice(1)
-  sentences <- paste0("In 2020, ", tolower(df1$offgeneral),
-                      " offenses constituted the most serious sentenced offense for individuals eligible for parole but still in prison, accounting for ",
-                      df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
+    filter(offgeneral != "Violent") %>%
+    group_by() %>%
+    summarise(n = sum(n, na.rm = TRUE),
+              prop = sum(prop, na.rm = TRUE)) %>%
+    mutate(prop = round(prop*100, 0),
+           prop_label = paste0(prop, "%"))
+
+  sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
+                      " people who were parole eligible but still in prison for non-violent offenses, accounting for ",
+                      df1$prop_label, " of the parole-eligible prison population.")
   return(sentences)
 })
 

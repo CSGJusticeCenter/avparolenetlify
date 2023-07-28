@@ -348,93 +348,54 @@ if (state_for_report %in% names(all_time_between_release_ped_2020_by_race)) {
 # Predicted Probabilities
 #####
 
-df1 <- all_pp_by_variable %>%
-  filter(state == state_for_report) %>% 
-  select(race, pp_by_race) %>%
-  distinct()
+# define function to create reactable tables for different predicted probabilities
+fnc_create_reactable <- function(df, variable_name, variable_pp, col_name) {
+  
+  df$variable_name <- get(variable_name, df)
+  df$variable_pp <- get(variable_pp, df)
+  
+  df1 <- df %>%
+    filter(state == state_for_report) %>%
+    select(variable_name, variable_pp) %>%
+    distinct()
 
+  reactable(df1,
+            style = hc_reactable_style,
+            theme = hc_reactable_theme,
+            defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                   align = "left"),
+            compact = TRUE,
+            fullWidth = FALSE,
+            columns = list(
+              variable_name = colDef(name = col_name, minWidth = 200),
+              variable_pp = colDef(name = "",
+                                   minWidth = 175,
+                                   align = "right",
+                                   format = colFormat(percent = TRUE,
+                                                      digits = 0)))
+  )
+}
+
+# apply function to different variables
+# race
 table_pp_by_race <- 
-  reactable(df1,
-          style = hc_reactable_style,
-          theme = hc_reactable_theme,
-          defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                 align = "left"),
-          compact = TRUE,
-          fullWidth = FALSE,
-          columns = list(
-            race      = colDef(name = "Race/Ethnicity",
-                               minWidth = 200),
-            pp_by_race = colDef(name = "",
-                                minWidth = 175,
-                                align = "right",
-                                format = colFormat(percent = TRUE,
-                                                   digits = 0))))
+  fnc_create_reactable(all_pp_by_variable, 
+                       "race", "pp_by_race", "Race/Ethnicity")
 
-df1 <- all_pp_by_variable %>%
-  filter(state == state_for_report) %>% 
-  select(sex, pp_by_sex) %>%
-  distinct()
-
+# sex
 table_pp_by_sex <- 
-  reactable(df1,
-          style = hc_reactable_style,
-          theme = hc_reactable_theme,
-          defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                 align = "left"),
-          compact = TRUE,
-          fullWidth = FALSE,
-          columns = list(
-            sex       = colDef(name = "Gender",
-                               minWidth = 200),
-            pp_by_sex = colDef(name = "",
-                                minWidth = 175,
-                                align = "right",
-                                format = colFormat(percent = TRUE,
-                                                   digits = 0))))
+  fnc_create_reactable(all_pp_by_variable, 
+                       "sex", "pp_by_sex", "Gender")
 
-df1 <- all_pp_by_variable %>%
-  filter(state == state_for_report) %>% 
-  select(offgeneral, pp_by_offgeneral) %>%
-  distinct()
-
+# offense
 table_pp_by_offgeneral <- 
-  reactable(df1,
-            style = hc_reactable_style,
-            theme = hc_reactable_theme,
-            defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                   align = "left"),
-            compact = TRUE,
-            fullWidth = FALSE,
-            columns = list(
-              offgeneral      = colDef(name = "Most Serious Sentenced Offense",
-                                       minWidth = 200),
-              pp_by_offgeneral = colDef(name = "",
-                                        minWidth = 175,
-                                        align = "right",
-                                        format = colFormat(percent = TRUE,
-                                                           digits = 0))))
+  fnc_create_reactable(all_pp_by_variable, 
+                       "offgeneral", "pp_by_offgeneral", "Most Serious Sentenced Offense")
 
-df1 <- all_pp_by_variable %>%
-  filter(state == state_for_report) %>% 
-  select(sentlgth, pp_by_sentlgth) %>%
-  distinct()
-
+# sentence length
 table_pp_by_sentlgth <- 
-  reactable(df1,
-            style = hc_reactable_style,
-            theme = hc_reactable_theme,
-            defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                   align = "left"),
-            compact = TRUE,
-            fullWidth = FALSE,
-            columns = list(
-              sentlgth      = colDef(name = "Maximum Sentence Lenth",
-                                     minWidth = 200),
-              pp_by_sentlgth = colDef(name = "",
-                                      minWidth = 175,
-                                      align = "right",
-                                      format = colFormat(percent = TRUE,
-                                                         digits = 0))))
+  fnc_create_reactable(all_pp_by_variable, 
+                       "sentlgth", "pp_by_sentlgth", "Maximum Sentence Length")
 
 ```
 
@@ -475,13 +436,34 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
     div(id = "regular-text",       parole_eligibility_criteria), br(), br(),
     
-    div(id = "big-section-title", "People who were Eligible for Parole in 2020"), br(), 
+    div(id = "big-section-title", "People who were Eligible for Parole"), br(), 
     div(id = "regular-text",       state_sentence_parole_elgibility_race), br(), 
-    div(id = "bar-chart",          state_bar_parole_elgibility_race), br(),
-    div(id = "regular-text",       state_sentence_parole_elgibility_offense), br(), 
-    div(id = "pie-chart",          state_pie_parole_elgibility_offense), br()
+    div(id = "bar-chart",          state_bar_parole_elgibility_race), br(), br(),
+    div(id = "big-section-title", "Most Serious Sentenced Offense"), br(), 
+    div(id = "regular-text",       state_sentence_parole_elgibility_offense), br()
 )
 ```
+
+::: {.panel-tabset}
+
+### Overview
+```{r}
+div(id = "body-section", state_pie_parole_elgibility_offense)
+```
+
+### New Crime
+```{r}
+div(id = "body-section", "TBD")
+```
+
+### Parole Return
+```{r}
+div(id = "body-section", "TBD")
+```
+
+:::
+
+
 </center>
 <br>
 

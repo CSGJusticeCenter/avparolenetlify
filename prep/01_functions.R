@@ -186,7 +186,7 @@ hc_theme_jc <- hc_theme(
   )
 )
 
-# Highcharts theme for line plots
+# highcharts theme for line plots
 hc_theme_jc_line <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
@@ -288,11 +288,10 @@ hc_theme_jc_pie <- hc_theme(
 # Highcharts theme for plots
 hc_theme_jc_minimal <- hc_theme(
 
-  # colors = c(orange, yellow, red, purple, darkblue, teal, blue, neutralBkgndMedium),
   colors = c(orange, yellow, purple, darkblue, teal, blue),
 
   chart = list(style = list(fontFamily = "Graphik",
-                            color      = neutralBlackText)),
+                            color = neutralBlackText)),
   title = list(align = "center",
                style = list(fontFamily = "Graphik",
                             fontWeight = "bold",
@@ -303,7 +302,8 @@ hc_theme_jc_minimal <- hc_theme(
                                fontWeight = "bold",
                                color = neutralBlackText,
                                fontSize   = "16px")),
-  chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
+  chart = list(style = list(fontFamily = "Graphik",
+                            color = neutralBlackText)),
   legend = list(align = "center", verticalAlign = "top"),
   xAxis = list(labels = list(enabled = FALSE),
                gridLineColor = "transparent",
@@ -333,58 +333,58 @@ hc_setup <- function(x) {
     highcharter::hc_exporting(enabled = TRUE)
 }
 
-# Create donut chart with overall finding label in middle
-fnc_donut_chart <- function(df,
-                            df_pct,
-                            x_variable,
-                            y_variable,
-                            point_format,
-                            accessibility_text){
-
-  df$x_variable <- get(x_variable, df)
-  df$y_variable <- get(y_variable, df)
-
-  df_pct$x_variable <- get(x_variable, df_pct)
-  df_pct$y_variable <- get(y_variable, df_pct)
-
-  highchart() %>%
-
-    hc_add_series(type = "pie",
-                  data = df_pct,
-                  hcaes(x_variable, y_variable),
-                  size = "100%",
-                  center = c(50, 50),
-                  innerSize="60%",
-                  dataLabels = list(
-                    style = list(fontSize = "2em",
-                                 color = neutralBlackText),
-                    enabled = TRUE,
-                    distance= -60,
-                    format = point_format)) %>%
-    hc_add_series(type = "pie",
-                  data = df,
-                  hcaes(x_variable, y_variable),
-                  size = "100%",
-                  center = c(50, 50),
-                  innerSize="60%",
-                  dataLabels = list(enabled = FALSE)) %>%
-
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_add_theme(hc_theme_jc_pie) %>%
-    hc_plotOptions(innersize = "50%",
-                   startAngle = 90,
-                   endAngle = 90,
-                   center = list('50%', '75%'),
-                   size = '110%',
-                   series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
-}
+# # Create donut chart with overall finding label in middle
+# fnc_donut_chart <- function(df,
+#                             df_pct,
+#                             x_variable,
+#                             y_variable,
+#                             point_format,
+#                             accessibility_text){
+#
+#   df$x_variable <- get(x_variable, df)
+#   df$y_variable <- get(y_variable, df)
+#
+#   df_pct$x_variable <- get(x_variable, df_pct)
+#   df_pct$y_variable <- get(y_variable, df_pct)
+#
+#   highchart() %>%
+#
+#     hc_add_series(type = "pie",
+#                   data = df_pct,
+#                   hcaes(x_variable, y_variable),
+#                   size = "100%",
+#                   center = c(50, 50),
+#                   innerSize="60%",
+#                   dataLabels = list(
+#                     style = list(fontSize = "2em",
+#                                  color = neutralBlackText),
+#                     enabled = TRUE,
+#                     distance= -60,
+#                     format = point_format)) %>%
+#     hc_add_series(type = "pie",
+#                   data = df,
+#                   hcaes(x_variable, y_variable),
+#                   size = "100%",
+#                   center = c(50, 50),
+#                   innerSize="60%",
+#                   dataLabels = list(enabled = FALSE)) %>%
+#
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_add_theme(hc_theme_jc_pie) %>%
+#     hc_plotOptions(innersize = "50%",
+#                    startAngle = 90,
+#                    endAngle = 90,
+#                    center = list('50%', '75%'),
+#                    size = '110%',
+#                    series = list(animation = FALSE,
+#                                  cursor = "pointer",
+#                                  borderWidth = 3),
+#                    accessibility = list(enabled = TRUE,
+#                                         keyboardNavigation = list(enabled = TRUE),
+#                                         linkedDescription = accessibility_text,
+#                                         landmarkVerbosity = "one"),
+#                    area = list(accessibility = list(description = accessibility_text)))
+# }
 
 
 # Create pie chart with labels
