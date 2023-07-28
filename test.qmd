@@ -1,56 +1,32 @@
 ---
-format:
-  html:
-    css: styles_test.css
-    embed-resources: TRUE
-    code-fold: true
-    page-layout: full
-    fig_caption: yes
+title: "Untitled"
+editor: visual
 ---
 
-:::: {.panel-tabset .nav-pills}
+```{r}
 
-## Parole Eligibility
+# load packages
+library(shiny)
+library(highcharter)
+library(dplyr)
+library(htmlwidgets)
+library(dplyr)
+library(htmltools)
+library(reactable)
+library(reactablefmtr)
+library(htmltools)
+library(tippy)
+library(reactable)
+library(tidyr)
 
-## Prison Population
+# load data
+source("prep/00_library.R")
+source("prep/01_functions.R")
+source("prep/dataframes.R")
 
-## Length of Stay
+```
 
-::: {.panel-tabset}
+```{r}
+all_pie_ped_current$Georgia
+```
 
-### Overview
-
-### Violent
-
-### Property
-
-### Drug
-
-### Public Order
-
-### Other
-
-
-:::
-
-## Releases from Prison
-
-::: {.panel-tabset}
-
-### Overview
-
-### Violent
-
-### Property
-
-### Drug
-
-### Public Order
-
-### Other
-
-:::
-
-## Disparities
-
-::::

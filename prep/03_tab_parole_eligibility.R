@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: July 18, 2023 (MAR)
+# Date last updated: July 28, 2023 (MAR)
 # Description:
 #    Parole eligibility tables and graphics for shiny app
 #######################################
@@ -10,7 +10,7 @@
 
 ################################################################################
 
-# Reactable table
+# Reactable table in national trends page
 # Parole eligibility in 2020
 
 ################################################################################
@@ -55,260 +55,10 @@ parole_eligibility_table_2020 <- bind_rows(parole_eligibility_table_2020, missin
 
 
 
-################################################################################
-
-# Most serious sentenced offenses for those in prison but not released in 2020
 
 ################################################################################
 
-# most serious sentenced offense for people eligible for parole but still in prison
-current_ped_2020_offenses <- ncrp_yearendpop %>%
-  filter(rptyear == 2020) %>%
-  filter(parelig_status == "Current") %>%
-  filter(!is.na(offgeneral)) %>%
-  mutate(offgeneral = ifelse(
-    offgeneral == "Other/unspecified", "Other or Unspecified", offgeneral
-  )) %>%
-  group_by(state) %>%
-  count(offgeneral) %>%
-  mutate(
-    prop = n/sum(n)
-    , yearendpop_ped = sum(n)
-  ) %>%
-  ungroup() %>%
-  mutate(tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "Most Serious Sentence Offense: <b>", offgeneral, "</b><br><br>",
-                  "Number of People with Parole<br>Eligibility but not yet Released: <br><b>",
-                  scales::comma(n), "</b><br><br>",
-                  "Percentage of Prison Population with Parole<br>Eligibility but not yet Released: <br><b>",
-                  paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
-         chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"),
-         prop_label = paste0(round(prop*100, 0), "%"))
-
-# parole eligible population but still in prison by race in 2020
-current_ped_2020_race <- ncrp_yearendpop %>%
-  filter(rptyear == 2020) %>%
-  filter(parelig_status == "Current") %>%
-  filter(!is.na(race)) %>%
-  group_by(state) %>%
-  count(race) %>%
-  mutate(
-    prop = n/sum(n),
-    yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop*100, 0), "%")
-  ) %>%
-  ungroup() %>%
-  mutate(tooltip = paste0("<b>", state, " - ",
-                          race, "</b><br>",
-                          prop_label, "<br>"))
-
-
-
-
-
-####################
-# Bar chart about parole eligibility by race
-####################
-
-# get states
-states <- unique(current_ped_2020_race$state)
-
-# generate bar chart showing parole eligible populations by race and state in 2020
-all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
-
-  # filter data
-  df1 <- current_ped_2020_race %>%
-    filter(state == x) %>%
-    arrange(desc(prop))
-  xaxis_order <- df1$race
-
-  # assign color for each race
-  df1$color <- case_when(df1$race == "Black, non-Hispanic" ~ yellow,
-                         df1$race == "White, non-Hispanic" ~ orange,
-                         df1$race == "Hispanic, any race" ~ teal,
-                         df1$race == "Other race(s), non-Hispanic" ~ purple)
-  df1$color <- htmltools::parseCssColors(df1$color)
-
-  highcharts <-
-    highchart() %>%
-    hc_add_series(df1, type = "column",
-                  hcaes(x = factor(race), y = prop*100, color = color
-                        ),
-                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
-                                    style = list(fontSize = "14px",
-                                                 fontWeight = "bold",
-                                                 fontFamily = "Graphik",
-                                                 textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = "TBD",
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = "TBD")))
-
-  return(highcharts)
-})
-
-all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, states)
-
-
-
-
-
-
-####################
-# Sentence about race and parole eligibility
-####################
-
-# get list of states
-states <- unique(current_ped_2020_race$state)
-
-# generate sentence about parole eligible populations by race and state in 2020
-all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_2020_race %>%
-    filter(state == x) %>%
-    arrange(desc(n)) %>%
-    slice(1)
-  sentences <- paste0("In 2020, ", df1$race,
-                      " people constituted the most number of people eligible for parole but still in prison, accounting for ",
-                      df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
-  return(sentences)
-})
-
-all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_race, states)
-
-
-
-
-
-
-
-####################
-# Sentence about most serious offense
-####################
-
-# get list of states
-states <- unique(current_ped_2020_offenses$state)
-
-# generate sentence about most serious sentenced offense in 2020 by state
-all_sentence_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
-  # df1 <- current_ped_2020_offenses %>%
-  #   filter(state == x) %>%
-  #   arrange(desc(n)) %>%
-  #   slice(1)
-  # sentences <- paste0("In 2020, ", tolower(df1$offgeneral),
-  #                     " offenses constituted the most serious sentenced offense for individuals eligible for parole but still in prison, accounting for ",
-  #                     df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
-  df1 <- current_ped_2020_offenses %>%
-    filter(state == x) %>%
-    filter(offgeneral != "Violent") %>%
-    group_by() %>%
-    summarise(n = sum(n, na.rm = TRUE),
-              prop = sum(prop, na.rm = TRUE)) %>%
-    mutate(prop = round(prop*100, 0),
-           prop_label = paste0(prop, "%"))
-
-  sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
-                      " people who were parole eligible but still in prison for non-violent offenses, accounting for ",
-                      df1$prop_label, " of the parole-eligible prison population.")
-  return(sentences)
-})
-
-all_sentence_parole_elgibility_offense <- setNames(all_sentence_parole_elgibility_offense, states)
-
-
-
-
-
-####################
-# Pie chart about most serious offense
-####################
-
-# get list of states
-states <- unique(current_ped_2020_offenses$state)
-
-# generate pie chart about most serious sentenced offense in 2020 by state
-all_pie_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_2020_offenses %>% filter(state == x)
-  highcharts <- fnc_pie_chart(df = df1,
-                              x_variable = "offgeneral",
-                              y_variable = "prop",
-                              point_format = "{point.chart_label}",
-                              accessibility_text = "TBD.")
-  return(highcharts)
-})
-
-all_pie_parole_elgibility_offense <- setNames(all_pie_parole_elgibility_offense, states)
-
-
-
-
-
-
-
-####################
-# Bar chart about most serious offense
-# Same as above but in bar chart form
-####################
-
-# get list of states
-states <- unique(current_ped_2020_offenses$state)
-
-# generate bar chart about most serious sentenced offense in 2020 by state
-all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_2020_offenses %>%
-    filter(state == x) %>%
-    arrange(desc(prop))
-  xaxis_order <- df1$offgeneral
-  highcharts <-
-    highchart() %>%
-    hc_add_series(df1, type = "column",
-                  hcaes(x = factor(offgeneral), y = prop*100, color = offgeneral),
-                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
-                                    style = list(fontSize = "14px",
-                                                 fontWeight = "bold",
-                                                 fontFamily = "Graphik",
-                                                 textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = "TBD",
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = "TBD")))
-
-  return(highcharts)
-})
-
-all_bar_parole_elgibility_offense <- setNames(all_bar_parole_elgibility_offense, states)
-
-
-
-
-
-
-
-################################################################################
-
-# NCRP - Parole eligibility by adm type and year
+# Parole eligibility by adm type and year
 
 ################################################################################
 
@@ -390,6 +140,322 @@ parole_eligibility_admtype_table_2020 <- bind_rows(parole_eligibility_admtype_ta
 
 
 
+################################################################################
+
+# Parole eligibility by adm type highcharts and sentence
+
+################################################################################
+
+# get list of states
+states <- parole_eligibility_rate_by_admtype %>%
+  ungroup() %>%
+  filter(rptyear == 2020 &
+         parelig_status == "Current" &
+         admtype == "Parole return/revocation") %>%
+  pull(state) %>%
+  unique()
+
+all_pie_ped_current <- map(.x = states,  .f = function(x) {
+
+  df1 <- parole_eligibility_rate_by_admtype %>%
+    filter(rptyear == 2020 &
+           state == x &
+           parelig_status == "Current") %>%
+    mutate(prop_label = paste0(round(prop, 0), "%"))
+
+  df2 <- df1 %>%
+    filter(admtype == "Parole return/revocation")
+
+  highcharts <- fnc_donut_chart(df = df1,
+                                df_pct = df2,
+                                x_variable = "admtype",
+                                y_variable = "prop",
+                                accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_chart(width = 250, height = 250) %>%
+    hc_colors(colors = c(neutralBkgndMedium, orange))
+
+  return(highcharts)
+})
+
+all_pie_ped_current <- setNames(all_pie_ped_current, states)
+
+# get list of states
+states <- parole_eligibility_rate_by_admtype %>%
+  ungroup() %>%
+  filter(rptyear == 2020 &
+           parelig_status == "Future 1-5 Years" &
+           admtype == "Parole return/revocation") %>%
+  pull(state) %>%
+  unique()
+
+all_pie_ped_future_1_5 <- map(.x = states,  .f = function(x) {
+
+  df1 <- parole_eligibility_rate_by_admtype %>%
+    filter(rptyear == 2020 &
+             state == x &
+             parelig_status == "Future 1-5 Years") %>%
+    mutate(prop_label = paste0(round(prop, 0), "%"))
+
+  df2 <- df1 %>%
+    filter(admtype == "Parole return/revocation")
+
+  highcharts <- fnc_donut_chart(df = df1,
+                                df_pct = df2,
+                                x_variable = "admtype",
+                                y_variable = "prop",
+                                accessibility_text = "TBD.")
+  highcharts <- highcharts %>%
+    hc_chart(width = 250, height = 250) %>%
+    hc_colors(colors = c(neutralBkgndMedium, orange))
+
+  return(highcharts)
+})
+
+all_pie_ped_future_1_5 <- setNames(all_pie_ped_future_1_5, states)
+
+# # get states
+# states <- parole_eligibility_rate_by_admtype %>%
+#   ungroup() %>%
+#   filter(rptyear == 2020 &
+#          parelig_status == "Current") %>%
+#   pull(state) %>%
+#   unique()
+#
+# all_pie_ped_current <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- parole_eligibility_rate_by_admtype %>%
+#     filter(rptyear == 2020 &
+#            state == x &
+#            parelig_status == "Current")
+#
+#   highcharts <-
+#     fnc_pie_chart_highlight(df = df1,
+#                             x_variable = "admtype",
+#                             y_variable = "prop",
+#                             point_format = "{point.admtype}: {point.prop:.0f}%",
+#                             accessibility_text = "TBD.")
+#   highcharts <- highcharts %>%
+#     hc_colors(colors = c(neutralBkgndMedium, orange))
+#
+#   return(highcharts)
+# })
+#
+# all_pie_ped_current <- setNames(all_pie_ped_current, states)
+#
+# # get states
+# states <- parole_eligibility_rate_by_admtype %>%
+#   ungroup() %>%
+#   filter(rptyear == 2020 &
+#          parelig_status == "Future 1-5 Years") %>%
+#   pull(state) %>%
+#   unique()
+#
+# all_pie_ped_future_1_5 <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- parole_eligibility_rate_by_admtype %>%
+#     filter(rptyear == 2020 &
+#            state == x &
+#            parelig_status == "Future 1-5 Years")
+#
+#   highcharts <-
+#     fnc_pie_chart_highlight(df = df1,
+#                             x_variable = "admtype",
+#                             y_variable = "prop",
+#                             point_format = "{point.admtype}: {point.prop:.0f}%",
+#                             accessibility_text = "TBD.")
+#   highcharts <- highcharts %>%
+#     hc_colors(colors = c(neutralBkgndMedium, orange))
+#
+#   return(highcharts)
+# })
+#
+# all_pie_ped_future_1_5 <- setNames(all_pie_ped_future_1_5, states)
+#
+# # get states
+# states <- parole_eligibility_rate_by_admtype %>%
+#   ungroup() %>%
+#   filter(rptyear == 2020 &
+#          parelig_status == "Future 6+ Years") %>%
+#   pull(state) %>%
+#   unique()
+#
+# all_pie_ped_future_6 <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- parole_eligibility_rate_by_admtype %>%
+#     filter(rptyear == 2020 &
+#            state == x &
+#            parelig_status == "Future 6+ Years")
+#
+#   highcharts <-
+#     fnc_pie_chart_highlight(df = df1,
+#                             x_variable = "admtype",
+#                             y_variable = "prop",
+#                             point_format = "{point.admtype}: {point.prop:.0f}%",
+#                             accessibility_text = "TBD.")
+#   highcharts <- highcharts %>%
+#     hc_colors(colors = c(neutralBkgndMedium, orange))
+#
+#   return(highcharts)
+# })
+#
+# all_pie_ped_future_6 <- setNames(all_pie_ped_future_6, states)
+
+
+
+
+
+
+
+
+
+####################
+# Sentence about parole eligibility and adm type
+####################
+
+# get list of states
+states <- parole_eligibility_rate_by_admtype %>%
+  ungroup() %>%
+  filter(rptyear == 2020 &
+           parelig_status == "Current") %>%
+  pull(state) %>%
+  unique()
+
+# generate sentence about parole eligible populations by race and state in 2020
+all_sentence_parole_elgibility_admtype <- map(.x = states,  .f = function(x) {
+  df1 <- parole_eligibility_rate_by_admtype %>%
+    filter(state == x &
+           admtype == "Parole return/revocation" &
+           rptyear == 2020 &
+           parelig_status == "Current")
+  sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
+                      " people who were incarcerated for a parole revocation and were eligible for parole but not yet released from prison.")
+  return(sentences)
+})
+
+all_sentence_parole_elgibility_admtype <- setNames(all_sentence_parole_elgibility_admtype, states)
+
+
+
+
+
+
+
+
+################################################################################
+
+# Parole eligibility by race
+
+################################################################################
+
+# parole eligible population but still in prison by race in 2020
+current_ped_2020_race <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  filter(parelig_status == "Current") %>%
+  filter(!is.na(race)) %>%
+  group_by(state) %>%
+  count(race) %>%
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%")
+  ) %>%
+  ungroup() %>%
+  mutate(tooltip = paste0("<b>", state, " - ",
+                          race, "</b><br>",
+                          prop_label, "<br>"))
+
+
+
+
+
+
+####################
+# Bar chart about parole eligibility by race
+####################
+
+# get states
+states <- unique(current_ped_2020_race$state)
+
+# generate bar chart showing parole eligible populations by race and state in 2020
+all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
+
+  # filter data
+  df1 <- current_ped_2020_race %>%
+    filter(state == x) %>%
+    arrange(desc(prop))
+  xaxis_order <- df1$race
+
+  # assign color for each race
+  df1$color <- case_when(df1$race == "Black, non-Hispanic" ~ yellow,
+                         df1$race == "White, non-Hispanic" ~ orange,
+                         df1$race == "Hispanic, any race" ~ teal,
+                         df1$race == "Other race(s), non-Hispanic" ~ purple)
+  df1$color <- htmltools::parseCssColors(df1$color)
+
+  highcharts <-
+    highchart() %>%
+    hc_add_series(df1, type = "column",
+                  hcaes(x = factor(race), y = prop*100, color = color
+                  ),
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontSize = "14px",
+                                                 fontWeight = "bold",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = xaxis_order) %>%
+    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
+
+  return(highcharts)
+})
+
+all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, states)
+
+
+
+
+
+
+####################
+# Sentence about race and parole eligibility
+####################
+
+# get list of states
+states <- unique(current_ped_2020_race$state)
+
+# generate sentence about parole eligible populations by race and state in 2020
+all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
+  df1 <- current_ped_2020_race %>%
+    filter(state == x) %>%
+    arrange(desc(n)) %>%
+    slice(1)
+  sentences <- paste0("In 2020, ", df1$race,
+                      " people constituted the most number of people eligible for parole but still in prison, accounting for ",
+                      df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
+  return(sentences)
+})
+
+all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_race, states)
+
+
+
+
+
+
+
 ##########
 # Save data
 ##########
@@ -400,14 +466,14 @@ for (folder in theseFOLDERS){
 
   save(parole_eligibility_table,               file=file.path(folder, "parole_eligibility_table.rds"))
   save(parole_eligibility_table_2020,          file=file.path(folder, "parole_eligibility_table_2020.rds"))
-  save(current_ped_2020_offenses,              file=file.path(folder, "current_ped_2020_offenses.rds"))
+
+  save(all_sentence_parole_elgibility_admtype, file=file.path(folder, "all_sentence_parole_elgibility_admtype.rds"))
+  save(all_pie_ped_current,                    file=file.path(folder, "all_pie_ped_current.rds"))
+  save(all_pie_ped_future_1_5,                 file=file.path(folder, "all_pie_ped_future_1_5.rds"))
+  save(all_pie_ped_future_6,                   file=file.path(folder, "all_pie_ped_future_6.rds"))
+
   save(current_ped_2020_race,                  file=file.path(folder, "current_ped_2020_race.rds"))
-
-  save(all_bar_parole_elgibility_race,         file=file.path(folder, "all_bar_parole_elgibility_race.rds"))
   save(all_sentence_parole_elgibility_race,    file=file.path(folder, "all_sentence_parole_elgibility_race.rds"))
-
-  save(all_bar_parole_elgibility_offense,      file=file.path(folder, "all_bar_parole_elgibility_offense.rds"))
-  save(all_pie_parole_elgibility_offense,      file=file.path(folder, "all_pie_parole_elgibility_offense.rds"))
-  save(all_sentence_parole_elgibility_offense, file=file.path(folder, "all_sentence_parole_elgibility_offense.rds"))
+  save(all_bar_parole_elgibility_race,         file=file.path(folder, "all_bar_parole_elgibility_race.rds"))
 
 }

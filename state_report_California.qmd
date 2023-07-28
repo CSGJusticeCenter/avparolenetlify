@@ -162,6 +162,57 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_race)) {
   state_sentence_parole_elgibility_race <- ""
 }
 
+
+
+
+
+
+###################
+
+# Offenses
+
+###################
+
+# save sentence about parole eligiblity by adm type
+if (state_for_report %in% names(all_sentence_parole_elgibility_admtype)) {
+  state_sentence_parole_elgibility_admtype <- 
+    all_sentence_parole_elgibility_admtype[[state_for_report]]
+} else {
+  state_sentence_parole_elgibility_admtype <- ""
+}
+
+# save pie chart of currently eligible
+if (state_for_report %in% names(all_pie_ped_current)) {
+  state_pie_ped_current <- 
+    all_pie_ped_current[[state_for_report]] %>% 
+    # hc_chart(width = 250, height = 350) %>% 
+    hc_title(text = "Currently Eligible for Parole but in Prison due to a Parole Revocation")
+} else {
+  state_pie_ped_current <- ""
+}
+
+# save pie chart of future 1-5 years eligible
+if (state_for_report %in% names(all_pie_ped_future_1_5)) {
+  state_pie_ped_future_1_5 <- 
+    all_pie_ped_future_1_5[[state_for_report]] %>% 
+    # hc_chart(width = 250, height = 350) %>% 
+    hc_title(text = "Eligible for Parole in 1-5 Years but in Prison due to a Parole Revocation")
+} else {
+  state_pie_ped_future_1_5 <- ""
+}
+
+# save pie chart of futyre 6+ years eligible
+if (state_for_report %in% names(all_pie_ped_future_6)) {
+  state_pie_ped_future_6 <- 
+    all_pie_ped_future_6[[state_for_report]] %>% 
+    hc_chart(width = 300, height = 300) %>% 
+    hc_title(text = "Eligible for Parole in 6+ Years")
+} else {
+  state_pie_ped_future_6 <- ""
+}
+
+
+
 # save pie chart of most serious sentenced offense by state
 if (state_for_report %in% names(all_pie_parole_elgibility_offense)) {
   state_pie_parole_elgibility_offense <- 
@@ -182,14 +233,6 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 
 
 
-
-
-
-###################
-
-# Length of Stay
-
-###################
 
 # save sentence duration by by state
 if (state_for_report %in% names(all_bar_sentence_overview_2020)) {
@@ -426,6 +469,11 @@ htmltools::div(
 
 <br>
 
+
+
+
+
+
 :::: {.panel-tabset .nav-pills}
 
 ## Parole Eligibility
@@ -435,37 +483,36 @@ htmltools::div(
 div(id = "body-section", br(),
     div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
     div(id = "regular-text",       parole_eligibility_criteria), br(), br(),
-    
-    div(id = "big-section-title", "People who were Eligible for Parole"), br(), 
+    div(id = "big-section-title", "People who were Eligible for Parole"), br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_race), br(), 
     div(id = "bar-chart",          state_bar_parole_elgibility_race), br(), br(),
-    div(id = "big-section-title", "Most Serious Sentenced Offense"), br(), 
-    div(id = "regular-text",       state_sentence_parole_elgibility_offense), br()
+    
+    div(id = "regular-text",       state_sentence_parole_elgibility_admtype), br(), 
+    div(
+      #style = "display:flex; flex-direction: row; align-items: center; justify-items: center;",
+      style = "display: grid; grid-template-columns: repeat(2, 1fr); justify-items: center;",
+      state_pie_ped_current,
+      state_pie_ped_future_1_5
+      )
 )
 ```
-
-::: {.panel-tabset}
-
-### Overview
-```{r}
-div(id = "body-section", state_pie_parole_elgibility_offense)
-```
-
-### New Crime
-```{r}
-div(id = "body-section", "TBD")
-```
-
-### Parole Return
-```{r}
-div(id = "body-section", "TBD")
-```
-
-:::
-
-
 </center>
-<br>
+
+<center>
+```{r}
+# div(id = "body-section", 
+#     div(id = "regular-text", state_sentence_parole_elgibility_race), br(), 
+#     div(id = "bar-chart",    state_bar_parole_elgibility_race), br()
+# )
+```
+</center>
+
+
+
+
+
+
+
 
 ## Prison Population
 
@@ -481,18 +528,45 @@ div(id = "body-section", br(),
 </center>
 <br>
 
-## Length of Stay
 
-<center>
+
+
+
+
+## Offenses
+
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Length of Stay")
+    div(id = "big-section-title", "Most Serious Sentenced Offense"), br(), 
+    div(id = "regular-text",       state_sentence_parole_elgibility_offense), br()
     )
 ```
-</center>
 
 ::: {.panel-tabset}
+### Overview
+```{r}
+div(id = "body-section", state_pie_parole_elgibility_offense)
+```
 
+### New Crime
+```{r}
+div(id = "body-section", "TBD")
+```
+
+### Parole Return
+```{r}
+div(id = "body-section", "TBD")
+```
+:::
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Length of Stay"), br(),
+    div(id = "regular-text", "TBD sentence about length of stay."), br()
+    )
+```
+
+::: {.panel-tabset}
 ### Overview
 ```{r}
 div(id = "body-section", state_bar_sentence_overview_2020)
@@ -522,8 +596,12 @@ div(id = "body-section", state_bar_sentence_drugs_2020)
 ```{r}
 div(id = "body-section", state_bar_sentence_other_2020)
 ```
-
 :::
+
+
+
+
+
 
 ## Releases from Prison
 
@@ -538,7 +616,6 @@ div(id = "body-section", br(),
 
 
 ::: {.panel-tabset}
-
 ### Overview
 ```{r}
 div(id = "body-section", state_bar_released_at_ped_2020)
@@ -568,8 +645,12 @@ div(id = "body-section", state_bar_released_at_ped_drugs_2020)
 ```{r}
 div(id = "body-section", state_bar_released_at_ped_other_2020)
 ```
-
 :::
+
+
+
+
+
 
 ## Disparities
 

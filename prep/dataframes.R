@@ -24,16 +24,24 @@ load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_
 load(file = paste0(sp_data_path, "/data/analysis/parole_eligibility_table_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_race.rds"))
+
+
+
+
+
+
+
+# Offenses
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_admtype.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_ped_current.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_ped_future_1_5.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_ped_future_6.rds"))
+
+
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_offense.rds"))
 
-
-
-
-
-
-# Length of Stay
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_overview_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_publicorder_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_property_2020.rds"))
