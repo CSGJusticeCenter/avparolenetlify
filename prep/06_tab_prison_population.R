@@ -8,9 +8,11 @@
 #######################################
 
 
-##########
+################################################################################
+
 # Annual Parole Survey Series in 2018 data for analysis
-##########
+
+################################################################################
 
 state_names_abb <-
   data.frame(abbreviation = state.abb,
@@ -203,12 +205,12 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
 
 
 
-########################################
+################################################################################
 
 # Line graph data showing the change in prison population
 # and change in people released to parole
 
-########################################
+################################################################################
 
 # get prison population by report year and state
 # merge with APS data for releases to parole and entries to parole from prison
@@ -272,11 +274,11 @@ all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, sta
 
 
 
-########################################
+################################################################################
 
 # Proportion of prison population who are parole eligible
 
-########################################
+################################################################################
 
 ncrp_pe_type_2020 <- all_ncrp_aps_pop_released_to_parole_by_year %>%
   select(state,
@@ -383,9 +385,12 @@ all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
 
 
 
-####################
+
+################################################################################
+
 # Sentence about parole eligible prison population
-####################
+
+################################################################################
 
 # get list of states
 states <- unique(ncrp_pe_type_2020$state)
@@ -410,9 +415,11 @@ all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibi
 
 
 
-##########
+################################################################################
+
 # Save data
-##########
+
+################################################################################
 
 theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 

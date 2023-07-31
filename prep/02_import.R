@@ -196,6 +196,8 @@ ncrp_sentlgth_timesrvd_rel <- ncrp_releases %>%
 
 ##########
 # Prepare Prisoners in 2020 data for analysis
+# have 2021, need?????????????????
+
 ##########
 
 # clean up file to create dataframe of state prison pop by race
@@ -230,7 +232,7 @@ hex_gj <- hex %>%
 # Prepare parole info by state for map
 ##########
 
-parole_info_by_state<- parole_info_by_state  %>%
+parole_info_by_state <- parole_info_by_state  %>%
   clean_names()
 
 

@@ -12,26 +12,22 @@
 library(rmarkdown)
 library(tidyverse)
 
-# # run code
-# source("prep/00_library.R")
+# run code
+source("prep/00_library.R")
 source("prep/01_functions.R")
-# source("prep/02_import.R")
-# source("prep/03_tab_parole_eligibility.R")
-# source("prep/04_tab_releases_from_prison.R")
-# source("prep/05_tab_offenses.R")
-# source("prep/06_tab_prison_population.R")
-# source("prep/07_tab_disparities.R")
-
-# render all QMDs
-# quarto_render()
+source("prep/02_import.R")
+source("prep/03_tab_parole_eligibility.R")
+source("prep/04_tab_releases_from_prison.R")
+source("prep/05_tab_offenses.R")
+source("prep/06_tab_prison_population.R")
+source("prep/07_tab_disparities.R")
 
 # save working directory
 wd <- getwd()
 
 # get list of 50 states
-states <- c("Arkansas", "California", "Georgia")
-# states <- state.name
-
+# states <- c("Arkansas", "California", "Georgia")
+states <- state.name
 
 # read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

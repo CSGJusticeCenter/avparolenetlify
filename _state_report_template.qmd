@@ -213,6 +213,7 @@ if (state_for_report %in% names(all_pie_ped_future_6)) {
 
 
 
+
 # save pie chart of most serious sentenced offense by state
 if (state_for_report %in% names(all_pie_parole_elgibility_offense)) {
   state_pie_parole_elgibility_offense <- 
@@ -223,6 +224,26 @@ if (state_for_report %in% names(all_pie_parole_elgibility_offense)) {
   state_pie_parole_elgibility_offense <- "No Data"
 }
 
+# save pie chart of most serious sentenced offense by state - new crime
+if (state_for_report %in% names(all_pie_parole_elgibility_offense_new_crime)) {
+  state_pie_parole_elgibility_offense_new_crime <- 
+    all_pie_parole_elgibility_offense_new_crime[[state_for_report]] %>% 
+    hc_size(width = 600, height = 300) %>% 
+    hc_title(text = "Most Serious Sentenced Offense for People who are Parole Eligible but Still in Prison in 2020")
+} else {
+  state_pie_parole_elgibility_offense_new_crime <- "No Data"
+}
+
+# save pie chart of most serious sentenced offense by state - parole revocation or return
+if (state_for_report %in% names(all_pie_parole_elgibility_offense_parole_return)) {
+  state_pie_parole_elgibility_offense_parole_return <- 
+    all_pie_parole_elgibility_offense_parole_return[[state_for_report]] %>% 
+    hc_size(width = 600, height = 300) %>% 
+    hc_title(text = "Most Serious Sentenced Offense for People who are Parole Eligible but Still in Prison in 2020")
+} else {
+  state_pie_parole_elgibility_offense_parole_return <- "No Data"
+}
+
 # save sentence about serious offense by state
 if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
   state_sentence_parole_elgibility_offense <- 
@@ -230,6 +251,7 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 } else {
   state_sentence_parole_elgibility_offense <- ""
 }
+
 
 
 
@@ -550,12 +572,12 @@ div(id = "body-section", state_pie_parole_elgibility_offense)
 
 ### New Crime
 ```{r}
-div(id = "body-section", "TBD")
+div(id = "body-section", state_pie_parole_elgibility_offense_new_crime)
 ```
 
 ### Parole Return
 ```{r}
-div(id = "body-section", "TBD")
+div(id = "body-section", state_pie_parole_elgibility_offense_parole_return)
 ```
 :::
 
@@ -676,6 +698,19 @@ div(id = "body-section", br(),
 <br>
 
 ::::
+
+::: citation-section
+
+Sources:   
+
+Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
+
+Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).    
+
+United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research [distributor], 2021-10-28. [https://doi.org/10.3886/ICPSR38058.v1](https://doi.org/10.3886/ICPSR38058.v1). 
+  
+United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
+:::
 
 ---
 title: "`r state_for_report`"

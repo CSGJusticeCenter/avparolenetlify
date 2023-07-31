@@ -41,6 +41,8 @@ load(file = paste0(sp_data_path, "/data/analysis/all_pie_ped_future_6.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense_parole_return.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense_new_crime.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_offense.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_overview_2020.rds"))

@@ -8,7 +8,7 @@
 #######################################
 
 ##########
-# Packages
+# Instructions Packages
 ##########
 
 # download CSGJCR package
@@ -39,6 +39,9 @@ library(sf)
 library(jsonlite)
 library(geojsonsf)
 library(openxlsx)
+library(broom)
+library(broom.helpers)
+
 
 # CHANGE THIS TO YOUR PROJECT PATH
 csg_set_project_path(
@@ -46,10 +49,10 @@ csg_set_project_path(
   sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - RES_Parole",
   force = TRUE)
 
-# Save data path
+# save data path
 sp_data_path <- csg_get_project_path("AVParole")
 
-# Load fonts
+# load fonts
 font_add("Graphik",     regular = "fonts/Graphik.ttf")
 font_add("GraphikBold", regular = "fonts/GraphikBold.ttf")
 
@@ -79,25 +82,3 @@ purple   <- "#c376fb"
 red      <- "#c60040"
 yellow   <- "#ffaf00"
 orange   <- "#ff6400"
-
-# define color gradient for map
-library(grDevices)
-
-# Define the middle color
-middle_color <- "#00aba0"
-
-# Define the number of colors in the gradient
-num_colors <- 5
-
-# Define the lighter and darker shades
-light_color <- "#D5F5F3"  # Lighter shade
-dark_color <- "#003474"   # Darker shade
-
-# Create the color gradient
-gradient_colors <- colorRampPalette(c(light_color, middle_color, dark_color))(num_colors)
-
-# Output the resulting colors
-gradient_colors
-
-
-

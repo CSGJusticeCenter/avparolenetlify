@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: July 28, 2023 (MAR)
+# Date last updated: July 31, 2023 (MAR)
 # Description:
 #    Parole eligibility tables and graphics for shiny app
 #######################################
@@ -155,6 +155,8 @@ states <- parole_eligibility_rate_by_admtype %>%
   pull(state) %>%
   unique()
 
+# pie chart
+# currently eligible for parole and in prison for parole return
 all_pie_ped_current <- map(.x = states,  .f = function(x) {
 
   df1 <- parole_eligibility_rate_by_admtype %>%
@@ -189,6 +191,7 @@ states <- parole_eligibility_rate_by_admtype %>%
   pull(state) %>%
   unique()
 
+# eligible for parole in the next 1-5 years and in prison for parole return
 all_pie_ped_future_1_5 <- map(.x = states,  .f = function(x) {
 
   df1 <- parole_eligibility_rate_by_admtype %>%
@@ -309,9 +312,11 @@ all_pie_ped_future_1_5 <- setNames(all_pie_ped_future_1_5, states)
 
 
 
-####################
+################################################################################
+
 # Sentence about parole eligibility and adm type
-####################
+
+################################################################################
 
 # get list of states
 states <- parole_eligibility_rate_by_admtype %>%
@@ -370,9 +375,12 @@ current_ped_2020_race <- ncrp_yearendpop %>%
 
 
 
-####################
+
+################################################################################
+
 # Bar chart about parole eligibility by race
-####################
+
+################################################################################
 
 # get states
 states <- unique(current_ped_2020_race$state)
@@ -429,9 +437,12 @@ all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, state
 
 
 
-####################
-# Sentence about race and parole eligibility
-####################
+
+################################################################################
+
+# Sentence about parole eligibility and race
+
+################################################################################
 
 # get list of states
 states <- unique(current_ped_2020_race$state)
@@ -456,9 +467,12 @@ all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_r
 
 
 
-##########
+
+################################################################################
+
 # Save data
-##########
+
+################################################################################
 
 theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
@@ -470,7 +484,6 @@ for (folder in theseFOLDERS){
   save(all_sentence_parole_elgibility_admtype, file=file.path(folder, "all_sentence_parole_elgibility_admtype.rds"))
   save(all_pie_ped_current,                    file=file.path(folder, "all_pie_ped_current.rds"))
   save(all_pie_ped_future_1_5,                 file=file.path(folder, "all_pie_ped_future_1_5.rds"))
-  save(all_pie_ped_future_6,                   file=file.path(folder, "all_pie_ped_future_6.rds"))
 
   save(current_ped_2020_race,                  file=file.path(folder, "current_ped_2020_race.rds"))
   save(all_sentence_parole_elgibility_race,    file=file.path(folder, "all_sentence_parole_elgibility_race.rds"))

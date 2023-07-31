@@ -7,13 +7,13 @@
 #    Releases from prison tables and graphics for app
 #######################################
 
-##################
+################################################################################
 
 # Data cleaning for:
 # Timing of release overall, by adm type, and by offense type
 # Released before parole eligibility (PE) year, on PE year, after PE year
 
-##################
+################################################################################
 
 # subset to 2020 report
 ncrp_releases_2020 <- ncrp_sentlgth_timesrvd_rel %>%
@@ -88,13 +88,18 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
                   prop_label, "</b></b>", sep = ""))
 
 
-##################
+
+
+
+
+
+################################################################################
 
 # Highcharts for:
 # Timing of release overall, by adm type, and by offense type
 # Create a grouped percent bar chart for each offense type
 
-##################
+################################################################################
 
 # assign x axis order
 desired_order <- c("Released Before Parole Eligibility Year",
@@ -172,12 +177,12 @@ all_bar_released_at_ped_drugs_2020 <-
 
 
 
-##################
+################################################################################
 
 # Highcharts for:
 # Unconditional vs conditional release
 
-##################
+################################################################################
 
 # subset to 2020 report
 ncrp_release_type <- ncrp_sentlgth_timesrvd_rel %>%
@@ -268,11 +273,16 @@ df1
 
 
 
-##################
+
+
+
+
+
+################################################################################
 
 # Save data
 
-##################
+################################################################################
 
 theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
