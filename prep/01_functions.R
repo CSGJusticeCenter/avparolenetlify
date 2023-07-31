@@ -96,7 +96,7 @@ hc_reactable_theme <-
 
 hc_reactable_style <- list(
   fontFamily = "Graphik, sans-serif",
-  fontSize = "0.75rem",
+  fontSize = "0.9rem",
   color = neutralBlackText
 )
 
@@ -123,9 +123,13 @@ hc_theme_map_jc <- hc_theme_merge(
       spline = list(marker = list(enabled = TRUE)),
       area = list(marker = list(enabled = TRUE)),
       areaspline = list(marker = list(enabled = TRUE))
+    ),
+    legend = list(
+      itemStyle = list(fontSize = "16px", fontWeight = "regular")
     )
   )
 )
+
 
 
 # highcharts theme for plots
@@ -356,7 +360,7 @@ fnc_donut_chart <- function(df,
                   innerSize="60%",
                   dataLabels = list(
                     style = list(fontSize = "2.7em",
-                                 color = orange),
+                                 color = teal),
                     enabled = TRUE,
                     distance= -85,
                     format = "{point.prop_label}")) %>%

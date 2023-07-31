@@ -173,7 +173,7 @@ all_pie_ped_current <- map(.x = states,  .f = function(x) {
                                 accessibility_text = "TBD.")
   highcharts <- highcharts %>%
     hc_chart(width = 250, height = 250) %>%
-    hc_colors(colors = c(neutralBkgndMedium, orange))
+    hc_colors(colors = c(neutralBkgndMedium, teal))
 
   return(highcharts)
 })
@@ -207,7 +207,7 @@ all_pie_ped_future_1_5 <- map(.x = states,  .f = function(x) {
                                 accessibility_text = "TBD.")
   highcharts <- highcharts %>%
     hc_chart(width = 250, height = 250) %>%
-    hc_colors(colors = c(neutralBkgndMedium, orange))
+    hc_colors(colors = c(neutralBkgndMedium, teal))
 
   return(highcharts)
 })

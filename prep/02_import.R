@@ -12,7 +12,6 @@ robinainfo <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet
 robinadefinitions <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
 robinaparoleeligibility <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "eligibility")
 
-
 # load NCRP data
 # https://www.icpsr.umich.edu/web/NACJD/studies/38492
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0001/38492-0001-Data.rda"))
@@ -47,10 +46,15 @@ aps_parole_2002 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31327-V1/ICPSR_313
 aps_parole_2001 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31326-V1/ICPSR_31326/DS0001/31326-0001-Data.rda"))
 aps_parole_2000 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31325-V1/ICPSR_31325/DS0001/31325-0001-Data.rda"))
 
-# Load sp file
+# load sp file
 hex <- read_sf(paste0(sp_data_path, "/data/raw/us_states_hexgrid.geojson")) %>%
   select(state_abb = iso3166_2) %>%
   filter(state_abb != "DC")
+
+# load info on states that abolished parole
+parole_info_by_state <-
+  read.xlsx(paste0(sp_data_path, "/Background Information/Parole Info by State.xlsx"),
+            sheet = "Overall")
 
 
 
@@ -188,6 +192,8 @@ ncrp_sentlgth_timesrvd_rel <- ncrp_releases %>%
 
 
 
+
+
 ##########
 # Prepare Prisoners in 2020 data for analysis
 ##########
@@ -219,6 +225,18 @@ hex_gj <- hex %>%
 
 
 
+
+##########
+# Prepare parole info by state for map
+##########
+
+parole_info_by_state<- parole_info_by_state  %>%
+  clean_names()
+
+
+
+
+
 ##########
 # Save data
 ##########
@@ -231,6 +249,7 @@ for (folder in theseFOLDERS){
   save(robinadefinitions, file=file.path(folder, "robinadefinitions.rds"))
   save(robinainfo, file=file.path(folder, "robinainfo.rds"))
   save(robinaparoleeligibility, file=file.path(folder, "robinaparoleeligibility.rds"))
+  save(parole_info_by_state, file=file.path(folder, "parole_info_by_state.rds"))
 
 }
 

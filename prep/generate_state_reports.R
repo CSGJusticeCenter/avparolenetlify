@@ -29,8 +29,8 @@ source("prep/01_functions.R")
 wd <- getwd()
 
 # get list of 50 states
-# states <- c("Arkansas", "California", "Georgia")
-states <- state.name
+states <- c("Arkansas", "California", "Georgia")
+# states <- state.name
 
 
 # read in original qmd

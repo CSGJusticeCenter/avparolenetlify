@@ -21,9 +21,6 @@ knitr::opts_chunk$set(
 source("prep/00_library.R")
 source("prep/01_functions.R")
 source("prep/dataframes.R")
-
-# load additional packages needed for this QMD
-library(shiny)
 ```
 
 ```{r}
@@ -71,11 +68,18 @@ htmltools::div(
 # create a vector of all states
 all_states <- state.name
 
-# parole_eligibility_table_2020 created in parole_eligibility_ncrp.R
+# get parole eligibility information
+parole_info_by_state_clean <- parole_info_by_state %>% 
+  select(state, abolished_discretionary_parole)
+
+# parole_eligibility_table_2020 created in tab_parole_elgibility.R
+# parole_info_by_state was imported in import.R
 map_data <- parole_eligibility_table_2020 %>% 
+  
   # add missing states
   complete(state = all_states) %>% 
   
+  # format data and create tooltip
   mutate(current_perc = current_perc*100,
          future_1_5_years_perc  = future_1_5_years_perc*100,
          missing_perc = missing_perc*100,
@@ -94,6 +98,7 @@ map_data <- parole_eligibility_table_2020 %>%
                    formattable::comma(yearendpop, digits = 0), "</b>"),
                   tooltip = str_replace_all(tooltip, "NA%", "No Data")) %>% 
   
+  # create data labels
   mutate(datalabel = ifelse(is.na(current_perc),
                             paste0("", state_abb, ""),
                             paste0("<p style=", "text-align:center", ">",
@@ -101,55 +106,88 @@ map_data <- parole_eligibility_table_2020 %>%
                                    round(current_perc, 0), "%</p>")),
          
          currentperclabel = paste0(round(current_perc, 0), "%"),
-         currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) 
+         currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) %>% 
+  
+  # add info about whether state abolished parole
+  left_join(parole_info_by_state_clean, by = "state")
+
+# define the gradient colors
+gradient_colors <- c("#D5F5F3", "#6AD0C9", "#00ABA0", "#006F8A", "#003474")
+
+# calculate the breaks for current_perc
+num_breaks <- length(gradient_colors) + 1
+breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks), na.rm = TRUE)
+
+# assign legend info and gradient colors based on current_perc values
+map_data_breaks <- map_data %>%
+  mutate(gradient_color = case_when(
+    is.na(current_perc) ~ NA_character_,
+    current_perc <= breaks[2] ~ gradient_colors[1],
+    current_perc <= breaks[3] ~ gradient_colors[2],
+    current_perc <= breaks[4] ~ gradient_colors[3],
+    TRUE ~ gradient_colors[4]
+  )) %>%
+  mutate(
+    current_perc = round(current_perc, 0)) %>%
+  group_by(gradient_color) %>%
+  mutate(data_category = paste0(min(current_perc), "% - ",max(current_perc), "%")) %>%
+  mutate(data_category = case_when(
+    data_category == "NA% - NA%" & abolished_discretionary_parole == "Yes" ~ "Abolished Parole",
+    data_category == "NA% - NA%" & abolished_discretionary_parole == "No" ~ "Missing Data",
+    TRUE ~ data_category
+  )) %>%
+  mutate(data_category_num = case_when(
+    data_category == "0% - 5%" ~ 0,
+    data_category == "6% - 10%" ~ 1,
+    data_category == "11% - 19%" ~ 2,
+    data_category == "22% - 54%" ~ 3,
+    data_category == "Abolished Parole" ~ 4,
+    data_category == "Missing Data" ~ 5
+  ))
 ```
 
 ```{r}
-# get minimum and maximum value
-min_map <- min(map_data$current_perc, na.rm = TRUE)
-max_map <- max(map_data$current_perc, na.rm = TRUE)
-
-# create hex map
-map_percent <- highchart(height = 580) %>%
+# create hex map showing the percent of the prison population that are parole eligible
+map_percent <- 
   
-  hc_chart(marginTop = -6) %>% 
+  highchart(height = 580) %>%
+  
+  hc_chart(marginTop = -6) %>%
   
   hc_add_series_map(
     map = hex_gj,
-    df = map_data,
+    df = map_data_breaks,
     joinBy = "state_abb",
-    value = "current_perc",
+    value = "data_category_num",
     dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
                       style = list(fontSize = "14px",
                                    fontWeight = "regular",
                                    fontFamily = "Graphik",
                                    textOutline = 0)),
-    nullColor = "#e8e8e8",
-    accessibility = list(
-      enabled = TRUE,
-      keyboardNavigation = list(enabled = TRUE),
-      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
-  
-  hc_colorAxis(min = min_map,
-               max = max_map,
-               stops = color_stops(4, gradient_colors),
-               labels = list(format = "{value}%",
-                             style = list(fontSize = "14px"))) %>%
+    nullColor = "#e8e8e8") %>%
+  hc_colorAxis(dataClassColor="category",
+               dataClasses = list(list(from = 0, to = 0, color="#D5F5F3", name = "0% - 5%"),
+                                  list(from = 1, to = 1, color="#6AD0C9", name = "6% - 10%"),
+                                  list(from = 2, to = 2, color="#00ABA0", name = "11% - 19%"),
+                                  list(from = 3, to = 3, color="#006F8A", name = "22% - 54%"),
+                                  list(from = 4, to = 4, color= yellow, name = "Abolished Parole"),
+                                  list(from = 5, to = 5, color="#e8e8e8", name = "Missing Data")
+                                  )) %>%
   
   hc_legend(align = "right",
-            verticalAlign = "bottom",
-            layout = "vertical",
-            symbolHeight = 200,
-            symbolWidth = 25,
-            x = -25,
-            y = 0) %>%
+          verticalAlign = "bottom",
+          layout = "vertical",
+          symbolHeight = 15,
+          symbolWidth = 15,
+          x = 0,
+          y = -100) %>% 
   
   hc_xAxis(title = "") %>%
   hc_yAxis(title = "") %>%
-  
+
   hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
   hc_add_theme(hc_theme_map_jc) %>%
-  
+
   hc_plotOptions(series = list(animation = FALSE,
                                cursor = "pointer",
                                borderWidth = 3),
@@ -160,7 +198,70 @@ map_percent <- highchart(height = 580) %>%
                  area = list(accessibility = list(description = paste0("TEXT")))
   )
 
-# parole_eligibility_table_2020 created in parole_eligibility_ncrp.R
+# # get minimum and maximum value
+# min_map <- min(map_data$current_perc, na.rm = TRUE)
+# max_map <- max(map_data$current_perc, na.rm = TRUE)
+# 
+# # create hex map
+# map_percent <- highchart(height = 580) %>%
+#   
+#   hc_chart(marginTop = -6) %>% 
+#   
+#   hc_add_series_map(
+#     map = hex_gj,
+#     df = map_data,
+#     joinBy = "state_abb",
+#     value = "current_perc",
+#     dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
+#                       style = list(fontSize = "14px",
+#                                    fontWeight = "regular",
+#                                    fontFamily = "Graphik",
+#                                    textOutline = 0)),
+#     nullColor = "#e8e8e8",
+#     accessibility = list(
+#       enabled = TRUE,
+#       keyboardNavigation = list(enabled = TRUE),
+#       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
+#   
+#   hc_colorAxis(min = min_map,
+#                max = max_map,
+#                stops = color_stops(4, gradient_colors),
+#                reversed = FALSE,
+#                labels = list(format = "{value}%",
+#                              style = list(fontSize = "14px"))) %>%
+#   
+#   hc_legend(align = "right",
+#             verticalAlign = "bottom",
+#             layout = "vertical",
+#             symbolHeight = 200,
+#             symbolWidth = 25,
+#             x = -25,
+#             y = 0) %>%
+#   
+# hc_xAxis(title = "") %>%
+# hc_yAxis(title = "") %>%
+# 
+# hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+# hc_add_theme(hc_theme_map_jc) %>%
+# 
+# hc_plotOptions(series = list(animation = FALSE,
+#                              cursor = "pointer",
+#                              borderWidth = 3),
+#                accessibility = list(enabled = TRUE,
+#                                     keyboardNavigation = list(enabled = TRUE),
+#                                     linkedDescription = paste0("TEXT"),
+#                                     landmarkVerbosity = "one"),
+#                area = list(accessibility = list(description = paste0("TEXT")))
+# )
+
+
+
+
+
+
+
+
+# parole_eligibility_table_2020 created in tab_parole_eligibility.R
 map_data <- parole_eligibility_table_2020 %>% 
   # add missing states
   complete(state = all_states) %>% 
@@ -210,7 +311,8 @@ map_count <- highchart(height = 580) %>%
       point = list(valueDescriptionFormat = "{point.state}, {point.currentcountlabel}"))) %>%
   
   hc_colorAxis(stops = color_stops(4, gradient_colors),
-               labels = list(format = "{value}",
+               reversed = FALSE,
+               labels = list(format = "{value:,.0f}",
                              style = list(fontSize = "14px"))) %>%
   
   hc_legend(align = "right",
@@ -239,7 +341,12 @@ map_count <- highchart(height = 580) %>%
 ```
 
 ```{r}
-div(div(id = "graph-title", HTML("People Currently Eligible for Parole but in Prison")))
+# div(div(id = "graph-title", HTML("People Currently Eligible for Parole but in Prison")))
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "People in Prison who are Currently Eligible for Parole in 2020"))
 ```
 
 ::: {.panel-tabset}
@@ -258,14 +365,24 @@ map_count
 
 <br>
 
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Parole Eligibility Data by State"), br(),
+    div(id = "regular-text", "
+The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole or lack of data in certain states."),
+br())
+```
+
 ::: table-container
 ```{r}
 # https://github.com/quarto-dev/quarto-cli/issues/5702
 table_data <- parole_eligibility_table_2020 %>%
+  left_join(parole_info_by_state_clean, by = "state") %>% 
   select(state,
+         abolished_discretionary_parole,
          yearendpop,
          current_count, current_perc,
-         future_1_5_years_count, future_1_5_years_perc, missing_count, missing_perc)
+         future_1_5_years_count, future_1_5_years_perc, missing_count, missing_perc) 
 
 reactable(table_data,
           style = hc_reactable_style,
@@ -287,7 +404,15 @@ reactable(table_data,
           columns = list(
             state         = colDef(name = "State",
                                    minWidth = 130,
-                                   align = "left"),
+                                   align = "left",
+                                   style = list(fontWeight = "bold")
+                                   ),
+            abolished_discretionary_parole = colDef(name = "Abolished Parole"),
+            yearendpop    = colDef(name = "Prison Population",
+                                   minWidth = 130,
+                                   style = list(position = "sticky",
+                                                borderRight = "1px solid #d3d3d3"),
+                       headerStyle = list(fontWeight = "bold")),
             current_perc  = colDef(name = "Percent of Prison Population",
                                    format = colFormat(percent = TRUE,
                                                       digits = 1),
@@ -304,10 +429,6 @@ reactable(table_data,
                                    format = colFormat(percent = TRUE,
                                                       digits = 1),
                                    headerStyle = list(fontWeight = "normal")),
-            yearendpop    = colDef(name = "Prison Population",
-                                   style = list(position = "sticky",
-                                                borderRight = "1px solid #d3d3d3"),
-                                   headerStyle = list(fontWeight = "bold")),
             current_count = colDef(name = "Number of People",
                                    headerStyle = list(fontWeight = "normal")),
             future_1_5_years_count  = colDef(name = "Number of People",
