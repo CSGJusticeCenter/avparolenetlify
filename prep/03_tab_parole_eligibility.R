@@ -13,20 +13,20 @@
 # Reactable table in national trends page
 # Parole eligibility in 2020
 
+# Obtained from NCRP year end population in 2020
+
 ################################################################################
 
 # get number and prop of people by eligibility statuses, by state and report year
-parole_eligibility_counts <- ncrp_yearendpop %>%
+# reformat for table viewing
+parole_eligibility_table <- ncrp_yearendpop %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   mutate(
     prop = n/sum(n),
     yearendpop = sum(n)
   ) %>%
-  ungroup()
-
-# reformat for table viewing
-parole_eligibility_table <- parole_eligibility_counts %>%
+  ungroup() %>%
   pivot_longer(cols = c(n, prop), names_to = "type", values_to = "value") %>%
   mutate(name = case_when(
     type == "n"    ~ paste(parelig_status, "count"),
@@ -40,13 +40,15 @@ parole_eligibility_table <- parole_eligibility_counts %>%
 parole_eligibility_table_2020 <- parole_eligibility_table %>%
   filter(rptyear == 2020)
 
-# find missing data
+# find missing states
 # Arizona, Michigan, New Jersey, New Mexico
-missing_data <- tibble(state = setdiff(state.name, parole_eligibility_table_2020$state),
+missing_data <- tibble(state = setdiff(state.name,
+                                       parole_eligibility_table_2020$state),
                        rptyear = 2020)
 
-# combine the missing data with the original dataframe
-parole_eligibility_table_2020 <- bind_rows(parole_eligibility_table_2020, missing_data) %>%
+# combine the missing states with the original dataframe to get all 50
+parole_eligibility_table_2020 <-
+  bind_rows(parole_eligibility_table_2020, missing_data) %>%
   arrange(state)
 
 
@@ -59,12 +61,17 @@ parole_eligibility_table_2020 <- bind_rows(parole_eligibility_table_2020, missin
 ################################################################################
 
 # Parole eligibility by adm type and year
+# Obtained from NCRP year end population in 2020
 
 ################################################################################
 
+# get parole eligibility status by admission type (new crime vs parole return)
+# remove missing data and "other" admission types
+# create a tool tip
 parole_eligibility_rate_by_admtype <- ncrp_yearendpop %>%
-  filter(!is.na(parelig_status) & !is.na(admtype) &
-           admtype != "Other admission (including unsentenced, transfer, AWOL/escapee return)") %>%
+  filter(!is.na(parelig_status) &
+         !is.na(admtype) &
+         admtype != "Other admission (including unsentenced, transfer, AWOL/escapee return)") %>%
   group_by(state, rptyear, parelig_status) %>%
   count(admtype) %>%
   mutate(
@@ -82,20 +89,18 @@ parole_eligibility_rate_by_admtype <- ncrp_yearendpop %>%
                               "Parole return/revocation:<br>",
                               paste(round(prop, 1), "%</b>", sep = ""), "<br>")))
 
-# get number and percentage of eligibility statuses by adm type (new court committment by parole eligibility status)
-parole_eligibility_admtype_counts <- ncrp_yearendpop %>%
+# get number and percentage of eligibility statuses by admission type and report year
+# reformat for table viewing
+parole_eligibility_admtype_table <- ncrp_yearendpop %>%
   filter(admtype == "Parole return/revocation" |
-           admtype == "New court commitment") %>%
+         admtype == "New court commitment") %>%
   group_by(state, rptyear, admtype) %>%
   count(parelig_status) %>%
   mutate(
     prop = n/sum(n),
     yearendpop = sum(n)
   ) %>%
-  ungroup()
-
-# reformat for table viewing
-parole_eligibility_admtype_table <- parole_eligibility_admtype_counts %>%
+  ungroup() %>%
   pivot_longer(cols = c(n, prop), names_to = "type", values_to = "value") %>%
   mutate(name = case_when(
     type == "n"    ~ paste(parelig_status, "count"),
@@ -106,10 +111,9 @@ parole_eligibility_admtype_table <- parole_eligibility_admtype_counts %>%
   clean_names()
 
 # filter to 2020
+# reformat table for viewing
 parole_eligibility_admtype_table_2020 <- parole_eligibility_admtype_table %>%
-  filter(rptyear == 2020)
-
-parole_eligibility_admtype_table_2020 <- parole_eligibility_admtype_table_2020 %>%
+  filter(rptyear == 2020) %>%
   pivot_wider(names_from = admtype,
               values_from = c(yearendpop,
                               missing_count,
@@ -122,7 +126,7 @@ parole_eligibility_admtype_table_2020 <- parole_eligibility_admtype_table_2020 %
                               future_6_years_perc),
               names_sep = "_")
 
-# missing data
+# missing states
 # Arizona, Michigan, New Jersey, New Mexico
 missing_states <- state.name[!state.name %in% parole_eligibility_admtype_table_2020$state]
 
@@ -142,11 +146,14 @@ parole_eligibility_admtype_table_2020 <- bind_rows(parole_eligibility_admtype_ta
 
 ################################################################################
 
-# Parole eligibility by adm type highcharts and sentence
+# Highcharts - donut/pie charts
+# Parole eligibility by adm type
+
+# Obtained from NCRP year end population
 
 ################################################################################
 
-# get list of states
+# get list of states with data
 states <- parole_eligibility_rate_by_admtype %>%
   ungroup() %>%
   filter(rptyear == 2020 &
@@ -217,93 +224,6 @@ all_pie_ped_future_1_5 <- map(.x = states,  .f = function(x) {
 
 all_pie_ped_future_1_5 <- setNames(all_pie_ped_future_1_5, states)
 
-# # get states
-# states <- parole_eligibility_rate_by_admtype %>%
-#   ungroup() %>%
-#   filter(rptyear == 2020 &
-#          parelig_status == "Current") %>%
-#   pull(state) %>%
-#   unique()
-#
-# all_pie_ped_current <- map(.x = states,  .f = function(x) {
-#
-#   df1 <- parole_eligibility_rate_by_admtype %>%
-#     filter(rptyear == 2020 &
-#            state == x &
-#            parelig_status == "Current")
-#
-#   highcharts <-
-#     fnc_pie_chart_highlight(df = df1,
-#                             x_variable = "admtype",
-#                             y_variable = "prop",
-#                             point_format = "{point.admtype}: {point.prop:.0f}%",
-#                             accessibility_text = "TBD.")
-#   highcharts <- highcharts %>%
-#     hc_colors(colors = c(neutralBkgndMedium, orange))
-#
-#   return(highcharts)
-# })
-#
-# all_pie_ped_current <- setNames(all_pie_ped_current, states)
-#
-# # get states
-# states <- parole_eligibility_rate_by_admtype %>%
-#   ungroup() %>%
-#   filter(rptyear == 2020 &
-#          parelig_status == "Future 1-5 Years") %>%
-#   pull(state) %>%
-#   unique()
-#
-# all_pie_ped_future_1_5 <- map(.x = states,  .f = function(x) {
-#
-#   df1 <- parole_eligibility_rate_by_admtype %>%
-#     filter(rptyear == 2020 &
-#            state == x &
-#            parelig_status == "Future 1-5 Years")
-#
-#   highcharts <-
-#     fnc_pie_chart_highlight(df = df1,
-#                             x_variable = "admtype",
-#                             y_variable = "prop",
-#                             point_format = "{point.admtype}: {point.prop:.0f}%",
-#                             accessibility_text = "TBD.")
-#   highcharts <- highcharts %>%
-#     hc_colors(colors = c(neutralBkgndMedium, orange))
-#
-#   return(highcharts)
-# })
-#
-# all_pie_ped_future_1_5 <- setNames(all_pie_ped_future_1_5, states)
-#
-# # get states
-# states <- parole_eligibility_rate_by_admtype %>%
-#   ungroup() %>%
-#   filter(rptyear == 2020 &
-#          parelig_status == "Future 6+ Years") %>%
-#   pull(state) %>%
-#   unique()
-#
-# all_pie_ped_future_6 <- map(.x = states,  .f = function(x) {
-#
-#   df1 <- parole_eligibility_rate_by_admtype %>%
-#     filter(rptyear == 2020 &
-#            state == x &
-#            parelig_status == "Future 6+ Years")
-#
-#   highcharts <-
-#     fnc_pie_chart_highlight(df = df1,
-#                             x_variable = "admtype",
-#                             y_variable = "prop",
-#                             point_format = "{point.admtype}: {point.prop:.0f}%",
-#                             accessibility_text = "TBD.")
-#   highcharts <- highcharts %>%
-#     hc_colors(colors = c(neutralBkgndMedium, orange))
-#
-#   return(highcharts)
-# })
-#
-# all_pie_ped_future_6 <- setNames(all_pie_ped_future_6, states)
-
 
 
 
@@ -349,7 +269,10 @@ all_sentence_parole_elgibility_admtype <- setNames(all_sentence_parole_elgibilit
 
 ################################################################################
 
+# Highcharts - barchart
 # Parole eligibility by race
+
+# Obtained from NCRP year end population
 
 ################################################################################
 
@@ -370,19 +293,7 @@ current_ped_2020_race <- ncrp_yearendpop %>%
                           race, "</b><br>",
                           prop_label, "<br>"))
 
-
-
-
-
-
-
-################################################################################
-
-# Bar chart about parole eligibility by race
-
-################################################################################
-
-# get states
+# get states with data
 states <- unique(current_ped_2020_race$state)
 
 # generate bar chart showing parole eligible populations by race and state in 2020
@@ -431,6 +342,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 })
 
 all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, states)
+
 
 
 

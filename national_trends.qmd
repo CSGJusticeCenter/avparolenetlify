@@ -389,7 +389,7 @@ reactable(table_data,
           theme = hc_reactable_theme,
           defaultColDef = colDef(format = colFormat(separators = TRUE),
                                  align = "right",
-                                 minWidth = 100),
+                                 minWidth = 110),
           compact = TRUE,
           fullWidth = FALSE,
           defaultPageSize = 50,
@@ -407,7 +407,9 @@ reactable(table_data,
                                    align = "left",
                                    style = list(fontWeight = "bold")
                                    ),
-            abolished_discretionary_parole = colDef(name = "Abolished Parole"),
+            abolished_discretionary_parole = 
+              colDef(name = "Abolished Discretionary Parole",
+                     minWidth = 130),
             yearendpop    = colDef(name = "Prison Population",
                                    minWidth = 130,
                                    style = list(position = "sticky",
@@ -439,3 +441,8 @@ reactable(table_data,
 )
 ```
 :::
+
+
+
+
+

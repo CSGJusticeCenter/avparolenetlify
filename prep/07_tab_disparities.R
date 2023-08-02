@@ -91,7 +91,7 @@ all_time_between_release_ped_2020_by_race <- setNames(all_time_between_release_p
 #    by race, sex, admtype, offgeneral, sentlngth
 
 # Input:
-# ncrp_sentlgth_timesrvd_rel - created in releases_ncrp.R
+# ncrp_releases - created in releases_ncrp.R
 
 # Output
 # all_pp_by_variable - used for app
@@ -103,8 +103,8 @@ library(broom)
 library(broom.helpers)
 
 # prepare data for analysis
-# ncrp_sentlgth_timesrvd_rel created in releases_ncrp.R
-ncrp_pp_model_data <- ncrp_sentlgth_timesrvd_rel %>%
+# ncrp_releases created in releases_ncrp.R
+ncrp_pp_model_data <- ncrp_releases %>%
   # filter to 2020 report year
   # remove releases that were classified as "other"
   filter(rptyear == 2020) %>%

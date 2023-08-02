@@ -503,30 +503,58 @@ htmltools::div(
 <center>
 ```{r}
 div(id = "body-section", br(),
+    div(id = "big-section-title", "Parole-Eligible Prison Population"),             br(),
+    div(id = "regular-text",       state_sentence_parole_elgibility_population),    br(), 
+    div(id = "bar-chart",          state_stackedbar_pe_type_2020),                  br(), br(),
     div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
-    div(id = "regular-text",       parole_eligibility_criteria), br(), br(),
-    div(id = "big-section-title", "People who were Eligible for Parole"), br(),
-    div(id = "regular-text",       state_sentence_parole_elgibility_race), br(), 
-    div(id = "bar-chart",          state_bar_parole_elgibility_race), br(), br(),
-    
-    div(id = "regular-text",       state_sentence_parole_elgibility_admtype), br(), 
-    div(
-      #style = "display:flex; flex-direction: row; align-items: center; justify-items: center;",
-      style = "display: grid; grid-template-columns: repeat(2, 1fr); justify-items: center;",
-      state_pie_ped_current,
-      state_pie_ped_future_1_5
-      )
+    div(id = "regular-text",       parole_eligibility_criteria),                    br(), br()
+    # div(id = "regular-text",       state_sentence_parole_elgibility_race),          br(), 
+    # div(id = "bar-chart",          state_bar_parole_elgibility_race),               br(), br()
+    # div(id = "regular-text",       state_sentence_parole_elgibility_admtype), br(), 
+    # div(
+    #   #style = "display:flex; flex-direction: row; align-items: center; justify-items: center;",
+    #   style = "display: grid; grid-template-columns: repeat(2, 1fr); justify-items: center;",
+    #   state_pie_ped_current,
+    #   state_pie_ped_future_1_5
+    #   )
 )
 ```
-</center>
 
-<center>
+
 ```{r}
-# div(id = "body-section", 
-#     div(id = "regular-text", state_sentence_parole_elgibility_race), br(), 
-#     div(id = "bar-chart",    state_bar_parole_elgibility_race), br()
-# )
+div(id = "body-section", br(),
+    div(id = "big-section-title", "People who are Eligible for Parole"),   br(),
+    div(id = "regular-text",       state_sentence_parole_elgibility_race), br(),
+    div(id = "regular-text",       state_bar_parole_elgibility_race),      br()
+    )
 ```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Most Serious Sentenced Offense"), br()
+    )
+```
+
+::: {.panel-tabset}
+### Overview
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", state_sentence_parole_elgibility_offense), br(),
+    state_pie_parole_elgibility_offense)
+```
+
+### New Crime
+```{r}
+div(id = "body-section",br(),
+    state_pie_parole_elgibility_offense_new_crime)
+```
+
+### Parole Return
+```{r}
+div(id = "body-section", br(),
+    state_pie_parole_elgibility_offense_parole_return)
+```
+:::
 </center>
 
 
@@ -542,8 +570,6 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population"), br(),
-    div(id = "regular-text",      state_sentence_parole_elgibility_population), br(), 
-    div(id = "bar-chart",         state_stackedbar_pe_type_2020), br(), br(),
     div(id = "line-chart",        state_line_pop_released_to_parole), br()
     )
 ```
@@ -555,36 +581,56 @@ div(id = "body-section", br(),
 
 
 
-## Offenses
 
+
+
+## Releases from Prison
+
+<center>
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Most Serious Sentenced Offense"), br(), 
-    div(id = "regular-text",       state_sentence_parole_elgibility_offense), br()
+    div(id = "big-section-title", "Release Type by Admission Type in 2020"), br(),
+    "TBD Visualization: Conditional vs Unconditional Releases",
+    br(), br(), br(), br(), 
+    div(id = "big-section-title", "Timing of Release by Offense Type in 2020"), br()
     )
 ```
 
 ::: {.panel-tabset}
 ### Overview
 ```{r}
-div(id = "body-section", state_pie_parole_elgibility_offense)
+div(id = "body-section", state_bar_released_at_ped_2020)
 ```
 
-### New Crime
+### Violent
 ```{r}
-div(id = "body-section", state_pie_parole_elgibility_offense_new_crime)
+div(id = "body-section", state_bar_released_at_ped_violent_2020)
 ```
 
-### Parole Return
+### Property
 ```{r}
-div(id = "body-section", state_pie_parole_elgibility_offense_parole_return)
+div(id = "body-section", state_bar_released_at_ped_property_2020)
+```
+
+### Public Order
+```{r}
+div(id = "body-section", state_bar_released_at_ped_publicorder_2020)
+```
+
+### Drug
+```{r}
+div(id = "body-section", state_bar_released_at_ped_drugs_2020)
+```
+
+### Other
+```{r}
+div(id = "body-section", state_bar_released_at_ped_other_2020)
 ```
 :::
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Length of Stay"), br(),
-    div(id = "regular-text", "TBD sentence about length of stay."), br()
+    div(id = "big-section-title", "Length of Stay"), br()
     )
 ```
 
@@ -619,55 +665,9 @@ div(id = "body-section", state_bar_sentence_drugs_2020)
 div(id = "body-section", state_bar_sentence_other_2020)
 ```
 :::
+</center>
+<br>
 
-
-
-
-
-
-## Releases from Prison
-
-```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Release Type by Admission Type in 2020"), br(),
-    "TBD Visualization: Conditional vs Unconditional Releases",
-    br(), br(), br(), br(), 
-    div(id = "big-section-title", "Timing of Release by Offense Type in 2020"), br()
-    )
-```
-
-
-::: {.panel-tabset}
-### Overview
-```{r}
-div(id = "body-section", state_bar_released_at_ped_2020)
-```
-
-### Violent
-```{r}
-div(id = "body-section", state_bar_released_at_ped_violent_2020)
-```
-
-### Property
-```{r}
-div(id = "body-section", state_bar_released_at_ped_property_2020)
-```
-
-### Public Order
-```{r}
-div(id = "body-section", state_bar_released_at_ped_publicorder_2020)
-```
-
-### Drug
-```{r}
-div(id = "body-section", state_bar_released_at_ped_drugs_2020)
-```
-
-### Other
-```{r}
-div(id = "body-section", state_bar_released_at_ped_other_2020)
-```
-:::
 
 
 
@@ -678,21 +678,21 @@ div(id = "body-section", state_bar_released_at_ped_other_2020)
 
 <center>
 ```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Racial and Ethnic Disparities"), br(),
-    div(id = "regular-text",      "Black people were X times less/more likely than White people to be released on or before their parole eligibility year."), br(), 
-    div(id = "regular-text",      "Hispanic people were X times less/more likely than White people to be released on or before their parole eligibility year."), br(), br(), 
-
-    div(id = "regular-text",      "For every White person who is released after their parole eligibility year, X Black people are released after their parole eligibility year."), br(), 
-    div(id = "regular-text",      "For every White person who is released after their parole eligibility year, X Hispanic people are released after their parole eligibility year."), br(), 
-    div(id = "bar-graph",         state_time_between_release_ped_by_race), br(), br(),
-    div(id = "section-title",    "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
-     div(id = "reactable-table",
-         table_pp_by_race,
-         table_pp_by_sex,
-         table_pp_by_offgeneral,
-         table_pp_by_sentlgth)
-    )
+# div(id = "body-section", br(),
+#     div(id = "big-section-title", "Racial and Ethnic Disparities"), br(),
+#     div(id = "regular-text",      "Black people were X times less/more likely than White people to be released on or before their parole eligibility year."), br(), 
+#     div(id = "regular-text",      "Hispanic people were X times less/more likely than White people to be released on or before their parole eligibility year."), br(), br(), 
+# 
+#     div(id = "regular-text",      "For every White person who is released after their parole eligibility year, X Black people are released after their parole eligibility year."), br(), 
+#     div(id = "regular-text",      "For every White person who is released after their parole eligibility year, X Hispanic people are released after their parole eligibility year."), br(), 
+#     div(id = "bar-graph",         state_time_between_release_ped_by_race), br(), br(),
+#     div(id = "section-title",    "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
+#      div(id = "reactable-table",
+#          table_pp_by_race,
+#          table_pp_by_sex,
+#          table_pp_by_offgeneral,
+#          table_pp_by_sentlgth)
+#     )
 ```
 </center>
 <br>

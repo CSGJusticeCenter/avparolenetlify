@@ -1,0 +1,316 @@
+---
+title: "Missing Data"
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+
+source("prep/00_library.R")
+source("prep/01_functions.R")
+source("prep/dataframes.R")
+
+library(sjPlot)
+
+# get data by state
+cross_tab_data <- ncrp_yearendpop %>% 
+  filter(!is.na(sentlgth) &
+         !is.na(offgeneral)) %>% 
+  mutate(release_id = row_number(),
+       sentlgth = 
+         factor(sentlgth, 
+                levels = c("< 1 year",
+                           "1-1.9 years",
+                           "2-4.9 years",
+                           "5-9.9 years",
+                           "10-24.9 years",
+                           ">=25 years",
+                           "Life, LWOP, Life plus additional years, Death"),
+                ordered = TRUE),
+       offgeneral = 
+         factor(offgeneral, 
+                levels = c("Drugs",
+                           "Public Order",
+                           "Property",
+                           "Other/unspecified",
+                           "Violent",
+                           "All Offenses"),
+                ordered = TRUE)) %>% 
+  filter(rptyear == 2020) 
+```
+
+
+
+
+
+
+
+**Missing Data: Sentence Length**
+
+```{r}
+# cross tab by state
+all_cross_tab <- cross_tab_data %>%
+  group_by(state) %>% 
+  count(sentlgth) %>%
+  pivot_wider(names_from = sentlgth, values_from = n, values_fill = 0) %>% 
+  clean_names() %>% 
+  mutate(total = 
+           x1_year +
+           x1_1_9_years +
+           x2_4_9_years +
+           x5_9_9_years +
+           x10_24_9_years +
+           x25_years +
+           life_lwop_life_plus_additional_years_death) %>% 
+  mutate_at(vars(x1_year:life_lwop_life_plus_additional_years_death), list(percent = ~ (. / total))) 
+
+
+```
+
+
+
+
+**Missing Data: Offense Type**
+
+
+
+
+**Missing Data: Sentence Length vs Offense Type**   
+
+Data: NCRP year-end population, Missing parole eligibility information.
+
+```{r}
+# cross tab by state
+all_cross_tab_state <- cross_tab_data %>%
+  filter(parelig_status == "Missing") %>% 
+  group_by(state) %>% 
+  count(sentlgth, offgeneral) %>%
+  pivot_wider(names_from = sentlgth, values_from = n, values_fill = 0) %>% 
+  clean_names() %>% 
+  mutate(total = 
+           x1_year +
+           x1_1_9_years +
+           x2_4_9_years +
+           x5_9_9_years +
+           x10_24_9_years +
+           x25_years +
+           life_lwop_life_plus_additional_years_death) %>% 
+  mutate_at(vars(x1_year:life_lwop_life_plus_additional_years_death), list(percent = ~ (. / total))) 
+
+# cross tab for all offenses by state
+all_cross_tab_all <- cross_tab_data %>%
+  group_by(state) %>% 
+  count(sentlgth) %>%
+  pivot_wider(names_from = sentlgth, values_from = n, values_fill = 0) %>% 
+  clean_names() %>% 
+  mutate(offgeneral = "All Offenses",
+         total = 
+           x1_year +
+           x1_1_9_years +
+           x2_4_9_years +
+           x5_9_9_years +
+           x10_24_9_years +
+           x25_years +
+           life_lwop_life_plus_additional_years_death) %>% 
+  mutate_at(vars(x1_year:life_lwop_life_plus_additional_years_death), list(percent = ~ (. / total))) 
+
+# add data together
+all_cross_tab <- rbind(all_cross_tab_state, all_cross_tab_all)
+
+# highlight cells
+fnc_highlight_cell <- 
+  function(value, index) {
+       if (all_cross_tab$offgeneral[index] ==
+           "All Offenses") {
+         color <- orange
+       } else {
+         color <- neutralBlackText
+       }
+       list(color = color,
+            position = "sticky",
+            borderRight = "1px solid #d3d3d3")
+  }
+
+
+# reactable table
+reactable(all_cross_tab,
+          style = hc_reactable_style,
+          theme = hc_reactable_theme,
+          defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                 align = "right",
+                                 minWidth = 60),
+          groupBy = "state",
+          compact = TRUE,
+          filterable = TRUE,
+          fullWidth = FALSE,
+          defaultExpanded = TRUE,
+          defaultPageSize = 300,
+          columnGroups = list(
+            colGroup(name = "< 1 year", 
+                     columns = c("x1_year", "x1_year_percent")),
+            colGroup(name = "1-1.9 years", 
+                     columns = c("x1_1_9_years", "x1_1_9_years_percent")),
+            colGroup(name = "2-4.9 years", 
+                     columns = c("x2_4_9_years", "x2_4_9_years_percent")),
+            colGroup(name = "5-9.9 years", 
+                     columns = c("x5_9_9_years", "x5_9_9_years_percent")),
+            colGroup(name = "10-24.9 years", 
+                     columns = c("x10_24_9_years", "x10_24_9_years_percent")),
+            colGroup(name = ">=25 years", 
+                     columns = c("x25_years", "x25_years_percent")),
+            colGroup(name = "Life, LWOP, Life plus additional years, Death", 
+                     columns = c("life_lwop_life_plus_additional_years_death", "life_lwop_life_plus_additional_years_death_percent"))
+          ),
+          columns = list(
+            state         = colDef(name = "State",
+                                   minWidth = 145,
+                                   align = "left",
+                                   style = list(fontWeight = "bold")
+            ),
+            offgeneral      = colDef(name = "Offense with Missing PED",
+                                     #style = fnc_highlight_cell
+                                     minWidth = 145),
+            
+            x1_year         = colDef(name = "N"),
+            x1_year_percent = colDef(name = "%",
+                                   format = colFormat(percent = TRUE, digits = 0)),
+            
+            x1_1_9_years         = colDef(name = "N"),
+            x1_1_9_years_percent = colDef(name = "%",
+                                               format = colFormat(percent = TRUE, digits = 0)),
+            
+            x2_4_9_years         = colDef(name = "N"),
+            x2_4_9_years_percent = colDef(name = "%",
+                                      format = colFormat(percent = TRUE, digits = 0)),
+            
+            x5_9_9_years  = colDef(name = "N"),
+            x5_9_9_years_percent = colDef(name = "%",
+                                          format = colFormat(percent = TRUE, digits = 0)),
+            
+            x10_24_9_years         = colDef(name = "N"),
+            x10_24_9_years_percent = colDef(name = "%",
+                                            format = colFormat(percent = TRUE, digits = 0)),
+            
+            x25_years         = colDef(name = "N"),
+            x25_years_percent = colDef(name = "%",
+                                       #style = fnc_highlight_cell,
+                                       format = colFormat(percent = TRUE, digits = 0)),
+            
+            life_lwop_life_plus_additional_years_death = colDef(name = "N"),
+            life_lwop_life_plus_additional_years_death_percent = colDef(name = "%",
+                                #style = fnc_highlight_cell,
+                                format = colFormat(percent = TRUE, 
+                                                   digits = 0)),
+            
+            total           = colDef(name = "Total",
+                                     minWidth = 100)
+          )
+)
+
+```
+
+
+
+```{r}
+# # cross tab by state
+# all_cross_tab <- cross_tab_data %>%
+#   group_by(state) %>% 
+#   count(sentlgth, offgeneral) %>%
+#   pivot_wider(names_from = offgeneral, values_from = n, values_fill = 0) %>% 
+#   clean_names() %>% 
+#   mutate(total = drugs + other_unspecified + property + public_order + violent) %>% 
+#   mutate_at(vars(drugs:violent), list(percent = ~ (. / total))) 
+# 
+# # reactable table
+# reactable(all_cross_tab,
+#           style = hc_reactable_style,
+#           theme = hc_reactable_theme,
+#           defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                  align = "right",
+#                                  minWidth = 75),
+#           compact = TRUE,
+#           filterable = TRUE,
+#           fullWidth = FALSE,
+#           defaultExpanded = TRUE,
+#           defaultPageSize = 100,
+#           groupBy = "state",
+#                     columnGroups = list(
+#                       colGroup(name = "Drugs", columns = c("drugs", "drugs_percent")),
+#                       colGroup(name = "Other", columns = c("other_unspecified", "other_unspecified_percent")),
+#                       colGroup(name = "Property", columns = c("property", "property_percent")),
+#                       colGroup(name = "Public Order", columns = c("public_order", "public_order_percent")),
+#                       colGroup(name = "Violent", columns = c("violent", "violent_percent"))
+#           ),
+#           columns = list(
+#             state         = colDef(name = "State",
+#                                    minWidth = 130,
+#                                    align = "left",
+#                                    style = list(fontWeight = "bold")
+#                                    ),
+#             sentlgth      = colDef(name = "Sentence Length",
+#                                    minWidth = 140,
+#                                    style = function(value, index) {
+#                                      if (all_cross_tab$sentlgth[index] == 
+#                                          "Life, LWOP, Life plus additional years, Death") {
+#                                        color <- orange
+#                                      } else {
+#                                        color <- neutralBlackText
+#                                      }
+#                                      list(color = color)
+#                                    }),
+#             
+#             drugs         = colDef(name = "N"),
+#             drugs_percent = colDef(name = "%",
+#                                    format = colFormat(percent = TRUE, 
+#                                                       digits = 0)),
+#             
+#             other_unspecified         = colDef(name = "N"),
+#             other_unspecified_percent = colDef(name = "%",
+#                                                format = colFormat(percent = TRUE, 
+#                                                                   digits = 0)),
+#       
+#             property         = colDef(name = "N"),
+#             property_percent = colDef(name = "%",
+#                                       format = colFormat(percent = TRUE, 
+#                                                          digits = 0)),
+#             
+#             public_order  = colDef(name = "N"),
+#             public_order_percent = colDef(name = "%",
+#                                    format = colFormat(percent = TRUE, 
+#                                                       digits = 0),
+#                                    style = list(position = "sticky", borderRight = "1px solid #d3d3d3")),
+#             
+#             violent         = colDef(name = "N"),
+#             violent_percent = colDef(name = "%",
+#                                style = function(value, index) {
+#                                  if (all_cross_tab$sentlgth[index] == 
+#                                      "Life, LWOP, Life plus additional years, Death") {
+#                                    color <- orange
+#                                  } else {
+#                                    color <- neutralBlackText
+#                                  }
+#                                  list(color = color,
+#                                       position = "sticky", 
+#                                       borderRight = "1px solid #d3d3d3")
+#                                },
+#                                format = colFormat(percent = TRUE, 
+#                                                   digits = 0)),
+#             
+#             total           = colDef(name = "Total")
+#           )
+# )
+```
+
+

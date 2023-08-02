@@ -1,6 +1,6 @@
 #######################################
 # Project: AV Parole
-# File: tab_los.R
+# File: tab_offenses.R
 # Authors: Mari Roberts
 # Date last updated: July 17, 2023 (MAR)
 # Description:
@@ -10,6 +10,8 @@
 ################################################################################
 
 # Most serious sentenced offenses for those in prison but not released in 2020
+
+# Obtained from NCRP year end population
 
 ################################################################################
 
@@ -21,7 +23,8 @@ current_ped_2020_offenses_all <- ncrp_yearendpop %>%
   mutate(offgeneral = ifelse(
     offgeneral == "Other/unspecified", "Other or Unspecified", offgeneral))
 
-# group by state
+# count by state
+# create tooltip
 current_ped_2020_offenses <- current_ped_2020_offenses_all %>%
   group_by(state) %>%
   count(offgeneral) %>%
@@ -40,7 +43,7 @@ current_ped_2020_offenses <- current_ped_2020_offenses_all %>%
          chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"),
          prop_label = paste0(round(prop*100, 0), "%"))
 
-# group by state for admission types that are parole revocations or returns
+# count by state for admission types that are parole revocations or returns only
 current_ped_2020_offenses_parole_return <- current_ped_2020_offenses_all %>%
   filter(admtype == "Parole return/revocation") %>%
   group_by(state) %>%
@@ -60,7 +63,7 @@ current_ped_2020_offenses_parole_return <- current_ped_2020_offenses_all %>%
          chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"),
          prop_label = paste0(round(prop*100, 0), "%"))
 
-# group by state for admission types that are new crimes
+# count by state for admission types that are new crimes only
 current_ped_2020_offenses_new_crime <- current_ped_2020_offenses_all %>%
   filter(admtype == "New court commitment") %>%
   group_by(state) %>%
@@ -89,9 +92,11 @@ current_ped_2020_offenses_new_crime <- current_ped_2020_offenses_all %>%
 
 # Sentence about most serious offense
 
+# Obtained from NCRP year end population
+
 ################################################################################
 
-# get list of states
+# get list of states with data
 states <- unique(current_ped_2020_offenses$state)
 
 # generate sentence about most serious sentenced offense in 2020 by state
@@ -121,6 +126,8 @@ all_sentence_parole_elgibility_offense <- setNames(all_sentence_parole_elgibilit
 ################################################################################
 
 # Pie chart about most serious offense
+
+# Obtained from NCRP year end population
 
 ################################################################################
 
@@ -224,7 +231,6 @@ all_bar_parole_elgibility_offense <- setNames(all_bar_parole_elgibility_offense,
 
 ################################################################################
 
-# Data cleaning for:
 # Proportion of time served by offense type, year, and state
 
 ################################################################################
@@ -235,7 +241,7 @@ desired_order <- c("Less than Sentence Length Served",
                    #"More than Sentence Length Served"
                    )
 
-ncrp_sentlgth_timesrvd_rel <- ncrp_sentlgth_timesrvd_rel %>%
+ncrp_releases <- ncrp_releases %>%
 filter(timesrvd_rel_vs_sentlgth!= "More than Sentence Length Served") # remove bc likely a data error
 
 ########
@@ -243,11 +249,11 @@ filter(timesrvd_rel_vs_sentlgth!= "More than Sentence Length Served") # remove b
 ########
 
 # count and get prop of people by state, adm type, and report year
-ncrp_proportion_served_2020 <- ncrp_sentlgth_timesrvd_rel %>%
+ncrp_proportion_served_2020 <- ncrp_releases %>%
   filter(admtype == "Parole return/revocation" |
-           admtype == "New court commitment") %>%
+         admtype == "New court commitment") %>%
   filter(reltype == "Unconditional release" |
-           reltype == "Conditional release") %>%
+         reltype == "Conditional release") %>%
   filter(!is.na(timesrvd_rel_vs_sentlgth)) %>%
   filter(!is.na(offgeneral)) %>%
   filter(rptyear == 2020) %>%
@@ -266,7 +272,7 @@ ncrp_proportion_served_2020 <- ncrp_sentlgth_timesrvd_rel %>%
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
-# get list of states
+# get list of states with data
 states <- ncrp_proportion_served_2020 %>%
   pull(state) %>%
   unique()
@@ -291,7 +297,7 @@ all_bar_sentence_overview_2020 <- setNames(all_bar_sentence_overview_2020, state
 
 # remove NA's and "other" releases which includes transfers and deaths
 # count and get prop of people by state, offense type, adm type, and report year
-ncrp_offense_proportion_served_2020 <- ncrp_sentlgth_timesrvd_rel %>%
+ncrp_offense_proportion_served_2020 <- ncrp_releases %>%
   filter(admtype == "Parole return/revocation" |
            admtype == "New court commitment") %>%
   filter(reltype == "Unconditional release" |

@@ -9,17 +9,19 @@
 
 ################################################################################
 
-# Data cleaning for:
 # Timing of release overall, by adm type, and by offense type
-# Released before parole eligibility (PE) year, on PE year, after PE year
+# Released before parole eligibility (PE) year or on PE year
+
+# Obtained from NCRP releases (ncrp_releases)
 
 ################################################################################
 
 # subset to 2020 report
-ncrp_releases_2020 <- ncrp_sentlgth_timesrvd_rel %>%
+ncrp_releases_2020 <- ncrp_releases %>%
   filter(rptyear == 2020)
 
-# df showing the number and prop of people by adm type and timing of release
+# number and prop of people by adm type and timing of release
+# create tooltip
 ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   filter(!is.na(released_at_ped_status)) %>%
@@ -41,36 +43,36 @@ ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
-# df showing the number and prop of people by adm type and timing of release
-ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
-  # remove states with NA's
-  dplyr::filter(!is.na(released_at_ped_status) &
-           !is.na(admtype)) %>%
-  filter(admtype == "Parole return/revocation" |
-           admtype == "New court commitment") %>%
-  group_by(state, admtype) %>%
-  count(released_at_ped_status) %>%
-  mutate(prop = (n/sum(n))*100,
-         prop_label = paste0(round(prop, 0), "%"),
-         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
-  mutate(tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "Timing of Release: <b>",
-                  released_at_ped_status,
-                  "</b><br><br>",
-                  "Number of People: <b>",
-                  scales::comma(n),
-                  "</b><br><br>",
-                  "Percentage of People: <b>",
-                  prop_label, "</b></b>", sep = ""))
+# # number and prop of people by adm type and timing of release
+# # create tooltip
+# ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
+#   # remove states with NA's
+#   dplyr::filter(!is.na(released_at_ped_status) &
+#            !is.na(admtype)) %>%
+#   filter(admtype == "Parole return/revocation" |
+#            admtype == "New court commitment") %>%
+#   group_by(state, admtype) %>%
+#   count(released_at_ped_status) %>%
+#   mutate(prop = (n/sum(n))*100,
+#          prop_label = paste0(round(prop, 0), "%"),
+#          chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
+#   mutate(tooltip =
+#            paste0("<b>", state, "</b><br><br>",
+#                   "Timing of Release: <b>",
+#                   released_at_ped_status,
+#                   "</b><br><br>",
+#                   "Number of People: <b>",
+#                   scales::comma(n),
+#                   "</b><br><br>",
+#                   "Percentage of People: <b>",
+#                   prop_label, "</b></b>", sep = ""))
 
-# df showing the number and prop of people by adm type, offense type, and timing of release
+# number and prop of people by adm type, offense type, and timing of release
 ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
-  # remove states with NA's
   filter(!is.na(released_at_ped_status) &
-           !is.na(offgeneral)) %>%
+         !is.na(offgeneral)) %>%
   filter(admtype == "Parole return/revocation" |
-           admtype == "New court commitment") %>%
+         admtype == "New court commitment") %>%
   group_by(state, offgeneral, admtype) %>%
   count(released_at_ped_status) %>%
   mutate(prop = (n/sum(n))*100,
@@ -185,7 +187,7 @@ all_bar_released_at_ped_drugs_2020 <-
 ################################################################################
 
 # subset to 2020 report
-ncrp_release_type <- ncrp_sentlgth_timesrvd_rel %>%
+ncrp_release_type <- ncrp_releases %>%
   filter(admtype == "Parole return/revocation" |
            admtype == "New court commitment") %>%
   filter(reltype == "Unconditional release" |
