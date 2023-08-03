@@ -63,19 +63,9 @@ cross_tab_data <- ncrp_yearendpop %>%
 # cross tab by state
 all_cross_tab <- cross_tab_data %>%
   group_by(state) %>% 
-  count(sentlgth) %>%
-  pivot_wider(names_from = sentlgth, values_from = n, values_fill = 0) %>% 
-  clean_names() %>% 
-  mutate(total = 
-           x1_year +
-           x1_1_9_years +
-           x2_4_9_years +
-           x5_9_9_years +
-           x10_24_9_years +
-           x25_years +
-           life_lwop_life_plus_additional_years_death) %>% 
-  mutate_at(vars(x1_year:life_lwop_life_plus_additional_years_death), list(percent = ~ (. / total))) 
-
+  count(sentlgth, parelig_status) %>%
+  pivot_wider(names_from = parelig_status, values_from = n, values_fill = 0) %>% 
+  clean_names()
 
 ```
 
