@@ -12,7 +12,7 @@
 ##########
 
 # download CSGJCR package
-# devtools::install_github("CSGJusticeCenter/csgjcr@DEVELOP")
+# devtools::install_github("CSGJusticeCenter/csgjcr@develop")
 # in your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token"
 library(csgjcr)
 
@@ -41,6 +41,7 @@ library(geojsonsf)
 library(openxlsx)
 library(broom)
 library(broom.helpers)
+library(sjPlot) # missing data
 
 
 # CHANGE THIS TO YOUR PROJECT PATH

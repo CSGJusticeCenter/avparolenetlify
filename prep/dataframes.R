@@ -67,7 +67,6 @@ load(file = paste0(sp_data_path, "/data/analysis/all_pp_by_variable.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/race_eth_rri_table.rds"))
 
 
-# Missing
-load(file = paste0(sp_data_path, "/data/analysis/ncrp_yearendpop.rds"))
+
 
 

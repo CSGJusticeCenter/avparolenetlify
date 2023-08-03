@@ -1,26 +1,16 @@
----
-title: "Missing Data"
-format:
-  html:
-    css: styles.css
-    embed-resources: TRUE
-    code-fold: true
-    page-layout: full
-    fig_caption: yes
----
+#######################################
+# Project: AV Parole
+# File: missing_data.R
+# Authors: Mari Roberts
+# Date last updated: August 3, 2023 (MAR)
+# Description:
+#    Understanding missing parole eligibility data
+#    Is data missing, does it not exist, or are people ineligible for parole?
+#######################################
 
-```{r setup, include=FALSE}
-
-knitr::opts_chunk$set(
-  echo = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  dev = "ragg_png"
-)
-
+# load custom functions
 source("prep/00_library.R")
 source("prep/01_functions.R")
-load(file = paste0(sp_data_path, "/data/analysis/ncrp_yearendpop.rds"))
 
 ################################################################################
 
@@ -94,7 +84,7 @@ all_cross_tab <- cross_tab_data %>%
 # reactable table
 all_cross_tab_sentlgth <-
   reactable(all_cross_tab,
-            elementId = "filter1-select",
+            elementId = "filter-select",
             style = list(
               fontFamily = "Graphik, sans-serif",
               fontSize = "0.8rem",
@@ -105,6 +95,8 @@ all_cross_tab_sentlgth <-
                                    align = "right",
                                    minWidth = 70),
             groupBy = "state",
+            # pagination = FALSE,
+            pageSize = Inf,
             compact = TRUE,
             filterable = TRUE,
             defaultExpanded = TRUE,
@@ -127,7 +119,7 @@ all_cross_tab_sentlgth <-
                                      style = list(fontWeight = "bold"),
                                      filterInput = function(values, name) {
                                        tags$select(
-                                         onchange = sprintf("Reactable.setFilter('filter1-select', '%s', event.target.value || undefined)", name),
+                                         onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
                                          tags$option(value = "", "All"),
                                          lapply(unique(values), tags$option),
                                          "aria-label" = sprintf("Filter %s", name),
@@ -141,7 +133,7 @@ all_cross_tab_sentlgth <-
                                        align = "left",
                                      filterInput = function(values, name) {
                                        tags$select(
-                                         onchange = sprintf("Reactable.setFilter('filter1-select', '%s', event.target.value || undefined)", name),
+                                         onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
                                          tags$option(value = "", "All"),
                                          lapply(unique(values), tags$option),
                                          "aria-label" = sprintf("Filter %s", name),
@@ -202,7 +194,7 @@ all_cross_tab <- cross_tab_data %>%
 # reactable table
 all_cross_tab_offgeneral <-
   reactable(all_cross_tab,
-            elementId = "filter2-select",
+            elementId = "filter-select",
             style = list(
               fontFamily = "Graphik, sans-serif",
               fontSize = "0.8rem",
@@ -213,6 +205,8 @@ all_cross_tab_offgeneral <-
                                    align = "right",
                                    minWidth = 70),
             groupBy = "state",
+            # pagination = FALSE,
+            pageSize = Inf,
             compact = TRUE,
             filterable = TRUE,
             defaultExpanded = TRUE,
@@ -235,7 +229,7 @@ all_cross_tab_offgeneral <-
                                      style = list(fontWeight = "bold"),
                                      filterInput = function(values, name) {
                                        tags$select(
-                                         onchange = sprintf("Reactable.setFilter('filter2-select', '%s', event.target.value || undefined)", name),
+                                         onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
                                          tags$option(value = "", "All"),
                                          lapply(unique(values), tags$option),
                                          "aria-label" = sprintf("Filter %s", name),
@@ -249,7 +243,7 @@ all_cross_tab_offgeneral <-
                                        align = "left",
                                        filterInput = function(values, name) {
                                          tags$select(
-                                           onchange = sprintf("Reactable.setFilter('filter2-select', '%s', event.target.value || undefined)", name),
+                                           onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
                                            tags$option(value = "", "All"),
                                            lapply(unique(values), tags$option),
                                            "aria-label" = sprintf("Filter %s", name),
@@ -311,7 +305,7 @@ all_cross_tab <- cross_tab_data %>%
 # reactable table
 all_cross_tab_offdetail <-
   reactable(all_cross_tab,
-            elementId = "filter3-select",
+            elementId = "filter-select",
             style = list(
               fontFamily = "Graphik, sans-serif",
               fontSize = "0.8rem",
@@ -322,6 +316,8 @@ all_cross_tab_offdetail <-
                                    align = "right",
                                    minWidth = 70),
             groupBy = "state",
+            # pagination = FALSE,
+            pageSize = Inf,
             compact = TRUE,
             filterable = TRUE,
             defaultExpanded = TRUE,
@@ -344,7 +340,7 @@ all_cross_tab_offdetail <-
                                      style = list(fontWeight = "bold"),
                                      filterInput = function(values, name) {
                                        tags$select(
-                                         onchange = sprintf("Reactable.setFilter('filter3-select', '%s', event.target.value || undefined)", name),
+                                         onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
                                          tags$option(value = "", "All"),
                                          lapply(unique(values), tags$option),
                                          "aria-label" = sprintf("Filter %s", name),
@@ -358,7 +354,7 @@ all_cross_tab_offdetail <-
                                        align = "left",
                                        filterInput = function(values, name) {
                                          tags$select(
-                                           onchange = sprintf("Reactable.setFilter('filter3-select', '%s', event.target.value || undefined)", name),
+                                           onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
                                            tags$option(value = "", "All"),
                                            lapply(unique(values), tags$option),
                                            "aria-label" = sprintf("Filter %s", name),
@@ -467,6 +463,8 @@ all_cross_tab_sentlgth_offgeneral <- reactable(
                                  align = "right",
                                  minWidth = 55),
           groupBy = "state",
+          # pagination = FALSE,
+          pageSize = Inf,
           compact = TRUE,
           filterable = TRUE,
           defaultExpanded = TRUE,
@@ -680,61 +678,18 @@ all_cross_tab_sentlgth_offgeneral <- reactable(
 #             total           = colDef(name = "Total")
 #           )
 # )
-```
 
-<br>
+##########
+# Save data
+##########
 
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
+for (folder in theseFOLDERS){
 
+  save(all_cross_tab_sentlgth, file=file.path(folder, "all_cross_tab_sentlgth.rds"))
+  save(all_cross_tab_offgeneral, file=file.path(folder, "all_cross_tab_offgeneral.rds"))
+  save(all_cross_tab_offdetail, file=file.path(folder, "all_cross_tab_offdetail.rds"))
+  save(all_cross_tab_sentlgth_offgeneral, file=file.path(folder, "all_cross_tab_sentlgth_offgeneral.rds"))
 
-
-
-**Parole Eligibility Status by Sentence Length**
-
-```{r}
-all_cross_tab_sentlgth
-```
-
-<br><br>
-
-
-
-
-
-
-**Parole Eligibility Status by Offense Type**
-
-```{r}
-all_cross_tab_offgeneral
-```
-
-<br><br>
-
-
-
-
-
-
-
-**Parole Eligibility Status by Detailed Offense Type**
-
-```{r}
-all_cross_tab_offdetail
-```
-
-<br><br>
-
-
-
-
-
-**Missing Data: Sentence Length vs Offense Type**   
-
-Data: NCRP year-end population, Missing parole eligibility information.
-
-Notes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 34% of people in prison for violent charges had missing data and a Life, LWOP, Life plus additional years, Death sentence length.  
-
-```{r}
-all_cross_tab_sentlgth_offgeneral
-```
-
+}
