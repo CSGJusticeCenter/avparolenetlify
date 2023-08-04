@@ -676,6 +676,19 @@ div(id = "body-section", state_bar_sentence_other_2020)
 
 ## Disparities
 
+*Relative Rate Index (RRI)*
+
+The Relative Rate Index (RRI) provides a measure of disparity in outcomes for different racial and ethnic groups by comparing the rates at which individuals of different races/ethnic groups experience incarceration. To calculate the RRI, the rate of each outcome of interest for individuals who are Black non-Hispanic and Hispanic any race, is divided by the rate at which the outcome occurs for individuals who are White. 
+
+For example, the RRI for jail booking rate uses the booking rate for Hispanic adults (e.g., number of individuals in jail who are Hispanic per 10,000 adults who are Hispanic in the state) and divides it by the booking rate for White adults (e.g., number of individuals in jail who are White per 10,000 adults who are White in the state) to create a comparison of the two rates.
+
+A RRI of 1 indicates no disparity. RRIs greater than 1 indicate the outcome occurs more frequently for individuals who are Black or Hispanic, and an RRI less than 1 indicates an outcome occurs less frequently than for individuals who are White. All rates are calculated at the individual level.
+
+- Relative rate index, overall prison population (using state adult population data as denominator)
+- Relative rate index, overall currently eligible for parole population (using state adult population data as denominator)
+
+
+
 <center>
 ```{r}
 # div(id = "body-section", br(),

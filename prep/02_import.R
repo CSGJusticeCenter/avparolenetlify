@@ -20,6 +20,7 @@ load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0003/38492-000
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0004/38492-0004-Data.rda"))
 
 # load Prisoners in 2020 - Statistical Tables
+# Using this info for RRI's bc there is more race/ethnicity data
 # https://bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables
 prison_pop_by_race_state_2020 <- read.csv(paste0(sp_data_path, "/data/raw/p20st/p20stat02.csv"), skip = 10)
 
