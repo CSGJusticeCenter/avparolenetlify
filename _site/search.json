@@ -11,7 +11,7 @@
     "href": "missing_data.html",
     "title": "Missing Data",
     "section": "",
-    "text": "Parole Eligibility Status by Sentence Length\n\n\n\n\n\n\n\n\nParole Eligibility Status by Offense Type\n\n\n\n\n\n\n\n\nParole Eligibility Status by Detailed Offense Type\n\n\n\n\n\n\n\n\nMissing Data: Sentence Length vs Offense Type\nData: NCRP year-end population, Missing parole eligibility information.\nNotes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 34% of people in prison for violent charges had missing data and a Life, LWOP, Life plus additional years, Death sentence length."
+    "text": "Parole Eligibility Status by Sentence Length\nData: NCRP year-end population\n\n\n\n\n\n\n\n\nParole Eligibility Status by Offense Type\nData: NCRP year-end population\n\n\n\n\n\n\n\n\nParole Eligibility Status by Detailed Offense Type\n\n\n\n\n\n\n\n\nMissing Data: Sentence Length vs Offense Type - Column Sums\nData: NCRP year-end population, Missing parole eligibility information.\nLife/LWOP = Life, LWOP, Life plus additional years, Death\nNotes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 34% of people in prison for violent charges with missing parole eligibility data had a Life/LWOP sentence length.\n\n\n\n\n\n\n\n\nMissing Data: Sentence Length vs Offense Type - Row Sums\nData: NCRP year-end population, Missing parole eligibility information.\nLife/LWOP = Life, LWOP, Life plus additional years, Death\nNotes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 89% of people in prison for a Life/LWOP sentence length with missing parole eligibility data had a violent most serious sentenced offense."
   },
   {
     "objectID": "national_trends.html",
@@ -376,5 +376,40 @@
     "title": "Wyoming",
     "section": "",
     "text": "694\n961\nHighIndeterminacy\nCurrently Eligible forParole but in Prison\nEligible for Parole inthe next 1-5 years\n\n\n\n\n\n\n\n\n\n\nParole EligibilityPrison PopulationReleases from PrisonDisparities\n\n\n\n\n\n\n\n\nParole-Eligible Prison Population\n\nIn 2020, there were 694 people who were eligible for parole but not released from prison, constituting 33% of the parole-eligible prison population.\n\n\n\n\n\n\n\nHow is Parole Release Eligibility Determined?\n\nMost felony offenders receive indeterminate sentences that contain a minimum and a maximum term. The maximum term may not be greater than the maximum provided by law, and the minimum term may not be less than the minimum provided by law and may not be more than 90% of the maximum term.10 Offenders with indeterminate sentences are eligible for parole when the minimum term imposed by the court, minus good time earned, is complete. When an inmate begins imprisonment, the Department of Corrections calculates a projected parole eligibility date based on the full potential good time allowance and the minimum sentence. This calculation is not “an award of or entitlement to good time but is merely for administrative purposes.” Inmates who have committed an escape, attempted escape, or assisted others to escape from any institution during a sentence are ineligible for parole on that sentence. Inmates who have committed assault with a deadly weapon on another inmate, an officer, or a staff member during a sentence are also ineligible for parole during that sentence.\n\n\n\n\n\n\n\n\n\n\nPeople who are Eligible for Parole\n\nIn 2020, White, non-Hispanic people constituted the most number of people eligible for parole but still in prison, accounting for 77% (531 people) of the parole-eligible prison population.\n\n\n\n\n\n\n\n\n\n\n\n\n\nMost Serious Sentenced Offense\n\n\n\n\n\nOverviewNew CrimeParole Return\n\n\n\n\n\n\n\nIn 2020, there were 265 people who were parole eligible but still in prison for non-violent offenses, accounting for 38% of the parole-eligible prison population.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPrison Population\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRelease Type by Admission Type in 2020\n\nTBD Visualization: Conditional vs Unconditional Releases\n\n\n\n\nTiming of Release by Offense Type in 2020\n\n\n\n\n\nOverviewViolentPropertyPublic OrderDrugOther\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLength of Stay\n\n\n\n\n\nOverviewViolentPropertyPublic OrderDrugOther\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSources:\nAlper, Mariel E., et al. “Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States.” Robina Institute of Criminal Law and Criminal Justice, 13 May 2022, robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states.\nCarson, Ann E. “Prisoners in 2020 – Statistical Tables.” Bureau of Justice Statistics, 1 Dec. 2020, bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables.\nUnited States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research [distributor], 2021-10-28. https://doi.org/10.3886/ICPSR38058.v1.\nUnited States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. https://doi.org/10.3886/ICPSR38492.v1."
+  },
+  {
+    "objectID": "missing_data.html#parole-eligibility-status-by-sentence-length",
+    "href": "missing_data.html#parole-eligibility-status-by-sentence-length",
+    "title": "Missing Data",
+    "section": "Parole Eligibility Status by Sentence Length",
+    "text": "Parole Eligibility Status by Sentence Length\nData: NCRP year-end population"
+  },
+  {
+    "objectID": "missing_data.html#parole-eligibility-status-by-offense-type",
+    "href": "missing_data.html#parole-eligibility-status-by-offense-type",
+    "title": "Missing Data",
+    "section": "Parole Eligibility Status by Offense Type",
+    "text": "Parole Eligibility Status by Offense Type\nData: NCRP year-end population"
+  },
+  {
+    "objectID": "missing_data.html#parole-eligibility-status-by-detailed-offense-type",
+    "href": "missing_data.html#parole-eligibility-status-by-detailed-offense-type",
+    "title": "Missing Data",
+    "section": "Parole Eligibility Status by Detailed Offense Type",
+    "text": "Parole Eligibility Status by Detailed Offense Type"
+  },
+  {
+    "objectID": "missing_data.html#missing-data-sentence-length-vs-offense-type---column-sums",
+    "href": "missing_data.html#missing-data-sentence-length-vs-offense-type---column-sums",
+    "title": "Missing Data",
+    "section": "Missing Data: Sentence Length vs Offense Type - Column Sums",
+    "text": "Missing Data: Sentence Length vs Offense Type - Column Sums\nData: NCRP year-end population, Missing parole eligibility information.\nLife/LWOP = Life, LWOP, Life plus additional years, Death\nNotes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 34% of people in prison for violent charges with missing parole eligibility data had a Life/LWOP sentence length."
+  },
+  {
+    "objectID": "missing_data.html#missing-data-sentence-length-vs-offense-type---row-sums",
+    "href": "missing_data.html#missing-data-sentence-length-vs-offense-type---row-sums",
+    "title": "Missing Data",
+    "section": "Missing Data: Sentence Length vs Offense Type - Row Sums",
+    "text": "Missing Data: Sentence Length vs Offense Type - Row Sums\nData: NCRP year-end population, Missing parole eligibility information.\nLife/LWOP = Life, LWOP, Life plus additional years, Death\nNotes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 89% of people in prison for a Life/LWOP sentence length with missing parole eligibility data had a violent most serious sentenced offense."
   }
 ]
