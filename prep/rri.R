@@ -1,8 +1,11 @@
+
+# # load NCRP year end population
+# load(file = paste0(sp_data_path, "/data/analysis/ncrp_yearendpop.rds"))
+
 ##########################
 # Get census data
 ##########################
 
-load(file = paste0(sp_data_path, "/data/analysis/ncrp_yearendpop.rds"))
 
 # # weighted estimate of percentage of race from 2020 census
 # # pulled estimated counts and construct percent estimate
@@ -42,8 +45,8 @@ load(file = paste0(sp_data_path, "/data/analysis/ncrp_yearendpop.rds"))
 # define the list of state names
 states <- c("Alabama", "Florida")
 
-# define the function to retrieve and process census data for a given state
-get_census_data <- function(state) {
+# define  function to retrieve and process census data for a given state
+fnc_get_census_data <- function(state) {
   census_race_data <- tidycensus::get_decennial(
     geography = "state",
     state = state,
@@ -73,18 +76,14 @@ get_census_data <- function(state) {
   return(census_race_data)
 }
 
-# Use lapply to retrieve and process data for each state
-census_data_list <- lapply(states, get_census_data)
+# use lapply to retrieve and process data for each state
+census_data_list <- lapply(states, fnc_get_census_data)
 
-# Convert the list of tibbles into a dataframe
+# convert the list of tibbles into a dataframe
 census_data_df <- bind_rows(census_data_list)
 
-# Add the "state" column to the final dataframe
+# add the "state" column to the final dataframe
 census_data_df$state <- rep(states, each = nrow(census_data_df) / length(states))
-
-# Print the resulting dataframe
-print(census_data_df)
-
 
 census_race_2020_table <- census_data_df %>%
   filter(state == "Florida")
@@ -187,6 +186,23 @@ ncrp_rri <- ncrp_race_2020_table %>%
 # reference index is "White, non-Hispanic"
 reference_index <- which(ncrp_race_2020_table$race_eth == "White, non-Hispanic")
 
+
+fnc_generate_tooltip <- function(sample, rri, race_eth) {
+  if (rri < 1) {
+    likelihood_text <- "less likely"
+    rri_text <- rri
+  } else if (rri == 1) {
+    likelihood_text <- "equally as likely"
+    rri_text <- ""
+  } else {
+    likelihood_text <- "more likely"
+    rri_text <- rri
+  }
+
+  paste(race_eth, "are", rri_text, "times", likelihood_text,
+        "to", sample, "than White people.")
+}
+
 # calculate RRI by variable
 ncrp_rri_table <- ncrp_rri %>%
   mutate(
@@ -226,6 +242,38 @@ ncrp_rri_table <- ncrp_rri %>%
            sample == "rri_sentlgth_5_9_9"   ~ "Sentence Length 5-9.9 years",
            sample == "rri_sentlgth_10_24_9" ~ "Sentence Length 10-24.9 years",
            sample == "rri_sentlgth_25"      ~ "Sentence Length >=25 years"
+         ),
+         rri = round(rri, 1),
+         tooltip = case_when(
+           sample == "In Prison" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to be in prison than White people."),
+           sample == "In Prison" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to be in prison as White people.",
+           sample == "In Prison" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to be in prison than White people."),
+
+           sample == "Sentence Length < 1 year" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of < 1 year than White people."),
+           sample == "Sentence Length < 1 year" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of < 1 year as White people.",
+           sample == "Sentence Length < 1 year" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of < 1 year than White people."),
+
+           sample == "Sentence Length 1-1.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 1-1.9 years than White people."),
+           sample == "Sentence Length 1-1.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 1-1.9 years as White people.",
+           sample == "Sentence Length 1-1.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 1-1.9 years than White people."),
+
+           sample == "Sentence Length 2-4.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 2-4.9 years than White people."),
+           sample == "Sentence Length 2-4.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 2-4.9 years as White people.",
+           sample == "Sentence Length 2-4.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 2-4.9 years than White people."),
+
+           sample == "Sentence Length 5-9.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 5-9.9 years than White people."),
+           sample == "Sentence Length 5-9.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 5-9.9 years as White people.",
+           sample == "Sentence Length 5-9.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 5-9.9 years than White people."),
+
+           sample == "Sentence Length 10-24.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 10-24.9 years than White people."),
+           sample == "Sentence Length 10-24.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 10-24.9 years as White people.",
+           sample == "Sentence Length 10-24.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 10-24.9 years than White people."),
+
+           sample == "Sentence Length >=25 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of >=25 years than White people."),
+           sample == "Sentence Length >=25 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of >=25 years as White people.",
+           sample == "Sentence Length >=25 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of >=25 years than White people."),
+
+           TRUE ~ NA_character_
          ))
 
 
@@ -260,7 +308,11 @@ chart <- data1 %>%
                to = 1))) %>%
   hc_legend(enabled = TRUE) %>%
   hc_add_theme(hc_theme_jc) %>%
-  hc_plotOptions(series = list(stacking = "normal"))
+  hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+  hc_plotOptions(series = list(stacking = "normal"),
+                 bar = list(
+                   dataLabels = list(enabled = TRUE, format = "{point.rri}", style = list(fontSize = "12px"))
+                 ))
 
 chart
 
