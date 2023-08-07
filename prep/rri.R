@@ -231,31 +231,114 @@ all_census_ncrp_rri_prep <- all_census_ncrp_rri %>%
 
 
 # loop through each state and create visualizations
-states <- all_census_ncrp_rri_prep %>% pull(state) %>% unique()
+states <- all_census_ncrp_rri_prep %>%
+  filter(race_eth == "Black, non-Hispanic") %>%
+  filter(!is.na(rri)) %>%
+  filter(!is.infinite(rri)) %>%
+  pull(state) %>% unique()
 
-all_bar_rri_sentence_length <- map(.x = states,  .f = function(x) {
+all_bar_rri_sentence_length_black <- map(.x = states,  .f = function(x) {
 
   df1 <- all_census_ncrp_rri_prep %>%
     filter(state == x) %>%
     filter(race_eth == "Black, non-Hispanic") %>%
-    filter(!is.na(rri))
+    filter(!is.na(rri)) %>%
+    filter(!is.infinite(rri))
 
-  # get min and max y values
-  min <- 0
-  max <- max(df1$rri, na.rm = TRUE)
+  # Calculate max_value and set min_value
+  max_value <- max(df1$rri, na.rm = TRUE)
+  max_value <- ceiling(max_value)
+  min_value <- 0
 
-  # round up the maximum value
-  max <- ceiling(max)
+  # # get y axis labels
+  # custom_labels <- list(
+  #   list(y = 1, text = "1")
+  # )
 
-  # # ensure the rounded maximum value is at least min_value
-  # final_max <- max(min, rounded_max)
+  # get y axis labels - option 2
   categories_list <- list()
-
-  for (i in min:max) {
+  for (i in 0:max_value) {
     if (i == 1) {
-      categories_list[[as.character(i)]] <- "1 = White Reference Line"
+      categories_list[[as.character(i)]] <- "1 = White<br>Reference Line"
     } else {
-      categories_list[[as.character(i)]] <- ""
+      categories_list[[as.character(i)]] <- " "
+    }
+  }
+
+  highcharts <- df1 %>%
+    hchart(type = "bar", hcaes(x = "sample", y = "rri", group = "type")) %>%
+    hc_title(text = "Black, non-Hispanic People") %>%
+    hc_subtitle(text = "Relative Rate Index") %>%
+    hc_xAxis(title = "",
+             categories = c(
+               "In Prison",
+               "Sentence Length < 1 year",
+               "Sentence Length 1-1.9 years",
+               "Sentence Length 2-4.9 years",
+               "Sentence Length 5-9.9 years",
+               "Sentence Length 10-24.9 years",
+               "Sentence Length >=25 years",
+               "Sentence Length Life, LWOP, Death"
+             )) %>%
+   hc_yAxis(title = "",
+            categories = categories_list,
+            labels = list(rotation = 0,
+                          step = 1),
+            min = 0,
+            max = max_value,
+             plotBands = list(
+               list(
+                 color = "rgba(0, 0, 0, 0.2)",
+                 from = 0,
+                 to = 1))) %>%
+    hc_legend(enabled = TRUE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_plotOptions(series = list(stacking = "normal"),
+                   bar = list(
+                     dataLabels = list(enabled = TRUE, format = "{point.rri}", style = list(fontSize = "12px"))
+                   )) %>%
+    hc_chart(marginTop = 100, marginBottom = 80, spacingBottom = 80)
+  return(highcharts)
+})
+
+all_bar_rri_sentence_length_black <- setNames(all_bar_rri_sentence_length_black, states)
+all_bar_rri_sentence_length_black$Arkansas
+all_bar_rri_sentence_length_black$Florida
+all_bar_rri_sentence_length_black$Georgia
+
+# loop through each state and create visualizations
+states <- all_census_ncrp_rri_prep %>%
+  filter(race_eth == "Hispanic, any race") %>%
+  filter(!is.na(rri)) %>%
+  filter(!is.infinite(rri)) %>%
+  pull(state) %>% unique()
+
+all_bar_rri_sentence_length_hispanic <- map(.x = states,  .f = function(x) {
+
+  df1 <- all_census_ncrp_rri_prep %>%
+    filter(state == x) %>%
+    filter(race_eth == "Hispanic, any race") %>%
+    filter(!is.na(rri)) %>%
+    filter(!is.infinite(rri))
+
+  # Calculate max_value and set min_value
+  max_value <- max(df1$rri, na.rm = TRUE)
+  max_value <- ceiling(max_value)
+  min_value <- 0
+
+  # # get y axis labels
+  # custom_labels <- list(
+  #   list(y = 1, text = "1")
+  # )
+
+  # get y axis labels - option 2
+  categories_list <- list()
+  for (i in 0:max_value) {
+    if (i == 1) {
+      categories_list[[as.character(i)]] <- "1 = White<br>Reference Line"
+    } else {
+      categories_list[[as.character(i)]] <- " "
     }
   }
 
@@ -276,6 +359,10 @@ all_bar_rri_sentence_length <- map(.x = states,  .f = function(x) {
              )) %>%
     hc_yAxis(title = "",
              categories = categories_list,
+             labels = list(rotation = 0,
+                           step = 1),
+             min = 0,
+             max = max_value,
              plotBands = list(
                list(
                  color = "rgba(0, 0, 0, 0.2)",
@@ -287,15 +374,14 @@ all_bar_rri_sentence_length <- map(.x = states,  .f = function(x) {
     hc_plotOptions(series = list(stacking = "normal"),
                    bar = list(
                      dataLabels = list(enabled = TRUE, format = "{point.rri}", style = list(fontSize = "12px"))
-                   ))
-
+                   )) %>%
+    hc_chart(marginTop = 100, marginBottom = 80, spacingBottom = 80)
   return(highcharts)
 })
 
-all_bar_rri_sentence_length <- setNames(all_bar_rri_sentence_length, states)
-all_bar_rri_sentence_length$Arkansas
-all_bar_rri_sentence_length$Florida
-
-
+all_bar_rri_sentence_length_hispanic <- setNames(all_bar_rri_sentence_length_hispanic, states)
+all_bar_rri_sentence_length_hispanic$Arkansas
+all_bar_rri_sentence_length_hispanic$Florida
+all_bar_rri_sentence_length_hispanic$Georgia
 
 
