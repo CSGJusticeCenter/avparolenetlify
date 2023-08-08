@@ -6,7 +6,6 @@
 # Get census data
 ##########################
 
-
 # weighted estimate of percentage of race from 2020 census
 # pulled estimated counts and construct percent estimate
 # these are the ids of race variables that we want to pull
@@ -60,6 +59,17 @@ census_data_df <- bind_rows(census_data_list)
 
 # add the "state" column to the final dataframe
 census_data_df$state <- rep(states, each = nrow(census_data_df) / length(states))
+
+
+
+
+
+
+################################################################################
+
+# Calculate RRI for sentence length
+
+################################################################################
 
 # get list of states in NCRP data
 states <- ncrp_yearendpop %>%
@@ -190,44 +200,54 @@ all_census_ncrp_rri_prep <- all_census_ncrp_rri %>%
          ),
          rri = round(rri, 1),
          tooltip = case_when(
-           sample == "In Prison" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to be in prison than White people."),
-           sample == "In Prison" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to be in prison as White people.",
-           sample == "In Prison" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to be in prison than White people."),
+           sample == "In Prison" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to be in prison than White people."),
+           sample == "In Prison" & rri == 1 ~ paste(race_eth, " people are equally as likely to be in prison as White people."),
+           sample == "In Prison" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to be in prison than White people."),
 
-           sample == "Sentence Length < 1 year" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of < 1 year than White people."),
-           sample == "Sentence Length < 1 year" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of < 1 year as White people.",
-           sample == "Sentence Length < 1 year" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of < 1 year than White people."),
+           sample == "Sentence Length < 1 year" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of < 1 year than White people."),
+           sample == "Sentence Length < 1 year" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of < 1 year as White people."),
+           sample == "Sentence Length < 1 year" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of < 1 year than White people."),
 
-           sample == "Sentence Length 1-1.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 1-1.9 years than White people."),
-           sample == "Sentence Length 1-1.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 1-1.9 years as White people.",
-           sample == "Sentence Length 1-1.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 1-1.9 years than White people."),
+           sample == "Sentence Length 1-1.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 1-1.9 years than White people."),
+           sample == "Sentence Length 1-1.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 1-1.9 years as White people."),
+           sample == "Sentence Length 1-1.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 1-1.9 years than White people."),
 
-           sample == "Sentence Length 2-4.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 2-4.9 years than White people."),
-           sample == "Sentence Length 2-4.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 2-4.9 years as White people.",
-           sample == "Sentence Length 2-4.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 2-4.9 years than White people."),
+           sample == "Sentence Length 2-4.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 2-4.9 years than White people."),
+           sample == "Sentence Length 2-4.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 2-4.9 years as White people."),
+           sample == "Sentence Length 2-4.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 2-4.9 years than White people."),
 
-           sample == "Sentence Length 5-9.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 5-9.9 years than White people."),
-           sample == "Sentence Length 5-9.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 5-9.9 years as White people.",
-           sample == "Sentence Length 5-9.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 5-9.9 years than White people."),
+           sample == "Sentence Length 5-9.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 5-9.9 years than White people."),
+           sample == "Sentence Length 5-9.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 5-9.9 years as White people."),
+           sample == "Sentence Length 5-9.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 5-9.9 years than White people."),
 
-           sample == "Sentence Length 10-24.9 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of 10-24.9 years than White people."),
-           sample == "Sentence Length 10-24.9 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of 10-24.9 years as White people.",
-           sample == "Sentence Length 10-24.9 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of 10-24.9 years than White people."),
+           sample == "Sentence Length 10-24.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 10-24.9 years than White people."),
+           sample == "Sentence Length 10-24.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 10-24.9 years as White people."),
+           sample == "Sentence Length 10-24.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 10-24.9 years than White people."),
 
-           sample == "Sentence Length >=25 years" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of >=25 years than White people."),
-           sample == "Sentence Length >=25 years" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of >=25 years as White people.",
-           sample == "Sentence Length >=25 years" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of >=25 years than White people."),
+           sample == "Sentence Length >=25 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of >=25 years than White people."),
+           sample == "Sentence Length >=25 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of >=25 years as White people."),
+           sample == "Sentence Length >=25 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of >=25 years than White people."),
 
-           sample == "Sentence Length Life, LWOP, Death" & rri < 1 ~ paste("Black, non-Hispanic people are", rri, "times less likely to have a sentence length of life, life without parole, or death than White people."),
-           sample == "Sentence Length Life, LWOP, Death" & rri == 1 ~ "Black, non-Hispanic people are equally as likely to have a sentence length of life, life without parole, or death as White people.",
-           sample == "Sentence Length Life, LWOP, Death" & rri > 1 ~ paste("Black, non-Hispanic people are", rri, "times more likely to have a sentence length of life, life without parole, or death than White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of life, life without parole, or death than White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of life, life without parole, or death as White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of life, life without parole, or death than White people."),
 
            TRUE ~ NA_character_
          )) %>%
-  mutate(color = ifelse(rri < 1, "#ff640080", "#ff6400"),
-         type = ifelse(rri < 1, "Underrepresented", "Overrepresented")) %>%
+  mutate(color = case_when(rri < 1 ~ "#ff640080",
+                           rri == 1 ~ "gray",
+                           rri > 1 ~ "#ff6400"),
+
+         type = case_when(rri < 1 ~ "Underrepresented",
+                           rri == 1 ~ "Equally Represented",
+                           rri > 1 ~ "Overrepresented")
+  ) %>%
+
   mutate_all(~ ifelse(is.nan(.), NA, .)) %>%
-  mutate_all(~ ifelse(is.infinite(.), NA, .))
+  mutate_all(~ ifelse(is.infinite(.), NA, .)) %>%
+
+  # REMOVE ALABAMA
+  filter(state != "Alabama")
 
 
 # loop through each state and create visualizations
@@ -244,11 +264,33 @@ all_bar_rri_sentence_length_black <- map(.x = states,  .f = function(x) {
     filter(race_eth == "Black, non-Hispanic") %>%
     filter(!is.na(rri)) %>%
     filter(!is.infinite(rri))
+  #
+  # # Calculate max_value and set min_value
+  # max_value <- max(df1$rri, na.rm = TRUE)
+  # max_value <- ceiling(max_value)
+  # min_value <- 0
 
-  # Calculate max_value and set min_value
-  max_value <- max(df1$rri, na.rm = TRUE)
-  max_value <- ceiling(max_value)
   min_value <- 0
+  # calculate the common max value
+  max_value_black <- max(all_census_ncrp_rri_prep %>%
+                           filter(state == x) %>%
+                           filter(race_eth == "Black, non-Hispanic") %>%
+                           filter(!is.na(rri)) %>%
+                           filter(!is.infinite(rri)) %>%
+                           pull(rri),
+                         na.rm = TRUE)
+
+  max_value_hispanic <- max(all_census_ncrp_rri_prep %>%
+                              filter(state == x) %>%
+                              filter(race_eth == "Hispanic, any race") %>%
+                              filter(!is.na(rri)) %>%
+                              filter(!is.infinite(rri)) %>%
+                              pull(rri),
+                            na.rm = TRUE)
+
+  # Determine the larger max value
+  max_value <- max(max_value_black, max_value_hispanic)
+  max_value <- ceiling(max_value)
 
   # # get y axis labels
   # custom_labels <- list(
@@ -267,7 +309,7 @@ all_bar_rri_sentence_length_black <- map(.x = states,  .f = function(x) {
 
   highcharts <- df1 %>%
     hchart(type = "bar", hcaes(x = "sample", y = "rri", group = "type")) %>%
-    hc_title(text = "Black, non-Hispanic People") %>%
+    hc_title(text = "Black People, Non-Hispanic") %>%
     hc_subtitle(text = "Relative Rate Index") %>%
     hc_xAxis(title = "",
              categories = c(
@@ -299,13 +341,41 @@ all_bar_rri_sentence_length_black <- map(.x = states,  .f = function(x) {
                      dataLabels = list(enabled = TRUE, format = "{point.rri}", style = list(fontSize = "12px"))
                    )) %>%
     hc_chart(marginTop = 100, marginBottom = 80, spacingBottom = 80)
+
+  unique_types <- unique(df1$type)
+
+  if ("Overrepresented" %in% unique_types && "Underrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff6400", "#ff640080"))
+
+  } else if ("Overrepresented" %in% unique_types && "Underrepresented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("#ff6400", "#ff640080"))
+
+  } else if ("Overrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff6400"))
+
+  } else if ("Underrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff640080"))
+
+  } else if ("Overrepresented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("#ff6400"))
+
+  } else if ("Underrepresented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("#ff640080"))
+
+  } else if ("Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray"))
+  }
+
   return(highcharts)
 })
 
 all_bar_rri_sentence_length_black <- setNames(all_bar_rri_sentence_length_black, states)
-all_bar_rri_sentence_length_black$Arkansas
-all_bar_rri_sentence_length_black$Florida
-all_bar_rri_sentence_length_black$Georgia
+
+
+
+
+
+
 
 # loop through each state and create visualizations
 states <- all_census_ncrp_rri_prep %>%
@@ -321,16 +391,33 @@ all_bar_rri_sentence_length_hispanic <- map(.x = states,  .f = function(x) {
     filter(race_eth == "Hispanic, any race") %>%
     filter(!is.na(rri)) %>%
     filter(!is.infinite(rri))
+  #
+  # # Calculate max_value and set min_value
+  # max_value <- max(df1$rri, na.rm = TRUE)
+  # max_value <- ceiling(max_value)
+  # min_value <- 0
 
-  # Calculate max_value and set min_value
-  max_value <- max(df1$rri, na.rm = TRUE)
-  max_value <- ceiling(max_value)
   min_value <- 0
+  # calculate the common max value
+  max_value_black <- max(all_census_ncrp_rri_prep %>%
+                           filter(state == x) %>%
+                           filter(race_eth == "Black, non-Hispanic") %>%
+                           filter(!is.na(rri)) %>%
+                           filter(!is.infinite(rri)) %>%
+                           pull(rri),
+                         na.rm = TRUE)
 
-  # # get y axis labels
-  # custom_labels <- list(
-  #   list(y = 1, text = "1")
-  # )
+  max_value_hispanic <- max(all_census_ncrp_rri_prep %>%
+                              filter(state == x) %>%
+                              filter(race_eth == "Hispanic, any race") %>%
+                              filter(!is.na(rri)) %>%
+                              filter(!is.infinite(rri)) %>%
+                              pull(rri),
+                            na.rm = TRUE)
+
+  # Determine the larger max value
+  max_value <- max(max_value_black, max_value_hispanic)
+  max_value <- ceiling(max_value)
 
   # get y axis labels - option 2
   categories_list <- list()
@@ -344,7 +431,7 @@ all_bar_rri_sentence_length_hispanic <- map(.x = states,  .f = function(x) {
 
   highcharts <- df1 %>%
     hchart(type = "bar", hcaes(x = "sample", y = "rri", group = "type")) %>%
-    hc_title(text = "Black, non-Hispanic People") %>%
+    hc_title(text = "Hispanic People, Any Race") %>%
     hc_subtitle(text = "Relative Rate Index") %>%
     hc_xAxis(title = "",
              categories = c(
@@ -376,12 +463,92 @@ all_bar_rri_sentence_length_hispanic <- map(.x = states,  .f = function(x) {
                      dataLabels = list(enabled = TRUE, format = "{point.rri}", style = list(fontSize = "12px"))
                    )) %>%
     hc_chart(marginTop = 100, marginBottom = 80, spacingBottom = 80)
+
+  unique_types <- unique(df1$type)
+
+  if ("Overrepresented" %in% unique_types && "Underrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff6400", "#ff640080"))
+
+  } else if ("Overrepresented" %in% unique_types && "Underrepresented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("#ff6400", "#ff640080"))
+
+  } else if ("Overrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff6400"))
+
+  } else if ("Underrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff640080"))
+
+  } else if ("Overrepresented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("#ff6400"))
+
+  } else if ("Underrepresented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("#ff640080"))
+
+  } else if ("Equally Represented" %in% unique_types) {
+    highcharts <- highcharts %>% hc_colors(colors = c("gray"))
+  }
+
   return(highcharts)
 })
 
 all_bar_rri_sentence_length_hispanic <- setNames(all_bar_rri_sentence_length_hispanic, states)
-all_bar_rri_sentence_length_hispanic$Arkansas
-all_bar_rri_sentence_length_hispanic$Florida
-all_bar_rri_sentence_length_hispanic$Georgia
 
 
+
+
+
+
+
+
+################################################################################
+
+# Calculate RRI for release timing
+
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+
+# Save data
+
+################################################################################
+
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+
+for (folder in theseFOLDERS){
+
+  save(all_bar_rri_sentence_length_black,    file=file.path(folder, "all_bar_rri_sentence_length_black.rds"))
+  save(all_bar_rri_sentence_length_hispanic, file=file.path(folder, "all_bar_rri_sentence_length_hispanic.rds"))
+
+}

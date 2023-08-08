@@ -248,9 +248,9 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 
     hc_series(list(name = "Prison Population",
                    data = df1$total_prison_population),
-              list(name = "Projected Prison Population if People who were Parole Eligible were Released",
-                   data = df1$prison_population_without_pe,
-                   dashStyle = "Dash"),
+              # list(name = "Projected Prison Population if People who were Parole Eligible were Released",
+              #      data = df1$prison_population_without_pe,
+              #      dashStyle = "Dash"),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
               list(name = "Parole Eligible but not Released from Prison",

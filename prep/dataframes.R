@@ -65,6 +65,8 @@ load(file = paste0(sp_data_path, "/data/analysis/all_pp_by_variable.rds"))
 
 # RRI
 load(file = paste0(sp_data_path, "/data/analysis/race_eth_rri_table.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_rri_sentence_length_black.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_rri_sentence_length_hispanic.rds"))
 
 
 

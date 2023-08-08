@@ -398,15 +398,39 @@ if (state_for_report %in% names(all_bar_released_at_ped_other_2020)) {
 
 ###################
 
-# graph showing the time from PED to release by race and ethnicity
-if (state_for_report %in% names(all_time_between_release_ped_2020_by_race)) {
-  state_time_between_release_ped_by_race <- 
-    all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
-    hc_title(text = "Timing of Release for People Eligible for Parole by Race and Ethnicity in 2020") %>% 
-    hc_size(height = 300, width = 500)
+#####
+# Relative Rate Index (RRI)
+#####
+
+# graph showing RRI for Black people
+if (state_for_report %in% names(all_bar_rri_sentence_length_black)) {
+  state_bar_rri_sentence_length_black <- 
+    all_bar_rri_sentence_length_black[[state_for_report]] %>% 
+    hc_size(width = 300, height = 300) 
 } else {
-  state_time_between_release_ped_by_race <- "No Data"
+  state_bar_rri_sentence_length_black <- "No Data"
 }
+
+# graph showing RRI for Hispanic people
+if (state_for_report %in% names(all_bar_rri_sentence_length_hispanic)) {
+  state_bar_rri_sentence_length_hispanic <- 
+    all_bar_rri_sentence_length_hispanic[[state_for_report]] %>% 
+    hc_size(width = 300, height = 300) 
+} else {
+  state_bar_rri_sentence_length_hispanic <- "No Data"
+}
+
+
+
+# # graph showing the time from PED to release by race and ethnicity
+# if (state_for_report %in% names(all_time_between_release_ped_2020_by_race)) {
+#   state_time_between_release_ped_by_race <- 
+#     all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
+#     hc_title(text = "Timing of Release for People Eligible for Parole by Race and Ethnicity in 2020") %>% 
+#     hc_size(height = 300, width = 500)
+# } else {
+#   state_time_between_release_ped_by_race <- "No Data"
+# }
 
 
 #####
@@ -488,7 +512,6 @@ htmltools::div(
 )
 ```
 :::
-
 <br>
 
 
@@ -523,11 +546,24 @@ div(id = "body-section", br(),
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People who are Eligible for Parole"),   br(),
+    div(id = "big-section-title", "People who are Eligible for Parole"),   br()
+    )
+```
+
+::: {.panel-tabset}
+### Race
+```{r}
+div(id = "body-section", br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_race), br(),
     div(id = "regular-text",       state_bar_parole_elgibility_race),      br()
     )
 ```
+
+### Gender
+
+### Age
+:::
+
 
 ```{r}
 div(id = "body-section", br(),
@@ -556,7 +592,7 @@ div(id = "body-section", br(),
 ```
 :::
 </center>
-
+<br>
 
 
 
@@ -573,6 +609,14 @@ div(id = "body-section", br(),
     div(id = "line-chart",        state_line_pop_released_to_parole), br()
     )
 ```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Projected Prison Population"), br(),
+    div(id = "line-chart",        "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
+    )
+```
+
 </center>
 <br>
 
@@ -589,8 +633,9 @@ div(id = "body-section", br(),
 <center>
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Release Type by Admission Type in 2020"), br(),
-    "TBD Visualization: Conditional vs Unconditional Releases",
+    div(id = "big-section-title", "Releases from Prison"), br(),
+    "TBD Visualization: Conditional vs Unconditional Releases", br(), br(),
+    "TBD Visualization: Percentage/number of people who maxed out even though they were parole eligible. Mandatory release date vs actual release date, supervised vs unsupervised release.",
     br(), br(), br(), br(), 
     div(id = "big-section-title", "Timing of Release by Offense Type in 2020"), br()
     )
@@ -677,6 +722,57 @@ div(id = "body-section", state_bar_sentence_other_2020)
 ## Disparities
 
 <center>
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Descriptive Statistics"), br())
+div(id = "body-section", "Race, ethincity, age, and gender", br(), br())
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Relative Rate Index"), br())
+
+div(id = "body-section", "The relative rate index (RRI) provides a measure of disparity in outcomes for different racial and ethnic groups by comparing the rates at which individuals of different races and ethnic groups experience incarceration. The rate for each specific racial and ethnic group is computed by dividing the population of interest within that group by the total state population for that particular group.")
+br()
+    
+div(id = "body-section", "To calculate the RRI, the rate of each outcome of interest for individuals who are Black non-Hispanic and Hispanic any race, is divided by the rate at which the outcome occurs for individuals who are White. A RRI of 1 indicates no disparity. RRIs greater than 1 indicate the outcome occurs more frequently for individuals who are Black or Hispanic, and an RRI less than 1 indicates an outcome occurs less frequently than for individuals who are White.")
+br()
+```
+
+::: {.panel-tabset}
+
+### Sentence Length
+```{r}
+# div(id = "body-section", state_bar_rri_sentence_length_black)
+# div(id = "body-section", state_bar_rri_sentence_length_hispanic)
+div(
+  #style = "display:flex; flex-direction: row; align-items: center; justify-items: center;",
+  style = "display: grid; grid-template-columns: repeat(2, 1fr); justify-items: center;",
+  state_bar_rri_sentence_length_black,
+  state_bar_rri_sentence_length_hispanic
+)
+```
+
+### Time Served
+```{r}
+div(id = "body-section", "Released before or on year of PED", br())
+```
+
+### Admission Type
+```{r}
+div(id = "body-section", "Parole return/revocation vs new crime", br())
+```
+:::
+
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Predicted Probabilities"), br())
+div(id = "body-section", "Race, ethincity, age, gender, offense, and sentence length", br(), br())
+```
+
+
 ```{r}
 # div(id = "body-section", br(),
 #     div(id = "big-section-title", "Racial and Ethnic Disparities"), br(),
