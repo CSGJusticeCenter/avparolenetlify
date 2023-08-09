@@ -257,6 +257,8 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
                    data = df1$current_count)) %>%
 
     hc_add_theme(hc_theme_jc_line) %>%
+    # hc_add_theme(hc_theme_jc) %>%
+
     hc_colors(colors = c(teal, "#75d9d4", yellow, orange)) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
     hc_exporting(enabled = TRUE) %>%

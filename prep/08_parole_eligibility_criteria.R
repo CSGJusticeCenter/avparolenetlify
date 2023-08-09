@@ -80,10 +80,10 @@ c("While the grant of parole is discretionary, consideration for parole is often
 # Save data
 ##########
 
-theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
-
-for (folder in theseFOLDERS){
-
-  save(all_parole_eligibility_criteria, file=file.path(folder, "all_parole_eligibility_criteria.rds"))
-
-}
+# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+#
+# for (folder in theseFOLDERS){
+#
+#   save(all_parole_eligibility_criteria, file=file.path(folder, "all_parole_eligibility_criteria.rds"))
+#
+# }

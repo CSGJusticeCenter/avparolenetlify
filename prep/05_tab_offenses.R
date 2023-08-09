@@ -207,7 +207,7 @@ all_bar_parole_elgibility_offense <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = TRUE) %>%
+    hc_exporting(enabled = FALSE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,

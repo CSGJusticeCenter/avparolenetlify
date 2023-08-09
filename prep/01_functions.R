@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: functions.R
 # Authors: Mari Roberts
-# Date last updated: June 12, 2023 (MAR)
+# Date last updated: August 9, 2023 (MAR)
 # Description:
 #    Custom functions
 #######################################
@@ -139,7 +139,7 @@ fnc_sentlgth_timesrvd_rel <- function(data) {
 
 
 ###################
-# Plots
+# Reactable
 ###################
 
 # highcharts theme for reactable tables
@@ -156,6 +156,14 @@ hc_reactable_style <- list(
   color = neutralBlackText
 )
 
+
+
+
+
+###################
+# Plots
+###################
+
 # highcharts theme for hex map
 hc_theme_map_jc <- hc_theme_merge(
   hc_theme_smpl(),
@@ -163,6 +171,7 @@ hc_theme_map_jc <- hc_theme_merge(
     chart = list(
       marginTop = 75,
       style = list(fontFamily = "Graphik",
+                   fontSize = "14px",
                    color = neutralBlackText)
     ),
     caption = list(align = "right", y = 15),
@@ -186,70 +195,12 @@ hc_theme_map_jc <- hc_theme_merge(
   )
 )
 
-
-
-# highcharts theme for plots
-hc_theme_jc <- hc_theme(
-  colors = c(orange, yellow, purple, darkblue, teal, blue),
-  chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
-  title = list(
-    align = "center",
-    style = list(
-      fontFamily = "Graphik",
-      fontWeight = "bold",
-      color = neutralBlackText,
-      fontSize = "18px"
-    )
-  ),
-  subtitle = list(
-    align = "center",
-    style = list(
-      fontFamily = "Graphik",
-      fontWeight = "bold",
-      color = neutralBlackText,
-      fontSize = "16px"
-    )
-  ),
-  legend = list(
-    align = "center",
-    verticalAlign = "top",
-    itemStyle = list(color = neutralBlackText)
-  ),
-  xAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
-                                               fontWeight = "bold")),
-    gridLineColor = "transparent",
-    lineColor = "transparent",
-    minorGridLineColor = "transparent",
-    tickColor = "transparent"
-  ),
-  yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText)),
-    gridLineColor = "transparent",
-    lineColor = "transparent",
-    majorGridLineColor = "transparent",
-    minorGridLineColor = "transparent",
-    tickColor = "transparent"
-  ),
-  plotOptions = list(
-    line = list(marker = list(enabled = FALSE)),
-    spline = list(marker = list(enabled = FALSE)),
-    area = list(marker = list(enabled = FALSE)),
-    areaspline = list(marker = list(enabled = FALSE)),
-    arearange = list(marker = list(enabled = FALSE)),
-    bubble = list(maxSize = "10%"),
-    column = list(
-      dataLabels = list(
-        style = list(color = neutralBlackText)
-      )
-    )
-  )
-)
-
-# highcharts theme for line plots
+# highcharts theme for plots, has axis lines
 hc_theme_jc_line <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
-  chart = list(style = list(fontFamily = "Graphik", color = neutralBlackText)),
+  chart = list(style = list(fontFamily = "Graphik",
+                            fontSize = "14px",
+                            color = neutralBlackText)),
   title = list(
     align = "center",
     style = list(
@@ -294,104 +245,22 @@ hc_theme_jc_line <- hc_theme(
   )
 )
 
-# highcharts theme for pie plots
-hc_theme_jc_pie <- hc_theme(
-  colors = c(teal, neutralBkgndMedium),
-  chart =
-    list(style =
-           list(fontFamily = "Graphik",
-                color      = neutralBlackText)),
-  title =
-    list(align = "center",
-         style =
-           list(fontFamily = "Graphik",
-                fontWeight = "bold",
-                color      = neutralBlackText,
-                fontSize   = "16px")),
-  subtitle =
-    list(align = "center",
-         style =
-           list(fontFamily = "Graphik",
-                color      = neutralBlackText,
-                fontSize   = "14px")),
-  chart =
-    list(style =
-           list(fontFamily = "Graphik",
-                color      = neutralBlackText)),
-  legend =
-    list(align = "center", verticalAlign = "top"),
 
-  xAxis =
-    list(labels =
-           list(enabled = TRUE),
-         gridLineColor = "transparent",
-         lineColor = "transparent",
-         minorGridLineColor = "transparent",
-         tickColor = "transparent"),
-  yAxis =
-    list(labels =
-           list(enabled = TRUE),
-         gridLineColor = "transparent",
-         lineColor = "transparent",
-         majorGridLineColor = "transparent",
-         minorGridLineColor = "transparent",
-         tickColor = "transparent"),
-  plotOptions =
-    list(line =
-           list(marker = list(enabled = FALSE)),
-         spline = list(marker = list(enabled = FALSE)),
-         area = list(marker = list(enabled = FALSE)),
-         areaspline = list(marker = list(enabled = FALSE)),
-         arearange = list(marker = list(enabled = FALSE)),
-         bubble = list(maxSize = "10%")))
 
-# Highcharts theme for plots
-hc_theme_jc_minimal <- hc_theme(
 
-  colors = c(orange, yellow, purple, darkblue, teal, blue),
 
-  chart = list(style = list(fontFamily = "Graphik",
-                            color = neutralBlackText)),
-  title = list(align = "center",
-               style = list(fontFamily = "Graphik",
-                            fontWeight = "bold",
-                            color = neutralBlackText,
-                            fontSize   = "18px")),
-  subtitle = list(align = "center",
-                  style = list(fontFamily = "Graphik",
-                               fontWeight = "bold",
-                               color = neutralBlackText,
-                               fontSize   = "16px")),
-  chart = list(style = list(fontFamily = "Graphik",
-                            color = neutralBlackText)),
-  legend = list(align = "center", verticalAlign = "top"),
-  xAxis = list(labels = list(enabled = FALSE),
-               gridLineColor = "transparent",
-               lineColor = "transparent",
-               minorGridLineColor = "transparent",
-               tickColor = "transparent"),
-  yAxis = list(labels = list(enabled = FALSE),
-               gridLineColor = "transparent",
-               lineColor = "transparent",
-               majorGridLineColor = "transparent",
-               minorGridLineColor = "transparent",
-               tickColor = "transparent"),
-  plotOptions = list(line = list(marker = list(enabled = FALSE)),
-                     spline = list(marker = list(enabled = FALSE)),
-                     area = list(marker = list(enabled = FALSE)),
-                     areaspline = list(marker = list(enabled = FALSE)),
-                     arearange = list(marker = list(enabled = FALSE)),
-                     bubble = list(maxSize = "10%")))
 
-# Highcharts download buttons
-hc_setup <- function(x) {
-  highcharter::hc_add_dependency(x, name = "plugins/series-label.js") %>%
-    highcharter::hc_add_dependency(name = "plugins/accessibility.js") %>%
-    highcharter::hc_add_dependency(name = "plugins/exporting.js") %>%
-    highcharter::hc_add_dependency(name = "plugins/export-data.js") %>%
-    highcharter::hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    highcharter::hc_exporting(enabled = TRUE)
-}
+
+
+
+
+
+
+
+
+
+
+
 
 # Create donut chart with overall finding label in middle
 fnc_donut_chart <- function(df,
@@ -429,7 +298,8 @@ fnc_donut_chart <- function(df,
                   dataLabels = list(enabled = FALSE)) %>%
 
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_add_theme(hc_theme_jc_pie) %>%
+    # hc_add_theme(hc_theme_jc_pie) %>%
+    hc_add_theme(hc_theme_jc) %>%
     hc_plotOptions(innersize = "50%",
                    startAngle = 90,
                    endAngle = 90,
@@ -513,20 +383,20 @@ fnc_pie_chart <- function(df,
              plotShadow = FALSE,
              margin = c(100, 0, 18, 0)
              # spacing = c(10, 0, 0, 0),
-             ) %>%
+    ) %>%
     hc_yAxis(maxPadding = 0) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
+    hc_exporting(enabled = FALSE) %>%
     hc_plotOptions(#pie = list(startAngle = 100),
-                   series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
+      series = list(animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
 }
 
 # Create pie chart with labels
@@ -539,22 +409,6 @@ fnc_pie_chart_highlight <- function(df,
 
   df$x_variable <- get(x_variable, df)
   df$y_variable <- get(y_variable, df)
-
-  # df_pct <- df %>%
-  #   filter(rptyear == 2020 &
-  #          state == state_name &
-  #          parelig_status == "Current" &
-  #          admtype == "Parole return/revocation") %>%
-  #   mutate(prop_label = paste0(round(prop, 0), "%"))
-
-  # parole_return_percentage <-
-  #   df %>%
-  #   filter(rptyear == 2020 &
-  #          state == state_name &
-  #          parelig_status == "Current" &
-  #          admtype == "Parole return/revocation") %>%
-  #   pull(prop)
-  # parole_return_percentage <- paste0(round(parole_return_percentage, 0), "%")
 
   df %>%
     hchart("pie",
@@ -614,7 +468,7 @@ fnc_percent_bar_chart_pestatus_admtype <-
       hc_add_theme(hc_theme_jc) %>%
       hc_colors(colors = c(purple, teal, orange)) %>%
       hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-      hc_exporting(enabled = TRUE) %>%
+      hc_exporting(enabled = FALSE) %>%
       hc_plotOptions(series = list(animation = FALSE,
                                    cursor = "pointer",
                                    borderWidth = 3,
@@ -626,7 +480,7 @@ fnc_percent_bar_chart_pestatus_admtype <-
                      area = list(accessibility = list(description = accessibility_text))
       )
 
-}
+  }
 
 # create all percent bar chart for each admission type and offense type
 fnc_create_all_percent_bar_chart_pestatus_admtype <- function(selected_offgeneral) {
@@ -678,7 +532,7 @@ fnc_percent_bar_chart_sentence_admtype <-
       hc_add_theme(hc_theme_jc) %>%
       hc_colors(colors = c(purple, yellow, orange)) %>%
       hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-      hc_exporting(enabled = TRUE) %>%
+      hc_exporting(enabled = FALSE) %>%
       hc_plotOptions(series = list(animation = FALSE,
                                    cursor = "pointer",
                                    borderWidth = 3,

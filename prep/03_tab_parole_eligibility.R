@@ -286,12 +286,13 @@ current_ped_2020_race <- ncrp_yearendpop %>%
   mutate(
     prop = n/sum(n),
     yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop*100, 0), "%")
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
   ) %>%
   ungroup() %>%
   mutate(tooltip = paste0("<b>", state, " - ",
                           race, "</b><br>",
-                          prop_label, "<br>"))
+                          n_label, "<br>"))
 
 # get states with data
 states <- unique(current_ped_2020_race$state)
@@ -302,7 +303,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   # filter data
   df1 <- current_ped_2020_race %>%
     filter(state == x) %>%
-    arrange(desc(prop))
+    arrange(desc(n))
   xaxis_order <- df1$race
 
   # assign color for each race
@@ -315,11 +316,10 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   highcharts <-
     highchart() %>%
     hc_add_series(df1, type = "column",
-                  hcaes(x = factor(race), y = prop*100, color = color
+                  hcaes(x = factor(race), y = n, color = color
                   ),
-                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
-                                    style = list(fontSize = "14px",
-                                                 fontWeight = "bold",
+                  dataLabels = list(enabled = TRUE, format = "{point.n_label}",
+                                    style = list(fontWeight = "bold",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
@@ -327,7 +327,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = TRUE) %>%
+    hc_exporting(enabled = FALSE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
@@ -372,6 +372,86 @@ all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 })
 
 all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_race, states)
+
+
+
+
+
+
+
+
+################################################################################
+
+# Highcharts - barchart
+# Parole eligibility by race - people who are eligible for the first time
+
+# Obtained from NCRP terms
+
+################################################################################
+
+# get number of prison episodes and identify most recent episode
+# takes a couple minutes to run
+ncrp_term_records_flags <- ncrp_term_records %>%
+  filter(!is.na(admityr)) %>%
+  mutate(prison_episode_id = paste(abt_inmate_id, admityr, sep = "_")) %>%
+  arrange(abt_inmate_id, admityr, releaseyr) %>%
+  group_by(abt_inmate_id) %>%
+  mutate(
+    prison_episode_number = row_number(),
+    recent_prison_episode = row_number() == n(),
+    has_multiple_prison_episode = n() > 1
+  ) %>%
+  ungroup()
+
+# flag people who have been to prison for a parole return/revocation
+ncrp_has_previous_parole_return <- ncrp_term_records_flags %>%
+  filter(recent_prison_episode == FALSE) %>%
+  group_by(abt_inmate_id) %>%
+  summarize(has_previous_parole_return = any(admtype == "Parole return/revocation" & !is.na(admtype))) %>%
+  ungroup()
+
+# add flag to data
+# if they only have one prison episode and it's not a parole return,
+# then make has_previous_parole_return FALSE
+ncrp_term_records_parole_flags <- ncrp_term_records_flags %>%
+  left_join(ncrp_has_previous_parole_return, by = "abt_inmate_id") %>%
+  mutate(has_previous_parole_return =
+           ifelse(is.na(has_previous_parole_return) &
+                  has_multiple_prison_episode == FALSE,
+                  FALSE,
+                  has_previous_parole_return))
+
+############
+############saved data set
+############
+# subset to people in prison who don't have a release year
+ncrp_term_records_in_prison <- ncrp_term_records_parole_flags %>%
+  filter(is.na(releaseyr))
+
+
+# subset to people in prison for the first time and are parole eligible
+in_prison_first_time <- ncrp_term_records_in_prison %>%
+  filter(has_multiple_prison_episode == FALSE &
+         has_previous_parole_return  == FALSE) %>%
+  mutate(rptyear = 2020) %>%
+  fnc_create_parelig_status()
+
+# current_ped_2020_race <- in_prison_first_time %>%
+#   filter(parelig_status == "Current") %>%
+#   filter(!is.na(race)) %>%
+#   group_by(state) %>%
+#   count(race) %>%
+#   mutate(
+#     prop = n/sum(n),
+#     yearendpop_ped = sum(n),
+#     prop_label = paste0(round(prop*100, 0), "%"),
+#     n_label = formattable::comma(n, 0)
+#   ) %>%
+#   ungroup() %>%
+#   mutate(tooltip = paste0("<b>", state, " - ",
+#                           race, "</b><br>",
+#                           n_label, "<br>"))
+
 
 
 

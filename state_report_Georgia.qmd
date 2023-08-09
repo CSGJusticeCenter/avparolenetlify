@@ -555,7 +555,7 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_race), br(),
-    div(id = "regular-text",       state_bar_parole_elgibility_race),      br()
+    div(id = "visualization",      state_bar_parole_elgibility_race),      br()
     )
 ```
 
@@ -606,14 +606,14 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population"), br(),
-    div(id = "line-chart",        state_line_pop_released_to_parole), br()
+    div(id = "visualization",      state_line_pop_released_to_parole), br()
     )
 ```
 
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Projected Prison Population"), br(),
-    div(id = "line-chart",        "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
+    div(id = "visualization",     "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
     )
 ```
 
@@ -731,13 +731,11 @@ div(id = "body-section", "Race, ethincity, age, and gender", br(), br())
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Relative Rate Index"), br())
-
-div(id = "body-section", "The relative rate index (RRI) provides a measure of disparity in outcomes for different racial and ethnic groups by comparing the rates at which individuals of different races and ethnic groups experience incarceration. The rate for each specific racial and ethnic group is computed by dividing the population of interest within that group by the total state population for that particular group.")
+    div(id = "big-section-title", "Relative Rate Index"), br(),
+    div(id = "regular-text", "The relative rate index (RRI) provides a measure of disparity in outcomes for different racial and ethnic groups by comparing the rates at which individuals of different races and ethnic groups experience incarceration. The rate for each specific racial and ethnic group is computed by dividing the population of interest within that group by the total state population for that particular group."), br(),
+    div(id = "regular-text", "To calculate the RRI, the rate of each outcome of interest for individuals who are Black non-Hispanic and Hispanic any race, is divided by the rate at which the outcome occurs for individuals who are White. A RRI of 1 indicates no disparity. RRIs greater than 1 indicate the outcome occurs more frequently for individuals who are Black or Hispanic, and an RRI less than 1 indicates an outcome occurs less frequently than for individuals who are White."),
 br()
-    
-div(id = "body-section", "To calculate the RRI, the rate of each outcome of interest for individuals who are Black non-Hispanic and Hispanic any race, is divided by the rate at which the outcome occurs for individuals who are White. A RRI of 1 indicates no disparity. RRIs greater than 1 indicate the outcome occurs more frequently for individuals who are Black or Hispanic, and an RRI less than 1 indicates an outcome occurs less frequently than for individuals who are White.")
-br()
+    )
 ```
 
 ::: {.panel-tabset}
