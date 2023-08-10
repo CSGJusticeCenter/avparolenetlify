@@ -78,11 +78,11 @@ parole_eligibility_criteria <- subset(robinaparoleeligibility, state == state_fo
 ```{r}
 # data prep by tab
 
-###################
+################################################################################
 
 # Highlights
 
-###################
+################################################################################
 
 if (state_for_report %in% unique(parole_eligibility_table_2020$state)) {
   state_data <- parole_eligibility_table_2020 %>% filter(state == state_for_report)
@@ -98,11 +98,11 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 
 
 
-###################
+################################################################################
 
 # Prison Population
 
-###################
+################################################################################
 
 # line chart showing the change in prison pop 
 # and the change in releases to parole over time
@@ -138,11 +138,11 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_population)) {
 
 
 
-###################
+################################################################################
 
 # Parole Eligibility
 
-###################
+################################################################################
 
 # save bar chart of people eligible for parole but still in prison by race and state
 if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
@@ -163,14 +163,8 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_race)) {
 }
 
 
-
-
-
-
 ###################
-
 # Offenses
-
 ###################
 
 # save sentence about parole eligiblity by adm type
@@ -321,11 +315,11 @@ if (state_for_report %in% names(all_bar_sentence_other_2020)) {
 
 
 
-###################
+################################################################################
 
 # Releases from Prison
 
-###################
+################################################################################
 
 # save adm type by release timing by state
 if (state_for_report %in% names(all_bar_released_at_ped_2020)) {
@@ -392,11 +386,11 @@ if (state_for_report %in% names(all_bar_released_at_ped_other_2020)) {
 
 
 
-###################
+################################################################################
 
 # Disparities
 
-###################
+################################################################################
 
 #####
 # Relative Rate Index (RRI)
@@ -490,6 +484,11 @@ table_pp_by_sentlgth <-
 
 ::: narrow-section
 ```{r}
+########################################
+
+# Highlights
+
+########################################
 htmltools::div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center;",
@@ -519,43 +518,58 @@ htmltools::div(
 
 
 
+
+
+
+
+
+
+
+
 :::: {.panel-tabset .nav-pills}
 
 ## Parole Eligibility
 
 <center>
 ```{r}
+########################################
+
+# Parole-Eligible Prison Population
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Parole-Eligible Prison Population"),             br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_population),    br(), 
-    div(id = "bar-chart",          state_stackedbar_pe_type_2020),                  br(), br(),
+    div(id = "bar-chart",          state_stackedbar_pe_type_2020),                  br(), br()
+)
+
+########################################
+
+# How is Parole Release Eligibility Determined?
+
+########################################
+div(id = "body-section", br(),
     div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
     div(id = "regular-text",       parole_eligibility_criteria),                    br(), br()
-    # div(id = "regular-text",       state_sentence_parole_elgibility_race),          br(), 
-    # div(id = "bar-chart",          state_bar_parole_elgibility_race),               br(), br()
-    # div(id = "regular-text",       state_sentence_parole_elgibility_admtype), br(), 
-    # div(
-    #   #style = "display:flex; flex-direction: row; align-items: center; justify-items: center;",
-    #   style = "display: grid; grid-template-columns: repeat(2, 1fr); justify-items: center;",
-    #   state_pie_ped_current,
-    #   state_pie_ped_future_1_5
-    #   )
 )
 ```
 
-
 ```{r}
+########################################
+
+# People who are Eligible for Parole
+
+########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People who are Eligible for Parole"),   br()
+    div(id = "big-section-title", "People who are Eligible for Parole"), br()
     )
 ```
-
 ::: {.panel-tabset}
 ### Race
 ```{r}
 div(id = "body-section", br(),
-    div(id = "regular-text",       state_sentence_parole_elgibility_race), br(),
-    div(id = "regular-text",       state_bar_parole_elgibility_race),      br()
+    div(id = "regular-text",  state_sentence_parole_elgibility_race), br(),
+    div(id = "visualization", state_bar_parole_elgibility_race),      br()
     )
 ```
 
@@ -565,7 +579,13 @@ div(id = "body-section", br(),
 :::
 
 
+
 ```{r}
+########################################
+
+# Most Serious Sentenced Offense
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Most Serious Sentenced Offense"), br()
     )
@@ -600,20 +620,40 @@ div(id = "body-section", br(),
 
 
 
+
+
+
+
+
+
+
+
+
+
 ## Prison Population
 
 <center>
 ```{r}
+########################################
+
+# Prison Population
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population"), br(),
-    div(id = "line-chart",        state_line_pop_released_to_parole), br()
+    div(id = "visualization",      state_line_pop_released_to_parole), br()
     )
 ```
 
 ```{r}
+########################################
+
+# Projected Prison Population
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Projected Prison Population"), br(),
-    div(id = "line-chart",        "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
+    div(id = "visualization",     "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
     )
 ```
 
@@ -628,10 +668,24 @@ div(id = "body-section", br(),
 
 
 
+
+
+
+
+
+
+
+
+
 ## Releases from Prison
 
 <center>
 ```{r}
+########################################
+
+# Releases from Prison
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Releases from Prison"), br(),
     "TBD Visualization: Conditional vs Unconditional Releases", br(), br(),
@@ -719,25 +773,45 @@ div(id = "body-section", state_bar_sentence_other_2020)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 ## Disparities
 
 <center>
 
 ```{r}
+########################################
+
+# Descriptive Statistics
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Descriptive Statistics"), br())
 div(id = "body-section", "Race, ethincity, age, and gender", br(), br())
 ```
 
 ```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Relative Rate Index"), br())
+########################################
 
-div(id = "body-section", "The relative rate index (RRI) provides a measure of disparity in outcomes for different racial and ethnic groups by comparing the rates at which individuals of different races and ethnic groups experience incarceration. The rate for each specific racial and ethnic group is computed by dividing the population of interest within that group by the total state population for that particular group.")
+# Relative Rate Index
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Relative Rate Index"), br(),
+    div(id = "regular-text", "The relative rate index (RRI) provides a measure of disparity in outcomes for different racial and ethnic groups by comparing the rates at which individuals of different races and ethnic groups experience incarceration. The rate for each specific racial and ethnic group is computed by dividing the population of interest within that group by the total state population for that particular group."), br(),
+    div(id = "regular-text", "To calculate the RRI, the rate of each outcome of interest for individuals who are Black non-Hispanic and Hispanic any race, is divided by the rate at which the outcome occurs for individuals who are White. A RRI of 1 indicates no disparity. RRIs greater than 1 indicate the outcome occurs more frequently for individuals who are Black or Hispanic, and an RRI less than 1 indicates an outcome occurs less frequently than for individuals who are White."),
 br()
-    
-div(id = "body-section", "To calculate the RRI, the rate of each outcome of interest for individuals who are Black non-Hispanic and Hispanic any race, is divided by the rate at which the outcome occurs for individuals who are White. A RRI of 1 indicates no disparity. RRIs greater than 1 indicate the outcome occurs more frequently for individuals who are Black or Hispanic, and an RRI less than 1 indicates an outcome occurs less frequently than for individuals who are White.")
-br()
+    )
 ```
 
 ::: {.panel-tabset}
@@ -767,6 +841,11 @@ div(id = "body-section", "Parole return/revocation vs new crime", br())
 
 
 ```{r}
+########################################
+
+# Predicted Probabilities
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Predicted Probabilities"), br())
 div(id = "body-section", "Race, ethincity, age, gender, offense, and sentence length", br(), br())
@@ -795,9 +874,31 @@ div(id = "body-section", "Race, ethincity, age, gender, offense, and sentence le
 
 ::::
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ::: citation-section
 
-Sources:   
+Citations:   
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 
@@ -807,6 +908,8 @@ United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-u
   
 United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
 :::
+
+<br><br>
 
 ---
 title: "`r state_for_report`"

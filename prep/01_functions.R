@@ -164,6 +164,66 @@ hc_reactable_style <- list(
 # Plots
 ###################
 
+# overall highcharts theme for plots
+hc_theme_jc <- hc_theme(
+  colors = c(orange, yellow, purple, darkblue, teal, blue),
+  chart = list(style = list(fontFamily = "Graphik",
+                            fontSize = "14px",
+                            color = neutralBlackText)),
+  title = list(
+    align = "center",
+    style = list(
+      fontFamily = "Graphik",
+      fontWeight = "bold",
+      color = neutralBlackText,
+      fontSize = "18px"
+    )
+  ),
+  subtitle = list(
+    align = "center",
+    style = list(
+      fontFamily = "Graphik",
+      fontWeight = "bold",
+      color = neutralBlackText,
+      fontSize = "16px"
+    )
+  ),
+  legend = list(
+    align = "center",
+    verticalAlign = "top",
+    itemStyle = list(color = neutralBlackText)
+  ),
+  xAxis = list(
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontWeight = "bold")),
+    gridLineColor = "transparent",
+    lineColor = "transparent",
+    minorGridLineColor = "transparent",
+    tickColor = "transparent"
+  ),
+  yAxis = list(
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText)),
+    gridLineColor = "transparent",
+    lineColor = "transparent",
+    majorGridLineColor = "transparent",
+    minorGridLineColor = "transparent",
+    tickColor = "transparent"
+  ),
+  plotOptions = list(
+    line = list(marker = list(enabled = FALSE)),
+    spline = list(marker = list(enabled = FALSE)),
+    area = list(marker = list(enabled = FALSE)),
+    areaspline = list(marker = list(enabled = FALSE)),
+    arearange = list(marker = list(enabled = FALSE)),
+    bubble = list(maxSize = "10%"),
+    column = list(
+      dataLabels = list(
+        style = list(color = neutralBlackText)
+      )
+    )
+  )
+)
+
 # highcharts theme for hex map
 hc_theme_map_jc <- hc_theme_merge(
   hc_theme_smpl(),

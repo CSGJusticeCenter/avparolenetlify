@@ -200,37 +200,37 @@ all_census_ncrp_rri_prep <- all_census_ncrp_rri %>%
          ),
          rri = round(rri, 1),
          tooltip = case_when(
-           sample == "In Prison" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to be in prison than White people."),
-           sample == "In Prison" & rri == 1 ~ paste(race_eth, " people are equally as likely to be in prison as White people."),
-           sample == "In Prison" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to be in prison than White people."),
+           sample == "In Prison" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to be in prison than White people."),
+           sample == "In Prison" & rri == 1 ~ paste0(race_eth, " people are equally as likely to be in prison as White people."),
+           sample == "In Prison" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to be in prison than White people."),
 
-           sample == "Sentence Length < 1 year" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of < 1 year than White people."),
-           sample == "Sentence Length < 1 year" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of < 1 year as White people."),
-           sample == "Sentence Length < 1 year" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of < 1 year than White people."),
+           sample == "Sentence Length < 1 year" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of < 1 year than White people."),
+           sample == "Sentence Length < 1 year" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of < 1 year as White people."),
+           sample == "Sentence Length < 1 year" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of < 1 year than White people."),
 
-           sample == "Sentence Length 1-1.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 1-1.9 years than White people."),
-           sample == "Sentence Length 1-1.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 1-1.9 years as White people."),
-           sample == "Sentence Length 1-1.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 1-1.9 years than White people."),
+           sample == "Sentence Length 1-1.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 1-1.9 years than White people."),
+           sample == "Sentence Length 1-1.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 1-1.9 years as White people."),
+           sample == "Sentence Length 1-1.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 1-1.9 years than White people."),
 
-           sample == "Sentence Length 2-4.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 2-4.9 years than White people."),
-           sample == "Sentence Length 2-4.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 2-4.9 years as White people."),
-           sample == "Sentence Length 2-4.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 2-4.9 years than White people."),
+           sample == "Sentence Length 2-4.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 2-4.9 years than White people."),
+           sample == "Sentence Length 2-4.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 2-4.9 years as White people."),
+           sample == "Sentence Length 2-4.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 2-4.9 years than White people."),
 
-           sample == "Sentence Length 5-9.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 5-9.9 years than White people."),
-           sample == "Sentence Length 5-9.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 5-9.9 years as White people."),
-           sample == "Sentence Length 5-9.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 5-9.9 years than White people."),
+           sample == "Sentence Length 5-9.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 5-9.9 years than White people."),
+           sample == "Sentence Length 5-9.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 5-9.9 years as White people."),
+           sample == "Sentence Length 5-9.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 5-9.9 years than White people."),
 
-           sample == "Sentence Length 10-24.9 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of 10-24.9 years than White people."),
-           sample == "Sentence Length 10-24.9 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of 10-24.9 years as White people."),
-           sample == "Sentence Length 10-24.9 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of 10-24.9 years than White people."),
+           sample == "Sentence Length 10-24.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 10-24.9 years than White people."),
+           sample == "Sentence Length 10-24.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 10-24.9 years as White people."),
+           sample == "Sentence Length 10-24.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 10-24.9 years than White people."),
 
-           sample == "Sentence Length >=25 years" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of >=25 years than White people."),
-           sample == "Sentence Length >=25 years" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of >=25 years as White people."),
-           sample == "Sentence Length >=25 years" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of >=25 years than White people."),
+           sample == "Sentence Length >=25 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of >=25 years than White people."),
+           sample == "Sentence Length >=25 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of >=25 years as White people."),
+           sample == "Sentence Length >=25 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of >=25 years than White people."),
 
-           sample == "Sentence Length Life, LWOP, Death" & rri < 1  ~ paste(race_eth, " people are", rri, " times less likely <br>to have a sentence length of life, life without parole, or death than White people."),
-           sample == "Sentence Length Life, LWOP, Death" & rri == 1 ~ paste(race_eth, " people are equally as likely to have a sentence length of life, life without parole, or death as White people."),
-           sample == "Sentence Length Life, LWOP, Death" & rri > 1  ~ paste(race_eth, " people are", rri, " times more likely <br>to have a sentence length of life, life without parole, or death than White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of life, life without parole, or death than White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of life, life without parole, or death as White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of life, life without parole, or death than White people."),
 
            TRUE ~ NA_character_
          )) %>%
@@ -240,7 +240,12 @@ all_census_ncrp_rri_prep <- all_census_ncrp_rri %>%
 
          type = case_when(rri < 1 ~ "Underrepresented",
                            rri == 1 ~ "Equally Represented",
-                           rri > 1 ~ "Overrepresented")
+                           rri > 1 ~ "Overrepresented"),
+         rri_label = case_when(
+           rri < 1  ~ paste0(round((1 - rri)*100, 0), "% less likely"),
+           rri == 1 ~ paste0("Equally as likely"),
+           rri > 1  ~ paste0(round((rri - 1)*100, 0), " % more likely")
+         )
   ) %>%
 
   mutate_all(~ ifelse(is.nan(.), NA, .)) %>%

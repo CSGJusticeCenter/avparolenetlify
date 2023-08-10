@@ -1,6 +1,35 @@
 # AV Parole Project
 
-### File types  
+<br>
+
+## Sources
+
+Alper, Mariel E., et al. “Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States.” Robina Institute of Criminal Law and Criminal Justice, 13 May 2022, robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states.  
+
+Carson, Ann E. “Prisoners in 2020 – Statistical Tables.” Bureau of Justice Statistics, 1 Dec. 2020, bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables.  
+
+United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research [distributor], 2021-10-28. https://doi.org/10.3886/ICPSR38058.v1.  
+
+United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. https://doi.org/10.3886/ICPSR38492.v1.  
+
+<br>
+
+
+
+
+
+## Deliverables
+
+Netlify Site: https://avparoleproject.netlify.app/  
+Password: csgjcavparole  
+
+<br>
+
+
+
+
+
+## Netlify File types  
 An extremely brief (and mostly accurate) overview of the types of files needed to build the site:  
 
 <dl>
@@ -19,3 +48,43 @@ An extremely brief (and mostly accurate) overview of the types of files needed t
   <dt>&#60;file name&#62;.qmd</dt>  
   <dd>The Quarto files for each page of the site. These get re-created as html files during the render process.</dd>
 </dl>  
+
+
+## Repository Structure
+
+|-- avparolenetlify 
+  |-- index.qmd                  # Landing page
+  |-- national_trends.qmd        # National trends page
+  |-- state_report_links.qmd     # State report pages
+  |-- missing_data.qmd           # Missing data page
+  |-- styles.css                 # CSS code for website design
+  |-- _state_report_template.qmd # Template for autogeneration of the state pages 
+|-- prep 
+  |-- 00_library.R                    # Packages
+  |-- 01_function.R                   # Custom functions
+  |-- 02_import.R                     # Imports data
+  |-- 03_tab_eligibility.R            # Prepares visualizations and data for eligibility tab
+  |-- 04_tab_releases_from_prison.R   # Prepares visualizations and data for releases tab
+  |-- 05_tab_offenses.R               # Prepares visualizations and data for offenses tab
+  |-- 06_tab_prison_population.R      # Prepares visualizations and data for population tab
+  |-- 07_disparities.R                # Prepares visualizations and data for disparities tab
+  |-- generate_state_reports.R        # Generates each state page based on the _state_report_template.qmd
+  |-- dataframes.R                    # List of dataframes needed to run each page's QMD.
+  
+## Processes
+
+To clean NCRP data, prepare visualizations, and generate website pages, run the following code in this order:  
+
+- 00_library.R                   
+- 01_function.R                   
+- 02_import.R                    
+- 03_tab_eligibility.R            
+- 04_tab_releases_from_prison.R   
+- 05_tab_offenses.R               
+- 06_tab_prison_population.R      
+- 07_disparities.R                
+- generate_state_reports.R       
+
+
+
+
