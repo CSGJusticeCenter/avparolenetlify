@@ -244,7 +244,7 @@ all_census_ncrp_rri_prep <- all_census_ncrp_rri %>%
          rri_label = case_when(
            rri < 1  ~ paste0(round((1 - rri)*100, 0), "% less likely"),
            rri == 1 ~ paste0("Equally as likely"),
-           rri > 1  ~ paste0(round((rri - 1)*100, 0), " % more likely")
+           rri > 1  ~ paste0(round((rri - 1)*100, 0), "% more likely")
          )
   ) %>%
 
