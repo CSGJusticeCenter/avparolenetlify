@@ -54,25 +54,25 @@ An extremely brief (and mostly accurate) overview of the types of files needed t
 
 ## Repository Structure
 
-|-- avparolenetlify 
-  |-- index.qmd                  # Landing page
-  |-- national_trends.qmd        # National trends page
-  |-- state_report_links.qmd     # State report pages
-  |-- missing_data.qmd           # Missing data page
-  |-- styles.css                 # CSS code for website design
-  |-- _state_report_template.qmd # Template for autogeneration of the state pages 
-  |--
-  |-- prep 
-    |-- 00_library.R                    # Packages
-    |-- 01_function.R                   # Custom functions
-    |-- 02_import.R                     # Imports data
-    |-- 03_tab_eligibility.R            # Prepares visualizations and data for eligibility tab
-    |-- 04_tab_releases_from_prison.R   # Prepares visualizations and data for releases tab
-    |-- 05_tab_offenses.R               # Prepares visualizations and data for offenses tab
-    |-- 06_tab_prison_population.R      # Prepares visualizations and data for population tab
-    |-- 07_disparities.R                # Prepares visualizations and data for disparities tab
-    |-- generate_state_reports.R        # Generates each state page based on the _state_report_template.qmd
-    |-- dataframes.R                    # List of dataframes needed to run each page's QMD.
+    |-- avparolenetlify 
+      |-- index.qmd                  # Landing page
+      |-- national_trends.qmd        # National trends page
+      |-- state_report_links.qmd     # State report pages
+      |-- missing_data.qmd           # Missing data page
+      |-- styles.css                 # CSS code for website design
+      |-- _state_report_template.qmd # Template for autogeneration of the state pages 
+      |--
+      |-- prep 
+        |-- 00_library.R                    # Packages
+        |-- 01_function.R                   # Custom functions
+        |-- 02_import.R                     # Imports data
+        |-- 03_tab_eligibility.R            # Prepares visualizations and data for eligibility tab
+        |-- 04_tab_releases_from_prison.R   # Prepares visualizations and data for releases tab
+        |-- 05_tab_offenses.R               # Prepares visualizations and data for offenses tab
+        |-- 06_tab_prison_population.R      # Prepares visualizations and data for population tab
+        |-- 07_disparities.R                # Prepares visualizations and data for disparities tab
+        |-- generate_state_reports.R        # Generates each state page based on the _state_report_template.qmd
+        |-- dataframes.R                    # List of dataframes needed to run each page's QMD.
   
 ## Processes
 
