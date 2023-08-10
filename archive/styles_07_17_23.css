@@ -1,0 +1,351 @@
+
+/******************************************************************************/
+/* Overview
+/******************************************************************************/
+
+body {
+  max-width: 1200px; /* set the maximum width */
+  margin: 0 auto; /* center the content horizontally */
+}
+
+/* add fonts*/
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/Graphik.ttf");
+}
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/GraphikBold.ttf");
+  font-weight: bold;
+}
+
+
+/* remove rounded edges everything */
+*{
+  border-radius: 0!important;
+}
+
+/* change font throughout website */
+html,
+body {
+  font-family: 'Graphik', sans-serif;
+  color: #3E4B4B!important;
+}
+
+
+
+
+
+
+/******************************************************************************/
+/* Section sizes and settings
+/******************************************************************************/
+
+/* highlights at the top of state report */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 10px; /* Adjust the gap value as per your preference */
+}
+
+.narrow-section {
+  max-width: 750px;
+  min-height: 100px;
+  margin: 0 auto;
+}
+
+.highlight-section {
+  max-width: 400px;
+  max-height: 100px;
+  margin: 0 auto;
+}
+
+#body-section{
+  max-width: 700px;
+  margin: 0 auto; /* center the content horizontally */
+}
+
+#first-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
+#bar-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+}
+
+#line-graph{
+  margin-top: 0em;
+  margin-bottom: 0;
+  padding: 0px;
+  display: flex;
+  justify-content: center;
+}
+
+#pie-chart{
+
+}
+
+#reactable-table{
+ /* display: flex;
+  flex-direction: column; */
+  align-items: center;
+}
+
+/* center table on page */
+.table-container {
+  display: flex;
+  justify-content: center;
+}
+
+
+
+
+
+
+
+/**********************************************/
+
+/* text styling */
+
+/**********************************************/
+
+/* title of website pages */
+.title {
+  font-size: 2.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+
+/* title of website tabs */
+#section-title {
+  font-size: 1em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+/* title of section under tabs */
+#big-section-title {
+  font-size: 1.8em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+#medium-section-title {
+  font-size: 1em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+
+#graph-title {
+  font-size: 1.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+
+/* text underneath state and national trends highlighting findings */
+#important-text {
+  font-size: 1em; /* change font size */
+  font-family: Graphik; /* change font family */
+  text-align: center;
+  color: #3E4B4B;
+}
+
+/* highlighted text underneath state name*/
+#highlight-text {
+  font-size: 2.5em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  color: teal;
+}
+
+/* regular app text */
+#regular-text {
+  font-size: 0.9em; /* change font size */
+  font-family: Graphik; /* change font family */
+  text-align: left;
+  color: #3E4B4B
+}
+
+/* bold app text */
+#bold-text {
+  font-size: 0.8em; /* change font size */
+  font-family: Graphik; /* change font family */
+  font-weight: bold; /* change font weight */
+  text-align: center;
+  color: #3E4B4B
+}
+
+
+
+
+
+
+/******************************************************************************/
+/* Tooltips
+/******************************************************************************/
+
+/* tool tip settings for robina institute prison sentencing system */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
+
+
+/******************************************************************************/
+/* Menu items
+/******************************************************************************/
+
+.navbar {
+background-color: #3E4B4B;
+color: #fff;
+border-radius: 0;
+height: 60px;
+font-size: 1em;
+}
+
+.navbar-brand {
+font-size: 1.2em;
+color: #fff;
+font-weight: bold;
+}
+
+.navbar-nav li {
+padding-right: 0.5em;
+padding-left: 0.5em;
+}
+
+.navbar-nav li a {
+color: #fff;
+font-size: 1em;
+}
+
+.navbar-nav li a:hover {
+background-color: #00aba0;
+color: #fff;
+}
+
+
+
+
+
+
+
+/******************************************************************************/
+/* TABS - Parole Eligibility, Releases from Prison, etc. */
+/******************************************************************************/
+
+.nav-tabs {
+  background-color: #fff; /* white background for tabs */
+  text-align:center;
+  font-size: .95em;
+  font-family: Graphik;
+  margin: 0 auto;
+  justify-content: center;
+  padding-bottom: 0.1em;
+  /*border: none; remove line underneath tabs*/
+}
+
+.tab-content {
+  border: none; /* remove border around box */
+}
+
+.nav-tabs .nav-link {
+  color: #3E4B4B;
+  background-color: white;
+}
+
+.nav-tabs .nav-link.active {
+  color: white;
+  background-color: #3E4B4B;
+}
+
+.nav-tabs .nav-link:hover {
+  color: white;
+  background-color: #3E4B4B;
+}
+
+
+
+
+
+
+/******************************************************************************/
+/* TABS - Offense types NOT WORKING
+/******************************************************************************/
+
+/* tabs that look like buttons for filtering visualizations */
+#tabsetpanel {
+  border-bottom: 1px solid #fff;
+  justify-content: center;
+  background-color: #fff;
+  text-align:center;
+  font-size: .95em;
+  font-family: Graphik;
+}
+
+/* this was working and then stopped but it didn't work for the second set of tabs */
+#tabsetpanel .nav-tabs>li>a:not(.active) {
+  background-color: #F4F6F8;
+  color: #3E4B4B;
+  text-decoration: none;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: 1px solid #3E4B4B;
+}
+
+#tabsetpanel .nav-tabs>li>a.active {
+  background-color: #3E4B4B;
+  color: #F4F6F8;
+  text-decoration: none;
+  margin-right: 10px;
+  margin-left: 10px;
+  border: 1px solid #3E4B4B;
+}

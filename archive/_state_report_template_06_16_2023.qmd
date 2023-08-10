@@ -1,0 +1,491 @@
+---
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+
+# load packages
+library(shiny)
+library(highcharter)
+library(dplyr)
+library(htmlwidgets)
+library(dplyr)
+library(htmltools)
+library(reactable)
+library(reactablefmtr)
+library(htmltools)
+library(tippy)
+library(reactable)
+library(tidyr)
+
+# load data
+source("prep/00_library.R")
+source("prep/01_functions.R")
+source("prep/dataframes.R")
+
+state_for_report <- "change_me"
+```
+
+
+```{r}
+prison_sentencing_system_info <- HTML("Prison Sentencing<br>System&#9432;")
+
+prison_sentencing_system_name <- subset(robinainfo, state == state_for_report)$prison_sentencing_system
+  
+prison_sentencing_system <- 
+  case_when(
+    prison_sentencing_system_name == "Extremely High Indeterminacy" ~ HTML("Extremely High<br>Indeterminacy"),
+    prison_sentencing_system_name == "High Indeterminacy"           ~ HTML("High<br>Indeterminacy"),
+    prison_sentencing_system_name == "Moderate Indeterminacy"       ~ HTML("Moderate<br>Indeterminacy"),
+    prison_sentencing_system_name == "Low Indeterminacy"            ~ HTML("Low<br>Indeterminacy"),
+    prison_sentencing_system_name == "Extremely Low Indeterminacy"  ~ HTML("Extremely Low<br>Indeterminacy"))
+
+prison_sentencing_system_definition <- subset(robinadefinitions, term == prison_sentencing_system_name)$definition 
+
+prison_sentencing_system_tooltip <- 
+  HTML(paste0("To compare the degrees of indeterminacy, or unpredictability
+   of time served, of prison-sentencing systems of different jurisdictions,
+   we use a qualitative ranking framework based on the Robina Institute's
+   Prison-release Discretion And Prison Population Size Report.<br><br><b>", 
+   prison_sentencing_system_name, "</b>: ",
+   prison_sentencing_system_definition, "."))
+
+# make the tippy accessible
+prison_sentencing_system_info <- paste0('<span aria-label="', prison_sentencing_system_tooltip, '" tabindex="0" role="button">', prison_sentencing_system_info, '</span>')
+
+parole_eligibility_criteria <- c("While the grant of parole is discretionary, consideration for parole is often not; most people in prison are entitled to automatic consideration for parole. In general, this occurs after serving 1/3 of the total sentence. However, there are minimums depending on the sentence.")
+```
+
+
+```{r}
+# data prep by tab
+
+###################
+
+# Highlights
+
+###################
+
+state_data <- parole_eligibility_table_2020 %>% filter(state == state_for_report)
+num_people_current   <- sum(state_data$current_count, na.rm = TRUE)
+num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
+
+
+###################
+
+# Overview
+
+###################
+
+# line chart showing the change in prison pop 
+# and the change in releases to parole over time
+state_line_pop_released_to_parole <- 
+  all_line_pop_released_to_parole[[state_for_report]] %>% 
+  # hc_size(width = 500, height = 400) %>%
+  hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
+
+
+
+###################
+
+# Parole Eligibility
+
+###################
+
+# create table about parole eligibility
+pe_length <- c("1/3", "6", "9", "7", "7 or 1/3")
+pe_unit   <- c("Term", "Months", "Months", "Years", "Years or Term")
+pe_sentence <- c("Generally when parole consideration occurs",
+                 "Must be served for misdemeanor sentences",
+                 "Must be served for felony sentences",
+                 "Must be served for a sentence of 21 years or more (excluding life sentences)",
+                 "Must be served for convictions of serious crimes such as aggravated assault, incest, or drug trafficking")
+pe_criteria <- data.frame(pe_length, pe_unit, pe_sentence)
+
+pe1 <- c("1/3 Term", "Generally when parole consideration occurs")
+pe2 <- c("6 Months", "Must be served for misdemeanor sentences")
+pe3 <- c("9 Months", "Must be served for felony sentences")
+pe4 <- c("7 Years", "Must be served for a sentence of 21 years or more (excluding life sentences)")
+pe5 <- c("7 Years or 1/3 Term", "Must be served for convictions of serious crimes such as aggravated assault, incest, or drug trafficking")
+
+# Reshape the data into a long format
+df1 <- data.frame(pe1, pe2, pe3)
+df2 <- data.frame(pe4, pe5)
+
+pe_criteria_table1 <- reactable(
+  data = df1,
+  sortable = FALSE,
+  style = hc_reactable_style,
+  theme = reactableTheme(borderColor = "#fff",
+                 stripedColor = "#fff",
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center")),
+  columns = list(
+    pe1 = colDef(align = "center", name = "", minWidth = 80),
+    pe2 = colDef(align = "center", name = "", minWidth = 80),
+    pe3 = colDef(align = "center", name = "", minWidth = 80)
+  ),
+  rowStyle = function(index) {
+    if (index %in% c(1)) {
+      list(fontWeight = "bold",
+           fontSize = "20px",
+           marginBottom = "-10px")
+    } else if (index %in% c(2)) {
+      list(fontSize = "14px")
+    }
+  }
+)
+
+pe_criteria_table2 <- reactable(
+  data = df2,
+  sortable = FALSE,
+  style = hc_reactable_style,
+  theme = reactableTheme(borderColor = "#fff",
+                 stripedColor = "#fff",
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center")),
+  columns = list(
+    pe4 = colDef(align = "center", name = "", minWidth = 80),
+    pe5 = colDef(align = "center", name = "", minWidth = 80)
+  ),
+  rowStyle = function(index) {
+    if (index %in% c(1)) {
+      list(fontWeight = "bold",
+           fontSize = "20px",
+           marginBottom = "-10px")
+    } else if (index %in% c(2)) {
+      list(fontSize = "14px")
+    }
+  }
+)
+
+
+
+
+
+###################
+
+# Releases from Prison
+
+###################
+
+
+# # pie chart overall
+# state_pie_released_at_ped_2020 <- 
+#   all_pie_released_at_ped_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release in 2020")
+# 
+# # pie chart new crime
+# state_pie_released_at_ped_newcrime_2020 <- 
+#   all_pie_released_at_ped_newcrime_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release for People in Prison for Parole Returns/Revocations in 2020")
+# 
+# # pie chart parole return/revocation
+# state_pie_released_at_ped_parolereturn_2020 <- 
+#   all_pie_released_at_ped_parolereturn_2020[[state_for_report]] %>% 
+#   hc_size(height = 180, width = 475) %>% 
+#   hc_colors(colors = c(orange, yellow, teal)) %>% 
+#   hc_title(text = "Timing of Parole Eligibility and Release for People in Prison for New Crimes in 2020")
+# 
+# # bar chart for most serious sentenced offense
+# state_bar_parole_elgibility_offense <- 
+#   all_bar_parole_elgibility_offense[[state_for_report]] %>% 
+#   hc_size(height = 300, width = 475) %>% 
+#   hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
+
+# # bar chart - using pie instead
+# state_bar_released_at_ped_2020 <- 
+#   all_bar_released_at_ped_2020[[state_for_report]] %>% 
+#   hc_colors(colors = c(orange, teal, yellow)) %>% 
+#   hc_size(height = 150, width = 400)
+
+# # save offense pie by state
+# state_pie_parole_elgibility_offense <- 
+#   all_pie_parole_elgibility_offense[[state_for_report]] %>% 
+#   hc_size(height = 300, width = 475) %>% 
+#   hc_title(text = "Most Serious Sentenced Offense for People Eligible for Parole but not yet Released in 2020")
+
+
+# save adm type by release timing by state
+state_bar_released_at_ped_admtype_2020 <-
+  all_bar_released_at_ped_admtype_2020[[state_for_report]] %>%
+  hc_size(height = 300, width = 475) %>%
+  hc_title(text = "Timing of Release by Parole Eligibility and Admission Type in 2020")
+
+
+
+###################
+
+# Disparities
+
+###################
+
+# graph showing the time from PED to release by race and ethnicity
+state_time_between_release_ped_by_race <- 
+all_time_between_release_ped_2020_by_race[[state_for_report]] %>% 
+  hc_title(text = "Time from PED to Release by Race and Ethnicity") %>% 
+  hc_size(height = 300, width = 475) 
+
+#####
+# Predicted Probabilities
+#####
+
+df1 <- all_pp_by_variable %>%
+  filter(state == state_for_report) %>% 
+  select(race, pp_by_race) %>%
+  distinct()
+
+table_pp_by_race <- 
+  reactable(df1,
+          style = hc_reactable_style,
+          theme = hc_reactable_theme,
+          defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                 align = "left"),
+          compact = TRUE,
+          fullWidth = FALSE,
+          columns = list(
+            race      = colDef(name = "Race/Ethnicity",
+                               minWidth = 200),
+            pp_by_race = colDef(name = "",
+                                minWidth = 175,
+                                align = "right",
+                                format = colFormat(percent = TRUE,
+                                                   digits = 0))))
+
+df1 <- all_pp_by_variable %>%
+  filter(state == state_for_report) %>% 
+  select(sex, pp_by_sex) %>%
+  distinct()
+
+table_pp_by_sex <- 
+  reactable(df1,
+          style = hc_reactable_style,
+          theme = hc_reactable_theme,
+          defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                 align = "left"),
+          compact = TRUE,
+          fullWidth = FALSE,
+          columns = list(
+            sex       = colDef(name = "Gender",
+                               minWidth = 200),
+            pp_by_sex = colDef(name = "",
+                                minWidth = 175,
+                                align = "right",
+                                format = colFormat(percent = TRUE,
+                                                   digits = 0))))
+
+df1 <- all_pp_by_variable %>%
+  filter(state == state_for_report) %>% 
+  select(offgeneral, pp_by_offgeneral) %>%
+  distinct()
+
+table_pp_by_offgeneral <- 
+  reactable(df1,
+            style = hc_reactable_style,
+            theme = hc_reactable_theme,
+            defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                   align = "left"),
+            compact = TRUE,
+            fullWidth = FALSE,
+            columns = list(
+              offgeneral      = colDef(name = "Most Serious Sentenced Offense",
+                                       minWidth = 200),
+              pp_by_offgeneral = colDef(name = "",
+                                        minWidth = 175,
+                                        align = "right",
+                                        format = colFormat(percent = TRUE,
+                                                           digits = 0))))
+
+df1 <- all_pp_by_variable %>%
+  filter(state == state_for_report) %>% 
+  select(sentlgth, pp_by_sentlgth) %>%
+  distinct()
+
+table_pp_by_sentlgth <- 
+  reactable(df1,
+            style = hc_reactable_style,
+            theme = hc_reactable_theme,
+            defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                   align = "left"),
+            compact = TRUE,
+            fullWidth = FALSE,
+            columns = list(
+              sentlgth      = colDef(name = "Maximum Sentence Lenth",
+                                     minWidth = 200),
+              pp_by_sentlgth = colDef(name = "",
+                                      minWidth = 175,
+                                      align = "right",
+                                      format = colFormat(percent = TRUE,
+                                                         digits = 0))))
+
+```
+
+::: tab-section
+```{r}
+# combine info in one row and center
+# highlighted trends numbers
+htmltools::div(
+  style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
+  div(id = "highlight-text", 
+      style = "padding-left: .9em; padding-right: 1em;",
+      formattable::comma(num_people_current, digits = 0)
+  ),
+  div(id = "highlight-text",
+      style = "padding-left: 2.2em; padding-right: 2.4em;",
+      formattable::comma(num_people_1_5_years, digits = 0)
+  ),
+  div(style = "display: block; 
+              padding-left: 1em; 
+              padding-right: 1em; 
+              color: #ff6400; 
+              font-size: 1.25em; 
+              font-family: Graphik; 
+              font-weight: bold; 
+              text-align: center;",
+      prison_sentencing_system)
+)
+
+# combine info in one row and center
+# highlighted titles for trends numbers
+htmltools::div(
+  style = "display:flex; flex-direction: row; align-items: center; justify-content: center; ",
+  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
+      HTML("Currently Eligible for<br>Parole but in Prison")
+      ),
+  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
+      HTML("Eligible for Parole in<br>the next 1-5 years")
+      ),
+  div(id = "bold-text", style = "padding-left: 5em; padding-right: 5em;",
+      tippy(prison_sentencing_system_info,
+            placement = "bottom",
+            flip = TRUE,
+            theme = "light",
+            tooltip = prison_sentencing_system_tooltip)
+      )
+)
+```
+
+
+<br>
+
+```{r}
+tags$style(type = "text/css", ".nav-tabs {justify-content: center;}")
+tabsetPanel(
+  id = "tabsetpanel",
+  
+  
+  #####################################
+  
+  tabPanel("Overview",
+           
+  #####################################
+  
+    br(),
+    div(id = "body-section", 
+        state_line_pop_released_to_parole),
+    br()
+  
+  ),
+  
+  #####################################
+
+  tabPanel("Parole Eligibility",
+         
+  #####################################
+  
+  div(id = "body-section", br(),
+      div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
+      div(id = "regular-text", parole_eligibility_criteria),
+      div(id = "reactable-table", pe_criteria_table1),
+      div(id = "reactable-table", pe_criteria_table2), br(), br(),
+      div(id = "big-section-title", "People who are Eligible for Parole but Still in Prison"), br()
+   )
+
+  ),
+  
+  #####################################
+
+  tabPanel("Length of Stay",
+
+  #####################################
+
+  br()
+
+  ),
+  
+  #####################################
+  
+  tabPanel("Releases from Prison",
+           
+  #####################################
+  
+  br(),
+  
+  div(id = "body-section", 
+      state_bar_released_at_ped_admtype_2020
+      
+      )
+  
+  # tabsetPanel(
+  #     id = "tabsetpanelgraph",
+  #     tabPanel("Parole Return/Revocation",
+  #              br(),
+  #              state_pie_released_at_ped_2020
+  #              ),
+  #     tabPanel("Parole Return/Revocation",
+  #              br(),
+  #              state_pie_released_at_ped_parolereturn_2020
+  #              ),
+  #     tabPanel("New Crime",
+  #              br(),
+  #              state_pie_released_at_ped_newcrime_2020)
+  #   ),
+  # 
+  # br(),
+  
+  ),
+  
+  #####################################
+  
+  tabPanel("Disparities",
+           
+  #####################################
+  
+  br(),
+  div(id = "body-section", 
+      div(id = "bar-graph", state_time_between_release_ped_by_race),
+      div(id = "section-title", "Predicted Probabilities of Being Released Within 1 Year of Parole Eligibility in 2020"), br(),
+           div(id = "reactable-table",
+               table_pp_by_race,
+               table_pp_by_sex,
+               table_pp_by_offgeneral,
+               table_pp_by_sentlgth)
+      ),
+  br()
+  )
+  
+)
+```
+::: 
+
+---
+title: "`r state_for_report`"
+---
