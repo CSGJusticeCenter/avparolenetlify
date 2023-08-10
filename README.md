@@ -10,9 +10,9 @@ Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining t
 
 Carson, Ann E. "Prisoners in 2020 -- Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables.
 
-United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research \[distributor\], 2021-10-28. https://doi.org/10.3886/ICPSR38058.v1.
+United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research \[distributoR], 2021-10-28. https://doi.org/10.3886/ICPSR38058.v1.
 
-United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research \[distributor\], 2022-11-28. https://doi.org/10.3886/ICPSR38492.v1.
+United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research \[distributoR], 2022-11-28. https://doi.org/10.3886/ICPSR38492.v1.
 
 <br>
 
@@ -82,14 +82,14 @@ An extremely brief (and mostly accurate) overview of the types of files needed t
 
 To clean NCRP data, prepare visualizations, and generate website pages, run the following code in this order:
 
--   00_library.R\
--   01_function.R\
--   02_import.R\
--   03_tab_eligibility.R\
--   04_tab_releases_from_prison.R\
--   05_tab_offenses.R\
--   06_tab_prison_population.R\
--   07_tab_disparities.R\
+-   00_library.R
+-   01_function.R
+-   02_import.R
+-   03_tab_eligibility.R
+-   04_tab_releases_from_prison.R
+-   05_tab_offenses.R
+-   06_tab_prison_population.R
+-   07_tab_disparities.R
 -   generate_state_reports.R
 
 ## Data Information
