@@ -42,8 +42,9 @@ states_qmd <- as.character(states)
 # function to replace place-holder text in orig qmd with our replacement values
 # and write out to qmd - name of qmd should include replacement value
 replace_write_qmd <- function(state) {
+  cleaned_state <- str_replace_all(state, "\\s+", "_") # replace spaces with underscores
   str_replace(orig_qmd, "change_me", state) |>
-    write_lines(paste0("state_report_", state, ".qmd"))
+    write_lines(paste0("state_report_", cleaned_state, ".qmd"))
 }
 
 # iterate over replacement values and write new qmds
