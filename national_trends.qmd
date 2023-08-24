@@ -132,7 +132,7 @@ map_data_breaks <- map_data %>%
   group_by(gradient_color) %>%
   mutate(data_category = paste0(min(current_perc), "% - ",max(current_perc), "%")) %>%
   mutate(data_category = case_when(
-    data_category == "NA% - NA%" & abolished_discretionary_parole == "Yes" ~ "Abolished Parole",
+    data_category == "NA% - NA%" & abolished_discretionary_parole == "Yes" ~ "Determinate Prison Sentence",
     data_category == "NA% - NA%" & abolished_discretionary_parole == "No" ~ "Missing Data",
     TRUE ~ data_category
   )) %>%
@@ -141,118 +141,118 @@ map_data_breaks <- map_data %>%
     data_category == "6% - 10%" ~ 1,
     data_category == "11% - 19%" ~ 2,
     data_category == "22% - 54%" ~ 3,
-    data_category == "Abolished Parole" ~ 4,
+    data_category == "Determinate Prison Sentence" ~ 4,
     data_category == "Missing Data" ~ 5
   ))
 ```
 
 ```{r}
 # create hex map showing the percent of the prison population that are parole eligible
-map_percent <- 
-  
-  highchart(height = 580) %>%
-  
-  hc_chart(marginTop = -6) %>%
-  
-  hc_add_series_map(
-    map = hex_gj,
-    df = map_data_breaks,
-    joinBy = "state_abb",
-    value = "data_category_num",
-    dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
-                      style = list(fontSize = "14px",
-                                   fontWeight = "regular",
-                                   fontFamily = "Graphik",
-                                   textOutline = 0)),
-    nullColor = "#e8e8e8") %>%
-  hc_colorAxis(dataClassColor="category",
-               dataClasses = list(list(from = 0, to = 0, color="#D5F5F3", name = "0% - 5%"),
-                                  list(from = 1, to = 1, color="#6AD0C9", name = "6% - 10%"),
-                                  list(from = 2, to = 2, color="#00ABA0", name = "11% - 19%"),
-                                  list(from = 3, to = 3, color="#006F8A", name = "22% - 54%"),
-                                  list(from = 4, to = 4, color= yellow, name = "Abolished Parole"),
-                                  list(from = 5, to = 5, color="#e8e8e8", name = "Missing Data")
-                                  )) %>%
-  
-  hc_legend(align = "right",
-          verticalAlign = "bottom",
-          layout = "vertical",
-          symbolHeight = 15,
-          symbolWidth = 15,
-          x = 0,
-          y = -100) %>% 
-  
-  hc_xAxis(title = "") %>%
-  hc_yAxis(title = "") %>%
-
-  hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-  hc_add_theme(hc_theme_map_jc) %>%
-
-  hc_plotOptions(series = list(animation = FALSE,
-                               cursor = "pointer",
-                               borderWidth = 3),
-                 accessibility = list(enabled = TRUE,
-                                      keyboardNavigation = list(enabled = TRUE),
-                                      linkedDescription = paste0("TEXT"),
-                                      landmarkVerbosity = "one"),
-                 area = list(accessibility = list(description = paste0("TEXT")))
-  )
-
-# # get minimum and maximum value
-# min_map <- min(map_data$current_perc, na.rm = TRUE)
-# max_map <- max(map_data$current_perc, na.rm = TRUE)
-# 
-# # create hex map
-# map_percent <- highchart(height = 580) %>%
+# map_percent <- 
 #   
-#   hc_chart(marginTop = -6) %>% 
+#   highchart(height = 580) %>%
+#   
+#   hc_chart(marginTop = -6) %>%
 #   
 #   hc_add_series_map(
 #     map = hex_gj,
-#     df = map_data,
+#     df = map_data_breaks,
 #     joinBy = "state_abb",
-#     value = "current_perc",
+#     value = "data_category_num",
 #     dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
 #                       style = list(fontSize = "14px",
 #                                    fontWeight = "regular",
 #                                    fontFamily = "Graphik",
 #                                    textOutline = 0)),
-#     nullColor = "#e8e8e8",
-#     accessibility = list(
-#       enabled = TRUE,
-#       keyboardNavigation = list(enabled = TRUE),
-#       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
-#   
-#   hc_colorAxis(min = min_map,
-#                max = max_map,
-#                stops = color_stops(4, gradient_colors),
-#                reversed = FALSE,
-#                labels = list(format = "{value}%",
-#                              style = list(fontSize = "14px"))) %>%
+#     nullColor = "#e8e8e8") %>%
+#   hc_colorAxis(dataClassColor="category",
+#                dataClasses = list(list(from = 0, to = 0, color="#D5F5F3", name = "0% - 5%"),
+#                                   list(from = 1, to = 1, color="#6AD0C9", name = "6% - 10%"),
+#                                   list(from = 2, to = 2, color="#00ABA0", name = "11% - 19%"),
+#                                   list(from = 3, to = 3, color="#006F8A", name = "22% - 54%"),
+#                                   list(from = 4, to = 4, color= yellow, name = "Determinate Prison Sentence"),
+#                                   list(from = 5, to = 5, color="#e8e8e8", name = "Missing Data")
+#                                   )) %>%
 #   
 #   hc_legend(align = "right",
-#             verticalAlign = "bottom",
-#             layout = "vertical",
-#             symbolHeight = 200,
-#             symbolWidth = 25,
-#             x = -25,
-#             y = 0) %>%
+#           verticalAlign = "bottom",
+#           layout = "vertical",
+#           symbolHeight = 15,
+#           symbolWidth = 15,
+#           x = -40,
+#           y = -110) %>% 
 #   
-# hc_xAxis(title = "") %>%
-# hc_yAxis(title = "") %>%
+#   hc_xAxis(title = "") %>%
+#   hc_yAxis(title = "") %>%
 # 
-# hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-# hc_add_theme(hc_theme_map_jc) %>%
+#   hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#   hc_add_theme(hc_theme_map_jc) %>%
 # 
-# hc_plotOptions(series = list(animation = FALSE,
-#                              cursor = "pointer",
-#                              borderWidth = 3),
-#                accessibility = list(enabled = TRUE,
-#                                     keyboardNavigation = list(enabled = TRUE),
-#                                     linkedDescription = paste0("TEXT"),
-#                                     landmarkVerbosity = "one"),
-#                area = list(accessibility = list(description = paste0("TEXT")))
-# )
+#   hc_plotOptions(series = list(animation = FALSE,
+#                                cursor = "pointer",
+#                                borderWidth = 3),
+#                  accessibility = list(enabled = TRUE,
+#                                       keyboardNavigation = list(enabled = TRUE),
+#                                       linkedDescription = paste0("TEXT"),
+#                                       landmarkVerbosity = "one"),
+#                  area = list(accessibility = list(description = paste0("TEXT")))
+#   )
+
+# get minimum and maximum value
+min_map <- min(map_data$current_perc, na.rm = TRUE)
+max_map <- max(map_data$current_perc, na.rm = TRUE)
+
+# create hex map
+map_percent <- highchart(height = 580) %>%
+
+  hc_chart(marginTop = -6) %>%
+
+  hc_add_series_map(
+    map = hex_gj,
+    df = map_data,
+    joinBy = "state_abb",
+    value = "current_perc",
+    dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
+                      style = list(fontSize = "14px",
+                                   fontWeight = "regular",
+                                   fontFamily = "Graphik",
+                                   textOutline = 0)),
+    nullColor = "#e8e8e8",
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
+
+  hc_colorAxis(min = min_map,
+               max = max_map,
+               stops = color_stops(4, gradient_colors),
+               reversed = FALSE,
+               labels = list(format = "{value}%",
+                             style = list(fontSize = "14px"))) %>%
+
+  hc_legend(align = "right",
+            verticalAlign = "bottom",
+            layout = "vertical",
+            symbolHeight = 200,
+            symbolWidth = 25,
+            x = -25,
+            y = 0) %>%
+
+hc_xAxis(title = "") %>%
+hc_yAxis(title = "") %>%
+
+hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+hc_add_theme(hc_theme_map_jc) %>%
+
+hc_plotOptions(series = list(animation = FALSE,
+                             cursor = "pointer",
+                             borderWidth = 3),
+               accessibility = list(enabled = TRUE,
+                                    keyboardNavigation = list(enabled = TRUE),
+                                    linkedDescription = paste0("TEXT"),
+                                    landmarkVerbosity = "one"),
+               area = list(accessibility = list(description = paste0("TEXT")))
+)
 
 
 
@@ -351,7 +351,7 @@ div(id = "body-section", br(),
 
 ::: {.panel-tabset}
 
-## Proportion of People
+## Percentage of People
 ```{r}
 map_percent
 ```
@@ -408,7 +408,7 @@ reactable(table_data,
                                    style = list(fontWeight = "bold")
                                    ),
             abolished_discretionary_parole = 
-              colDef(name = "Abolished Discretionary Parole",
+              colDef(name = "Abolished Parole Release",
                      minWidth = 130),
             yearendpop    = colDef(name = "Prison Population",
                                    minWidth = 130,
@@ -441,8 +441,3 @@ reactable(table_data,
 )
 ```
 :::
-
-
-
-
-
