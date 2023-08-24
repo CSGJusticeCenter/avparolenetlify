@@ -341,7 +341,7 @@ readRenviron("~/.Renviron")
 # Alabama looks weird
 state_prison_pop <- ncrp_yearendpop %>%
   filter(rptyear == 2020 &
-         !is.na(race)) %>%
+           !is.na(race)) %>%
   group_by(state) %>%
   count(race) %>%
   rename(prison_pop = n)

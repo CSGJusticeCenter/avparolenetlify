@@ -51,6 +51,9 @@ cross_tab_data <- ncrp_yearendpop %>%
 
 
 
+
+
+
 ################################################################################
 
 # Missingness by sentence length and parole eligibility status

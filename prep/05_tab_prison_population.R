@@ -10,7 +10,7 @@
 
 ################################################################################
 
-# Annual Parole Survey Series in 2018 data for analysis
+# Annual Parole Survey Series
 
 ################################################################################
 
@@ -207,8 +207,12 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
 
 ################################################################################
 
+# Highchart - Trend line graph
 # Line graph data showing the change in prison population
-# and change in people released to parole
+#     and change in people released to parole
+
+# Obtained from NCRP year end population and APS Surveys from 2000-2018
+
 
 ################################################################################
 
@@ -253,7 +257,7 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
               #      dashStyle = "Dash"),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
-              list(name = "Parole Eligible but not Released from Prison",
+              list(name = "Parole Eligible but not Released from Prison for a New Court Commitment",
                    data = df1$current_count)) %>%
 
     hc_add_theme(hc_theme_jc_line) %>%
@@ -276,141 +280,6 @@ all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, sta
 
 
 
-################################################################################
-
-# Proportion of prison population who are parole eligible
-
-################################################################################
-
-ncrp_pe_type_2020 <- all_ncrp_aps_pop_released_to_parole_by_year %>%
-  select(state,
-         rptyear,
-         current_count,
-         future_1_5_years_count,
-         future_6_years_count,
-         missing_count
-  ) %>%
-  filter(rptyear == 2020) %>%
-  pivot_longer(cols = c(current_count,
-                        future_1_5_years_count,
-                        future_6_years_count,
-                        missing_count),
-               names_to = "count_type",
-               values_to = "n") %>%
-  mutate(count_type = case_when(
-    count_type == "current_count"          ~ "Currently Eligible<br>for Parole",
-    count_type == "future_1_5_years_count" ~ "Eligible for Parole<br>in 1-5 Years",
-    count_type == "future_6_years_count"   ~ "Eligible for Parole<br>in 6+ Years",
-    count_type == "missing_count"          ~ "Missing Data or Not<br>Eligible for Parole" # WILL NEED TO CHANGE FOR STATES THAT ABOLISHED PAROLE
-  )) %>%
-  group_by(state) %>%
-  mutate(prop = ifelse(sum(!is.na(n)) == 1 & !is.na(n), 1, n / sum(n, na.rm = TRUE))) %>%
-  ungroup() %>%
-  mutate(tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "<b>", count_type, "</b><br><br>",
-                  "Number of People: <br><b>",
-                  formattable::comma(n, digits = 0), "</b><br><br>",
-                  "Percentage of Prison Population: <br><b>",
-                  paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
-         prop_label = paste0(round(prop*100, 0), "%"),
-         new_label = paste0(
-           "<b>", count_type, "</b><br><br>",
-           prop_label
-         ))
-
-# Reorder the levels of count_type
-ncrp_pe_type_2020$count_type <-
-  factor(ncrp_pe_type_2020$count_type, levels
-                         = c("Missing Data or Not<br>Eligible for Parole",
-                             "Eligible for Parole<br>in 6+ Years",
-                             "Eligible for Parole<br>in 1-5 Years",
-                             "Currently Eligible<br>for Parole"))
-
-
-# get list of states
-states <- unique(ncrp_pe_type_2020$state)
-
-all_stackedbar_pe_type_2020 <- map(.x = states,  .f = function(x) {
-
-  df1 <- ncrp_pe_type_2020 %>%
-    filter(state == x)
-
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = state,
-                             y = prop,
-                             group = count_type),
-                       # dataLabels = list(enabled = TRUE,
-                       #                   format = "{point.new_label}",
-                       #                   y = -140,
-                       #                   style = list(fontWeight = "bold",
-                       #                                fontFamily = "Graphik"))
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "bold",
-                                                      fontSize = "16px",
-                                                      fontFamily = "Graphik"))
-                       ) %>%
-    hc_yAxis(labels = list(format = "{value}%",
-                           enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_legend(reversed = TRUE
-              #enabled = FALSE
-              ) %>%
-    hc_colors(c("gray", yellow, purple, teal)) %>%
-    hc_plotOptions(
-      series = list(stacking = "normal",
-                    animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD.",
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
-
-    return(highcharts)
-})
-
-all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
-
-
-
-
-
-
-
-
-################################################################################
-
-# Sentence about parole eligible prison population
-
-################################################################################
-
-# get list of states
-states <- unique(ncrp_pe_type_2020$state)
-
-# generate sentence about most serious sentenced offense in 2020 by state
-all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) {
-
-  df1 <- ncrp_pe_type_2020 %>%
-    filter(state == x &
-           count_type == "Currently Eligible<br>for Parole")
-
-  sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
-                      " people who were eligible for parole but not released from prison, constituting ",
-                      df1$prop_label, " of the parole-eligible prison population.")
-  return(sentences)
-})
-
-all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibility_population, states)
 
 
 
@@ -427,8 +296,6 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_line_pop_released_to_parole,           file=file.path(folder, "all_line_pop_released_to_parole.rds"))
-  save(all_stackedbar_pe_type_2020,               file=file.path(folder, "all_stackedbar_pe_type_2020.rds"))
-  save(all_sentence_parole_elgibility_population, file=file.path(folder, "all_sentence_parole_elgibility_population.rds"))
+  save(all_line_pop_released_to_parole, file=file.path(folder, "all_line_pop_released_to_parole.rds"))
 
 }

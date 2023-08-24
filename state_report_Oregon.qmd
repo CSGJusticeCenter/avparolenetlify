@@ -909,7 +909,7 @@ United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-u
 United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
 :::
 
-<br><br>
+<br><br><br><br>
 
 ---
 title: "`r state_for_report`"
