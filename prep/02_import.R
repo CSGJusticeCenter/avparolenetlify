@@ -204,20 +204,20 @@ parole_info_by_state <- parole_info_by_state  %>%
 # Save data
 ##########
 
-theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
-
-for (folder in theseFOLDERS){
-
-  save(ncrp_yearendpop,   file=file.path(folder, "ncrp_yearendpop.rds"))
-  save(ncrp_admissions,   file=file.path(folder, "ncrp_admissions.rds"))
-  save(ncrp_term_records, file=file.path(folder, "ncrp_term_records.rds"))
-  save(ncrp_releases,     file=file.path(folder, "ncrp_releases.rds"))
-
-  save(hex_gj, file=file.path(folder, "hex_gj.rds"))
-  save(robinadefinitions, file=file.path(folder, "robinadefinitions.rds"))
-  save(robinainfo, file=file.path(folder, "robinainfo.rds"))
-  save(robinaparoleeligibility, file=file.path(folder, "robinaparoleeligibility.rds"))
-  save(parole_info_by_state, file=file.path(folder, "parole_info_by_state.rds"))
-
-}
+# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+#
+# for (folder in theseFOLDERS){
+#
+#   save(ncrp_yearendpop,   file=file.path(folder, "ncrp_yearendpop.rds"))
+#   save(ncrp_admissions,   file=file.path(folder, "ncrp_admissions.rds"))
+#   save(ncrp_term_records, file=file.path(folder, "ncrp_term_records.rds"))
+#   save(ncrp_releases,     file=file.path(folder, "ncrp_releases.rds"))
+#
+#   save(hex_gj, file=file.path(folder, "hex_gj.rds"))
+#   save(robinadefinitions, file=file.path(folder, "robinadefinitions.rds"))
+#   save(robinainfo, file=file.path(folder, "robinainfo.rds"))
+#   save(robinaparoleeligibility, file=file.path(folder, "robinaparoleeligibility.rds"))
+#   save(parole_info_by_state, file=file.path(folder, "parole_info_by_state.rds"))
+#
+# }
 

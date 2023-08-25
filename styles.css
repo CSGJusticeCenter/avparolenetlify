@@ -183,6 +183,7 @@ body {
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   color: teal;
+  text-align: center;
 }
 
 /* regular app text */

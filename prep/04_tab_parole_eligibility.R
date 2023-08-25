@@ -19,42 +19,57 @@
 
 ################################################################################
 
+ncrp_prison_population_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  group_by(state) %>%
+  summarise(yearendpop = n())
+
 ncrp_pe_type_2020 <- parole_eligibility_table %>%
+  filter(rptyear == 2020) %>%
   select(state,
          rptyear,
          current_count,
          future_1_5_years_count,
          future_6_years_count,
          missing_count
-  ) %>%
-  filter(rptyear == 2020) %>%
-  pivot_longer(cols = c(current_count,
-                        future_1_5_years_count,
-                        future_6_years_count,
-                        missing_count),
-               names_to = "count_type",
-               values_to = "n") %>%
-  mutate(count_type = case_when(
-    count_type == "current_count"          ~ "Currently Eligible<br>for Parole",
-    count_type == "future_1_5_years_count" ~ "Eligible for Parole<br>in 1-5 Years",
-    count_type == "future_6_years_count"   ~ "Eligible for Parole<br>in 6+ Years",
-    count_type == "missing_count"          ~ "Missing Data or Not<br>Eligible for Parole" # WILL NEED TO CHANGE FOR STATES THAT ABOLISHED PAROLE
-  )) %>%
-  group_by(state) %>%
-  mutate(prop = ifelse(sum(!is.na(n)) == 1 & !is.na(n), 1, n / sum(n, na.rm = TRUE))) %>%
-  ungroup() %>%
-  mutate(tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "<b>", count_type, "</b><br><br>",
-                  "Number of People: <br><b>",
-                  formattable::comma(n, digits = 0), "</b><br><br>",
-                  "Percentage of the Prison Population: <br><b>",
-                  paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
-         prop_label = paste0(round(prop*100, 0), "%"),
-         new_label = paste0(
-           "<b>", count_type, "</b><br><br>",
-           prop_label
-         ))
+  )
+
+# ncrp_pe_type_2020 <- parole_eligibility_table %>%
+  # select(state,
+  #        rptyear,
+  #        current_count,
+  #        future_1_5_years_count,
+  #        future_6_years_count,
+  #        missing_count
+  # ) %>%
+#   filter(rptyear == 2020) %>%
+#   pivot_longer(cols = c(current_count,
+#                         future_1_5_years_count,
+#                         future_6_years_count,
+#                         missing_count),
+#                names_to = "count_type",
+#                values_to = "n") %>%
+#   mutate(count_type = case_when(
+#     count_type == "current_count"          ~ "Currently Eligible<br>for Parole",
+#     count_type == "future_1_5_years_count" ~ "Eligible for Parole<br>in 1-5 Years",
+#     count_type == "future_6_years_count"   ~ "Eligible for Parole<br>in 6+ Years",
+#     count_type == "missing_count"          ~ "Missing Data or Not<br>Eligible for Parole" # WILL NEED TO CHANGE FOR STATES THAT ABOLISHED PAROLE
+#   )) %>%
+#   group_by(state) %>%
+#   mutate(prop = ifelse(sum(!is.na(n)) == 1 & !is.na(n), 1, n / sum(n, na.rm = TRUE))) %>%
+#   ungroup() %>%
+#   mutate(tooltip =
+#            paste0("<b>", state, "</b><br><br>",
+#                   "<b>", count_type, "</b><br><br>",
+#                   "Number of People: <br><b>",
+#                   formattable::comma(n, digits = 0), "</b><br><br>",
+#                   "Percentage of the Prison Population: <br><b>",
+#                   paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
+#          prop_label = paste0(round(prop*100, 0), "%"),
+#          new_label = paste0(
+#            "<b>", count_type, "</b><br><br>",
+#            prop_label
+#          ))
 
 # Reorder the levels of count_type
 ncrp_pe_type_2020$count_type <-

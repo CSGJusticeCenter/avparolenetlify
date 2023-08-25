@@ -26,8 +26,8 @@ source("prep/dataframes.R")
 ```{r}
 page_summary <- "With the support of Arnold Ventures, the Council of State Governments (CSG) Justice Center analyzed data from the National Corrections Reporting Program (NCRP) and Robina Institute of Criminal Law and Criminal Justice to gain deeper insights into the relationship between parole practices and prison populations. The study specifically focused on understanding the dynamics of parole eligibility and lengths of stay, with a specific emphasis on examining racial, ethnic, and gender disparities."
   
-num_people_current   <- sum(parole_eligibility_table_2020$current_count, na.rm = TRUE)
-num_people_1_5_years <- sum(parole_eligibility_table_2020$future_1_5_years_count, na.rm = TRUE)
+num_people_current   <- sum(parole_eligibility_table_2020$current_new_crime_count, na.rm = TRUE)
+num_people_1_5_years <- sum(parole_eligibility_table_2020$future_1_5_years_new_crime_count, na.rm = TRUE)
 ```
 
 ::: narrow-section
@@ -36,28 +36,34 @@ div(id = "body-section",
     div(id = "regular-text", page_summary, br(), br(), br())
     )
 
-# combine info in one row and center
-# highlighted national trends numbers
+# # combine info in one row and center
+# # highlighted national trends numbers
 htmltools::div(
-  style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
-  div(style = "margin-right: 2.7em;", 
+  style = "display:flex; flex-direction: row; justify-content: center; align-items: center;",
+  div(
+    style = "text-align: center; margin-right: 10em;",
+    div(
       id = "highlight-text", 
-      formattable::comma(num_people_current, digits = 0)),
-  div(id = "highlight-text", 
+      formattable::comma(num_people_current, digits = 0)
+    ),
+    div(
+      HTML("Currently Eligible for Parole but<br>in Prison for a New Crime"),
+      id = "bold-text"
+    )
+  ),
+  div(
+    style = "text-align: center;",
+    div(
+      id = "highlight-text", 
       formattable::comma(num_people_1_5_years, digits = 0)
-      )
+    ),
+    div(
+      HTML("Eligible for Parole in the next 1-5 years<br>and in Prison for a New Crime"),
+      id = "bold-text"
+    )
+  )
 )
 
-# combine info in one row and center
-# highlighted titles for national trends numbers
-htmltools::div(
-  style = "display:flex; flex-direction: row; align-items: center; justify-content: center;",
-  div(style = "margin-right: 10em;", 
-      id = "bold-text", 
-      HTML("Currently Eligible for<br>Parole but in Prison")),
-  div(id = "bold-text", 
-      HTML("Eligible for Parole in<br>the next 1-5 years"))
-)
 
 ```
 :::
@@ -80,18 +86,18 @@ map_data <- parole_eligibility_table_2020 %>%
   complete(state = all_states) %>% 
   
   # format data and create tooltip
-  mutate(current_perc = current_perc*100,
-         future_1_5_years_perc  = future_1_5_years_perc*100,
+  mutate(current_new_crime_perc = current_new_crime_perc*100,
+         future_1_5_years_new_crime_perc  = future_1_5_years_new_crime_perc*100,
          missing_perc = missing_perc*100,
          
          state_abb = state.abb[match(state, state.name)],
          
          tooltip = 
            paste0("<b>", state, "</b><br><br>",
-                  "Percent of Prison Population<br> Currently Eligible for Release:<br><b>",
-                   paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
+                  "Percent of Prison Population<br> Currently Eligible for Parole Release:<br><b>",
+                   paste(round(current_new_crime_perc, 0), "%</b>", sep = ""), "<br><br>",
                   "Percent of Prison Population<br> Eligible for Parole in the Next 1-5 Years:<br><b>",
-                   paste(round(future_1_5_years_perc, 0), "%</b>", sep = ""), "<br><br>",
+                   paste(round(future_1_5_years_new_crime_perc, 0), "%</b>", sep = ""), "<br><br>",
                  "Percent of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
                    paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
                  "Total Prison Population:<br><b>",
@@ -99,13 +105,13 @@ map_data <- parole_eligibility_table_2020 %>%
                   tooltip = str_replace_all(tooltip, "NA%", "No Data")) %>% 
   
   # create data labels
-  mutate(datalabel = ifelse(is.na(current_perc),
+  mutate(datalabel = ifelse(is.na(current_new_crime_perc),
                             paste0("", state_abb, ""),
                             paste0("<p style=", "text-align:center", ">",
                                    state_abb, "", "<br>",
-                                   round(current_perc, 0), "%</p>")),
+                                   round(current_new_crime_perc, 0), "%</p>")),
          
-         currentperclabel = paste0(round(current_perc, 0), "%"),
+         currentperclabel = paste0(round(current_new_crime_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) %>% 
   
   # add info about whether state abolished parole
@@ -114,23 +120,23 @@ map_data <- parole_eligibility_table_2020 %>%
 # define the gradient colors
 gradient_colors <- c("#D5F5F3", "#6AD0C9", "#00ABA0", "#006F8A", "#003474")
 
-# calculate the breaks for current_perc
+# calculate the breaks for current_new_crime_perc
 num_breaks <- length(gradient_colors) + 1
-breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks), na.rm = TRUE)
+breaks <- quantile(map_data$current_new_crime_perc, probs = seq(0, 1, length.out = num_breaks), na.rm = TRUE)
 
-# assign legend info and gradient colors based on current_perc values
+# assign legend info and gradient colors based on current_new_crime_perc values
 map_data_breaks <- map_data %>%
   mutate(gradient_color = case_when(
-    is.na(current_perc) ~ NA_character_,
-    current_perc <= breaks[2] ~ gradient_colors[1],
-    current_perc <= breaks[3] ~ gradient_colors[2],
-    current_perc <= breaks[4] ~ gradient_colors[3],
+    is.na(current_new_crime_perc) ~ NA_character_,
+    current_new_crime_perc <= breaks[2] ~ gradient_colors[1],
+    current_new_crime_perc <= breaks[3] ~ gradient_colors[2],
+    current_new_crime_perc <= breaks[4] ~ gradient_colors[3],
     TRUE ~ gradient_colors[4]
   )) %>%
   mutate(
-    current_perc = round(current_perc, 0)) %>%
+    current_new_crime_perc = round(current_new_crime_perc, 0)) %>%
   group_by(gradient_color) %>%
-  mutate(data_category = paste0(min(current_perc), "% - ",max(current_perc), "%")) %>%
+  mutate(data_category = paste0(min(current_new_crime_perc), "% - ",max(current_new_crime_perc), "%")) %>%
   mutate(data_category = case_when(
     data_category == "NA% - NA%" & abolished_discretionary_parole == "Yes" ~ "Determinate Prison Sentence",
     data_category == "NA% - NA%" & abolished_discretionary_parole == "No" ~ "Missing Data",
@@ -199,8 +205,8 @@ map_data_breaks <- map_data %>%
 #   )
 
 # get minimum and maximum value
-min_map <- min(map_data$current_perc, na.rm = TRUE)
-max_map <- max(map_data$current_perc, na.rm = TRUE)
+min_map <- min(map_data$current_new_crime_perc, na.rm = TRUE)
+max_map <- max(map_data$current_new_crime_perc, na.rm = TRUE)
 
 # create hex map
 map_percent <- highchart(height = 580) %>%
@@ -211,7 +217,7 @@ map_percent <- highchart(height = 580) %>%
     map = hex_gj,
     df = map_data,
     joinBy = "state_abb",
-    value = "current_perc",
+    value = "current_new_crime_perc",
     dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
                       style = list(fontSize = "14px",
                                    fontWeight = "regular",
@@ -271,22 +277,22 @@ map_data <- parole_eligibility_table_2020 %>%
          tooltip = 
            paste0("<b>", state, "</b><br><br>",
                   "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
-                   paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+                   paste(formattable::comma(current_new_crime_count, 0), "</b>", sep = ""), "<br><br>",
                   "Number of People in Prison<br> Eligible for Parole in the Next 1-5 Years:<br><b>",
-                   paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
+                   paste(formattable::comma(future_1_5_years_new_crime_count, 0), "</b>", sep = ""), "<br><br>",
                  "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
                    paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
                  "Total Prison Population:<br><b>",
                    formattable::comma(yearendpop, digits = 0), "</b>"),
                   tooltip = str_replace_all(tooltip, "NA", "No Data")) %>% 
   
-  mutate(datalabel = ifelse(is.na(current_count),
+  mutate(datalabel = ifelse(is.na(current_new_crime_count),
                             paste0("", state_abb, ""),
                             paste0("<p style=", "text-align:center", ">",
                                    state_abb, "", "<br>",
-                                   formattable::comma(current_count, 0), "</p>")),
+                                   formattable::comma(current_new_crime_count, 0), "</p>")),
          
-         currentcountlabel = paste0(round(current_count, 0), "%"),
+         currentcountlabel = paste0(round(current_new_crime_count, 0), "%"),
          currentcountlabel = str_replace_all(currentcountlabel, "NA%", "No Data")) 
 
 # create hex map for counts
@@ -298,7 +304,7 @@ map_count <- highchart(height = 580) %>%
     map = hex_gj,
     df = map_data,
     joinBy = "state_abb",
-    value = "current_count",
+    value = "current_new_crime_count",
     dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
                       style = list(fontSize = "14px",
                                    fontWeight = "regular",
@@ -341,12 +347,8 @@ map_count <- highchart(height = 580) %>%
 ```
 
 ```{r}
-# div(div(id = "graph-title", HTML("People Currently Eligible for Parole but in Prison")))
-```
-
-```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People in Prison who are Currently Eligible for Parole in 2020"))
+    div(id = "big-section-title", "People in Prison for a New Crime who are Currently Eligible for Parole in 2020"))
 ```
 
 ::: {.panel-tabset}
@@ -381,8 +383,8 @@ table_data <- parole_eligibility_table_2020 %>%
   select(state,
          abolished_discretionary_parole,
          yearendpop,
-         current_count, current_perc,
-         future_1_5_years_count, future_1_5_years_perc, missing_count, missing_perc) 
+         current_new_crime_count, current_new_crime_perc,
+         future_1_5_years_new_crime_count, future_1_5_years_new_crime_perc, missing_count, missing_perc) 
 
 reactable(table_data,
           style = hc_reactable_style,
@@ -394,11 +396,11 @@ reactable(table_data,
           fullWidth = FALSE,
           defaultPageSize = 50,
           columnGroups = list(
-              colGroup(name = "Currently Eligible for Parole",
-                       columns = c("current_perc", "current_count")),
-              colGroup(name = "Eligible for Parole in the Next 1-5 Years",
-                       columns = c("future_1_5_years_perc", "future_1_5_years_count")),
-              colGroup(name = "Missing Parole Eligibility Data",
+              colGroup(name = "Currently Eligible for Parole (New Crime)",
+                       columns = c("current_new_crime_perc", "current_new_crime_count")),
+              colGroup(name = "Eligible for Parole in the Next 1-5 Years  (New Crime)",
+                       columns = c("future_1_5_years_new_crime_perc", "future_1_5_years_new_crime_count")),
+              colGroup(name = "Missing Parole Eligibility Data  (New Crime & Other Admissions)",
                        columns = c("missing_perc", "missing_count"))
           ),
           columns = list(
@@ -410,18 +412,18 @@ reactable(table_data,
             abolished_discretionary_parole = 
               colDef(name = "Abolished Parole Release",
                      minWidth = 130),
-            yearendpop    = colDef(name = "Prison Population",
+            yearendpop    = colDef(name = "Total Prison Population",
                                    minWidth = 130,
                                    style = list(position = "sticky",
                                                 borderRight = "1px solid #d3d3d3"),
                        headerStyle = list(fontWeight = "bold")),
-            current_perc  = colDef(name = "Percent of Prison Population",
+            current_new_crime_perc  = colDef(name = "Percent of Prison Population",
                                    format = colFormat(percent = TRUE,
                                                       digits = 1),
                                    style = list(position = "sticky",
                                                 borderRight = "1px solid #d3d3d3"),
                                    headerStyle = list(fontWeight = "normal")),
-            future_1_5_years_perc   = colDef(name = "Percent of Prison Population",
+            future_1_5_years_new_crime_perc   = colDef(name = "Percent of Prison Population",
                                    format = colFormat(percent = TRUE,
                                                       digits = 1),
                                    style = list(position = "sticky",
@@ -431,9 +433,9 @@ reactable(table_data,
                                    format = colFormat(percent = TRUE,
                                                       digits = 1),
                                    headerStyle = list(fontWeight = "normal")),
-            current_count = colDef(name = "Number of People",
+            current_new_crime_count = colDef(name = "Number of People",
                                    headerStyle = list(fontWeight = "normal")),
-            future_1_5_years_count  = colDef(name = "Number of People",
+            future_1_5_years_new_crime_count  = colDef(name = "Number of People",
                                    headerStyle = list(fontWeight = "normal")),
             missing_count = colDef(name = "Number of People",
                                    headerStyle = list(fontWeight = "normal"))
