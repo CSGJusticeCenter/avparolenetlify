@@ -148,8 +148,7 @@ maxout_ratio_by_state_2020 <- ncrp_releases_maxout_2020 %>%
 ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
   # remove states with NA's
   filter(!is.na(released_at_ped_status)) %>%
-  filter(admtype == "Parole return/revocation" |
-           admtype == "New court commitment") %>%
+  filter(admtype == "New court commitment") %>%
   group_by(state, admtype) %>%
   count(released_at_ped_status) %>%
   mutate(prop = (n/sum(n))*100,
@@ -173,6 +172,28 @@ desired_order <- c("Released Before Parole Eligibility Year",
 
 # get list of states
 states <- unique(ncrp_released_at_ped_2020$state)
+
+# number and prop of people by adm type, offense type, and timing of release
+ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
+  filter(!is.na(released_at_ped_status) &
+         !is.na(offgeneral)) %>%
+  filter(admtype == "New court commitment") %>%
+  group_by(state, offgeneral, admtype) %>%
+  count(released_at_ped_status) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Timing of Release: <b>",
+                  released_at_ped_status,
+                  "</b><br><br>",
+                  "Number of People: <b>",
+                  scales::comma(n),
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
 
 ########
 # Overall
