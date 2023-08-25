@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: August 22, 2023 (MAR)
+# Date last updated: August 25, 2023 (MAR)
 # Description:
 #    Parole eligibility table and data for national trends page
 #######################################

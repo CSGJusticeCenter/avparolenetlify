@@ -230,7 +230,7 @@ all_ncrp_aps_pop_released_to_parole_by_year <- ncrp_yearendpop %>%
             by = c("state", "rptyear")) %>%
   left_join(parole_eligibility_table,
             by = c("state", "rptyear")) %>%
-  mutate(prison_population_without_pe = coalesce(total_prison_population, 0) - coalesce(current_count, 0),
+  mutate(prison_population_without_pe = coalesce(total_prison_population, 0) - coalesce(current_new_crime_count, 0),
          prison_populations_same =
            ifelse(prison_population_without_pe == total_prison_population, TRUE, FALSE))
 
@@ -257,8 +257,8 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
               #      dashStyle = "Dash"),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
-              list(name = "Parole Eligible but not Released from Prison for a New Court Commitment",
-                   data = df1$current_count)) %>%
+              list(name = "Parole Eligible but not Released from Prison for a New Crime",
+                   data = df1$current_new_crime_count)) %>%
 
     hc_add_theme(hc_theme_jc_line) %>%
     # hc_add_theme(hc_theme_jc) %>%

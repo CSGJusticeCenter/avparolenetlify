@@ -176,7 +176,7 @@ hc_theme_jc <- hc_theme(
       fontFamily = "Graphik",
       fontWeight = "bold",
       color = neutralBlackText,
-      fontSize = "18px"
+      fontSize = "16px"
     )
   ),
   subtitle = list(
@@ -415,84 +415,84 @@ fnc_donut_chart <- function(df,
 }
 
 
-# Create pie chart with labels
-fnc_pie_chart <- function(df,
-                          x_variable,
-                          y_variable,
-                          point_format,
-                          accessibility_text){
+# # Create pie chart with labels
+# fnc_pie_chart <- function(df,
+#                           x_variable,
+#                           y_variable,
+#                           point_format,
+#                           accessibility_text){
+#
+#   df$x_variable <- get(x_variable, df)
+#   df$y_variable <- get(y_variable, df)
+#
+#   df %>%
+#     hchart("pie",
+#            # margin = c(0, NA, 0, NA), not working
+#            # size = "70%", makes too big
+#            hcaes(x = x_variable, y = y_variable),
+#            dataLabels = list(
+#              style = list(fontSize = "1.25em",
+#                           fontWeight = "bold",
+#                           alignTo = "connectors",
+#                           color = neutralBlackText),
+#              enabled = TRUE,
+#              # y = -10,
+#              format = point_format)) %>%
+#     hc_chart(plotBackgroundColor = "none",
+#              plotBorderWidth = 0,
+#              plotShadow = FALSE,
+#              margin = c(100, 0, 18, 0)
+#              # spacing = c(10, 0, 0, 0),
+#     ) %>%
+#     hc_yAxis(maxPadding = 0) %>%
+#     hc_add_theme(hc_theme_jc) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = FALSE) %>%
+#     hc_plotOptions(#pie = list(startAngle = 100),
+#       series = list(animation = FALSE,
+#                     cursor = "pointer",
+#                     borderWidth = 3),
+#       accessibility = list(enabled = TRUE,
+#                            keyboardNavigation = list(enabled = TRUE),
+#                            linkedDescription = accessibility_text,
+#                            landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+# }
 
-  df$x_variable <- get(x_variable, df)
-  df$y_variable <- get(y_variable, df)
-
-  df %>%
-    hchart("pie",
-           # margin = c(0, NA, 0, NA), not working
-           # size = "70%", makes too big
-           hcaes(x = x_variable, y = y_variable),
-           dataLabels = list(
-             style = list(fontSize = "1.25em",
-                          fontWeight = "bold",
-                          alignTo = "connectors",
-                          color = neutralBlackText),
-             enabled = TRUE,
-             # y = -10,
-             format = point_format)) %>%
-    hc_chart(plotBackgroundColor = "none",
-             plotBorderWidth = 0,
-             plotShadow = FALSE,
-             margin = c(100, 0, 18, 0)
-             # spacing = c(10, 0, 0, 0),
-    ) %>%
-    hc_yAxis(maxPadding = 0) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = FALSE) %>%
-    hc_plotOptions(#pie = list(startAngle = 100),
-      series = list(animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-}
-
-# Create pie chart with labels
-fnc_pie_chart_highlight <- function(df,
-                                    # state_name,
-                                    x_variable,
-                                    y_variable,
-                                    point_format,
-                                    accessibility_text){
-
-  df$x_variable <- get(x_variable, df)
-  df$y_variable <- get(y_variable, df)
-
-  df %>%
-    hchart("pie",
-           hcaes(x = x_variable, y = y_variable),
-           dataLabels = list(
-             style = list(fontSize = "0.9em",
-                          fontWeight = "regular",
-                          alignTo = "connectors",
-                          color = neutralBlackText),
-             enabled = TRUE,
-             format = point_format)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = FALSE) %>%
-    hc_plotOptions(
-      pie = list(innerSize = "60%"),
-      series = list(animation = FALSE,
-                    cursor = "pointer"),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-}
+# # Create pie chart with labels
+# fnc_pie_chart_highlight <- function(df,
+#                                     # state_name,
+#                                     x_variable,
+#                                     y_variable,
+#                                     point_format,
+#                                     accessibility_text){
+#
+#   df$x_variable <- get(x_variable, df)
+#   df$y_variable <- get(y_variable, df)
+#
+#   df %>%
+#     hchart("pie",
+#            hcaes(x = x_variable, y = y_variable),
+#            dataLabels = list(
+#              style = list(fontSize = "0.9em",
+#                           fontWeight = "regular",
+#                           alignTo = "connectors",
+#                           color = neutralBlackText),
+#              enabled = TRUE,
+#              format = point_format)) %>%
+#     hc_add_theme(hc_theme_jc) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = FALSE) %>%
+#     hc_plotOptions(
+#       pie = list(innerSize = "60%"),
+#       series = list(animation = FALSE,
+#                     cursor = "pointer"),
+#       accessibility = list(enabled = TRUE,
+#                            keyboardNavigation = list(enabled = TRUE),
+#                            linkedDescription = accessibility_text,
+#                            landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+# }
 
 
 
