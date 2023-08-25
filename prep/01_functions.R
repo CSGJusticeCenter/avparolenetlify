@@ -195,6 +195,7 @@ hc_theme_jc <- hc_theme(
   ),
   xAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "1em",
                                                fontWeight = "bold")),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -202,7 +203,8 @@ hc_theme_jc <- hc_theme(
     tickColor = "transparent"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText)),
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "1em")),
     gridLineColor = "transparent",
     lineColor = "transparent",
     majorGridLineColor = "transparent",

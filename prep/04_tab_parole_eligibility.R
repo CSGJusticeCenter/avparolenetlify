@@ -238,7 +238,8 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
                   hcaes(x = factor(race), y = n, color = color
                   ),
                   dataLabels = list(enabled = TRUE, format = "{point.n_label:,.0f}",
-                                    style = list(fontWeight = "bold",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
