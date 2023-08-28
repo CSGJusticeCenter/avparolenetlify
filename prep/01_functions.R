@@ -310,12 +310,9 @@ hc_theme_jc_line <- hc_theme(
 
 
 
+# Create highchart bar chart showing timing of release (released before, on, after PED) by offense type
+fnc_create_bar_chart_released_at_ped <- function(selected_offgeneral, accessibility_text) {
 
-
-
-
-# create all percent bar chart for each admission type and offense type
-fnc_create_all_percent_bar_chart_released_at_ped <- function(selected_offgeneral) {
   states <- ncrp_released_at_ped_offgeneral_2020 %>%
     filter(offgeneral == selected_offgeneral) %>%
     pull(state) %>%
@@ -364,36 +361,40 @@ fnc_create_all_percent_bar_chart_released_at_ped <- function(selected_offgeneral
   return(setNames(all_bar, states))
 }
 
-# Create bar chart with labels showing sentence duration by adm type
-fnc_percent_bar_chart_sentence_admtype <-
-  function(df, point_format, accessibility_text) {
+
+# Create highchart bar chart showing LOS by offense type
+fnc_create_bar_chart_los <- function(selected_offgeneral, accessibility_text) {
+
+  states <- ncrp_proportion_served_offenses_2020 %>%
+    filter(offgeneral == selected_offgeneral) %>%
+    pull(state) %>%
+    unique()
+
+  all_bar <- map(states, function(x) {
+
+    df1 <- ncrp_proportion_served_offenses_2020 %>%
+      filter(state == x, offgeneral == selected_offgeneral) %>%
+      arrange(match(timesrvd_rel_vs_sentlgth, desired_order))
+
+    # assign color for each race
+    df1$color <- case_when(df1$timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served" ~ yellow,
+                           df1$timesrvd_rel_vs_sentlgth == "Full Sentence Length Served" ~ purple)
+    df1$color <- htmltools::parseCssColors(df1$color)
 
     highcharts <- highchart() %>%
-      hc_chart(type = "column") %>%
-      hc_xAxis(categories = c("New court commitment",
-                              "Parole return/revocation")) %>%
-      hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
-      hc_add_series(data = subset(df, timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served"),
-                    name = "Less than Sentence Length Served",
-                    type = "column",
-                    dataLabels = list(enabled = TRUE, format = point_format,
-                                      style = list(fontWeight = "regular")),
-                    hcaes(x = admtype, y = prop)) %>%
-      hc_add_series(data = subset(df, timesrvd_rel_vs_sentlgth == "Full Sentence Length Served"),
-                    name = "Full Sentence Length Served",
-                    type = "column",
-                    dataLabels = list(enabled = TRUE, format = point_format,
-                                      style = list(fontWeight = "regular")),
-                    hcaes(x = admtype, y = prop)) %>%
-      hc_add_series(data = subset(df, timesrvd_rel_vs_sentlgth == "More than Sentence Length Served"),
-                    name = "More than Sentence Length Served",
-                    type = "column",
-                    dataLabels = list(enabled = TRUE, format = point_format,
-                                      style = list(fontWeight = "regular")),
-                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_series(df1, type = "column",
+                    hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = n, color = color),
+                    dataLabels = list(enabled = TRUE,
+                                      format = "{point.n_label:,.0f}",
+                                      style = list(fontWeight = "regular",
+                                                   fontSize = "1em",
+                                                   fontFamily = "Graphik",
+                                                   textOutline = 0))) %>%
+      hc_xAxis(categories = df1$timesrvd_rel_vs_sentlgth) %>%
+      hc_yAxis(labels = list(enabled = FALSE)) %>%
       hc_add_theme(hc_theme_jc) %>%
-      hc_colors(colors = c(purple, yellow, orange)) %>%
       hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+      hc_legend(enabled = FALSE) %>%
       hc_exporting(enabled = FALSE) %>%
       hc_plotOptions(series = list(animation = FALSE,
                                    cursor = "pointer",
@@ -401,9 +402,12 @@ fnc_percent_bar_chart_sentence_admtype <-
                                    minPointLength = 4),
                      accessibility = list(enabled = TRUE,
                                           keyboardNavigation = list(enabled = TRUE),
-                                          linkedDescription = accessibility_text,
+                                          linkedDescription = "TBD",
                                           landmarkVerbosity = "one"),
-                     area = list(accessibility = list(description = accessibility_text))
-      )
+                     area = list(accessibility = list(description = "TBD")))
 
-  }
+    return(highcharts)
+  })
+
+  return(setNames(all_bar, states))
+}

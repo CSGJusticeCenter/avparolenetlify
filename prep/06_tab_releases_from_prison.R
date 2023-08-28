@@ -247,31 +247,36 @@ all_bar_released_at_ped_2020 <- setNames(all_bar_released_at_ped_2020, states)
 # Other/unspecified
 ########
 all_bar_released_at_ped_other_2020 <-
-  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Other/unspecified")
+  fnc_create_bar_chart_released_at_ped(selected_offgeneral = "Other/unspecified",
+                                       accessibility_text = "TBD")
 
 ########
 # Property
 ########
 all_bar_released_at_ped_property_2020 <-
-  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Property")
+  fnc_create_bar_chart_released_at_ped(selected_offgeneral = "Property",
+                                       accessibility_text = "TBD")
 
 ########
 # Violent
 ########
 all_bar_released_at_ped_violent_2020 <-
-  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Violent")
+  fnc_create_bar_chart_released_at_ped(selected_offgeneral = "Violent",
+                                       accessibility_text = "TBD")
 
 ########
 # Public Order
 ########
 all_bar_released_at_ped_publicorder_2020 <-
-  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Public order")
+  fnc_create_bar_chart_released_at_ped(selected_offgeneral = "Public order",
+                                       accessibility_text = "TBD")
 
 ########
 # Drugs
 ########
 all_bar_released_at_ped_drugs_2020 <-
-  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Drugs")
+  fnc_create_bar_chart_released_at_ped(selected_offgeneral = "Drugs",
+                                       accessibility_text = "TBD")
 
 
 
@@ -296,33 +301,40 @@ all_bar_released_at_ped_drugs_2020 <-
 
 
 
-################################################################################
-
-# Highcharts for:
-# Unconditional vs conditional release
 
 ################################################################################
 
-# subset to 2020 report
-ncrp_release_type <- ncrp_releases %>%
-  filter(admtype == "Parole return/revocation" |
-           admtype == "New court commitment") %>%
+# Length of stay by offense type, year, and state
+
+################################################################################
+
+# assign x axis order
+desired_order <- c("Less than Sentence Length Served",
+                   "Full Sentence Length Served")
+
+ncrp_releases <- ncrp_releases %>%
+  filter(timesrvd_rel_vs_sentlgth!= "More than Sentence Length Served") # remove bc likely a data error
+
+########
+# Overview
+########
+
+ncrp_proportion_served_2020 <- ncrp_releases %>%
+  filter(rptyear == 2020 &
+           !is.na(offgeneral) &
+           !is.na(timesrvd_rel_vs_sentlgth)) %>%
+  filter(admtype == "New court commitment") %>%
   filter(reltype == "Unconditional release" |
            reltype == "Conditional release") %>%
-  filter(!is.na(proportion_served))
-
-df1 <- ncrp_release_type %>%
   group_by(state, rptyear) %>%
-  count(reltype) %>%
-  mutate(
-    prop = n/sum(n),
-    yearendpop = sum(n),
-    prop = prop*100,
-    prop_label = paste0(round(prop, 0), "%")) %>%
+  count(timesrvd_rel_vs_sentlgth) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0)) %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
-                  "Release Type: <b>",
-                  reltype,
+                  "Sentence Duration: <b>",
+                  timesrvd_rel_vs_sentlgth,
                   "</b><br><br>",
                   "Number of People: <b>",
                   scales::comma(n),
@@ -330,115 +342,118 @@ df1 <- ncrp_release_type %>%
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
-df1 <- df1 %>% filter(state == "California") %>%
-  filter(rptyear >= 2015) %>%
-  select(reltype, rptyear, n)
-df1
-
-# df1 <- ncrp_los %>%
-#   group_by(state, admtype, rptyear) %>%
-#   count(reltype) %>%
-#   mutate(
-#     prop = n/sum(n),
-#     yearendpop = sum(n),
-#     prop = prop*100,
-#     prop_label = paste0(round(prop, 0), "%")) %>%
-#   mutate(tooltip =
-#            paste0("<b>", state, "</b><br><br>",
-#                   "Release Type: <b>",
-#                   reltype,
-#                   "</b><br><br>",
-#                   "Number of People: <b>",
-#                   scales::comma(n),
-#                   "</b><br><br>",
-#                   "Percentage of People: <b>",
-#                   prop_label, "</b></b>", sep = ""))
-#
-# df1 <- df1 %>% filter(state == "Alabama") %>%
-#   filter(rptyear >= 2018) %>%
-#   select(reltype, rptyear, prop)
-# df1
-# highchart() %>%
-#   hc_chart(type = "column", polar = FALSE) %>%
-#   hc_xAxis(categories = df1$rptyear) %>%
-#   hc_add_series(
-#     name = "Conditional Release",
-#     data = subset(df1, reltype == "Conditional release" & admtype == "New court commitment")$prop,
-#     stack = "A",
-#     color = yellow
-#   ) %>%
-#   hc_add_series(
-#     name = "Conditional Release",
-#     data = subset(df1, reltype == "Conditional release" & admtype == "Parole return/revocation")$prop,
-#     stack = "B",
-#     linkedTo = "previous",
-#     color = yellow
-#   ) %>%
-#   hc_add_series(
-#     name = "Unconditional Release",
-#     data = subset(df1, reltype == "Unconditional release" & admtype == "New court commitment")$prop,
-#     stack = "A",
-#     color = teal
-#   ) %>%
-#   hc_add_series(
-#     name = "Unconditional Release",
-#     data = subset(df1, reltype == "Unconditional release" & admtype == "Parole return/revocation")$prop,
-#     stack = "B",
-#     linkedTo = "previous",
-#     color = teal
-#   ) %>%
-#   hc_plotOptions(column = list(
-#     stacking = "normal"))
+# get list of states with data
+states <- ncrp_proportion_served_2020 %>%
+  pull(state) %>%
+  unique()
 
 
+########
+# Overall
+########
+
+all_bar_los_overview_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_proportion_served_2020 %>%
+    filter(state == x) %>%
+    arrange(match(timesrvd_rel_vs_sentlgth, desired_order))
+
+  # assign color for each race
+  df1$color <- case_when(df1$timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served" ~ yellow,
+                         df1$timesrvd_rel_vs_sentlgth == "Full Sentence Length Served" ~ purple)
+  df1$color <- htmltools::parseCssColors(df1$color)
+
+  highcharts <- highchart() %>%
+    hc_add_series(df1, type = "column",
+                  hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = n, color = color),
+                  dataLabels = list(enabled = TRUE,
+                                    format = "{point.n_label:,.0f}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = df1$timesrvd_rel_vs_sentlgth) %>%
+    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = FALSE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
+  return(highcharts)
+})
+
+all_bar_los_overview_2020 <- setNames(all_bar_los_overview_2020, states)
+
+########
+# Other/unspecified
+########
+
+ncrp_proportion_served_offenses_2020 <- ncrp_releases %>%
+  filter(rptyear == 2020 &
+           !is.na(offgeneral) &
+           !is.na(timesrvd_rel_vs_sentlgth)) %>%
+  filter(admtype == "New court commitment") %>%
+  filter(reltype == "Unconditional release" |
+           reltype == "Conditional release") %>%
+  group_by(state, rptyear, offgeneral) %>%
+  count(timesrvd_rel_vs_sentlgth) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0)) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Sentence Duration: <b>",
+                  timesrvd_rel_vs_sentlgth,
+                  "</b><br><br>",
+                  "Number of People: <b>",
+                  scales::comma(n),
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
+all_bar_los_other_2020 <-
+  fnc_create_bar_chart_los(selected_offgeneral = "Other/unspecified",
+                           accessibility_text = "TBD")
 
 
-# # number and prop of people by adm type and timing of release
-# # create tooltip
-# ncrp_released_at_ped_admtype_2020 <- ncrp_releases_2020 %>%
-#   # remove states with NA's
-#   dplyr::filter(!is.na(released_at_ped_status) &
-#            !is.na(admtype)) %>%
-#   filter(admtype == "Parole return/revocation" |
-#            admtype == "New court commitment") %>%
-#   group_by(state, admtype) %>%
-#   count(released_at_ped_status) %>%
-#   mutate(prop = (n/sum(n))*100,
-#          prop_label = paste0(round(prop, 0), "%"),
-#          chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
-#   mutate(tooltip =
-#            paste0("<b>", state, "</b><br><br>",
-#                   "Timing of Release: <b>",
-#                   released_at_ped_status,
-#                   "</b><br><br>",
-#                   "Number of People: <b>",
-#                   scales::comma(n),
-#                   "</b><br><br>",
-#                   "Percentage of People: <b>",
-#                   prop_label, "</b></b>", sep = ""))
-#
-# # number and prop of people by adm type, offense type, and timing of release
-# ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
-#   filter(!is.na(released_at_ped_status) &
-#          !is.na(offgeneral)) %>%
-#   filter(admtype == "Parole return/revocation" |
-#          admtype == "New court commitment") %>%
-#   group_by(state, offgeneral, admtype) %>%
-#   count(released_at_ped_status) %>%
-#   mutate(prop = (n/sum(n))*100,
-#          prop_label = paste0(round(prop, 0), "%"),
-#          chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
-#   mutate(tooltip =
-#            paste0("<b>", state, "</b><br><br>",
-#                   "Timing of Release: <b>",
-#                   released_at_ped_status,
-#                   "</b><br><br>",
-#                   "Number of People: <b>",
-#                   scales::comma(n),
-#                   "</b><br><br>",
-#                   "Percentage of People: <b>",
-#                   prop_label, "</b></b>", sep = ""))
+########
+# Property
+########
+all_bar_los_property_2020 <-
+  fnc_create_bar_chart_los(selected_offgeneral = "Property",
+                           accessibility_text = "TBD")
 
+
+########
+# Violent
+########
+all_bar_los_violent_2020 <-
+  fnc_create_bar_chart_los(selected_offgeneral = "Violent",
+                           accessibility_text = "TBD")
+
+
+########
+# Public Order
+########
+all_bar_los_publicorder_2020 <-
+  fnc_create_bar_chart_los(selected_offgeneral = "Public order",
+                           accessibility_text = "TBD")
+
+
+########
+# Drugs
+########
+all_bar_los_drugs_2020 <-
+  fnc_create_bar_chart_los(selected_offgeneral = "Drugs",
+                           accessibility_text = "TBD")
 
 
 
@@ -464,4 +479,18 @@ for (folder in theseFOLDERS){
        file=file.path(folder, "all_bar_released_at_ped_drugs_2020.rds"))
   save(all_bar_released_at_ped_violent_2020,
        file=file.path(folder, "all_bar_released_at_ped_violent_2020.rds"))
+
+  save(all_bar_los_overview_2020,
+       file=file.path(folder, "all_bar_los_overview_2020.rds"))
+  save(all_bar_los_other_2020,
+       file=file.path(folder, "all_bar_los_other_2020.rds"))
+  save(all_bar_los_property_2020,
+       file=file.path(folder, "all_bar_los_property_2020.rds"))
+  save(all_bar_los_violent_2020,
+       file=file.path(folder, "all_bar_los_violent_2020.rds"))
+  save(all_bar_los_publicorder_2020,
+       file=file.path(folder, "all_bar_los_publicorder_2020.rds"))
+  save(all_bar_los_drugs_2020,
+       file=file.path(folder, "all_bar_los_drugs_2020.rds"))
+
 }

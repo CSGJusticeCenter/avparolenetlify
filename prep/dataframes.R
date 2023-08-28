@@ -31,12 +31,12 @@ load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offen
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_offense.rds"))
 
 # Length of Stay
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_overview_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_publicorder_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_property_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_other_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_drugs_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_sentence_violent_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_overview_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_publicorder_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_property_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_other_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_drugs_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_violent_2020.rds"))
 
 
 
