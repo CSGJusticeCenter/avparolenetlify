@@ -44,10 +44,10 @@ ncrp_pe_type_2020_prop <- parole_eligibility_table %>%
                names_to = "type",
                values_to = "prop") %>%
   mutate(type = case_when(
-    type == "current_new_crime_perc"          ~ "New Crime Population Currently Eligible",
-    type == "future_1_5_years_new_crime_perc" ~ "New Crime Population Eligible in 1-5 Years",
-    type == "future_6_years_new_crime_perc"   ~ "New Crime Population Eligible in 6+ Years",
-    type == "other_perc"                      ~ "Other Population Currently/Future Eligible",
+    type == "current_new_crime_perc"          ~ "New Crime Population<br>Currently Eligible",
+    type == "future_1_5_years_new_crime_perc" ~ "New Crime Population<br>Eligible in 1-5 Years",
+    type == "future_6_years_new_crime_perc"   ~ "New Crime Population<br>Eligible in 6+ Years",
+    type == "other_perc"                      ~ "Other Population<br>Currently/Future Eligible",
     type == "missing_perc"                    ~ "Missing Data"
   ))
 
@@ -70,10 +70,10 @@ ncrp_pe_type_2020_count <- parole_eligibility_table %>%
                names_to = "type",
                values_to = "n") %>%
   mutate(type = case_when(
-    type == "current_new_crime_count"          ~ "New Crime Population Currently Eligible",
-    type == "future_1_5_years_new_crime_count" ~ "New Crime Population Eligible in 1-5 Years",
-    type == "future_6_years_new_crime_count"   ~ "New Crime Population Eligible in 6+ Years",
-    type == "other_count"                      ~ "Other Population Currently/Future Eligible",
+    type == "current_new_crime_count"          ~ "New Crime Population<br>Currently Eligible",
+    type == "future_1_5_years_new_crime_count" ~ "New Crime Population<br>Eligible in 1-5 Years",
+    type == "future_6_years_new_crime_count"   ~ "New Crime Population<br>Eligible in 6+ Years",
+    type == "other_count"                      ~ "Other Population<br>Currently/Future Eligible",
     type == "missing_count"                    ~ "Missing Data"
   ))
 
@@ -82,10 +82,10 @@ ncrp_pe_type_2020 <- ncrp_pe_type_2020_prop %>%
   left_join(ncrp_pe_type_2020_count, by = c("state", "rptyear", "type")) %>%
    mutate(type = factor(type,
                         levels = c("Missing Data",
-                                   "Other Population Currently/Future Eligible",
-                                   "New Crime Population Eligible in 6+ Years",
-                                   "New Crime Population Eligible in 1-5 Years",
-                                   "New Crime Population Currently Eligible"))) %>%
+                                   "Other Population<br>Currently/Future Eligible",
+                                   "New Crime Population<br>Eligible in 6+ Years",
+                                   "New Crime Population<br>Eligible in 1-5 Years",
+                                   "New Crime Population<br>Currently Eligible"))) %>%
    mutate(tooltip =
             paste0("<b>", state, "</b><br><br>",
                    "<b>", type, "</b><br><br>",
@@ -122,8 +122,31 @@ all_stackedbar_pe_type_2020 <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
-    hc_legend(reversed = TRUE
-              #enabled = FALSE
+    hc_legend(
+      layout = "horizontal",
+      align = "center",
+      verticalAlign = "top",
+      reversed = TRUE,
+      itemMarginTop = 10,
+      labelFormatter = JS("
+      function() {
+        var text = this.name;
+        switch(text) {
+          case 'Missing Data':
+            return '<span style=\"font-weight: normal;\">' + text + '</span>';
+          case 'New Crime Population<br>Currently Eligible':
+            return '<span style=\"font-weight: normal;\">' + text + '</span>';
+          case 'Other Population<br>Currently/Future Eligible':
+            return '<span style=\"font-weight: normal;\">' + text + '</span>';
+          case 'New Crime Population<br>Eligible in 6+ Years':
+            return '<span style=\"font-weight: normal;\">' + text + '</span>';
+          case 'New Crime Population<br>Eligible in 1-5 Years':
+            return '<span style=\"font-weight: normal;\">' + text + '</span>';
+          default:
+            return '<span style=\"font-weight: bold;\">' + text + '</span>';
+        }
+      }
+    ")
     ) %>%
     hc_colors(c("gray", orange, yellow, purple, teal)) %>%
     hc_plotOptions(
@@ -152,7 +175,10 @@ all_stackedbar_pe_type_2020$Georgia
 
 ################################################################################
 
-# Sentence about parole eligible prison population
+# Sentence about parole eligible prison population:
+
+# In 2020, there were ___ people who were eligible for parole but remained incarcerated for a new crime.
+# This group made up ___% of the prison population.
 
 # Obtained from NCRP year end population
 
@@ -166,7 +192,7 @@ all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) 
 
   df1 <- ncrp_pe_type_2020 %>%
     filter(state == x &
-             type == "New Crime Population Currently Eligible")
+             type == "New Crime Population<br>Currently Eligible")
 
   sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
                       " people who were eligible for parole but remained incarcerated for a new crime. This group made up ",
@@ -235,8 +261,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   highcharts <-
     highchart() %>%
     hc_add_series(df1, type = "column",
-                  hcaes(x = factor(race), y = n, color = color
-                  ),
+                  hcaes(x = factor(race), y = n, color = color),
                   dataLabels = list(enabled = TRUE, format = "{point.n_label:,.0f}",
                                     style = list(fontWeight = "regular",
                                                  fontSize = "1em",
@@ -456,8 +481,6 @@ for (folder in theseFOLDERS){
   save(all_sentence_parole_elgibility_race,    file=file.path(folder, "all_sentence_parole_elgibility_race.rds"))
   save(all_bar_parole_elgibility_race,         file=file.path(folder, "all_bar_parole_elgibility_race.rds"))
 
-  save(current_ped_2020_offenses,
-       file=file.path(folder, "current_ped_2020_offenses.rds"))
   save(all_sentence_parole_elgibility_offense,
        file=file.path(folder, "all_sentence_parole_elgibility_offense.rds"))
   save(all_pie_parole_elgibility_offense_new_crime,

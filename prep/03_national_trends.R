@@ -68,26 +68,6 @@ parole_eligibility_table <- ncrp_parole_eligible_all %>%
   pivot_wider(names_from = name, values_from = value) %>%
   clean_names()
 
-# Get population of people who are in prison for a new crime
-# Get number and prop of people by eligibility statuses by state and report year
-# Reformat for table viewing
-# parole_eligibility_table <- ncrp_yearendpop %>%
-#   filter(admtype == "New court commitment") %>%
-#   group_by(state, rptyear) %>%
-#   count(parelig_status) %>%
-#   mutate(
-#     prop = n/sum(n),
-#   ) %>%
-#   ungroup() %>%
-#   pivot_longer(cols = c(n, prop), names_to = "type", values_to = "value") %>%
-#   mutate(name = case_when(
-#     type == "n"    ~ paste(parelig_status, "count"),
-#     type == "prop" ~ paste(parelig_status, "perc.")
-#   )) %>%
-#   select(state, rptyear, yearendpop, name, value) %>%
-#   pivot_wider(names_from = name, values_from = value) %>%
-#   clean_names()
-
 # Filter to 2020
 parole_eligibility_table_2020 <- parole_eligibility_table %>%
   filter(rptyear == 2020)
@@ -115,8 +95,7 @@ parole_eligibility_table_2020 <-
          current_new_crime_perc,
          future_1_5_years_new_crime_perc,
          future_6_years_new_crime_perc,
-         missing_perc
-         )
+         missing_perc)
 
 
 

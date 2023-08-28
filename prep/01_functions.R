@@ -183,9 +183,9 @@ hc_theme_jc <- hc_theme(
     align = "center",
     style = list(
       fontFamily = "Graphik",
-      fontWeight = "bold",
+      fontWeight = "regular",
       color = neutralBlackText,
-      fontSize = "16px"
+      fontSize = "14px"
     )
   ),
   legend = list(
@@ -196,7 +196,7 @@ hc_theme_jc <- hc_theme(
   xAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText,
                                                fontSize = "1em",
-                                               fontWeight = "bold")),
+                                               fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
     minorGridLineColor = "transparent",
@@ -252,7 +252,8 @@ hc_theme_map_jc <- hc_theme_merge(
       areaspline = list(marker = list(enabled = TRUE))
     ),
     legend = list(
-      itemStyle = list(fontSize = "16px", fontWeight = "regular")
+      itemStyle = list(fontSize = "16px",
+                       fontWeight = "regular")
     )
   )
 )
@@ -313,223 +314,39 @@ hc_theme_jc_line <- hc_theme(
 
 
 
+# create all percent bar chart for each admission type and offense type
+fnc_create_all_percent_bar_chart_released_at_ped <- function(selected_offgeneral) {
+  states <- ncrp_released_at_ped_offgeneral_2020 %>%
+    filter(offgeneral == selected_offgeneral) %>%
+    pull(state) %>%
+    unique()
 
+  all_bar <- map(states, function(x) {
 
+    df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
+      filter(state == x, offgeneral == selected_offgeneral) %>%
+      arrange(match(released_at_ped_status, desired_order))
 
-
-
-
-
-
-
-
-
-# Create donut chart with overall finding label in middle
-fnc_donut_chart <- function(df,
-                            df_pct,
-                            x_variable,
-                            y_variable,
-                            accessibility_text){
-
-  df$x_variable <- get(x_variable, df)
-  df$y_variable <- get(y_variable, df)
-
-  df_pct$x_variable <- get(x_variable, df_pct)
-  df_pct$y_variable <- get(y_variable, df_pct)
-
-  highchart() %>%
-
-    hc_add_series(type = "pie",
-                  data = df_pct,
-                  hcaes(x_variable, y_variable),
-                  size = "100%",
-                  center = c(50, 50),
-                  innerSize="60%",
-                  dataLabels = list(
-                    style = list(fontSize = "2.7em",
-                                 color = teal),
-                    enabled = TRUE,
-                    distance= -85,
-                    format = "{point.prop_label}")) %>%
-    hc_add_series(type = "pie",
-                  data = df,
-                  hcaes(x_variable, y_variable),
-                  size = "100%",
-                  center = c(50, 50),
-                  innerSize="60%",
-                  dataLabels = list(enabled = FALSE)) %>%
-
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    # hc_add_theme(hc_theme_jc_pie) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_plotOptions(innersize = "50%",
-                   startAngle = 90,
-                   endAngle = 90,
-                   center = list('50%', '75%'),
-                   size = '75%',
-                   series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
-
-
-  # highchart() %>%
-  #
-  #   hc_add_series(type = "pie",
-  #                 data = df_pct,
-  #                 hcaes(x_variable, y_variable),
-  #                 size = "100%",
-  #                 center = c(50, 50),
-  #                 innerSize="60%",
-  #                 dataLabels = list(
-  #                   style = list(fontSize = "2em",
-  #                                color = neutralBlackText),
-  #                   enabled = TRUE,
-  #                   distance= -60,
-  #                   format = point_format)) %>%
-  #   hc_add_series(type = "pie",
-  #                 data = df,
-  #                 hcaes(x_variable, y_variable),
-  #                 size = "100%",
-  #                 center = c(50, 50),
-  #                 innerSize="60%",
-  #                 dataLabels = list(enabled = FALSE)) %>%
-  #
-  #   hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-  #   hc_add_theme(hc_theme_jc_pie) %>%
-  #   hc_plotOptions(innersize = "50%",
-  #                  startAngle = 90,
-  #                  endAngle = 90,
-  #                  center = list('50%', '75%'),
-  #                  size = '110%',
-  #                  series = list(animation = FALSE,
-  #                                cursor = "pointer",
-  #                                borderWidth = 3),
-  #                  accessibility = list(enabled = TRUE,
-  #                                       keyboardNavigation = list(enabled = TRUE),
-  #                                       linkedDescription = accessibility_text,
-  #                                       landmarkVerbosity = "one"),
-  #                  area = list(accessibility = list(description = accessibility_text)))
-}
-
-
-# # Create pie chart with labels
-# fnc_pie_chart <- function(df,
-#                           x_variable,
-#                           y_variable,
-#                           point_format,
-#                           accessibility_text){
-#
-#   df$x_variable <- get(x_variable, df)
-#   df$y_variable <- get(y_variable, df)
-#
-#   df %>%
-#     hchart("pie",
-#            # margin = c(0, NA, 0, NA), not working
-#            # size = "70%", makes too big
-#            hcaes(x = x_variable, y = y_variable),
-#            dataLabels = list(
-#              style = list(fontSize = "1.25em",
-#                           fontWeight = "bold",
-#                           alignTo = "connectors",
-#                           color = neutralBlackText),
-#              enabled = TRUE,
-#              # y = -10,
-#              format = point_format)) %>%
-#     hc_chart(plotBackgroundColor = "none",
-#              plotBorderWidth = 0,
-#              plotShadow = FALSE,
-#              margin = c(100, 0, 18, 0)
-#              # spacing = c(10, 0, 0, 0),
-#     ) %>%
-#     hc_yAxis(maxPadding = 0) %>%
-#     hc_add_theme(hc_theme_jc) %>%
-#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-#     hc_exporting(enabled = FALSE) %>%
-#     hc_plotOptions(#pie = list(startAngle = 100),
-#       series = list(animation = FALSE,
-#                     cursor = "pointer",
-#                     borderWidth = 3),
-#       accessibility = list(enabled = TRUE,
-#                            keyboardNavigation = list(enabled = TRUE),
-#                            linkedDescription = accessibility_text,
-#                            landmarkVerbosity = "one"),
-#       area = list(accessibility = list(description = accessibility_text)))
-# }
-
-# # Create pie chart with labels
-# fnc_pie_chart_highlight <- function(df,
-#                                     # state_name,
-#                                     x_variable,
-#                                     y_variable,
-#                                     point_format,
-#                                     accessibility_text){
-#
-#   df$x_variable <- get(x_variable, df)
-#   df$y_variable <- get(y_variable, df)
-#
-#   df %>%
-#     hchart("pie",
-#            hcaes(x = x_variable, y = y_variable),
-#            dataLabels = list(
-#              style = list(fontSize = "0.9em",
-#                           fontWeight = "regular",
-#                           alignTo = "connectors",
-#                           color = neutralBlackText),
-#              enabled = TRUE,
-#              format = point_format)) %>%
-#     hc_add_theme(hc_theme_jc) %>%
-#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-#     hc_exporting(enabled = FALSE) %>%
-#     hc_plotOptions(
-#       pie = list(innerSize = "60%"),
-#       series = list(animation = FALSE,
-#                     cursor = "pointer"),
-#       accessibility = list(enabled = TRUE,
-#                            keyboardNavigation = list(enabled = TRUE),
-#                            linkedDescription = accessibility_text,
-#                            landmarkVerbosity = "one"),
-#       area = list(accessibility = list(description = accessibility_text)))
-# }
-
-
-
-
-# Create bar chart with labels showing PE status by adm type
-fnc_percent_bar_chart_pestatus_admtype <-
-
-  function(df, point_format, accessibility_text) {
+    # assign color for each race
+    df1$color <- case_when(df1$released_at_ped_status == "Released Before Parole Eligibility Year" ~ purple,
+                           df1$released_at_ped_status == "Released on Parole Eligibility Year" ~ teal,
+                           df1$released_at_ped_status == "Released After Parole Eligibility Year" ~ orange)
+    df1$color <- htmltools::parseCssColors(df1$color)
 
     highcharts <- highchart() %>%
-      hc_chart(type = "column") %>%
-      hc_xAxis(categories = c("New court commitment",
-                              "Parole return/revocation")) %>%
-      hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
-      hc_add_series(data = subset(df, released_at_ped_status == "Released Before Parole Eligibility Year"),
-                    name = "Released Before Parole Eligibility Year",
-                    type = "column",
-                    dataLabels = list(enabled = TRUE, format = point_format,
-                                      style = list(fontWeight = "regular")),
-                    hcaes(x = admtype, y = prop)) %>%
-      hc_add_series(data = subset(df, released_at_ped_status == "Released on Parole Eligibility Year"),
-                    name = "Released on Parole Eligibility Year",
-                    type = "column",
-                    dataLabels = list(enabled = TRUE, format = point_format,
-                                      style = list(fontWeight = "regular")),
-                    hcaes(x = admtype, y = prop)) %>%
-      hc_add_series(data = subset(df, released_at_ped_status == "Released After Parole Eligibility Year"),
-                    name = "Released After Parole Eligibility Year",
-                    type = "column",
-                    dataLabels = list(enabled = TRUE, format = point_format,
-                                      style = list(fontWeight = "regular")),
-                    hcaes(x = admtype, y = prop)) %>%
+      hc_add_series(df1, type = "column",
+                    hcaes(x = factor(released_at_ped_status), y = n, color = color),
+                    dataLabels = list(enabled = TRUE,
+                                      format = "{point.n_label:,.0f}",
+                                      style = list(fontWeight = "regular",
+                                                   fontSize = "1em",
+                                                   fontFamily = "Graphik",
+                                                   textOutline = 0))) %>%
+      hc_xAxis(categories = df1$released_at_ped_status) %>%
+      hc_yAxis(labels = list(enabled = FALSE)) %>%
       hc_add_theme(hc_theme_jc) %>%
-      hc_colors(colors = c(purple, teal, orange)) %>%
       hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+      hc_legend(enabled = FALSE) %>%
       hc_exporting(enabled = FALSE) %>%
       hc_plotOptions(series = list(animation = FALSE,
                                    cursor = "pointer",
@@ -537,27 +354,10 @@ fnc_percent_bar_chart_pestatus_admtype <-
                                    minPointLength = 4),
                      accessibility = list(enabled = TRUE,
                                           keyboardNavigation = list(enabled = TRUE),
-                                          linkedDescription = accessibility_text,
+                                          linkedDescription = "TBD",
                                           landmarkVerbosity = "one"),
-                     area = list(accessibility = list(description = accessibility_text))
-      )
+                     area = list(accessibility = list(description = "TBD")))
 
-  }
-
-# create all percent bar chart for each admission type and offense type
-fnc_create_all_percent_bar_chart_pestatus_admtype <- function(selected_offgeneral) {
-  states <- ncrp_released_at_ped_offgeneral_2020 %>%
-    filter(offgeneral == selected_offgeneral) %>%
-    pull(state) %>%
-    unique()
-
-  all_bar <- map(states, function(x) {
-    df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
-      filter(state == x, offgeneral == selected_offgeneral) %>%
-      arrange(match(released_at_ped_status, desired_order))
-    highcharts <- fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                                         point_format = "{point.prop_label}",
-                                                         accessibility_text = "TBD.")
     return(highcharts)
   })
 

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases_from_prison.R
 # Authors: Mari Roberts
-# Date last updated: August 15, 2023 (MAR)
+# Date last updated: August 28, 2023 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -153,7 +153,8 @@ ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
   count(released_at_ped_status) %>%
   mutate(prop = (n/sum(n))*100,
          prop_label = paste0(round(prop, 0), "%"),
-         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
+         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>"),
+         n_label = formattable::comma(n, 0)) %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
                   "Timing of Release: <b>",
@@ -182,7 +183,8 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
   count(released_at_ped_status) %>%
   mutate(prop = (n/sum(n))*100,
          prop_label = paste0(round(prop, 0), "%"),
-         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>")) %>%
+         chart_label = paste0(released_at_ped_status, " <b>", prop_label, "</b>"),
+         n_label = formattable::comma(n, 0)) %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
                   "Timing of Release: <b>",
@@ -198,47 +200,78 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
 ########
 # Overall
 ########
+
 all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_released_at_ped_2020 %>% filter(state == x) %>%
+
+  df1 <- ncrp_released_at_ped_2020 %>% filter(state == "Georgia") %>%
     arrange(match(released_at_ped_status, desired_order))
+
+  # assign color for each race
+  df1$color <- case_when(df1$released_at_ped_status == "Released Before Parole Eligibility Year" ~ purple,
+                         df1$released_at_ped_status == "Released on Parole Eligibility Year" ~ teal,
+                         df1$released_at_ped_status == "Released After Parole Eligibility Year" ~ orange)
+  df1$color <- htmltools::parseCssColors(df1$color)
+
   highcharts <-
-    fnc_percent_bar_chart_pestatus_admtype(df = df1,
-                                           point_format = "{point.prop_label}",
-                                           accessibility_text = "TBD.")
+    highchart() %>%
+    hc_add_series(df1, type = "column",
+                  hcaes(x = factor(released_at_ped_status), y = n, color = color),
+                  dataLabels = list(enabled = TRUE,
+                                    format = "{point.n_label:,.0f}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = df1$released_at_ped_status) %>%
+    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = FALSE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
   return(highcharts)
 })
 
 all_bar_released_at_ped_2020 <- setNames(all_bar_released_at_ped_2020, states)
 
+
 ########
 # Other/unspecified
 ########
 all_bar_released_at_ped_other_2020 <-
-  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Other/unspecified")
+  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Other/unspecified")
 
 ########
 # Property
 ########
 all_bar_released_at_ped_property_2020 <-
-  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Property")
+  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Property")
 
 ########
 # Violent
 ########
 all_bar_released_at_ped_violent_2020 <-
-  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Violent")
+  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Violent")
 
 ########
 # Public Order
 ########
 all_bar_released_at_ped_publicorder_2020 <-
-  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Public order")
+  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Public order")
 
 ########
 # Drugs
 ########
 all_bar_released_at_ped_drugs_2020 <-
-  fnc_create_all_percent_bar_chart_pestatus_admtype(selected_offgeneral = "Drugs")
+  fnc_create_all_percent_bar_chart_released_at_ped(selected_offgeneral = "Drugs")
 
 
 
