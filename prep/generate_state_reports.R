@@ -16,14 +16,13 @@ library(tidyverse)
 source("prep/00_library.R")
 source("prep/01_functions.R")
 # source("prep/02_import.R")
-# source("prep/03_national_trends.R")
-# source("prep/04_tab_parole_eligibility.R")
-# source("prep/05_tab_prison_population.R")
-# source("prep/06_tab_releases_from_prison.R") # error
-# source("prep/07_tab_disparities.R")
-# source("prep/08_missing_data.R")
-# source("prep/offenses.R")
-# source("prep/rri.R")
+source("prep/03_national_trends.R")
+source("prep/04_tab_parole_eligibility.R")
+source("prep/05_tab_prison_population.R")
+source("prep/06_tab_releases_from_prison.R")
+source("prep/07_tab_disparities.R")
+source("prep/08_missing_data.R")
+source("prep/rri.R")
 
 
 # save working directory

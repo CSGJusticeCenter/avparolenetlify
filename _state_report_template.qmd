@@ -383,60 +383,60 @@ if (state_for_report %in% names(all_bar_rri_sentence_length_hispanic)) {
 # } else {
 #   state_time_between_release_ped_by_race <- "No Data"
 # }
-
-
-#####
-# Predicted Probabilities
-#####
-
-# define function to create reactable tables for different predicted probabilities
-fnc_create_reactable <- function(df, variable_name, variable_pp, col_name) {
-  
-  df$variable_name <- get(variable_name, df)
-  df$variable_pp <- get(variable_pp, df)
-  
-  df1 <- df %>%
-    filter(state == state_for_report) %>%
-    select(variable_name, variable_pp) %>%
-    distinct()
-
-  reactable(df1,
-            style = hc_reactable_style,
-            theme = hc_reactable_theme,
-            defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                   align = "left"),
-            compact = TRUE,
-            fullWidth = FALSE,
-            columns = list(
-              variable_name = colDef(name = col_name, minWidth = 200),
-              variable_pp = colDef(name = "",
-                                   minWidth = 175,
-                                   align = "right",
-                                   format = colFormat(percent = TRUE,
-                                                      digits = 0)))
-  )
-}
-
-# apply function to different variables
-# race
-table_pp_by_race <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "race", "pp_by_race", "Race/Ethnicity")
-
-# sex
-table_pp_by_sex <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "sex", "pp_by_sex", "Gender")
-
-# offense
-table_pp_by_offgeneral <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "offgeneral", "pp_by_offgeneral", "Most Serious Sentenced Offense")
-
-# sentence length
-table_pp_by_sentlgth <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "sentlgth", "pp_by_sentlgth", "Maximum Sentence Length")
+# 
+# 
+# #####
+# # Predicted Probabilities
+# #####
+# 
+# # define function to create reactable tables for different predicted probabilities
+# fnc_create_reactable <- function(df, variable_name, variable_pp, col_name) {
+#   
+#   df$variable_name <- get(variable_name, df)
+#   df$variable_pp <- get(variable_pp, df)
+#   
+#   df1 <- df %>%
+#     filter(state == state_for_report) %>%
+#     select(variable_name, variable_pp) %>%
+#     distinct()
+# 
+#   reactable(df1,
+#             style = hc_reactable_style,
+#             theme = hc_reactable_theme,
+#             defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                    align = "left"),
+#             compact = TRUE,
+#             fullWidth = FALSE,
+#             columns = list(
+#               variable_name = colDef(name = col_name, minWidth = 200),
+#               variable_pp = colDef(name = "",
+#                                    minWidth = 175,
+#                                    align = "right",
+#                                    format = colFormat(percent = TRUE,
+#                                                       digits = 0)))
+#   )
+# }
+# 
+# # apply function to different variables
+# # race
+# table_pp_by_race <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "race", "pp_by_race", "Race/Ethnicity")
+# 
+# # sex
+# table_pp_by_sex <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "sex", "pp_by_sex", "Gender")
+# 
+# # offense
+# table_pp_by_offgeneral <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "offgeneral", "pp_by_offgeneral", "Most Serious Sentenced Offense")
+# 
+# # sentence length
+# table_pp_by_sentlgth <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "sentlgth", "pp_by_sentlgth", "Maximum Sentence Length")
 
 ```
 
