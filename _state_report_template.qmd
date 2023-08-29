@@ -198,6 +198,21 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 ################################################################################
 
 ###################
+# Max out
+###################
+
+# save pie chart of whether people maxed our or didn't max out - new crime
+if (state_for_report %in% names(all_pie_maxout)) {
+  state_pie_maxout <- 
+    all_pie_maxout[[state_for_report]] %>% 
+    hc_size(width = 600, height = 300) %>% 
+    hc_title(text = "Percentage of People who Maxed Out") %>% 
+    hc_subtitle(text = "(People in Prison for a New Crime)")
+} else {
+  state_pie_maxout <- "No Data"
+}
+
+###################
 # Released before, on or after parole eligibility year
 ###################
 
@@ -626,6 +641,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Releases from Prison"), br(),
+    state_pie_maxout, br(), br(),
     "TBD Visualization: Conditional vs Unconditional Releases", br(), br(),
     "TBD Visualization: Percentage/number of people who maxed out even though they were parole eligible. Mandatory release date vs actual release date, supervised vs unsupervised release.",
     br(), br(), br(), br(), 

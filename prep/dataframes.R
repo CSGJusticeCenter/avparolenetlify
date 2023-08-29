@@ -43,6 +43,9 @@ load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_
 
 ################################################################################
 
+# Maxout
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_maxout.rds"))
+
 # Releases from Prison
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_publicorder_2020.rds"))

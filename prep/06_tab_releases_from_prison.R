@@ -54,9 +54,9 @@ states <- unique(ncrp_released_at_ped_2020$state)
 
 # Get number and prop of people by release year, parole eligibility year, and offense type
 ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
+  filter(admtype == "New court commitment") %>%
   filter(!is.na(released_at_ped_status) &
          !is.na(offgeneral)) %>%
-  filter(admtype == "New court commitment") %>%
   group_by(state, offgeneral) %>%
   count(released_at_ped_status) %>%
   mutate(prop = (n/sum(n))*100,
@@ -196,10 +196,10 @@ ncrp_releases <- ncrp_releases %>%
 ########
 
 ncrp_proportion_served_2020 <- ncrp_releases %>%
+  filter(admtype == "New court commitment") %>%
   filter(rptyear == 2020 &
            !is.na(offgeneral) &
            !is.na(timesrvd_rel_vs_sentlgth)) %>%
-  filter(admtype == "New court commitment") %>%
   filter(reltype == "Unconditional release" |
            reltype == "Conditional release") %>%
   group_by(state, rptyear) %>%
@@ -273,10 +273,10 @@ all_bar_los_overview_2020 <- setNames(all_bar_los_overview_2020, states)
 ########
 
 ncrp_proportion_served_offenses_2020 <- ncrp_releases %>%
+  filter(admtype == "New court commitment") %>%
   filter(rptyear == 2020 &
            !is.na(offgeneral) &
            !is.na(timesrvd_rel_vs_sentlgth)) %>%
-  filter(admtype == "New court commitment") %>%
   filter(reltype == "Unconditional release" |
            reltype == "Conditional release") %>%
   group_by(state, rptyear, offgeneral) %>%

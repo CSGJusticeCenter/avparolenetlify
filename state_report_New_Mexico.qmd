@@ -119,7 +119,7 @@ if (state_for_report %in% names(all_line_pop_released_to_parole)) {
 if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
   state_stackedbar_pe_type_2020 <- 
     all_stackedbar_pe_type_2020[[state_for_report]] %>% 
-    hc_size(height = 300) %>%
+    hc_size(height = 250) %>%
     hc_title(text = "Distribution of Parole Eligibility Status Among the Prison Population in 2020")
 } else {
   state_stackedbar_pe_type_2020 <- "No Data"
@@ -149,8 +149,8 @@ if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
   state_bar_parole_elgibility_race <- 
     all_bar_parole_elgibility_race[[state_for_report]] %>% 
     hc_size(width = 600, height = 350) %>% 
-    hc_title(text = "People who are Parole Eligible but Still in Prison by Race") %>% 
-    hc_subtitle(text = "(People in Prison for a New Crime in 2020)")
+    hc_title(text = "People who are Parole Eligible but Still in Prison by Race in 2020") %>% 
+    hc_subtitle(text = "(People in Prison for a New Crime)")
 } else {
   state_bar_parole_elgibility_race <- "No Data"
 }
@@ -167,14 +167,13 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_race)) {
 # Offenses
 ###################
 
-
 # save pie chart of most serious sentenced offense by state - new crime
 if (state_for_report %in% names(all_pie_parole_elgibility_offense_new_crime)) {
   state_pie_parole_elgibility_offense_new_crime <- 
     all_pie_parole_elgibility_offense_new_crime[[state_for_report]] %>% 
     hc_size(width = 600, height = 300) %>% 
-    hc_title(text = "Most Serious Sentenced Offense for Parole-Eligible People in Prison") %>% 
-    hc_subtitle(text = "(People in Prison for a New Crime in 2020)")
+    hc_title(text = "Most Serious Sentenced Offense for Parole-Eligible People in Prison in 2020") %>% 
+    hc_subtitle(text = "(People in Prison for a New Crime)")
 } else {
   state_pie_parole_elgibility_offense_new_crime <- "No Data"
 }
@@ -191,70 +190,6 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 
 
 
-# save sentence duration by by state
-if (state_for_report %in% names(all_bar_sentence_overview_2020)) {
-  state_bar_sentence_overview_2020 <- 
-    all_bar_sentence_overview_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Sentence Duration for All Offenses: Parole Revocation vs. New Crime")
-} else {
-  state_bar_sentence_overview_2020 <- "No Data"
-}
-
-# save sentence duration by offense type (violent) and by state
-if (state_for_report %in% names(all_bar_sentence_violent_2020)) {
-  state_bar_sentence_violent_2020 <- 
-    all_bar_sentence_violent_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Sentence Duration for Violent Offenses: Parole Revocation vs. New Crime")
-} else {
-  state_bar_sentence_violent_2020 <- "No Data"
-}
-
-# save sentence duration by offense type (drugs) and by state
-if (state_for_report %in% names(all_bar_sentence_drugs_2020)) {
-  state_bar_sentence_drugs_2020 <- 
-    all_bar_sentence_drugs_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Sentence Duration for Drug Offenses: Parole Revocation vs. New Crime")
-} else {
-  state_bar_sentence_drugs_2020 <- "No Data"
-}
-
-# save sentence duration by offense type (property) and by state
-if (state_for_report %in% names(all_bar_sentence_property_2020)) {
-  state_bar_sentence_property_2020 <- 
-    all_bar_sentence_property_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Sentence Duration for Property Offenses: Parole Revocation vs. New Crime")
-} else {
-  state_bar_sentence_property_2020 <- "No Data"
-}
-
-# save sentence duration by offense type (public order) and by state
-if (state_for_report %in% names(all_bar_sentence_publicorder_2020)) {
-  state_bar_sentence_publicorder_2020 <- 
-    all_bar_sentence_publicorder_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Sentence Duration for Public Order Offenses: Parole Revocation vs. New Crime")
-} else {
-  state_bar_sentence_publicorder_2020 <- "No Data"
-}
-
-# save sentence duration by offense type (other) and by state
-if (state_for_report %in% names(all_bar_sentence_other_2020)) {
-  state_bar_sentence_other_2020 <- 
-    all_bar_sentence_other_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Sentence Duration for Other Offenses: Parole Revocation vs. New Crime")
-} else {
-  state_bar_sentence_other_2020 <- "No Data"
-}
-
-
-
-
-
 
 ################################################################################
 
@@ -262,12 +197,32 @@ if (state_for_report %in% names(all_bar_sentence_other_2020)) {
 
 ################################################################################
 
-# save adm type by release timing by state
+###################
+# Max out
+###################
+
+# save pie chart of whether people maxed our or didn't max out - new crime
+if (state_for_report %in% names(all_pie_maxout)) {
+  state_pie_maxout <- 
+    all_pie_maxout[[state_for_report]] %>% 
+    hc_size(width = 600, height = 300) %>% 
+    hc_title(text = "Percentage of People who Maxed Out") %>% 
+    hc_subtitle(text = "(People in Prison for a New Crime)")
+} else {
+  state_pie_maxout <- "No Data"
+}
+
+###################
+# Released before, on or after parole eligibility year
+###################
+
+# save release timing by state
 if (state_for_report %in% names(all_bar_released_at_ped_2020)) {
   state_bar_released_at_ped_2020 <- 
     all_bar_released_at_ped_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Timing of Release for All Offenses: Parole Revocation vs. New Crime")
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Parole Eligibility Year vs. Actual Release Year in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/All Offenses)")
 } else {
   state_bar_released_at_ped_2020 <- "No Data"
 }
@@ -276,8 +231,9 @@ if (state_for_report %in% names(all_bar_released_at_ped_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_violent_2020)) {
   state_bar_released_at_ped_violent_2020 <- 
     all_bar_released_at_ped_violent_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Timing of Release for Violent Offenses: Parole Revocation vs. New Crime")
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Parole Eligibility Year vs. Actual Release Year in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Violent Offense)")
 } else {
   state_bar_released_at_ped_violent_2020 <- "No Data"
 }
@@ -286,8 +242,9 @@ if (state_for_report %in% names(all_bar_released_at_ped_violent_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_publicorder_2020)) {
   state_bar_released_at_ped_publicorder_2020 <- 
     all_bar_released_at_ped_publicorder_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Timing of Release for Public Order Offenses: Parole Revocation vs. New Crime")
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Parole Eligibility Year vs. Actual Release Year in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Public Order Offense)")
 } else {
   state_bar_released_at_ped_publicorder_2020 <- "No Data"
 }
@@ -296,8 +253,9 @@ if (state_for_report %in% names(all_bar_released_at_ped_publicorder_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_property_2020)) {
   state_bar_released_at_ped_property_2020 <- 
     all_bar_released_at_ped_property_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Timing of Release for Property Offenses: Parole Revocation vs. New Crime")
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Parole Eligibility Year vs. Actual Release Year in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Property Offense)")
 } else {
   state_bar_released_at_ped_property_2020 <- "No Data"
 }
@@ -306,8 +264,9 @@ if (state_for_report %in% names(all_bar_released_at_ped_property_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_drugs_2020)) {
   state_bar_released_at_ped_drugs_2020 <- 
     all_bar_released_at_ped_drugs_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Timing of Release for Drug Offenses: Parole Revocation vs. New Crime")
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Parole Eligibility Year vs. Actual Release Year in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Drug Offense)")
 } else {
   state_bar_released_at_ped_drugs_2020 <- "No Data"
 }
@@ -316,11 +275,84 @@ if (state_for_report %in% names(all_bar_released_at_ped_drugs_2020)) {
 if (state_for_report %in% names(all_bar_released_at_ped_other_2020)) {
   state_bar_released_at_ped_other_2020 <- 
     all_bar_released_at_ped_other_2020[[state_for_report]] %>%
-    hc_size(height = 300, width = 500) %>%
-    hc_title(text = "Timing of Release for Other Offenses: Parole Revocation vs. New Crime")
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Parole Eligibility Year vs. Actual Release Year in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Other Offense)")
 } else {
   state_bar_released_at_ped_other_2020 <- "No Data"
 }
+
+###################
+# Length of stay - full sentence length served vs less than sentence length served
+###################
+
+# save sentence duration by by state
+if (state_for_report %in% names(all_bar_los_overview_2020)) {
+  state_bar_los_overview_2020 <- 
+    all_bar_los_overview_2020[[state_for_report]] %>%
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Sentence Length Served for People Released in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/All Offenses)")
+} else {
+  state_bar_los_overview_2020 <- "No Data"
+}
+
+# save sentence duration by offense type (violent) and by state
+if (state_for_report %in% names(all_bar_los_violent_2020)) {
+  state_bar_los_violent_2020 <- 
+    all_bar_los_violent_2020[[state_for_report]] %>%
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Sentence Length Served for People Released in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Violent Offense)")
+} else {
+  state_bar_los_violent_2020 <- "No Data"
+}
+
+# save sentence duration by offense type (drugs) and by state
+if (state_for_report %in% names(all_bar_los_drugs_2020)) {
+  state_bar_los_drugs_2020 <- 
+    all_bar_los_drugs_2020[[state_for_report]] %>%
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Sentence Length Served for People Released in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Drug Offense)")
+} else {
+  state_bar_los_drugs_2020 <- "No Data"
+}
+
+# save sentence duration by offense type (property) and by state
+if (state_for_report %in% names(all_bar_los_property_2020)) {
+  state_bar_los_property_2020 <- 
+    all_bar_los_property_2020[[state_for_report]] %>%
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Sentence Length Served for People Released in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Property Offense)")
+} else {
+  state_bar_los_property_2020 <- "No Data"
+}
+
+# save sentence duration by offense type (public order) and by state
+if (state_for_report %in% names(all_bar_los_publicorder_2020)) {
+  state_bar_los_publicorder_2020 <- 
+    all_bar_los_publicorder_2020[[state_for_report]] %>%
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Sentence Length Served for People Released in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Public Order Offense)")
+} else {
+  state_bar_los_publicorder_2020 <- "No Data"
+}
+
+# save sentence duration by offense type (other) and by state
+if (state_for_report %in% names(all_bar_los_other_2020)) {
+  state_bar_los_other_2020 <- 
+    all_bar_los_other_2020[[state_for_report]] %>%
+    hc_size(height = 100, width = 200) %>%
+    hc_title(text = "Sentence Length Served for People Released in 2020") %>% 
+    hc_subtitle(text = "(For People Incarcerated for New Crime/Other Offense)")
+} else {
+  state_bar_los_other_2020 <- "No Data"
+}
+
+
 
 
 
@@ -366,60 +398,60 @@ if (state_for_report %in% names(all_bar_rri_sentence_length_hispanic)) {
 # } else {
 #   state_time_between_release_ped_by_race <- "No Data"
 # }
-
-
-#####
-# Predicted Probabilities
-#####
-
-# define function to create reactable tables for different predicted probabilities
-fnc_create_reactable <- function(df, variable_name, variable_pp, col_name) {
-  
-  df$variable_name <- get(variable_name, df)
-  df$variable_pp <- get(variable_pp, df)
-  
-  df1 <- df %>%
-    filter(state == state_for_report) %>%
-    select(variable_name, variable_pp) %>%
-    distinct()
-
-  reactable(df1,
-            style = hc_reactable_style,
-            theme = hc_reactable_theme,
-            defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                   align = "left"),
-            compact = TRUE,
-            fullWidth = FALSE,
-            columns = list(
-              variable_name = colDef(name = col_name, minWidth = 200),
-              variable_pp = colDef(name = "",
-                                   minWidth = 175,
-                                   align = "right",
-                                   format = colFormat(percent = TRUE,
-                                                      digits = 0)))
-  )
-}
-
-# apply function to different variables
-# race
-table_pp_by_race <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "race", "pp_by_race", "Race/Ethnicity")
-
-# sex
-table_pp_by_sex <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "sex", "pp_by_sex", "Gender")
-
-# offense
-table_pp_by_offgeneral <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "offgeneral", "pp_by_offgeneral", "Most Serious Sentenced Offense")
-
-# sentence length
-table_pp_by_sentlgth <- 
-  fnc_create_reactable(all_pp_by_variable, 
-                       "sentlgth", "pp_by_sentlgth", "Maximum Sentence Length")
+# 
+# 
+# #####
+# # Predicted Probabilities
+# #####
+# 
+# # define function to create reactable tables for different predicted probabilities
+# fnc_create_reactable <- function(df, variable_name, variable_pp, col_name) {
+#   
+#   df$variable_name <- get(variable_name, df)
+#   df$variable_pp <- get(variable_pp, df)
+#   
+#   df1 <- df %>%
+#     filter(state == state_for_report) %>%
+#     select(variable_name, variable_pp) %>%
+#     distinct()
+# 
+#   reactable(df1,
+#             style = hc_reactable_style,
+#             theme = hc_reactable_theme,
+#             defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                    align = "left"),
+#             compact = TRUE,
+#             fullWidth = FALSE,
+#             columns = list(
+#               variable_name = colDef(name = col_name, minWidth = 200),
+#               variable_pp = colDef(name = "",
+#                                    minWidth = 175,
+#                                    align = "right",
+#                                    format = colFormat(percent = TRUE,
+#                                                       digits = 0)))
+#   )
+# }
+# 
+# # apply function to different variables
+# # race
+# table_pp_by_race <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "race", "pp_by_race", "Race/Ethnicity")
+# 
+# # sex
+# table_pp_by_sex <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "sex", "pp_by_sex", "Gender")
+# 
+# # offense
+# table_pp_by_offgeneral <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "offgeneral", "pp_by_offgeneral", "Most Serious Sentenced Offense")
+# 
+# # sentence length
+# table_pp_by_sentlgth <- 
+#   fnc_create_reactable(all_pp_by_variable, 
+#                        "sentlgth", "pp_by_sentlgth", "Maximum Sentence Length")
 
 ```
 
@@ -481,7 +513,7 @@ htmltools::div(
 div(id = "body-section", br(),
     div(id = "big-section-title", "Parole-Eligible Prison Population"),             br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_population),    br(), 
-    div(id = "bar-chart",          state_stackedbar_pe_type_2020),                  br(), br()
+    div(id = "bar-chart",          state_stackedbar_pe_type_2020),                  br()
 )
 
 ########################################
@@ -609,10 +641,11 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Releases from Prison"), br(),
+    state_pie_maxout, br(), br(),
     "TBD Visualization: Conditional vs Unconditional Releases", br(), br(),
     "TBD Visualization: Percentage/number of people who maxed out even though they were parole eligible. Mandatory release date vs actual release date, supervised vs unsupervised release.",
     br(), br(), br(), br(), 
-    div(id = "big-section-title", "Timing of Release by Offense Type in 2020"), br()
+    div(id = "big-section-title", "Timing of Release"), br()
     )
 ```
 
@@ -657,32 +690,32 @@ div(id = "body-section", br(),
 ::: {.panel-tabset}
 ### Overview
 ```{r}
-div(id = "body-section", state_bar_sentence_overview_2020)
+div(id = "body-section", state_bar_los_overview_2020)
 ```
 
 ### Violent
 ```{r}
-div(id = "body-section", state_bar_sentence_violent_2020)
+div(id = "body-section", state_bar_los_violent_2020)
 ```
 
 ### Property
 ```{r}
-div(id = "body-section", state_bar_sentence_property_2020)
+div(id = "body-section", state_bar_los_property_2020)
 ```
 
 ### Public Order
 ```{r}
-div(id = "body-section", state_bar_sentence_publicorder_2020)
+div(id = "body-section", state_bar_los_publicorder_2020)
 ```
 
 ### Drug
 ```{r}
-div(id = "body-section", state_bar_sentence_drugs_2020)
+div(id = "body-section", state_bar_los_drugs_2020)
 ```
 
 ### Other
 ```{r}
-div(id = "body-section", state_bar_sentence_other_2020)
+div(id = "body-section", state_bar_los_other_2020)
 ```
 :::
 </center>
