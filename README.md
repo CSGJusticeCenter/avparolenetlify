@@ -56,45 +56,38 @@ An extremely brief (and mostly accurate) overview of the types of files needed t
 ```         
   |-- avparolenetlify 
     |-- index.qmd                  # Landing page
-    |-- national_trends.qmd        # National trends page
     |-- state_report_links.qmd     # State report pages
+    |-- national_trends.qmd        # National trends page
     |-- missing_data.qmd           # Missing data page
     |-- styles.css                 # CSS code for website design
-    |-- _state_report_template.qmd # Template for autogeneration of the state pages 
+    |-- _state_report_template.qmd # Template for autogeneration of the state reports 
     |--
-    |-- state_report_Georgia.qmd   # State report for the state of Georgia
+    |-- state_report_STATE.qmd     # State reports for all 50 states  
     |--      
     |-- prep 
-      |-- 00_library.R                    # Packages
-      |-- 01_function.R                   # Custom functions
-      |-- 02_import.R                     # Imports data
-      |-- 03_tab_eligibility.R            # Prepares visualizations and data for eligibility tab
-      |-- 04_tab_releases_from_prison.R   # Prepares visualizations and data for releases tab
-      |-- 05_tab_offenses.R               # Prepares visualizations and data for offenses tab
-      |-- 06_tab_prison_population.R      # Prepares visualizations and data for population tab
-      |-- 07_tab_disparities.R            # Prepares visualizations and data for disparities tab
-      |-- generate_state_reports.R        # Generates each state page based on the _state_report_template.qmd
-      |-- dataframes.R                    # Loads dataframes needed to run each page's QMD.
+      |-- library.R                    # Packages
+      |-- function.R                   # Custom functions
+      |-- import.R                     # Imports data
+      |-- page_missing_data.R          # Prepares tables exploring missing data for missing data page
+      |-- page_national_trends.R       # Prepares visualizations and data for national trends page
+      |-- tab_eligibility.R            # Prepares visualizations and data for eligibility tab
+      |-- tab_releases_from_prison.R   # Prepares visualizations and data for releases tab
+      |-- tab_offenses.R               # Prepares visualizations and data for offenses tab
+      |-- tab_prison_population.R      # Prepares visualizations and data for population tab
+      |-- tab_disparities.R            # Prepares visualizations and data for disparities tab
+      |-- dataframes.R                 # Loads dataframes needed to run each page's QMD.
+      |-- 
+      |-- generate_netlfy_site.R       # Generates each state page based on the _state_report_template.qmd
   
 ```
 
 ## Processes
 
-To clean NCRP data, prepare visualizations, and generate website pages, run the following code in this order:
-
--   00_library.R
--   01_function.R
--   02_import.R
--   03_tab_eligibility.R
--   04_tab_releases_from_prison.R
--   05_tab_offenses.R
--   06_tab_prison_population.R
--   07_tab_disparities.R
--   generate_state_reports.R
+To clean NCRP data, prepare visualizations, and generate website pages, run the following generate_netlify_site.R
 
 ## Data Information
 
--   This data is stored in [Sharepoint](https://csgorg.sharepoint.com/:f:/s/Team-JC-Research/EjOiusd2IBpEtWhY0xufTs0BcfvztTih-w-VsEtq3171JQ?e=c7E0GP).\
--   This data is not from partners and does not need to be logged in the data inventory.\
--   This data does not have PII.\
+-   This data is stored in [Sharepoint](https://csgorg.sharepoint.com/:f:/s/Team-JC-Research/EjOiusd2IBpEtWhY0xufTs0BcfvztTih-w-VsEtq3171JQ?e=c7E0GP).  
+-   This data is not from partners and does not need to be logged in the data inventory.  
+-   This data does not have PII.  
 -   This data does not require data destruction.

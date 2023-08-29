@@ -13,15 +13,15 @@ library(rmarkdown)
 library(tidyverse)
 
 # run code
-source("prep/00_library.R")
-source("prep/01_functions.R")
-# source("prep/02_import.R")
-# source("prep/03_national_trends.R")
-# source("prep/04_tab_parole_eligibility.R")
-# source("prep/05_tab_prison_population.R")
-# source("prep/06_tab_releases_from_prison.R")
-# source("prep/07_tab_disparities.R")
-# source("prep/08_missing_data.R")
+# source("prep/library.R")
+# source("prep/functions.R")
+# source("prep/import.R")
+# source("prep/page_national_trends.R")
+# source("prep/tab_parole_eligibility.R")
+# source("prep/tab_prison_population.R")
+# source("prep/tab_releases_from_prison.R")
+# source("prep/tab_disparities.R")
+# source("prep/page_missing_data.R")
 # source("prep/rri.R")
 
 
@@ -29,8 +29,8 @@ source("prep/01_functions.R")
 wd <- getwd()
 
 # get list of 50 states
-# states <- c("Georgia")
-states <- state.name
+states <- c("Georgia")
+#states <- state.name
 
 # read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

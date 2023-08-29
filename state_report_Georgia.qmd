@@ -31,8 +31,8 @@ library(reactable)
 library(tidyr)
 
 # load data
-source("prep/00_library.R")
-source("prep/01_functions.R")
+source("prep/library.R")
+source("prep/functions.R")
 source("prep/dataframes.R")
 
 state_for_report <- "Georgia"
@@ -120,7 +120,7 @@ if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
   state_stackedbar_pe_type_2020 <- 
     all_stackedbar_pe_type_2020[[state_for_report]] %>% 
     hc_size(height = 250) %>%
-    hc_title(text = "Distribution of Parole Eligibility Status Among the Prison Population in 2020")
+    hc_title(text = "Distribution of Parole Eligibility Statuses Among the Prison Population in 2020")
 } else {
   state_stackedbar_pe_type_2020 <- "No Data"
 }
@@ -149,8 +149,8 @@ if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
   state_bar_parole_elgibility_race <- 
     all_bar_parole_elgibility_race[[state_for_report]] %>% 
     hc_size(width = 600, height = 350) %>% 
-    hc_title(text = "People who are Parole Eligible but Still in Prison by Race in 2020") %>% 
-    hc_subtitle(text = "(People in Prison for a New Crime)")
+    hc_title(text = "People who are Parole-Eligible but Still in Prison by Race in 2020") %>% 
+    hc_subtitle(text = "(For Perople Incarcerated for a New Crime)")
 } else {
   state_bar_parole_elgibility_race <- "No Data"
 }
@@ -172,8 +172,8 @@ if (state_for_report %in% names(all_pie_parole_elgibility_offense_new_crime)) {
   state_pie_parole_elgibility_offense_new_crime <- 
     all_pie_parole_elgibility_offense_new_crime[[state_for_report]] %>% 
     hc_size(width = 600, height = 300) %>% 
-    hc_title(text = "Most Serious Sentenced Offense for Parole-Eligible People in Prison in 2020") %>% 
-    hc_subtitle(text = "(People in Prison for a New Crime)")
+    hc_title(text = "Most Serious Sentenced Offense for<br>Parole-Eligible People in Prison in 2020") %>% 
+    hc_subtitle(text = "(For Perople Incarcerated for a New Crime)")
 } else {
   state_pie_parole_elgibility_offense_new_crime <- "No Data"
 }
@@ -202,14 +202,29 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 ###################
 
 # save pie chart of whether people maxed our or didn't max out - new crime
-if (state_for_report %in% names(all_pie_maxout)) {
-  state_pie_maxout <- 
-    all_pie_maxout[[state_for_report]] %>% 
+if (state_for_report %in% names(all_pie_maxout_2020)) {
+  state_pie_maxout_2020 <- 
+    all_pie_maxout_2020[[state_for_report]] %>% 
     hc_size(width = 600, height = 300) %>% 
-    hc_title(text = "Percentage of People who Maxed Out") %>% 
-    hc_subtitle(text = "(People in Prison for a New Crime)")
+    hc_title(text = "Distribution of People who Maxed Out Their Sentences in 2020") %>% 
+    hc_subtitle(text = "(For Perople Incarcerated for a New Crime)")
 } else {
-  state_pie_maxout <- "No Data"
+  state_pie_maxout_2020 <- "No Data"
+}
+
+###################
+# Unconditional vs conditional releases
+###################
+
+# save pie chart of whether people maxed our or didn't max out - new crime
+if (state_for_report %in% names(all_pie_release_type_2020)) {
+  state_pie_release_type_2020 <- 
+    all_pie_release_type_2020[[state_for_report]] %>% 
+    hc_size(width = 600, height = 300) %>% 
+    hc_title(text = "Distribution of People Released Conditionally and Unconditionally in 2020") %>% 
+    hc_subtitle(text = "(For Perople Incarcerated for a New Crime)")
+} else {
+  state_pie_release_type_2020 <- "No Data"
 }
 
 ###################
@@ -474,13 +489,13 @@ htmltools::div(
               font-weight: bold; 
               text-align: center;",
       prison_sentencing_system),
-  div(id = "bold-text", HTML("Currently Eligible for<br>Parole but in Prison")),
-  div(id = "bold-text", HTML("Eligible for Parole in<br>the next 1-5 years")),
+  div(id = "bold-text", HTML("Currently Eligible<br>for Parole")),
+  div(id = "bold-text", HTML("Eligible for Parole<br>in the next 1-5 years")),
   div(id = "bold-text", tippy(prison_sentencing_system_info,
-                              placement = "bottom",
-                              flip = TRUE,
-                              theme = "light",
-                              tooltip = prison_sentencing_system_tooltip))
+                            placement = "bottom",
+                            flip = TRUE,
+                            theme = "light",
+                            tooltip = prison_sentencing_system_tooltip))
 )
 ```
 :::
@@ -518,11 +533,11 @@ div(id = "body-section", br(),
 
 ########################################
 
-# How is Parole Release Eligibility Determined?
+# How is Parole Eligibility Determined?
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "How is Parole Release Eligibility Determined?"), br(),
+    div(id = "big-section-title", "How is Parole Eligibility Determined?"), br(),
     div(id = "regular-text",       parole_eligibility_criteria),                    br(), br()
 )
 ```
@@ -542,7 +557,7 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text",  state_sentence_parole_elgibility_race), br(),
-    div(id = "visualization", state_bar_parole_elgibility_race),      br()
+    div(id = "visualization", state_bar_parole_elgibility_race)
     )
 ```
 
@@ -560,7 +575,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Most Serious Sentenced Offense"), br(),
+    div(id = "big-section-title", "Offense Types for the Parole-Eligible Prison Population"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_offense), br(),
     state_pie_parole_elgibility_offense_new_crime)
 ```
@@ -593,7 +608,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Prison Population"), br(),
+    div(id = "big-section-title", "Prison Population Trends"), br(),
     div(id = "visualization",      state_line_pop_released_to_parole), br()
     )
 ```
@@ -640,12 +655,11 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Releases from Prison"), br(),
-    state_pie_maxout, br(), br(),
-    "TBD Visualization: Conditional vs Unconditional Releases", br(), br(),
-    "TBD Visualization: Percentage/number of people who maxed out even though they were parole eligible. Mandatory release date vs actual release date, supervised vs unsupervised release.",
-    br(), br(), br(), br(), 
-    div(id = "big-section-title", "Timing of Release"), br()
+    div(id = "big-section-title", "Max-Out vs. Early Releases"), br(),
+    state_pie_maxout_2020, br(), br(),
+    div(id = "big-section-title", "Release Types"), br(),
+    state_pie_release_type_2020, br(), br(),
+    div(id = "big-section-title", "Release Timing by Offense Type"), br()
     )
 ```
 
@@ -683,7 +697,7 @@ div(id = "body-section", state_bar_released_at_ped_other_2020)
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Length of Stay"), br()
+    div(id = "big-section-title", "Length of Stay by Offense Type"), br()
     )
 ```
 

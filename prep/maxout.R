@@ -68,15 +68,15 @@ pe_releases_maxout_2020 <- ncrp_releases_maxout_2020 %>%
 
 
 # get list of states
-states <- unique(releases_maxout_2020$state)
+states <- unique(pe_releases_maxout_2020$state)
 
 # generate pie chart about most serious sentenced offense in 2020 by state - NEW CRIME ONLY
-all_pie_maxout <- map(.x = states,  .f = function(x) {
+all_pie_maxout_2020 <- map(.x = states,  .f = function(x) {
 
-  df1 <- releases_maxout_2020 %>%
+  df1 <- pe_releases_maxout_2020 %>%
     filter(state == x)
 
-  df1$color <- case_when(df1$maxout == "Released Before Mandatory Release Year" ~ teal,
+  df1$color <- case_when(df1$maxout == "Released Before Mandatory Release Year" ~ orange,
                          df1$maxout == "Released On/After Mandatory Release Year" ~ yellow)
   df1$color <- htmltools::parseCssColors(df1$color)
 
@@ -113,8 +113,8 @@ all_pie_maxout <- map(.x = states,  .f = function(x) {
   return(highcharts)
 })
 
-all_pie_maxout <- setNames(all_pie_maxout, states)
-all_pie_maxout$Georgia
+all_pie_maxout_2020 <- setNames(all_pie_maxout_2020, states)
+all_pie_maxout_2020$Georgia
 
 
 # # get list of states
@@ -184,80 +184,6 @@ all_pie_maxout$Georgia
 
 
 
-########
-# Sunburst chart
-########
-
-data1 <- data.frame(
-  id = c("Root", "A", "B", "C", "A1", "A2", "B1", "B2", "C1"),
-  parent = c("", "Root", "Root", "Root", "A", "A", "B", "B", "C"),
-  value = c(100, 40, 30, 30, 20, 20, 10, 20, 30)
-)
-
-data <- ncrp_releases_maxout_2020 %>%
-  ungroup() %>%
-  filter(state == "Georgia") %>%
-  droplevels() %>%
-  rename(parent = maxout)
-
-root <- data %>%
-  summarise(value = n()) %>%
-  mutate(parent = "",
-         id = "Released from Prison")
-
-A <- data %>%
-  filter(parent == "Released Before Mandatory Release Year") %>%
-  summarise(value = n()) %>%
-  mutate(id = "Released Before Mandatory Release Year",
-         parent = "Released from Prison")
-
-B <- data %>%
-  filter(parent == "Released on Mandatory Release Year") %>%
-  summarise(value = n()) %>%
-  mutate(id = "Released on Mandatory Release Year",
-         parent = "Released from Prison")
-
-C <- data %>%
-  filter(parent == "Released After Mandatory Release Year") %>%
-  summarise(value = n()) %>%
-  mutate(id = "Released After Mandatory Release Year",
-         parent = "Released from Prison")
-
-ABC <- rbind(root, A, B, C)
-ABC <- ABC %>% select(id, parent, value)
-
-B123 <- data %>%
-  filter(parent == "Released on Mandatory Release Year") %>%
-  count(maxout_type) %>%
-  mutate(id = maxout_type,
-         parent = "Released on Mandatory Release Year") %>%
-  select(id, parent, value = n)
-
-ABC_all <- rbind(ABC, B123)
-
-hchart(ABC_all, "sunburst", hcaes(id = id, parent = parent, value = value))
-
-
-
-
-
-
-
-
-maxout_ratio_by_state_2020 <- ncrp_releases_maxout_2020 %>%
-  group_by(state) %>%
-  summarize(
-    total_cases = n(),
-    maxout_pe_prior_cases = sum(maxout == "Maxed out and was Parole Eligible Before Release Year"),
-    ratio = maxout_pe_prior_cases / total_cases,
-    representation = 1 / ratio  # Calculating the "1 in X" representation
-  )
-
-
-
-
-
-
 
 
 ################################################################################
@@ -270,7 +196,7 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_pie_maxout, file=file.path(folder, "all_pie_maxout.rds"))
+  save(all_pie_maxout_2020, file=file.path(folder, "all_pie_maxout_2020.rds"))
 
 }
 

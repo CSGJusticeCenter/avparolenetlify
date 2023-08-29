@@ -84,7 +84,7 @@ all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_released_at_ped_2020 %>% filter(state == "Georgia") %>%
     arrange(match(released_at_ped_status, desired_order))
 
-  # assign color for each race
+  # assign color
   df1$color <- case_when(df1$released_at_ped_status == "Released Before Parole Eligibility Year" ~ purple,
                          df1$released_at_ped_status == "Released on Parole Eligibility Year" ~ teal,
                          df1$released_at_ped_status == "Released After Parole Eligibility Year" ~ orange)
@@ -234,7 +234,7 @@ all_bar_los_overview_2020 <- map(.x = states,  .f = function(x) {
     filter(state == x) %>%
     arrange(match(timesrvd_rel_vs_sentlgth, desired_order))
 
-  # assign color for each race
+  # assign color
   df1$color <- case_when(df1$timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served" ~ yellow,
                          df1$timesrvd_rel_vs_sentlgth == "Full Sentence Length Served" ~ purple)
   df1$color <- htmltools::parseCssColors(df1$color)

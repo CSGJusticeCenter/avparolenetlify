@@ -188,7 +188,7 @@ body {
 
 /* regular app text */
 #regular-text {
-  font-size: 0.9em; /* change font size */
+  font-size: 0.8em; /* change font size */
   font-family: Graphik; /* change font family */
   text-align: left;
   color: #3E4B4B
@@ -196,7 +196,7 @@ body {
 
 /* bold app text */
 #bold-text {
-  font-size: 0.8em; /* change font size */
+  font-size: 1em; /* change font size */
   font-family: Graphik; /* change font family */
   font-weight: bold; /* change font weight */
   text-align: center;

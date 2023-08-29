@@ -44,7 +44,10 @@ load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_
 ################################################################################
 
 # Maxout
-load(file = paste0(sp_data_path, "/data/analysis/all_pie_maxout.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_maxout_2020.rds"))
+
+# Unconditional vs conditional release
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_release_type_2020.rds"))
 
 # Releases from Prison
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_2020.rds"))

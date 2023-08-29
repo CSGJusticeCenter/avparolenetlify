@@ -18,8 +18,8 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
-source("prep/00_library.R")
-source("prep/01_functions.R")
+source("prep/library.R")
+source("prep/functions.R")
 
 # load data
 load(file = paste0(sp_data_path, "/data/analysis/all_sentlgth_ped.rds"))
