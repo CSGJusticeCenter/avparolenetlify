@@ -38,9 +38,9 @@ ncrp_released_at_ped_2020 <- ncrp_releases_2020 %>%
                   "Timing of Release: <b>",
                   released_at_ped_status,
                   "</b><br><br>",
-                  "Number of People: <b>",
-                  scales::comma(n),
-                  "</b><br><br>",
+                  # "Number of People: <b>",
+                  # scales::comma(n),
+                  # "</b><br><br>",
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
@@ -68,9 +68,9 @@ ncrp_released_at_ped_offgeneral_2020 <- ncrp_releases_2020 %>%
                   "Timing of Release: <b>",
                   released_at_ped_status,
                   "</b><br><br>",
-                  "Number of People: <b>",
-                  scales::comma(n),
-                  "</b><br><br>",
+                  # "Number of People: <b>",
+                  # scales::comma(n),
+                  # "</b><br><br>",
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
@@ -93,10 +93,10 @@ all_bar_released_at_ped_2020 <- map(.x = states,  .f = function(x) {
   highcharts <-
     highchart() %>%
     hc_add_series(df1, type = "column",
-                  hcaes(x = factor(released_at_ped_status), y = n, color = color),
+                  hcaes(x = factor(released_at_ped_status), y = prop, color = color),
                   dataLabels = list(enabled = TRUE,
-                                    format = "{point.n_label:,.0f}",
-                                    style = list(fontWeight = "regular",
+                                    format = "{point.prop_label}",
+                                    style = list(fontWeight = "bold",
                                                  fontSize = "1em",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
@@ -212,9 +212,9 @@ ncrp_proportion_served_2020 <- ncrp_releases %>%
                   "Sentence Duration: <b>",
                   timesrvd_rel_vs_sentlgth,
                   "</b><br><br>",
-                  "Number of People: <b>",
-                  scales::comma(n),
-                  "</b><br><br>",
+                  # "Number of People: <b>",
+                  # scales::comma(n),
+                  # "</b><br><br>",
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 
@@ -241,10 +241,10 @@ all_bar_los_overview_2020 <- map(.x = states,  .f = function(x) {
 
   highcharts <- highchart() %>%
     hc_add_series(df1, type = "column",
-                  hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = n, color = color),
+                  hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = prop, color = color),
                   dataLabels = list(enabled = TRUE,
-                                    format = "{point.n_label:,.0f}",
-                                    style = list(fontWeight = "regular",
+                                    format = "{point.prop_label}",
+                                    style = list(fontWeight = "bold",
                                                  fontSize = "1em",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
@@ -289,9 +289,9 @@ ncrp_proportion_served_offenses_2020 <- ncrp_releases %>%
                   "Sentence Duration: <b>",
                   timesrvd_rel_vs_sentlgth,
                   "</b><br><br>",
-                  "Number of People: <b>",
-                  scales::comma(n),
-                  "</b><br><br>",
+                  # "Number of People: <b>",
+                  # scales::comma(n),
+                  # "</b><br><br>",
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 

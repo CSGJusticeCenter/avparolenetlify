@@ -60,9 +60,9 @@ pe_releases_maxout_2020 <- ncrp_releases_maxout_2020 %>%
                   "<b>",
                   maxout,
                   "</b><br><br>",
-                  "Number of People: <b>",
-                  scales::comma(n),
-                  "</b><br><br>",
+                  # "Number of People: <b>",
+                  # scales::comma(n),
+                  # "</b><br><br>",
                   "Percentage of People: <b>",
                   prop_label, "</b></b>", sep = ""))
 

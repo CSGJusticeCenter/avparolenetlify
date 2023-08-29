@@ -332,10 +332,10 @@ fnc_create_bar_chart_released_at_ped <- function(selected_offgeneral, accessibil
 
     highcharts <- highchart() %>%
       hc_add_series(df1, type = "column",
-                    hcaes(x = factor(released_at_ped_status), y = n, color = color),
+                    hcaes(x = factor(released_at_ped_status), y = prop, color = color),
                     dataLabels = list(enabled = TRUE,
-                                      format = "{point.n_label:,.0f}",
-                                      style = list(fontWeight = "regular",
+                                      format = "{point.prop_label}",
+                                      style = list(fontWeight = "bold",
                                                    fontSize = "1em",
                                                    fontFamily = "Graphik",
                                                    textOutline = 0))) %>%
@@ -383,10 +383,10 @@ fnc_create_bar_chart_los <- function(selected_offgeneral, accessibility_text) {
 
     highcharts <- highchart() %>%
       hc_add_series(df1, type = "column",
-                    hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = n, color = color),
+                    hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = prop, color = color),
                     dataLabels = list(enabled = TRUE,
-                                      format = "{point.n_label:,.0f}",
-                                      style = list(fontWeight = "regular",
+                                      format = "{point.prop_label}",
+                                      style = list(fontWeight = "bold",
                                                    fontSize = "1em",
                                                    fontFamily = "Graphik",
                                                    textOutline = 0))) %>%

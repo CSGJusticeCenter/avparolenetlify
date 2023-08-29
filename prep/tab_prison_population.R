@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_prison_population.R
 # Authors: Mari Roberts
-# Date last updated: July 10, 2023 (MAR)
+# Date last updated: August 29, 2023 (MAR)
 # Description:
 #    Prison population and graphics for shiny app
 #######################################
@@ -10,7 +10,105 @@
 
 ################################################################################
 
-# Annual Parole Survey Series
+# Highchart - People in prison by race, age range, gender, sentence length, offenses
+
+# Obtained from NCRP year end population
+# NEED TO CHANGE NCRP YEAR END POPULATION TO BJS CORRECTIONAL STATISTICS????????????
+
+################################################################################
+
+# Get proportion and number of people in prison by race and admission type
+ncrp_yearendpop_admtype_race_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  filter(admtype == "New court commitment" | admtype == "Parole return/revocation") %>%
+  group_by(state) %>%
+  count(race, admtype) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0)) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Race and Ethnicity: <b>",
+                  race,
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
+# Create grouped bar chart showing proportion of people in prison by race and admission type
+
+
+
+
+
+
+
+
+
+
+ncrp_yearendpop_admtype_age_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  filter(admtype == "New court commitment" | admtype == "Parole return/revocation") %>%
+  group_by(state) %>%
+  count(ageyrend_category, admtype) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0)) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Age Range: <b>",
+                  ageyrend_category,
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
+ncrp_yearendpop_admtype_gender_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  filter(admtype == "New court commitment" | admtype == "Parole return/revocation") %>%
+  group_by(state) %>%
+  count(sex, admtype) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0)) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Gender: <b>",
+                  sex,
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
+## change to FBI 10 crime types????
+ncrp_yearendpop_admtype_offense_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  filter(admtype == "New court commitment" | admtype == "Parole return/revocation") %>%
+  group_by(state) %>%
+  count(offgeneral, admtype) %>%
+  mutate(prop = (n/sum(n))*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0)) %>%
+  mutate(tooltip =
+           paste0("<b>", state, "</b><br><br>",
+                  "Offense Type: <b>",
+                  offgeneral,
+                  "</b><br><br>",
+                  "Percentage of People: <b>",
+                  prop_label, "</b></b>", sep = ""))
+
+
+
+
+
+
+
+
+################################################################################
+
+# Highchart - Trend line graph
+# Line graph data showing the change in prison population
+#     and change in people released to parole
+
+# Obtained from NCRP year end population and APS Surveys from 2000-2018
+# NEED TO CHANGE NCRP YEAR END POPULATION TO BJS CORRECTIONAL STATISTICS????????????
 
 ################################################################################
 
@@ -198,23 +296,6 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
   filter(state != "District of Columbia" &
            state != "Federal" &
            !is.na(state))
-
-
-
-
-
-
-
-################################################################################
-
-# Highchart - Trend line graph
-# Line graph data showing the change in prison population
-#     and change in people released to parole
-
-# Obtained from NCRP year end population and APS Surveys from 2000-2018
-
-
-################################################################################
 
 # get prison population by report year and state
 # merge with APS data for releases to parole and entries to parole from prison

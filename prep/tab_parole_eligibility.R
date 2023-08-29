@@ -2,8 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-
-# Date last updated: August 24, 2023 (MAR)
+# Date last updated: August 29, 2023 (MAR)
 
 # Description:
 #    Parole eligibility tables and graphics for "Parole Eligibility" tab
@@ -89,8 +88,8 @@ ncrp_pe_type_2020 <- ncrp_pe_type_2020_prop %>%
    mutate(tooltip =
             paste0("<b>", state, "</b><br><br>",
                    "<b>", type, "</b><br><br>",
-                   "Number of People: <br><b>",
-                    formattable::comma(n, digits = 0), "</b><br><br>",
+                   # "Number of People: <br><b>",
+                   #  formattable::comma(n, digits = 0), "</b><br><br>",
                    "Percentage of the Prison Population: <br><b>",
                     paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
           prop_label = paste0(round(prop*100, 0), "%"))
@@ -165,7 +164,8 @@ all_stackedbar_pe_type_2020 <- map(.x = states,  .f = function(x) {
 })
 
 all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
-all_stackedbar_pe_type_2020$Georgia
+
+
 
 
 
@@ -201,7 +201,7 @@ all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) 
 })
 
 all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibility_population, states)
-all_sentence_parole_elgibility_population$Georgia
+
 
 
 
@@ -223,9 +223,8 @@ all_sentence_parole_elgibility_population$Georgia
 # Only in for people in prison most recently for a new crime
 current_ped_2020_race <- ncrp_yearendpop %>%
   filter(admtype == "New court commitment" &
-           rptyear == 2020 &
-           parelig_status == "Current" &
-           !is.na(race)) %>%
+         rptyear == 2020 &
+         parelig_status == "Current") %>%
   group_by(state) %>%
   count(race) %>%
   mutate(
@@ -237,7 +236,7 @@ current_ped_2020_race <- ncrp_yearendpop %>%
   ungroup() %>%
   mutate(tooltip = paste0("<b>", state, " - ",
                           race, "</b><br>",
-                          n_label, "<br>"))
+                          prop_label, "<br>"))
 
 # get states with data
 states <- unique(current_ped_2020_race$state)
@@ -255,15 +254,16 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   df1$color <- case_when(df1$race == "Black, non-Hispanic" ~ yellow,
                          df1$race == "White, non-Hispanic" ~ orange,
                          df1$race == "Hispanic, any race" ~ teal,
-                         df1$race == "Other race(s), non-Hispanic" ~ purple)
+                         df1$race == "Other race(s), non-Hispanic" ~ purple,
+                         df1$race == "Unknown race and ethnicity" ~ darkblue)
   df1$color <- htmltools::parseCssColors(df1$color)
 
   highcharts <-
     highchart() %>%
     hc_add_series(df1, type = "column",
-                  hcaes(x = factor(race), y = n, color = color),
-                  dataLabels = list(enabled = TRUE, format = "{point.n_label:,.0f}",
-                                    style = list(fontWeight = "regular",
+                  hcaes(x = factor(race), y = prop, color = color),
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontWeight = "bold",
                                                  fontSize = "1em",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
@@ -312,9 +312,12 @@ all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
     filter(state == x) %>%
     arrange(desc(n)) %>%
     slice(1)
+  # sentences <- paste0("In 2020, ", df1$race,
+  #                     " people constituted the most number of people eligible for parole but still in prison for a new crime, accounting for ",
+  #                     df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
   sentences <- paste0("In 2020, ", df1$race,
                       " people constituted the most number of people eligible for parole but still in prison for a new crime, accounting for ",
-                      df1$prop_label, " (", formattable::comma(df1$n, digits = 0), " people) of the parole-eligible prison population.")
+                      df1$prop_label, " of the parole-eligible prison population.")
   return(sentences)
 })
 
@@ -358,8 +361,8 @@ current_ped_2020_offenses_new_crime <- current_ped_2020_offenses_all %>%
   mutate(tooltip =
            paste0("<b>", state, "</b><br><br>",
                   "Most Serious Sentence Offense: <b>", offgeneral, "</b><br><br>",
-                  "Number of People with Parole<br>Eligibility but not yet Released: <br><b>",
-                  scales::comma(n), "</b><br><br>",
+                  # "Number of People with Parole<br>Eligibility but not yet Released: <br><b>",
+                  # scales::comma(n), "</b><br><br>",
                   "Percentage of Prison Population with Parole<br>Eligibility but not yet Released: <br><b>",
                   paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
          chart_label = paste0(offgeneral, " <b>", round(prop*100, 0), "%</b>"),

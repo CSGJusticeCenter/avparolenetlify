@@ -136,7 +136,7 @@ if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
   state_bar_parole_elgibility_race <- 
     all_bar_parole_elgibility_race[[state_for_report]] %>% 
     hc_size(width = 600, height = 350) %>% 
-    hc_title(text = "People who are Parole-Eligible but Still in Prison by Race in 2020") %>% 
+    hc_title(text = "Distribution of Prison Population who are Parole-Eligible by Race in 2020") %>% 
     hc_subtitle(text = "(For Perople Incarcerated for a New Crime)")
 } else {
   state_bar_parole_elgibility_race <- "No Data"
@@ -545,6 +545,48 @@ htmltools::div(
 
 :::: {.panel-tabset .nav-pills}
 
+## Prison Population
+
+<center>
+```{r}
+########################################
+
+# Prison Population Trends
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Prison Population Trends"), br(),
+    div(id = "visualization",      state_line_pop_released_to_parole), br()
+    )
+```
+
+```{r}
+########################################
+
+# Projected Prison Population
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Projected Prison Population"), br(),
+    div(id = "visualization",     "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
+    )
+```
+
+</center>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Parole Eligibility
 
 <center>
@@ -606,56 +648,6 @@ div(id = "body-section", br(),
 ```
 </center>
 <br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Prison Population
-
-<center>
-```{r}
-########################################
-
-# Prison Population Trends
-
-########################################
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Prison Population Trends"), br(),
-    div(id = "visualization",      state_line_pop_released_to_parole), br()
-    )
-```
-
-```{r}
-########################################
-
-# Projected Prison Population
-
-########################################
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Projected Prison Population"), br(),
-    div(id = "visualization",     "Same as chart above but projected prison population if people who were eligible for parole were released."), br()
-    )
-```
-
-</center>
-<br>
-
-
-
-
 
 
 

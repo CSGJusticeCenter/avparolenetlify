@@ -142,7 +142,23 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     timesrvd_yrend = str_sub(timesrvd_yrend, 5, -1)) %>%
 
   # create parole eligibility status with custom function
-  fnc_create_parelig_status()
+  fnc_create_parelig_status() %>%
+
+  # include unknown race in analysis
+  # include unknown admission type in analysis???
+  # create age categories
+  mutate(admtype = ifelse(is.na(admtype), "Unknown admission type", admtype),
+         race = ifelse(is.na(race), "Unknown race and ethnicity", race),
+
+         ageyrend_category = case_when(
+           ageyrend < 18  ~ "Under 18",
+           ageyrend >= 18 & ageyrend <= 24 ~ "18-24 years old",
+           ageyrend >= 25 & ageyrend <= 39 ~ "25-39 years old",
+           ageyrend >= 40 & ageyrend <= 54 ~ "40-54 years old",
+           ageyrend >= 55 & ageyrend <= 64 ~ "55-64 years old",
+           ageyrend >= 65 ~ "65 years and older",
+           TRUE ~ "Unknown"
+         ))
 
 
 
