@@ -45,7 +45,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, auto);
-  gap: 10px; /* Adjust the gap value as per your preference */
+  gap: 10px;
 }
 
 .narrow-section {
@@ -64,8 +64,8 @@ body {
   max-width: 750px;
   min-height: 100px;
   margin: 0 auto;
-  font-size: 0.9em; /* change font size */
-  font-family: Graphik; /* change font family */
+  font-size: 0.8em;
+  font-family: Graphik;
   text-align: left;
   color: #3E4B4B
 }
@@ -122,9 +122,9 @@ body {
 
 /* title of website pages */
 .title {
-  font-size: 2.5em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 2.5em;
+  font-family: Graphik;
+  font-weight: bold;
   text-align: center;
   color: #3E4B4B;
 }
@@ -132,18 +132,18 @@ body {
 
 /* title of website tabs */
 #section-title {
-  font-size: 1em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 1em;
+  font-family: Graphik;
+  font-weight: bold;
   text-align: center;
   color: #3E4B4B;
 }
 
 /* title of section under tabs */
 #big-section-title {
-  font-size: 1.8em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 1.8em;
+  font-family: Graphik;
+  font-weight: bold;
   text-align: center;
   color: #3E4B4B;
   border-bottom: 1px solid #ccc;
@@ -152,18 +152,18 @@ body {
 }
 
 #medium-section-title {
-  font-size: 1em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 1em;
+  font-family: Graphik;
+  font-weight: bold;
   text-align: center;
   color: #3E4B4B;
 }
 
 
 #graph-title {
-  font-size: 1.5em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 1.5em;
+  font-family: Graphik;
+  font-weight: bold;
   text-align: center;
   color: #3E4B4B;
 }
@@ -171,34 +171,34 @@ body {
 
 /* text underneath state and national trends highlighting findings */
 #important-text {
-  font-size: 1em; /* change font size */
-  font-family: Graphik; /* change font family */
+  font-size: 1em;
+  font-family: Graphik;
   text-align: center;
   color: #3E4B4B;
 }
 
 /* highlighted text underneath state name*/
 #highlight-text {
-  font-size: 2.5em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 2.5em;
+  font-family: Graphik;
+  font-weight: bold;
   color: teal;
   text-align: center;
 }
 
 /* regular app text */
 #regular-text {
-  font-size: 0.8em; /* change font size */
-  font-family: Graphik; /* change font family */
+  font-size: 0.8em;
+  font-family: Graphik;
   text-align: left;
   color: #3E4B4B
 }
 
 /* bold app text */
 #bold-text {
-  font-size: 1em; /* change font size */
-  font-family: Graphik; /* change font family */
-  font-weight: bold; /* change font weight */
+  font-size: 1em;
+  font-family: Graphik;
+  font-weight: bold;
   text-align: center;
   color: #3E4B4B
 }

@@ -1,83 +1,400 @@
 
+################################################################################
 
+# Relative Rate Index
 
+# Obtained from NCRP year end population
 
-########################################
+################################################################################
 
-# Bar graph of proportion of people/demographic released on or after their PED
+##########################
+# Get census data
+##########################
 
-########################################
+# Weighted estimate of percentage of race from 2020 census
+# Pulled estimated counts and construct percent estimate
+# These are the ids of race variables that we want to pull
+race_vars <- c(estimate_white              = "P3_003N",
+               estimate_black              = "P3_004N",
+               estimate_asian              = "P3_006N",
+               estimate_native_hawaiian_pi = "P3_007N",
+               estimate_hispanic           = "P4_002N",
+               estimate_american_indian    = "P1_005N")
 
-# prepare data for graphs
-ncrp_time_between_release_ped_2020_by_race <-
-  ncrp_releases_2020 %>%
-  filter(!is.na(time_between_release_ped)) %>%
-  filter(race == "Hispanic, any race" |
-           race == "White, non-Hispanic" |
-           race == "Black, non-Hispanic") %>%
-  mutate(time_between_release_ped_overall =
-           case_when(
-             time_between_release_ped > 1 ~ "Released After Year of PED",
-             time_between_release_ped <= 1 ~ "Released Before or on Year of PED",
-             is.na(time_between_release_ped) ~ "No PED Data"
-           )
+# Get list of states
+states <- state.name
+
+# Define  function to retrieve and process census data for a given state
+fnc_get_census_data <- function(state) {
+  census_race_data <- tidycensus::get_decennial(
+    geography = "state",
+    state = state,
+    variables = race_vars,
+    summary_var = "P3_001N",
+    year = 2020,
+    geometry = FALSE
   ) %>%
-  group_by(state, race) %>%
-  count(time_between_release_ped_overall) %>%
-  mutate(
-    prop = n / sum(n),
-    prop_label = paste0(round(prop * 100, 0), "%"),
-    tooltip = paste0("<b>", state, "</b><br><br><b>",
-                     time_between_release_ped_overall,
-                     "</b><br><br>",
-                     "Number of People: <b>",
-                     scales::comma(n),
-                     "</b><br><br>",
-                     "Percentage of Prison Population: <b>",
-                     prop_label, "</b></b>", sep = ""))
-
-# get list of states with data
-states <- unique(ncrp_time_between_release_ped_2020_by_race$state)
-
-# create graph by state
-all_time_between_release_ped_2020_by_race <- map(.x = states, .f = function(x) {
-  df1 <- ncrp_time_between_release_ped_2020_by_race %>% filter(state == x)
-
-  highcharts <- highchart() %>%
-    hc_chart(type = "column") %>%
-    hc_xAxis(categories = c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) %>%
-    hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
-    hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released Before or on Year of PED"),
-                  name = "Released Before or on Year of PED",
-                  type = "column",
-                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
-                                    style = list(fontWeight = "regular")),
-                  hcaes(x = race, y = prop * 100)) %>%
-    hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released After Year of PED"),
-                  name = "Released After Year of PED",
-                  type = "column",
-                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
-                                    style = list(fontWeight = "regular")),
-                  hcaes(x = race, y = prop * 100)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_colors(colors = c(teal, orange)) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = "TBD",
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = "TBD"))
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race_eth = case_when(
+        variable %in% c("estimate_american_indian", "estimate_asian", "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    ) %>%
+    filter(race_eth != "Other race(s), non-Hispanic") %>%
+    group_by(race_eth) %>%
+    summarise(race_eth_pop = sum(value)) %>%
+    ungroup() %>%
+    mutate(total_pop = sum(race_eth_pop)
+           # estimate = (race_eth_pop / total_pop) * 100
     )
 
-  return(highcharts)
-})
+  return(census_race_data)
+}
 
-all_time_between_release_ped_2020_by_race <- setNames(all_time_between_release_ped_2020_by_race, states)
+# Use lapply to retrieve and process data for each state
+census_data_list <- lapply(states, fnc_get_census_data)
+
+# Convert the list of tibbles into a dataframe
+census_data_df <- bind_rows(census_data_list)
+
+# Add the "state" column to the final dataframe
+census_data_df$state <- rep(states, each = nrow(census_data_df) / length(states))
+
+
+
+
+################### TESTING
+
+# Filter to state
+census_race_2020 <- census_data_df %>%
+  filter(state == "Georgia") %>%
+  ungroup() %>%
+  dplyr::select(race_eth, race_eth_pop)
+
+# Filter to rptyear 2020 and to state
+ncrp_race_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020 &
+           state == "Georgia" &
+           race != "Other race(s), non-Hispanic") %>%
+  mutate(unique_id = row_number()) %>%
+  rename(race_eth = race) %>%
+  ungroup() %>%
+  distinct(unique_id, .keep_all = TRUE)
+
+# Join two files
+ncrp_census_prelim_rri <- left_join(ncrp_race_2020, census_race_2020, by = "race_eth")
+
+# white, non-hispanic only for rri calculation
+rri_analytic_white <- ncrp_census_prelim_rri %>%
+  filter(!is.na(race_eth) == TRUE,
+         race_eth == "White, non-Hispanic") %>%
+  summarise(people_in_prison_per10kadult         = round(n_distinct(unique_id)/mean(race_eth_pop)*10000, digits = 1),
+            people_in_prison_rri                 = NA,
+
+            sentence_length_1_year_per10kadult = round(n_distinct(unique_id[sentlgth == "< 1 year"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_1_year_rri         = NA,
+
+            sentence_length_1_1_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "1-1.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_1_1_9_years_rri         = NA,
+
+            sentence_length_2_4_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "2-4.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_2_4_9_years_rri         = NA,
+
+            sentence_length_5_9_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "2-4.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_5_9_9_years_rri         = NA,
+
+            sentence_length_10_24_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "10-24.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_10_24_9_years_rri         = NA,
+
+            sentence_length_25_years_per10kadult = round(n_distinct(unique_id[sentlgth == "Life, LWOP, Life plus additional years, Death"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_25_years_rri         = NA,
+
+            sentence_length_lwop_per10kadult = round(n_distinct(unique_id[sentlgth == "Life, LWOP, Life plus additional years, Death"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_lwop_rri         = NA
+  ) %>%
+  dplyr::mutate(race_eth = "White, non-Hispanic")
+
+# now calculate rates and RRIs using above dataframe (for White individuals) as reference
+rri_analytic <- ncrp_census_prelim_rri %>%
+  dplyr::filter(!is.na(race_eth) == TRUE,
+                race_eth %in% c("Black, non-Hispanic","Hispanic, any race")) %>%
+  group_by(race_eth) %>%
+  summarise(people_in_prison_per10kadult         = round(n_distinct(unique_id)/mean(race_eth_pop)*10000, digits = 1),
+            people_in_prison_rri                 = round(people_in_prison_per10kadult/rri_analytic_white$people_in_prison_per10kadult, digits = 2),
+
+            sentence_length_1_year_per10kadult = round(n_distinct(unique_id[sentlgth == "< 1 year"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_1_year_rri         = round(sentence_length_1_year_per10kadult/rri_analytic_white$sentence_length_1_year_per10kadult, digits = 2),
+
+            sentence_length_1_1_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "1-1.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_1_1_9_years_rri         = round(sentence_length_1_1_9_years_per10kadult/rri_analytic_white$sentence_length_1_1_9_years_per10kadult, digits = 2),
+
+            sentence_length_2_4_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "2-4.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_2_4_9_years_rri         = round(sentence_length_2_4_9_years_per10kadult/rri_analytic_white$sentence_length_2_4_9_years_per10kadult, digits = 2),
+
+            sentence_length_5_9_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "2-4.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_5_9_9_years_rri         = round(sentence_length_5_9_9_years_per10kadult/rri_analytic_white$sentence_length_5_9_9_years_per10kadult, digits = 2),
+
+            sentence_length_10_24_9_years_per10kadult = round(n_distinct(unique_id[sentlgth == "10-24.9 years"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_10_24_9_years_rri         = round(sentence_length_10_24_9_years_per10kadult/rri_analytic_white$sentence_length_10_24_9_years_per10kadult, digits = 2),
+
+            sentence_length_25_years_per10kadult = round(n_distinct(unique_id[sentlgth == "Life, LWOP, Life plus additional years, Death"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_25_years_rri         = round(sentence_length_25_years_per10kadult/rri_analytic_white$sentence_length_25_years_per10kadult, digits = 2),
+
+            sentence_length_lwop_per10kadult = round(n_distinct(unique_id[sentlgth == "Life, LWOP, Life plus additional years, Death"])/mean(race_eth_pop)*10000, digits = 1),
+            sentence_length_lwop_rri         = round(sentence_length_lwop_per10kadult/rri_analytic_white$sentence_length_lwop_per10kadult, digits = 2)
+  ) %>%
+  ungroup()
+
+# reformat table
+rri_analytic_table <- rri_analytic %>%
+  select(race_eth,
+         people_in_prison_rri,
+         sentence_length_1_year_rri,
+         sentence_length_1_1_9_years_rri,
+         sentence_length_2_4_9_years_rri,
+         sentence_length_5_9_9_years_rri,
+         sentence_length_10_24_9_years_rri,
+         sentence_length_25_years_rri,
+         sentence_length_lwop_rri) %>%
+  gather(sample, rri, people_in_prison_rri:sentence_length_lwop_rri) %>%
+  mutate(state = "Georgia")
+
+# prep for graph
+all_census_ncrp_rri_prep <- rri_analytic_table %>%
+  mutate(color = ifelse(rri < 1, "#ff640080", "#ff6400"),
+         sample = case_when(
+           sample == "people_in_prison_rri" ~ "In Prison",
+           sample == "sentence_length_1_year_rri"        ~ "Sentence Length < 1 year",
+           sample == "sentence_length_1_1_9_years_rri"   ~ "Sentence Length 1-1.9 years",
+           sample == "sentence_length_2_4_9_years_rri"   ~ "Sentence Length 2-4.9 years",
+           sample == "sentence_length_5_9_9_years_rri"   ~ "Sentence Length 5-9.9 years",
+           sample == "sentence_length_10_24_9_years_rri" ~ "Sentence Length 10-24.9 years",
+           sample == "sentence_length_25_years_rri"      ~ "Sentence Length >=25 years",
+           sample == "sentence_length_lwop_rri"          ~ "Sentence Length Life, LWOP, Death"
+         ),
+         rri = round(rri, 1),
+         tooltip = case_when(
+           sample == "In Prison" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to be in prison than White people."),
+           sample == "In Prison" & rri == 1 ~ paste0(race_eth, " people are equally as likely to be in prison as White people."),
+           sample == "In Prison" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to be in prison than White people."),
+
+           sample == "Sentence Length < 1 year" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of < 1 year than White people."),
+           sample == "Sentence Length < 1 year" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of < 1 year as White people."),
+           sample == "Sentence Length < 1 year" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of < 1 year than White people."),
+
+           sample == "Sentence Length 1-1.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 1-1.9 years than White people."),
+           sample == "Sentence Length 1-1.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 1-1.9 years as White people."),
+           sample == "Sentence Length 1-1.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 1-1.9 years than White people."),
+
+           sample == "Sentence Length 2-4.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 2-4.9 years than White people."),
+           sample == "Sentence Length 2-4.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 2-4.9 years as White people."),
+           sample == "Sentence Length 2-4.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 2-4.9 years than White people."),
+
+           sample == "Sentence Length 5-9.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 5-9.9 years than White people."),
+           sample == "Sentence Length 5-9.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 5-9.9 years as White people."),
+           sample == "Sentence Length 5-9.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 5-9.9 years than White people."),
+
+           sample == "Sentence Length 10-24.9 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of 10-24.9 years than White people."),
+           sample == "Sentence Length 10-24.9 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of 10-24.9 years as White people."),
+           sample == "Sentence Length 10-24.9 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of 10-24.9 years than White people."),
+
+           sample == "Sentence Length >=25 years" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of >=25 years than White people."),
+           sample == "Sentence Length >=25 years" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of >=25 years as White people."),
+           sample == "Sentence Length >=25 years" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of >=25 years than White people."),
+
+           sample == "Sentence Length Life, LWOP, Death" & rri < 1  ~ paste0(race_eth, " people are ", round((1 - rri)*100, 0), "% less likely <br>to have a sentence length of life, life without parole, or death than White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri == 1 ~ paste0(race_eth, " people are equally as likely to have a sentence length of life, life without parole, or death as White people."),
+           sample == "Sentence Length Life, LWOP, Death" & rri > 1  ~ paste0(race_eth, " people are ", rri, " times more likely <br>to have a sentence length of life, life without parole, or death than White people."),
+
+           TRUE ~ NA_character_
+         )) %>%
+  mutate(color = case_when(rri < 1 ~ "#ff640080",
+                           rri == 1 ~ "gray",
+                           rri > 1 ~ "#ff6400"),
+
+         type = case_when(rri < 1 ~ "Underrepresented",
+                          rri == 1 ~ "Equally Represented",
+                          rri > 1 ~ "Overrepresented"),
+         rri_pct = case_when(
+           rri < 1  ~ round((1 - rri)*100, 0),
+           rri == 1 ~ 100, ############################################################?
+           rri > 1  ~ round((rri - 1)*100, 0)
+         ),
+         rri_label = case_when(
+           rri < 1  ~ paste0(round((1 - rri)*100, 0), "% less likely"),
+           rri == 1 ~ paste0("Equally as likely"),
+           rri > 1  ~ paste0(round((rri - 1)*100, 0), "% more likely")
+         )
+  ) %>%
+
+  mutate_all(~ ifelse(is.nan(.), NA, .)) %>%
+  mutate_all(~ ifelse(is.infinite(.), NA, .))
+
+df1 <- all_census_ncrp_rri_prep %>%
+  filter(state == "Georgia") %>%
+  filter(race_eth == "Black, non-Hispanic") %>%
+  filter(!is.na(rri)) %>%
+  filter(!is.infinite(rri))
+
+df1
+
+min_value <- 0
+# calculate the common max value
+max_value_black <- max(all_census_ncrp_rri_prep %>%
+                         filter(state == "Georgia") %>%
+                         filter(race_eth == "Black, non-Hispanic") %>%
+                         filter(!is.na(rri)) %>%
+                         filter(!is.infinite(rri)) %>%
+                         pull(rri_pct),
+                       na.rm = TRUE)
+
+max_value_hispanic <- max(all_census_ncrp_rri_prep %>%
+                            filter(state == "Georgia") %>%
+                            filter(race_eth == "Hispanic, any race") %>%
+                            filter(!is.na(rri)) %>%
+                            filter(!is.infinite(rri)) %>%
+                            pull(rri_pct),
+                          na.rm = TRUE)
+
+# Determine the larger max value
+max_value <- max(max_value_black, max_value_hispanic)
+max_value <- ceiling(max_value)
+
+highcharts <- df1 %>%
+  hchart(type = "bar", hcaes(x = "sample", y = "rri_pct", group = "type")) %>%
+  hc_title(text = "Black People, Non-Hispanic") %>%
+  hc_subtitle(text = "Relative Rate Index") %>%
+  hc_xAxis(title = "",
+           categories = c(
+             "In Prison",
+             "Sentence Length < 1 year",
+             "Sentence Length 1-1.9 years",
+             "Sentence Length 2-4.9 years",
+             "Sentence Length 5-9.9 years",
+             "Sentence Length 10-24.9 years",
+             "Sentence Length >=25 years",
+             "Sentence Length Life, LWOP, Death"
+           )) %>%
+  hc_yAxis(title = "",
+           min = 0,
+           max = max_value) %>%
+  hc_legend(enabled = TRUE) %>%
+  hc_add_theme(hc_theme_jc) %>%
+  hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+  hc_plotOptions(series = list(stacking = "normal"),
+                 bar = list(
+                   dataLabels = list(enabled = TRUE, format = "{point.rri_label}", style = list(fontSize = "12px"))
+                 )) %>%
+  hc_chart(marginTop = 100, marginBottom = 80, spacingBottom = 80)
+
+unique_types <- unique(df1$type)
+
+if ("Overrepresented" %in% unique_types && "Underrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff6400", "#ff640080"))
+
+} else if ("Overrepresented" %in% unique_types && "Underrepresented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("#ff6400", "#ff640080"))
+
+} else if ("Overrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff6400"))
+
+} else if ("Underrepresented" %in% unique_types && "Equally Represented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("gray", "#ff640080"))
+
+} else if ("Overrepresented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("#ff6400"))
+
+} else if ("Underrepresented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("#ff640080"))
+
+} else if ("Equally Represented" %in% unique_types) {
+  highcharts <- highcharts %>% hc_colors(colors = c("gray"))
+}
+
+highcharts
+
+
+# ########################################
+#
+# # Bar graph of proportion of people/demographic released on or after their PED
+#
+# ########################################
+#
+# # prepare data for graphs
+# ncrp_time_between_release_ped_2020_by_race <-
+#   ncrp_releases_2020 %>%
+#   filter(!is.na(time_between_release_ped)) %>%
+#   filter(race == "Hispanic, any race" |
+#            race == "White, non-Hispanic" |
+#            race == "Black, non-Hispanic") %>%
+#   mutate(time_between_release_ped_overall =
+#            case_when(
+#              time_between_release_ped > 1 ~ "Released After Year of PED",
+#              time_between_release_ped <= 1 ~ "Released Before or on Year of PED",
+#              is.na(time_between_release_ped) ~ "No PED Data"
+#            )
+#   ) %>%
+#   group_by(state, race) %>%
+#   count(time_between_release_ped_overall) %>%
+#   mutate(
+#     prop = n / sum(n),
+#     prop_label = paste0(round(prop * 100, 0), "%"),
+#     tooltip = paste0("<b>", state, "</b><br><br><b>",
+#                      time_between_release_ped_overall,
+#                      "</b><br><br>",
+#                      "Number of People: <b>",
+#                      scales::comma(n),
+#                      "</b><br><br>",
+#                      "Percentage of Prison Population: <b>",
+#                      prop_label, "</b></b>", sep = ""))
+#
+# # get list of states with data
+# states <- unique(ncrp_time_between_release_ped_2020_by_race$state)
+#
+# # create graph by state
+# all_time_between_release_ped_2020_by_race <- map(.x = states, .f = function(x) {
+#   df1 <- ncrp_time_between_release_ped_2020_by_race %>% filter(state == x)
+#
+#   highcharts <- highchart() %>%
+#     hc_chart(type = "column") %>%
+#     hc_xAxis(categories = c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) %>%
+#     hc_yAxis(labels = list(format = "{value}%"), min = 0, max = 100) %>%
+#     hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released Before or on Year of PED"),
+#                   name = "Released Before or on Year of PED",
+#                   type = "column",
+#                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+#                                     style = list(fontWeight = "regular")),
+#                   hcaes(x = race, y = prop * 100)) %>%
+#     hc_add_series(data = subset(df1, time_between_release_ped_overall == "Released After Year of PED"),
+#                   name = "Released After Year of PED",
+#                   type = "column",
+#                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+#                                     style = list(fontWeight = "regular")),
+#                   hcaes(x = race, y = prop * 100)) %>%
+#     hc_add_theme(hc_theme_jc) %>%
+#     hc_colors(colors = c(teal, orange)) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_plotOptions(series = list(animation = FALSE,
+#                                  cursor = "pointer",
+#                                  borderWidth = 3,
+#                                  minPointLength = 4),
+#                    accessibility = list(enabled = TRUE,
+#                                         keyboardNavigation = list(enabled = TRUE),
+#                                         linkedDescription = "TBD",
+#                                         landmarkVerbosity = "one"),
+#                    area = list(accessibility = list(description = "TBD"))
+#     )
+#
+#   return(highcharts)
+# })
+#
+# all_time_between_release_ped_2020_by_race <- setNames(all_time_between_release_ped_2020_by_race, states)
 
 
 

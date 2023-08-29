@@ -60,11 +60,6 @@ census_data_df <- bind_rows(census_data_list)
 # add the "state" column to the final dataframe
 census_data_df$state <- rep(states, each = nrow(census_data_df) / length(states))
 
-
-
-
-
-
 ################################################################################
 
 # Calculate RRI for sentence length

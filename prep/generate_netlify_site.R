@@ -29,8 +29,8 @@ library(tidyverse)
 wd <- getwd()
 
 # get list of 50 states
-states <- c("Georgia")
-#states <- state.name
+# states <- c("Georgia")
+states <- state.name
 
 # read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
