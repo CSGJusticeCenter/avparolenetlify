@@ -13,8 +13,9 @@ library(rmarkdown)
 library(tidyverse)
 
 # run code
-# source("prep/library.R")
-# source("prep/functions.R")
+source("prep/library.R")
+source("prep/functions.R")
+# source("prep/dataframes.R")
 # source("prep/import.R")
 # source("prep/page_national_trends.R")
 # source("prep/tab_parole_eligibility.R")

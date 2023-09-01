@@ -12,7 +12,8 @@ format:
 knitr::opts_chunk$set(
   echo = FALSE,
   warning = FALSE,
-  message = FALSE
+  message = FALSE,
+  dev = "ragg_png"
 )
 
 # load packages
@@ -34,7 +35,7 @@ source("prep/library.R")
 source("prep/functions.R")
 source("prep/dataframes.R")
 
-state_for_report <- "Georgia"
+state_for_report <- "change_me"
 ```
 
 
@@ -189,71 +190,71 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 # Who is in Prison?
 ###################
 
-# Stacked bar chart showing distribution of people by race
-# New crime
-if (state_for_report %in% names(all_stackedbar_new_crime_race_2020)) {
-  state_stackedbar_new_crime_race_2020 <-
-    all_stackedbar_new_crime_race_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "New Crime: Race/Ethincity")
-} else {
-  state_stackedbar_new_crime_race_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by sex
-# New crime
-if (state_for_report %in% names(all_stackedbar_new_crime_sex_2020)) {
-  state_stackedbar_new_crime_sex_2020 <-
-    all_stackedbar_new_crime_sex_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "New Crime: Gender")
-} else {
-  state_stackedbar_new_crime_sex_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by age
-# New crime
-if (state_for_report %in% names(all_stackedbar_new_crime_ageyrend_2020)) {
-  state_stackedbar_new_crime_ageyrend_2020 <-
-    all_stackedbar_new_crime_ageyrend_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "New Crime: Age")
-} else {
-  state_stackedbar_new_crime_ageyrend_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by race
-# Parole return/revocation
-if (state_for_report %in% names(all_stackedbar_parole_return_race_2020)) {
-  state_stackedbar_parole_return_race_2020 <-
-    all_stackedbar_parole_return_race_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Parole return/revocation: Race/Ethincity")
-} else {
-  state_stackedbar_parole_return_race_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by sex
-# Parole return/revocation
-if (state_for_report %in% names(all_stackedbar_parole_return_sex_2020)) {
-  state_stackedbar_parole_return_sex_2020 <-
-    all_stackedbar_parole_return_sex_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Parole return/revocation: Gender")
-} else {
-  state_stackedbar_parole_return_sex_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by age
-# Parole return/revocation
-if (state_for_report %in% names(all_stackedbar_parole_return_ageyrend_2020)) {
-  state_stackedbar_parole_return_ageyrend_2020 <-
-    all_stackedbar_parole_return_ageyrend_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Parole return/revocation: Age")
-} else {
-  state_stackedbar_parole_return_ageyrend_2020 <- "No Data"
-}
+# # Stacked bar chart showing distribution of people by race
+# # New crime
+# if (state_for_report %in% names(all_stackedbar_new_crime_race_2020)) {
+#   state_stackedbar_new_crime_race_2020 <- 
+#     all_stackedbar_new_crime_race_2020[[state_for_report]] %>% 
+#     hc_size(height = 100) %>%
+#     hc_title(text = "New Crime: Race/Ethincity")
+# } else {
+#   state_stackedbar_new_crime_race_2020 <- "No Data"
+# }
+# 
+# # Stacked bar chart showing distribution of people by sex
+# # New crime
+# if (state_for_report %in% names(all_stackedbar_new_crime_sex_2020)) {
+#   state_stackedbar_new_crime_sex_2020 <- 
+#     all_stackedbar_new_crime_sex_2020[[state_for_report]] %>% 
+#     hc_size(height = 100) %>%
+#     hc_title(text = "New Crime: Gender")
+# } else {
+#   state_stackedbar_new_crime_sex_2020 <- "No Data"
+# }
+# 
+# # Stacked bar chart showing distribution of people by age
+# # New crime
+# if (state_for_report %in% names(all_stackedbar_new_crime_ageyrend_2020)) {
+#   state_stackedbar_new_crime_ageyrend_2020 <- 
+#     all_stackedbar_new_crime_ageyrend_2020[[state_for_report]] %>% 
+#     hc_size(height = 100) %>%
+#     hc_title(text = "New Crime: Age")
+# } else {
+#   state_stackedbar_new_crime_ageyrend_2020 <- "No Data"
+# }
+# 
+# # Stacked bar chart showing distribution of people by race
+# # Parole return/revocation
+# if (state_for_report %in% names(all_stackedbar_parole_return_race_2020)) {
+#   state_stackedbar_parole_return_race_2020 <- 
+#     all_stackedbar_parole_return_race_2020[[state_for_report]] %>% 
+#     hc_size(height = 100) %>%
+#     hc_title(text = "Parole return/revocation: Race/Ethincity")
+# } else {
+#   state_stackedbar_parole_return_race_2020 <- "No Data"
+# }
+# 
+# # Stacked bar chart showing distribution of people by sex
+# # Parole return/revocation
+# if (state_for_report %in% names(all_stackedbar_parole_return_sex_2020)) {
+#   state_stackedbar_parole_return_sex_2020 <- 
+#     all_stackedbar_parole_return_sex_2020[[state_for_report]] %>% 
+#     hc_size(height = 100) %>%
+#     hc_title(text = "Parole return/revocation: Gender")
+# } else {
+#   state_stackedbar_parole_return_sex_2020 <- "No Data"
+# }
+# 
+# # Stacked bar chart showing distribution of people by age
+# # Parole return/revocation
+# if (state_for_report %in% names(all_stackedbar_parole_return_ageyrend_2020)) {
+#   state_stackedbar_parole_return_ageyrend_2020 <- 
+#     all_stackedbar_parole_return_ageyrend_2020[[state_for_report]] %>% 
+#     hc_size(height = 100) %>%
+#     hc_title(text = "Parole return/revocation: Age")
+# } else {
+#   state_stackedbar_parole_return_ageyrend_2020 <- "No Data"
+# }
 
 ###################
 # Prison Population Trends
@@ -631,40 +632,40 @@ div(id = "body-section", br(),
 ::: {.panel-tabset}
 ### Race
 ```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_new_crime_race_2020), br(),
-    div(id = "visualization", state_stackedbar_parole_return_race_2020), br()
-    )
+# div(id = "body-section", br(),
+#     div(id = "visualization", state_stackedbar_new_crime_race_2020), br(),
+#     div(id = "visualization", state_stackedbar_parole_return_race_2020), br()
+#     )
 ```
 
 ### Gender
 ```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_new_crime_sex_2020), br(),
-    div(id = "visualization", state_stackedbar_parole_return_sex_2020), br()
-    )
+# div(id = "body-section", br(),
+#     div(id = "visualization", state_stackedbar_new_crime_sex_2020), br(),
+#     div(id = "visualization", state_stackedbar_parole_return_sex_2020), br()
+#     )
 ```
 
 ### Age
 ```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_new_crime_ageyrend_2020), br(),
-    div(id = "visualization", state_stackedbar_parole_return_ageyrend_2020), br()
-    )
+# div(id = "body-section", br(),
+#     div(id = "visualization", state_stackedbar_new_crime_ageyrend_2020), br(),
+#     div(id = "visualization", state_stackedbar_parole_return_ageyrend_2020), br()
+#     )
 ```
 
 ### Offense Types
 ```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", "TBD"), br()
-    )
+# div(id = "body-section", br(),
+#     div(id = "visualization", "TBD"), br()
+#     )
 ```
 
 ### Sentence Length
 ```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", "TBD"), br()
-    )
+# div(id = "body-section", br(),
+#     div(id = "visualization", "TBD"), br()
+#     )
 ```
 
 :::

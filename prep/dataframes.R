@@ -1,5 +1,13 @@
 
 
+# # NCRP files
+# load(file = paste0(sp_data_path, "/data/analysis/ncrp_yearendpop.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/ncrp_admissions.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/ncrp_term_records.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/ncrp_releases.rds"))
+
+
+
 # Map
 load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/parole_info_by_state.rds"))
@@ -35,8 +43,13 @@ load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_pe_type_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_population.rds"))
 
-
-
+# Who is in Prison?
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_new_crime_sex_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_new_crime_ageyrend_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_new_crime_race_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_parole_return_sex_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_parole_return_ageyrend_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_parole_return_race_2020.rds"))
 
 
 
