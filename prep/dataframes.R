@@ -6,7 +6,9 @@
 # load(file = paste0(sp_data_path, "/data/analysis/ncrp_term_records.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/ncrp_releases.rds"))
 
-
+################################################################################
+# National Trends
+################################################################################
 
 # Map
 load(file = paste0(sp_data_path, "/data/analysis/hex_gj.rds"))
@@ -16,6 +18,8 @@ load(file = paste0(sp_data_path, "/data/analysis/parole_info_by_state.rds"))
 
 
 
+################################################################################
+# Parole Eligibility
 ################################################################################
 
 # Robina Institute information
@@ -35,8 +39,12 @@ load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_
 
 
 
-
 ################################################################################
+# Prison Population
+################################################################################
+
+# New crime vs Parole return
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_admtype_2020.rds"))
 
 # Prison Population
 load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole.rds"))
@@ -54,6 +62,8 @@ load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_parole_return_ra
 
 
 
+################################################################################
+# Releases
 ################################################################################
 
 # Maxout
@@ -83,6 +93,8 @@ load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_violent_2020.rds"))
 
 
 
+################################################################################
+# Disparities
 ################################################################################
 
 # Disparities

@@ -149,7 +149,21 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # create age categories
   mutate(admtype = ifelse(is.na(admtype), "Unknown", admtype),
          race = ifelse(is.na(race), "Unknown", race),
-         ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend))
+         ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend)) %>%
+
+  mutate(admtype = factor(admtype,
+                          levels = c("New court commitment",
+                                     "Parole return/revocation",
+                                     "Other admission (including unsentenced, transfer, AWOL/escapee return)",
+                                     "Unknown")),
+         race = factor(race,
+                       levels = c("Unknown",
+                                  "Other race(s), non-Hispanic",
+                                  "White, non-Hispanic",
+                                  "Hispanic, any race",
+                                  "Black, non-Hispanic"
+                                  ))
+         )
 
 
 

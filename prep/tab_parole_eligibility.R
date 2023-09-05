@@ -172,7 +172,6 @@ all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
 
 
 
-
 ################################################################################
 
 # Sentence about parole eligible prison population:
@@ -477,16 +476,14 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_stackedbar_pe_type_2020,               file=file.path(folder, "all_stackedbar_pe_type_2020.rds"))
-  save(all_sentence_parole_elgibility_population, file=file.path(folder, "all_sentence_parole_elgibility_population.rds"))
+  save(all_stackedbar_pe_type_2020,                 file = file.path(folder, "all_stackedbar_pe_type_2020.rds"))
+  save(all_sentence_parole_elgibility_population,   file = file.path(folder, "all_sentence_parole_elgibility_population.rds"))
 
-  save(current_ped_2020_race,                  file=file.path(folder, "current_ped_2020_race.rds"))
-  save(all_sentence_parole_elgibility_race,    file=file.path(folder, "all_sentence_parole_elgibility_race.rds"))
-  save(all_bar_parole_elgibility_race,         file=file.path(folder, "all_bar_parole_elgibility_race.rds"))
+  save(current_ped_2020_race,                       file = file.path(folder, "current_ped_2020_race.rds"))
+  save(all_sentence_parole_elgibility_race,         file = file.path(folder, "all_sentence_parole_elgibility_race.rds"))
+  save(all_bar_parole_elgibility_race,              file = file.path(folder, "all_bar_parole_elgibility_race.rds"))
 
-  save(all_sentence_parole_elgibility_offense,
-       file=file.path(folder, "all_sentence_parole_elgibility_offense.rds"))
-  save(all_pie_parole_elgibility_offense_new_crime,
-       file=file.path(folder, "all_pie_parole_elgibility_offense_new_crime.rds"))
+  save(all_sentence_parole_elgibility_offense,      file = file.path(folder, "all_sentence_parole_elgibility_offense.rds"))
+  save(all_pie_parole_elgibility_offense_new_crime, file = file.path(folder, "all_pie_parole_elgibility_offense_new_crime.rds"))
 
 }

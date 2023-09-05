@@ -8,10 +8,10 @@
 #######################################
 
 # Function to generate grouped data for stacked bar chart
-fnc_generate_grouped_adm_data <- function(df, year, group_by_col) {
+fnc_generate_grouped_data <- function(df, year, admtype_col, group_by_col) {
   df %>%
-    filter(rptyear == year) %>%
-    group_by(state, admtype) %>%
+    filter(rptyear == year & admtype == admtype_col) %>%
+    group_by(state) %>%
     count(!!sym(group_by_col)) %>%
     mutate(
       prop = (n / sum(n)) * 100,
@@ -20,19 +20,17 @@ fnc_generate_grouped_adm_data <- function(df, year, group_by_col) {
       tooltip = paste0("<b>", state, "</b><br><br>",
                        group_by_col, ": <b>", !!sym(group_by_col),
                        "</b><br><br>",
-                       "Percentage of People: <b>", prop_label, "</b><br>",
-                       "Number of People: <b>", formattable::comma(n, digits = 0), "</b>",
-                       sep = "")
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
     )
 }
 
 # Function to create stacked bar
-fnc_generate_horzstackedbar_admtype_chart <- function(df, group_by_col) {
+fnc_generate_horzstackedbar_chart <- function(df, group_by_col) {
   hchart(df, "bar",
-         hcaes(x = admtype,
+         hcaes(x = state,
                y = prop,
                group = !!sym(group_by_col)
-               ),
+         ),
          dataLabels = list(enabled = TRUE,
                            format = "{point.prop_label}",
                            style = list(fontWeight = "bold",
@@ -41,12 +39,8 @@ fnc_generate_horzstackedbar_admtype_chart <- function(df, group_by_col) {
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
              min = 0, max = 100) %>%
-    hc_xAxis(categories = c("New court commitment",
-                            "Parole return/revocation",
-                            "Other admission (including unsentenced, transfer, AWOL/escapee return)",
-                            "Unknown"),
-             title = list(text = ""),
-             labels = list(enabled = TRUE)) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = FALSE)) %>%
     hc_legend(enabled = TRUE,
               reversed = TRUE) %>%
     hc_add_theme(hc_theme_jc) %>%
@@ -411,61 +405,304 @@ all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, sta
 
 ################################################################################
 
+###################
+# Parole return/revocation
+###################
+
 # RACE
 # Get number/prop people by race
-ncrp_yearendpop_race_2020 <-
-  fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "race")
+ncrp_yearendpop_parole_return_race_2020 <-
+  fnc_generate_grouped_data(ncrp_yearendpop, 2020, "Parole return/revocation", "race")
 
 # List of states
-states <- unique(ncrp_yearendpop_race_2020$state)
+states <- unique(ncrp_yearendpop_parole_return_race_2020$state)
 
-all_stackedbar_prison_race_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_yearendpop_race_2020 %>%
+# Create highchart of people in prison by race in 2020
+all_stackedbar_parole_return_race_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_parole_return_race_2020 %>%
     ungroup() %>%
     filter(state == x) %>%
-    distinct()
-  highcharts <- fnc_generate_horzstackedbar_admtype_chart(df1, "race")
+    mutate(race = factor(race,
+                         levels = c("Black, non-Hispanic",
+                                    "Unknown",
+                                    "Other race(s), non-Hispanic",
+                                    "White, non-Hispanic",
+                                    "Hispanic, any race"
+                         )))
+  highcharts <- highchart() %>%
+    hc_chart(type = "bar") %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        stacking = "normal",
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4)) %>%
+    hc_add_series(name = "Unknown",
+                  data = df1 %>%
+                    filter(race == "Unknown") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = darkblue,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "Other race(s), non-Hispanic",
+                  data = df1 %>% filter(race == "Other race(s), non-Hispanic") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = orange,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "White, non-Hispanic",
+                  data = df1 %>% filter(race == "White, non-Hispanic") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = yellow,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "Hispanic, any race",
+                  data = df1 %>% filter(race == "Hispanic, any race") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = purple,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "Black, non-Hispanic",
+                  data = df1 %>% filter(race == "Black, non-Hispanic") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = teal,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}")))
   return(highcharts)
 })
 
-all_stackedbar_prison_race_2020 <- setNames(all_stackedbar_prison_race_2020, states)
+# Assign state names
+all_stackedbar_parole_return_race_2020 <- setNames(all_stackedbar_parole_return_race_2020, states)
+
+
+
+
+# AGE
+# Get number/prop people by age
+ncrp_yearendpop_parole_return_ageyrend_2020 <-
+  fnc_generate_grouped_data(ncrp_yearendpop, 2020, "Parole return/revocation", "ageyrend")
+
+# List of states
+states <- unique(ncrp_yearendpop_parole_return_ageyrend_2020$state)
+
+# Create highchart of people in prison by age
+all_stackedbar_parole_return_ageyrend_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_parole_return_ageyrend_2020 %>%
+    filter(state == x) %>%
+    mutate(ageyrend = factor(ageyrend,
+                             levels = c("55+ years",
+                                        "45-54 years",
+                                        "35-44 years",
+                                        "25-34 years",
+                                        "18-24 years")))
+
+  highcharts <- fnc_generate_horzstackedbar_chart(df1, "ageyrend")
+  return(highcharts)
+})
+
+# Assign state names
+all_stackedbar_parole_return_ageyrend_2020 <- setNames(all_stackedbar_parole_return_ageyrend_2020, states)
+
+
+
+
+# SEX
+# Get number/prop people by sex
+ncrp_yearendpop_parole_return_sex_2020 <-
+  fnc_generate_grouped_data(ncrp_yearendpop, 2020, "Parole return/revocation", "sex")
+
+# List of states
+states <- unique(ncrp_yearendpop_parole_return_sex_2020$state)
+
+# Create highchart of people in prison by sex
+all_stackedbar_parole_return_sex_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_parole_return_sex_2020 %>% filter(state == x)
+
+  highcharts <- fnc_generate_horzstackedbar_chart(df1, "sex")
+  highcharts <- highcharts %>% hc_colors(c(yellow, teal))
+  return(highcharts)
+})
+all_stackedbar_parole_return_sex_2020 <- setNames(all_stackedbar_parole_return_sex_2020, states)
 
 
 
 
 
 
+###################
+# New court commitment
+###################
+
+# RACE
+# Get number/prop of people in prison for a new crime by race
+ncrp_yearendpop_new_crime_race_2020 <-
+  fnc_generate_grouped_data(ncrp_yearendpop, 2020, "New court commitment", "race")
+
+# List of states
+states <- unique(ncrp_yearendpop_new_crime_race_2020$state)
+
+# Create highchart of people in prison for a new crime by race
+all_stackedbar_new_crime_race_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_new_crime_race_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    mutate(race = factor(race,
+                         levels = c("Black, non-Hispanic",
+                                    "Unknown",
+                                    "Other race(s), non-Hispanic",
+                                    "White, non-Hispanic",
+                                    "Hispanic, any race"
+                         )))
+  highcharts <- highchart() %>%
+    hc_chart(type = "bar") %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        stacking = "normal",
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4)) %>%
+    hc_add_series(name = "Unknown",
+                  data = df1 %>%
+                    filter(race == "Unknown") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = darkblue,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "Other race(s), non-Hispanic",
+                  data = df1 %>% filter(race == "Other race(s), non-Hispanic") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = orange,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "White, non-Hispanic",
+                  data = df1 %>% filter(race == "White, non-Hispanic") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = yellow,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "Hispanic, any race",
+                  data = df1 %>% filter(race == "Hispanic, any race") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = purple,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}"))) %>%
+    hc_add_series(name = "Black, non-Hispanic",
+                  data = df1 %>% filter(race == "Black, non-Hispanic") %>% select(prop, prop_label) %>%
+                    mutate(data_point = map2(prop, prop_label, ~ list(y = .x, prop_label = .y))) %>%
+                    pull(data_point),
+                  color = teal,
+                  dataLabels = list(enabled = TRUE,
+                                    style = list(fontSize = '1em'),
+                                    formatter = JS("function() {return this.point.prop_label;}")))
+  return(highcharts)
+})
+
+# Assign state names
+all_stackedbar_new_crime_race_2020 <- setNames(all_stackedbar_new_crime_race_2020, states)
 
 
 
-# # AGE
-# # Get number/prop people by age
-# ncrp_yearendpop_parole_return_ageyrend_2020 <-
-#   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "Parole return/revocation", "ageyrend")
-#
-# # List of states
-# states <- unique(ncrp_yearendpop_parole_return_ageyrend_2020$state)
-#
-# # Create highchart of people in prison by age
-# all_stackedbar_parole_return_ageyrend_2020 <- map(.x = states,  .f = function(x) {
-#
-#   df1 <- ncrp_yearendpop_parole_return_ageyrend_2020 %>%
-#     filter(state == x) %>%
-#     mutate(ageyrend = factor(ageyrend,
-#                              levels = c("55+ years",
-#                                         "45-54 years",
-#                                         "35-44 years",
-#                                         "25-34 years",
-#                                         "18-24 years")))
-#
-#   highcharts <- fnc_generate_horzstackedbar_chart(df1, "ageyrend")
-#   return(highcharts)
-# })
-#
-# # Assign state names
-# all_stackedbar_parole_return_ageyrend_2020 <- setNames(all_stackedbar_parole_return_ageyrend_2020, states)
-#
-#
+
+
+# AGE
+# Get number/prop of people in prison for a new crime by age
+ncrp_yearendpop_new_crime_ageyrend_2020 <-
+  fnc_generate_grouped_data(ncrp_yearendpop, 2020, "New court commitment", "ageyrend")
+
+# List of states
+states <- unique(ncrp_yearendpop_new_crime_ageyrend_2020$state)
+
+# Create highcharts of people in prison for a new crime by age
+all_stackedbar_new_crime_ageyrend_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_new_crime_ageyrend_2020 %>%
+    filter(state == x) %>%
+    mutate(ageyrend = factor(ageyrend,
+                             levels = c("55+ years",
+                                        "45-54 years",
+                                        "35-44 years",
+                                        "25-34 years",
+                                        "18-24 years")))
+
+  highcharts <- fnc_generate_horzstackedbar_chart(df1, "ageyrend")
+  return(highcharts)
+})
+
+# Assign state names
+all_stackedbar_new_crime_ageyrend_2020 <- setNames(all_stackedbar_new_crime_ageyrend_2020, states)
+
+
+
+
+
+
+# SEX
+# Get number/prop of people in prison for a new crime by sex
+ncrp_yearendpop_new_crime_sex_2020 <-
+  fnc_generate_grouped_data(ncrp_yearendpop, 2020, "New court commitment", "sex")
+
+# Get list of states
+states <- unique(ncrp_yearendpop_new_crime_sex_2020$state)
+
+# Create highcharts of people in prison for a new crime by sex
+all_stackedbar_new_crime_sex_2020 <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_new_crime_sex_2020 %>% filter(state == x)
+
+  highcharts <- fnc_generate_horzstackedbar_chart(df1, "sex")
+  highcharts <- highcharts %>% hc_colors(c(yellow, teal))
+
+  return(highcharts)
+})
+
+# Assign state names
+all_stackedbar_new_crime_sex_2020 <- setNames(all_stackedbar_new_crime_sex_2020, states)
+
+
 
 
 
@@ -482,7 +719,12 @@ for (folder in theseFOLDERS){
 
   save(all_stackedbar_admtype_2020,                file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
 
-  save(all_stackedbar_prison_sex_2020,             file = file.path(folder, "all_stackedbar_prison_sex_2020.rds"))
+  save(all_stackedbar_new_crime_sex_2020,          file = file.path(folder, "all_stackedbar_new_crime_sex_2020.rds"))
+  save(all_stackedbar_new_crime_ageyrend_2020,     file = file.path(folder, "all_stackedbar_new_crime_ageyrend_2020.rds"))
+  save(all_stackedbar_new_crime_race_2020,         file = file.path(folder, "all_stackedbar_new_crime_race_2020.rds"))
+  save(all_stackedbar_parole_return_sex_2020,      file = file.path(folder, "all_stackedbar_parole_return_sex_2020.rds"))
+  save(all_stackedbar_parole_return_ageyrend_2020, file = file.path(folder, "all_stackedbar_parole_return_ageyrend_2020.rds"))
+  save(all_stackedbar_parole_return_race_2020,     file = file.path(folder, "all_stackedbar_parole_return_race_2020.rds"))
 
   save(all_line_pop_released_to_parole,            file = file.path(folder, "all_line_pop_released_to_parole.rds"))
 
