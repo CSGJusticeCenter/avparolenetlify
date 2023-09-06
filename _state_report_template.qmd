@@ -151,7 +151,7 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_race)) {
 
 
 ###################
-# Offense Types for the Parole-Eligible Prison Population
+# Criminal Offenses for the Parole-Eligible Prison Population
 ###################
 
 # Save pie chart of most serious sentenced offense by state - new crime
@@ -201,70 +201,39 @@ if (state_for_report %in% names(all_stackedbar_admtype_2020)) {
 ###################
 
 # Stacked bar chart showing distribution of people by race
-# New crime
-if (state_for_report %in% names(all_stackedbar_new_crime_race_2020)) {
-  state_stackedbar_new_crime_race_2020 <-
-    all_stackedbar_new_crime_race_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "New Crime: Race/Ethincity")
+if (state_for_report %in% names(all_stackedbar_prison_race_2020)) {
+  state_stackedbar_prison_race_2020 <-
+    all_stackedbar_prison_race_2020[[state_for_report]] %>%
+    # hc_size(height = 200) %>%
+    hc_title(text = "Race and Ethincity")
 } else {
-  state_stackedbar_new_crime_race_2020 <- "No Data"
+  state_stackedbar_prison_race_2020 <- "No Data"
 }
 
 # Stacked bar chart showing distribution of people by sex
-# New crime
-if (state_for_report %in% names(all_stackedbar_new_crime_sex_2020)) {
-  state_stackedbar_new_crime_sex_2020 <-
-    all_stackedbar_new_crime_sex_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "New Crime: Gender")
+if (state_for_report %in% names(all_stackedbar_prison_sex_2020)) {
+  state_stackedbar_prison_sex_2020 <-
+    all_stackedbar_prison_sex_2020[[state_for_report]] %>%
+    # hc_size(height = 200) %>%
+    hc_title(text = "Gender")
 } else {
-  state_stackedbar_new_crime_sex_2020 <- "No Data"
+  state_stackedbar_prison_sex_2020 <- "No Data"
 }
 
-# Stacked bar chart showing distribution of people by age
-# New crime
-if (state_for_report %in% names(all_stackedbar_new_crime_ageyrend_2020)) {
-  state_stackedbar_new_crime_ageyrend_2020 <-
-    all_stackedbar_new_crime_ageyrend_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "New Crime: Age")
+# Stacked bar chart showing distribution of people by ageyrend
+if (state_for_report %in% names(all_stackedbar_prison_ageyrend_2020)) {
+  state_stackedbar_prison_ageyrend_2020 <-
+    all_stackedbar_prison_ageyrend_2020[[state_for_report]] %>%
+    # hc_size(height = 200) %>%
+    hc_title(text = "Age")
 } else {
-  state_stackedbar_new_crime_ageyrend_2020 <- "No Data"
+  state_stackedbar_prison_ageyrend_2020 <- "No Data"
 }
 
-# Stacked bar chart showing distribution of people by race
-# Parole return/revocation
-if (state_for_report %in% names(all_stackedbar_parole_return_race_2020)) {
-  state_stackedbar_parole_return_race_2020 <-
-    all_stackedbar_parole_return_race_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Parole return/revocation: Race/Ethincity")
-} else {
-  state_stackedbar_parole_return_race_2020 <- "No Data"
-}
 
-# Stacked bar chart showing distribution of people by sex
-# Parole return/revocation
-if (state_for_report %in% names(all_stackedbar_parole_return_sex_2020)) {
-  state_stackedbar_parole_return_sex_2020 <-
-    all_stackedbar_parole_return_sex_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Parole return/revocation: Gender")
-} else {
-  state_stackedbar_parole_return_sex_2020 <- "No Data"
-}
 
-# Stacked bar chart showing distribution of people by age
-# Parole return/revocation
-if (state_for_report %in% names(all_stackedbar_parole_return_ageyrend_2020)) {
-  state_stackedbar_parole_return_ageyrend_2020 <-
-    all_stackedbar_parole_return_ageyrend_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Parole return/revocation: Age")
-} else {
-  state_stackedbar_parole_return_ageyrend_2020 <- "No Data"
-}
+
+
 
 ###################
 # Prison Population Trends
@@ -565,7 +534,7 @@ htmltools::div(
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "New Court Commits vs. Parole Revocations"), br(),
-    div(id = "regular-text", "While the public often envisions a prison population primarily made up of individuals serving long sentences for serious crimes, the reality is far more nuanced. In particular, the distinction between new court commits—those incarcerated for the first time on a new charge—and parole revocations—those returned to prison for violating the conditions of their parole—is a critical one. Understanding the proportion of these two groups within the prison population can provide valuable insights into the effectiveness of the state's criminal justice policies, including sentencing and parole practices."), br(),
+    div(id = "regular-text", "While the public often envisions a prison population primarily made up of individuals serving long sentences for serious crimes, the reality is far more nuanced. In particular, the distinction between new court commits—those incarcerated for a new crime—and parole revocations—those returned to prison for violating the conditions of their parole—is a critical one. Understanding the proportion of these two groups within the prison population can provide valuable insights into the effectiveness of the state's criminal justice policies, including sentencing and parole practices."), br(),
     div(id = "visualization", state_stackedbar_admtype_2020), br()
     )
 ```
@@ -589,49 +558,45 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Who's in Prison?"), br(),
-    div(id = "regular-text", "[Race/Ethnicity][Gender] in who are between [Age Range] years old made up the most people in prison in 2020"), br(),
+    div(id = "big-section-title", "Who's in Prison?"), br()
+    # div(id = "regular-text", "[Race/Ethnicity][Gender] in who are between [Age Range] years old made up the most people in prison in 2020"), br(),
     )
 ```
 ::: {.panel-tabset}
-### Race
+### Race and Ethinicity
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_new_crime_race_2020), br(),
-    div(id = "visualization", state_stackedbar_parole_return_race_2020), br()
+    div(id = "visualization", state_stackedbar_prison_race_2020)
     )
 ```
 
 ### Gender
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_new_crime_sex_2020), br(),
-    div(id = "visualization", state_stackedbar_parole_return_sex_2020), br()
+    div(id = "visualization", state_stackedbar_prison_sex_2020)
     )
 ```
 
 ### Age
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_new_crime_ageyrend_2020), br(),
-    div(id = "visualization", state_stackedbar_parole_return_ageyrend_2020), br()
-    )
-```
-
-### Offense Types
-```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", "Visualization by FBI violent index, prop, drug, public order"), br()
-    )
-```
-
-### Sentence Length
-```{r}
-div(id = "body-section", br(),
-    div(id = "visualization", "TBD"), br()
+    div(id = "visualization", state_stackedbar_prison_ageyrend_2020)
     )
 ```
 :::
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Sentence Lengths"), br()
+    )
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Criminal Offenses"), br()
+    )
+```
+
 </center>
 <br>
 
@@ -683,7 +648,7 @@ div(id = "body-section", br(),
     )
 ```
 ::: {.panel-tabset}
-### Race
+### Race and Ethnicity
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text",  state_sentence_parole_elgibility_race), br(),
@@ -711,11 +676,11 @@ div(id = "body-section", br(),
 ```{r}
 ########################################
 
-# Offense Types
+# Criminal Offenses
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Offense Types"), br(),
+    div(id = "big-section-title", "Criminal Offenses"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_offense), br(),
     state_pie_parole_elgibility_offense_new_crime)
 ```

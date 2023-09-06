@@ -162,7 +162,13 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
                                   "White, non-Hispanic",
                                   "Hispanic, any race",
                                   "Black, non-Hispanic"
-                                  ))
+                                  )),
+         ageyrend = factor(ageyrend,
+                           levels = c("55+ years",
+                                      "45-54 years",
+                                      "35-44 years",
+                                      "25-34 years",
+                                      "18-24 years"))
          )
 
 

@@ -168,7 +168,7 @@ hc_reactable_style <- list(
 hc_theme_jc <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
-                            fontSize = "14px",
+                            fontSize = "12px",
                             color = neutralBlackText)),
   title = list(
     align = "center",
@@ -191,11 +191,12 @@ hc_theme_jc <- hc_theme(
   legend = list(
     align = "center",
     verticalAlign = "top",
-    itemStyle = list(color = neutralBlackText)
+    itemStyle = list(color = neutralBlackText,
+                     fontWeight = "regular")
   ),
   xAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText,
-                                               fontSize = "1em",
+                                               fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -204,7 +205,8 @@ hc_theme_jc <- hc_theme(
   ),
   yAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText,
-                                               fontSize = "1em")),
+                                               fontSize = "12px",
+                                               fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
     majorGridLineColor = "transparent",
@@ -285,11 +287,12 @@ hc_theme_jc_line <- hc_theme(
   legend = list(
     align = "center",
     verticalAlign = "top",
-    itemStyle = list(color = neutralBlackText)
+    itemStyle = list(color = neutralBlackText,
+                     fontWeight = "regular")
   ),
   xAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText,
-                                               fontWeight = "bold")),
+                                               fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
     minorGridLineColor = "transparent",

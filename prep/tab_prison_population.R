@@ -36,7 +36,7 @@ fnc_generate_horzstackedbar_admtype_chart <- function(df, group_by_col) {
          dataLabels = list(enabled = TRUE,
                            format = "{point.prop_label}",
                            style = list(fontWeight = "bold",
-                                        fontSize = "16px",
+                                        fontSize = "12px",
                                         fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
@@ -102,7 +102,7 @@ all_stackedbar_admtype_2020 <- map(.x = states,  .f = function(x) {
                        dataLabels = list(enabled = TRUE,
                                          format = "{point.prop_label}",
                                          style = list(fontWeight = "bold",
-                                                      fontSize = "16px",
+                                                      fontSize = "12px",
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(format = "{value}%",
                            enabled = FALSE),
@@ -429,44 +429,48 @@ all_stackedbar_prison_race_2020 <- map(.x = states,  .f = function(x) {
 })
 
 all_stackedbar_prison_race_2020 <- setNames(all_stackedbar_prison_race_2020, states)
+all_stackedbar_prison_race_2020$Georgia
 
+# AGE
+# Get number/prop people by ageyrend
+ncrp_yearendpop_ageyrend_2020 <-
+  fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "ageyrend")
 
+# List of states
+states <- unique(ncrp_yearendpop_ageyrend_2020$state)
 
+all_stackedbar_prison_ageyrend_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_ageyrend_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- fnc_generate_horzstackedbar_admtype_chart(df1, "ageyrend")
+  return(highcharts)
+})
 
+all_stackedbar_prison_ageyrend_2020 <- setNames(all_stackedbar_prison_ageyrend_2020, states)
+all_stackedbar_prison_ageyrend_2020$Georgia
 
+# Sex
+# Get number/prop people by sex
+ncrp_yearendpop_sex_2020 <-
+  fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "sex")
 
+# List of states
+states <- unique(ncrp_yearendpop_sex_2020$state)
 
+all_stackedbar_prison_sex_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_sex_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- fnc_generate_horzstackedbar_admtype_chart(df1, "sex")
+  highcharts <- highcharts %>% hc_colors(c(yellow, teal))
+  return(highcharts)
+})
 
-
-# # AGE
-# # Get number/prop people by age
-# ncrp_yearendpop_parole_return_ageyrend_2020 <-
-#   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "Parole return/revocation", "ageyrend")
-#
-# # List of states
-# states <- unique(ncrp_yearendpop_parole_return_ageyrend_2020$state)
-#
-# # Create highchart of people in prison by age
-# all_stackedbar_parole_return_ageyrend_2020 <- map(.x = states,  .f = function(x) {
-#
-#   df1 <- ncrp_yearendpop_parole_return_ageyrend_2020 %>%
-#     filter(state == x) %>%
-#     mutate(ageyrend = factor(ageyrend,
-#                              levels = c("55+ years",
-#                                         "45-54 years",
-#                                         "35-44 years",
-#                                         "25-34 years",
-#                                         "18-24 years")))
-#
-#   highcharts <- fnc_generate_horzstackedbar_chart(df1, "ageyrend")
-#   return(highcharts)
-# })
-#
-# # Assign state names
-# all_stackedbar_parole_return_ageyrend_2020 <- setNames(all_stackedbar_parole_return_ageyrend_2020, states)
-#
-#
-
+all_stackedbar_prison_sex_2020 <- setNames(all_stackedbar_prison_sex_2020, states)
+all_stackedbar_prison_sex_2020$Georgia
 
 
 
@@ -480,10 +484,12 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_stackedbar_admtype_2020,                file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
+  save(all_stackedbar_admtype_2020,         file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
 
-  save(all_stackedbar_prison_sex_2020,             file = file.path(folder, "all_stackedbar_prison_sex_2020.rds"))
+  save(all_stackedbar_prison_race_2020,     file = file.path(folder, "all_stackedbar_prison_race_2020.rds"))
+  save(all_stackedbar_prison_sex_2020,      file = file.path(folder, "all_stackedbar_prison_sex_2020.rds"))
+  save(all_stackedbar_prison_ageyrend_2020, file = file.path(folder, "all_stackedbar_prison_ageyrend_2020.rds"))
 
-  save(all_line_pop_released_to_parole,            file = file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_line_pop_released_to_parole,     file = file.path(folder, "all_line_pop_released_to_parole.rds"))
 
 }
