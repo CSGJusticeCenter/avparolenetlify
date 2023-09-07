@@ -534,7 +534,7 @@ htmltools::div(
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "New Court Commits vs. Parole Revocations"), br(),
-    div(id = "regular-text", "While the public often envisions a prison population primarily made up of individuals serving long sentences for serious crimes, the reality is far more nuanced. In particular, the distinction between new court commits—those incarcerated for a new charge—and parole revocations—those returned to prison for violating the conditions of their parole—is a critical one. Understanding the proportion of these two groups within the prison population can provide valuable insights into the effectiveness of the state's criminal justice policies, including sentencing and parole practices."), br(),
+    div(id = "regular-text", "While the public often envisions a prison population primarily made up of individuals serving long sentences for serious crimes, the reality is far more nuanced. In particular, the distinction between new court commits—those incarcerated for a new crime—and parole revocations—those returned to prison for violating the conditions of their parole—is a critical one. Understanding the proportion of these two groups within the prison population can provide valuable insights into the effectiveness of the state's criminal justice policies, including sentencing and parole practices."), br(),
     div(id = "visualization", state_stackedbar_admtype_2020), br()
     )
 ```
@@ -558,8 +558,8 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Who's in Prison?"), br()
-    # div(id = "regular-text", "[Race/Ethnicity][Gender] in who are between [Age Range] years old made up the most people in prison in 2020"), br(),
+    div(id = "big-section-title", "Who's in Prison?"), br(),
+    div(id = "regular-text", "The following visualizations offer an overview of the demographic composition of the prison population in 2020 by race, gender, and age."), br(),
     )
 ```
 ::: {.panel-tabset}
