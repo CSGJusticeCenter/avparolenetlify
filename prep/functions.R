@@ -140,14 +140,24 @@ fnc_create_fbi_index <- function(df){
     mutate(fbi_index = case_when(
       offdetail == "Aggravated or simple assault"                  ~ "Aggravated or Simple Assault",
       offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder and Non-negligent Manslaughter",
-      offdetail == "Negligent manslaughter"                        ~ "Negligent Manslaughter",
+      offdetail == "Negligent manslaughter"                        ~ "Other Violent Offenses",
       offdetail == "Other violent offenses"                        ~ "Other Violent Offenses",
       offdetail == "Rape/sexual assault"                           ~ "Rape or Sexual Assault",
       offdetail == "Robbery"                                       ~ "Robbery",
       offdetail == "Other/unspecified"                             ~ "Other or Unknown",
       is.na(offdetail)                                             ~ "Other or Unknown",
       TRUE ~ offgeneral
-    ))
+    )) %>%
+    mutate(fbi_index = factor(fbi_index,
+                              levels = c("Murder and Non-negligent Manslaughter",
+                                         "Rape or Sexual Assault",
+                                         "Robbery",
+                                         "Aggravated or Simple Assault",
+                                         "Other Violent Offenses",
+                                         "Property",
+                                         "Public order",
+                                         "Drugs",
+                                         "Other or Unknown")))
 }
 
 fnc_create_admtype <- function(df){

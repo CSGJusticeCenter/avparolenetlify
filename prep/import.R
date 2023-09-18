@@ -165,21 +165,31 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # create age categories
   fnc_create_admtype() %>%
   mutate(race = ifelse(is.na(race), "Unknown", race),
-         ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend)) %>%
+         ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend),
+         sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
 
   mutate(race = factor(race,
                        levels = c("Unknown",
                                   "Other race(s), non-Hispanic",
                                   "White, non-Hispanic",
                                   "Hispanic, any race",
-                                  "Black, non-Hispanic"
-                                  )),
+                                  "Black, non-Hispanic")),
          ageyrend = factor(ageyrend,
                            levels = c("55+ years",
                                       "45-54 years",
                                       "35-44 years",
                                       "25-34 years",
-                                      "18-24 years"))
+                                      "18-24 years")),
+         sentlgth = factor(sentlgth,
+                           levels = c(
+                             "< 1 year",
+                             "1-1.9 years",
+                             "2-4.9 years",
+                             "5-9.9 years",
+                             "10-24.9 years",
+                             ">=25 years",
+                             "Life, LWOP, Life plus additional years, Death",
+                             "Unknown"))
          )
 
 

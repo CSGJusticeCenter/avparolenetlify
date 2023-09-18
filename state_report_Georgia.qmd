@@ -89,6 +89,110 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_new_crime_count, na.rm =
 
 
 
+
+
+
+################################################################################
+
+# Prison Population Tab
+
+################################################################################
+
+# Stacked bar chart showing distribution of prison population by admission type
+if (state_for_report %in% names(all_stackedbar_admtype_2020)) {
+  state_stackedbar_admtype_2020 <-
+    all_stackedbar_admtype_2020[[state_for_report]] %>%
+    hc_size(height = 200) %>%
+    hc_title(text = "Distribution of the Prison Population by Admission Type")
+} else {
+  state_stackedbar_admtype_2020 <- "No Data"
+}
+
+
+###################
+# Who is in Prison?
+###################
+
+# Stacked bar chart showing distribution of people by race
+if (state_for_report %in% names(all_stackedbar_prison_race_2020)) {
+  state_stackedbar_prison_race_2020 <-
+    all_stackedbar_prison_race_2020[[state_for_report]] %>%
+    # hc_size(height = 200) %>%
+    hc_title(text = "Race and Ethincity")
+} else {
+  state_stackedbar_prison_race_2020 <- "No Data"
+}
+
+# Stacked bar chart showing distribution of people by sex
+if (state_for_report %in% names(all_stackedbar_prison_sex_2020)) {
+  state_stackedbar_prison_sex_2020 <-
+    all_stackedbar_prison_sex_2020[[state_for_report]] %>%
+    # hc_size(height = 200) %>%
+    hc_title(text = "Gender")
+} else {
+  state_stackedbar_prison_sex_2020 <- "No Data"
+}
+
+# Stacked bar chart showing distribution of people by ageyrend
+if (state_for_report %in% names(all_stackedbar_prison_ageyrend_2020)) {
+  state_stackedbar_prison_ageyrend_2020 <-
+    all_stackedbar_prison_ageyrend_2020[[state_for_report]] %>%
+    # hc_size(height = 200) %>%
+    hc_title(text = "Age")
+} else {
+  state_stackedbar_prison_ageyrend_2020 <- "No Data"
+}
+
+
+###################
+# Prison Population Trends
+###################
+
+# line chart showing the change in prison pop 
+# and the change in releases to parole over time
+if (state_for_report %in% names(all_line_pop_released_to_parole)) {
+  state_line_pop_released_to_parole <- 
+    all_line_pop_released_to_parole[[state_for_report]] %>% 
+    hc_size(width = 600, height = 400) %>%
+    hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
+} else {
+  state_line_pop_released_to_parole <- "No Data"
+}
+
+
+###################
+# Sentence Length
+###################
+
+# grouped barchart showing the proportion of the prison population by sentlgth and admtype
+if (state_for_report %in% names(all_bar_prison_sentlgth_2020)) {
+  state_bar_prison_sentlgth_2020 <- 
+    all_bar_prison_sentlgth_2020[[state_for_report]] %>% 
+    hc_size(width = 600, height = 700) %>%
+    hc_title(text = "Sentence Length by Admission Type")
+} else {
+  state_bar_prison_sentlgth_2020 <- "No Data"
+}
+
+
+###################
+# Criminal Offenses
+###################
+
+# grouped barchart showing the proportion of the prison population by sentlgth and admtype
+if (state_for_report %in% names(all_bar_prison_fbi_index_2020)) {
+  state_bar_prison_fbi_index_2020 <- 
+    all_bar_prison_fbi_index_2020[[state_for_report]] %>% 
+    hc_size(width = 600, height = 700) %>%
+    hc_title(text = "Criminal Offense by Admission Type")
+} else {
+  state_bar_prison_fbi_index_2020 <- "No Data"
+}
+
+
+
+
+
 ################################################################################
 
 # Parole Eligibility Tab
@@ -174,81 +278,6 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_offense)) {
 }
 
 
-
-
-
-
-
-################################################################################
-
-# Prison Population Tab
-
-################################################################################
-
-# Stacked bar chart showing distribution of prison population by admission type
-if (state_for_report %in% names(all_stackedbar_admtype_2020)) {
-  state_stackedbar_admtype_2020 <-
-    all_stackedbar_admtype_2020[[state_for_report]] %>%
-    hc_size(height = 200) %>%
-    hc_title(text = "Distribution of the Prison Population by Admission Type")
-} else {
-  state_stackedbar_admtype_2020 <- "No Data"
-}
-
-
-###################
-# Who is in Prison?
-###################
-
-# Stacked bar chart showing distribution of people by race
-if (state_for_report %in% names(all_stackedbar_prison_race_2020)) {
-  state_stackedbar_prison_race_2020 <-
-    all_stackedbar_prison_race_2020[[state_for_report]] %>%
-    # hc_size(height = 200) %>%
-    hc_title(text = "Race and Ethincity")
-} else {
-  state_stackedbar_prison_race_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by sex
-if (state_for_report %in% names(all_stackedbar_prison_sex_2020)) {
-  state_stackedbar_prison_sex_2020 <-
-    all_stackedbar_prison_sex_2020[[state_for_report]] %>%
-    # hc_size(height = 200) %>%
-    hc_title(text = "Gender")
-} else {
-  state_stackedbar_prison_sex_2020 <- "No Data"
-}
-
-# Stacked bar chart showing distribution of people by ageyrend
-if (state_for_report %in% names(all_stackedbar_prison_ageyrend_2020)) {
-  state_stackedbar_prison_ageyrend_2020 <-
-    all_stackedbar_prison_ageyrend_2020[[state_for_report]] %>%
-    # hc_size(height = 200) %>%
-    hc_title(text = "Age")
-} else {
-  state_stackedbar_prison_ageyrend_2020 <- "No Data"
-}
-
-
-
-
-
-
-###################
-# Prison Population Trends
-###################
-
-# line chart showing the change in prison pop 
-# and the change in releases to parole over time
-if (state_for_report %in% names(all_line_pop_released_to_parole)) {
-  state_line_pop_released_to_parole <- 
-    all_line_pop_released_to_parole[[state_for_report]] %>% 
-    hc_size(width = 600, height = 400) %>%
-    hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
-} else {
-  state_line_pop_released_to_parole <- "No Data"
-}
 
 
 
@@ -390,13 +419,15 @@ div(id = "body-section", br(),
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Sentence Lengths"), br()
+    div(id = "big-section-title", "Sentence Length"), br(),
+    div(id = "visualization", state_bar_prison_sentlgth_2020), br()
     )
 ```
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Criminal Offenses"), br()
+    div(id = "big-section-title", "Criminal Offense"), br(),
+    div(id = "visualization", state_bar_prison_fbi_index_2020), br()
     )
 ```
 
@@ -625,6 +656,11 @@ div(id = "body-section", br(),
 <br>
 
 ::::
+
+
+
+
+
 
 ::: citation-section
 

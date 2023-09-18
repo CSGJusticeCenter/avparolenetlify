@@ -471,9 +471,103 @@ all_stackedbar_prison_sex_2020 <- map(.x = states,  .f = function(x) {
 all_stackedbar_prison_sex_2020 <- setNames(all_stackedbar_prison_sex_2020, states)
 all_stackedbar_prison_sex_2020$Georgia
 
+# FBI INDEX
+# Get number/prop people by fbi_index
+ncrp_yearendpop_fbi_index_2020 <-
+  fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "fbi_index")
+
+# List of states
+states <- unique(ncrp_yearendpop_fbi_index_2020$state)
+
+all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_fbi_index_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- hchart(df1, "bar",
+                       hcaes(x = fbi_index,
+                             y = prop,
+                             group = admtype
+                       ),
+                       dataLabels = list(enabled = TRUE,
+                                         format = "{point.prop_label}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_colors(c(teal, yellow, purple)) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD.", landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD.")))
+  return(highcharts)
+})
+
+all_bar_prison_fbi_index_2020 <- setNames(all_bar_prison_fbi_index_2020, states)
+all_bar_prison_fbi_index_2020$Georgia
 
 
 
+# SENTENCE LENGTH
+# Get number/prop people by sentlgth
+ncrp_yearendpop_sentlgth_2020 <-
+  fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "sentlgth")
+
+# List of states
+states <- unique(ncrp_yearendpop_sentlgth_2020$state)
+
+all_bar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_sentlgth_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- hchart(df1, "bar",
+                       hcaes(x = sentlgth,
+                             y = prop,
+                             group = admtype
+                       ),
+                       dataLabels = list(enabled = TRUE,
+                                         format = "{point.prop_label}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_colors(c(teal, yellow, purple)) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD.", landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD.")))
+  return(highcharts)
+})
+
+all_bar_prison_sentlgth_2020 <- setNames(all_bar_prison_sentlgth_2020, states)
+all_bar_prison_sentlgth_2020$Georgia
 
 
 
@@ -522,10 +616,13 @@ for (folder in theseFOLDERS){
 
   save(all_stackedbar_admtype_2020,         file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
 
+  save(all_line_pop_released_to_parole,     file = file.path(folder, "all_line_pop_released_to_parole.rds"))
+
   save(all_stackedbar_prison_race_2020,     file = file.path(folder, "all_stackedbar_prison_race_2020.rds"))
   save(all_stackedbar_prison_sex_2020,      file = file.path(folder, "all_stackedbar_prison_sex_2020.rds"))
   save(all_stackedbar_prison_ageyrend_2020, file = file.path(folder, "all_stackedbar_prison_ageyrend_2020.rds"))
 
-  save(all_line_pop_released_to_parole,     file = file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_bar_prison_sentlgth_2020,        file = file.path(folder, "all_bar_prison_sentlgth_2020.rds"))
+  save(all_bar_prison_fbi_index_2020,       file = file.path(folder, "all_bar_prison_fbi_index_2020.rds"))
 
 }

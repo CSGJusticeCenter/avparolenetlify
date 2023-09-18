@@ -56,7 +56,11 @@ load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_race_2020
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_sex_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_ageyrend_2020.rds"))
 
+# Sentence Length
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_prison_sentlgth_2020.rds"))
 
+# Offenses
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_prison_fbi_index_2020.rds"))
 
 
 ################################################################################
