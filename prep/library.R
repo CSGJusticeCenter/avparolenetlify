@@ -47,8 +47,7 @@ library(sjPlot) # missing data
 # CHANGE THIS TO YOUR PROJECT PATH
 csg_set_project_path(
   project = "AVParole",
-  # sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - RES_Parole",
-  sp_folder = "C:/Users/mroberts/OneDrive - The Council of State Governments/Desktop/Temp/JC Research - RES_Parole",
+  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
   force = TRUE)
 
 # save data path

@@ -43,8 +43,7 @@ fnc_generate_horzstackedbar_admtype_chart <- function(df, group_by_col) {
              min = 0, max = 100) %>%
     hc_xAxis(categories = c("New court commitment",
                             "Parole return/revocation",
-                            "Other admission (including unsentenced, transfer, AWOL/escapee return)",
-                            "Unknown"),
+                            "Other or Unknown"),
              title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -132,8 +131,8 @@ all_stackedbar_admtype_2020 <- map(.x = states,  .f = function(x) {
 
 # Assign state names
 all_stackedbar_admtype_2020 <- setNames(all_stackedbar_admtype_2020, states)
-
-
+all_stackedbar_admtype_2020$Georgia
+all_stackedbar_admtype_2020$California
 
 
 
@@ -396,8 +395,8 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 
 # Assign state names
 all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
-
-
+all_line_pop_released_to_parole$Georgia
+all_line_pop_released_to_parole$California
 
 
 
@@ -471,6 +470,43 @@ all_stackedbar_prison_sex_2020 <- map(.x = states,  .f = function(x) {
 
 all_stackedbar_prison_sex_2020 <- setNames(all_stackedbar_prison_sex_2020, states)
 all_stackedbar_prison_sex_2020$Georgia
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

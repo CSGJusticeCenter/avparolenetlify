@@ -63,27 +63,27 @@ load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_ageyrend_
 # Releases
 ################################################################################
 
-# Maxout
-load(file = paste0(sp_data_path, "/data/analysis/all_pie_maxout_2020.rds"))
-
-# Unconditional vs conditional release
-load(file = paste0(sp_data_path, "/data/analysis/all_pie_release_type_2020.rds"))
-
-# Releases from Prison
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_publicorder_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_property_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_other_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_drugs_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_violent_2020.rds"))
-
-# Length of Stay
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_overview_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_publicorder_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_property_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_other_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_drugs_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_violent_2020.rds"))
+# # Maxout
+# load(file = paste0(sp_data_path, "/data/analysis/all_pie_maxout_2020.rds"))
+#
+# # Unconditional vs conditional release
+# load(file = paste0(sp_data_path, "/data/analysis/all_pie_release_type_2020.rds"))
+#
+# # Releases from Prison
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_publicorder_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_property_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_other_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_drugs_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_released_at_ped_violent_2020.rds"))
+#
+# # Length of Stay
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_overview_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_publicorder_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_property_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_other_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_drugs_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_violent_2020.rds"))
 
 
 
@@ -94,15 +94,15 @@ load(file = paste0(sp_data_path, "/data/analysis/all_bar_los_violent_2020.rds"))
 # Disparities
 ################################################################################
 
-# Disparities
-load(file = paste0(sp_data_path, "/data/analysis/all_time_between_release_ped_2020_by_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_pp_by_variable.rds"))
-
-# RRI
-load(file = paste0(sp_data_path, "/data/analysis/race_eth_rri_table.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_rri_sentence_length_black.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_rri_sentence_length_hispanic.rds"))
-
+# # Disparities
+# load(file = paste0(sp_data_path, "/data/analysis/all_time_between_release_ped_2020_by_race.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_pp_by_variable.rds"))
+#
+# # RRI
+# load(file = paste0(sp_data_path, "/data/analysis/race_eth_rri_table.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_rri_sentence_length_black.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_bar_rri_sentence_length_hispanic.rds"))
+#
 
 
 

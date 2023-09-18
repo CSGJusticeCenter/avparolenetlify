@@ -73,7 +73,9 @@ ncrp_term_records <- da38492.0001 %>% clean_names() %>%
     admtype      = str_sub(admtype, 5, -1),
     race         = str_sub(race, 5, -1),
     sex          = str_sub(sex, 5, -1),
-    sentlgth     = str_sub(sentlgth, 5, -1))
+    sentlgth     = str_sub(sentlgth, 5, -1)) %>%
+
+  mutate(across(everything(), ~ trimws(.)))
 
 
 
@@ -91,6 +93,8 @@ ncrp_admissions <- da38492.0002 %>% clean_names() %>%
     race         = str_sub(race, 5, -1),
     sex          = str_sub(sex, 5, -1),
     sentlgth     = str_sub(sentlgth, 5, -1)) %>%
+
+  mutate(offdetail = trimws(offdetail)) %>%
 
   # create parole eligibility status with custom function
   fnc_create_parelig_status()
@@ -114,6 +118,8 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
     sentlgth     = str_sub(sentlgth, 5, -1),
     reltype      = str_sub(reltype, 5, -1),
     timesrvd_rel = str_sub(timesrvd_rel, 5, -1)) %>%
+
+  mutate(offdetail = trimws(offdetail)) %>%
 
   # custom funciton that create sentence length and timeserved order since they are categorical
   # calculate proportion of sentence length served
@@ -141,22 +147,27 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     ageyrend       = str_sub(ageyrend, 5, -1),
     timesrvd_yrend = str_sub(timesrvd_yrend, 5, -1)) %>%
 
+  mutate(offdetail = trimws(offdetail),
+         offgeneral = case_when(
+           is.na(offgeneral) ~ "Other or Unknown",
+           offgeneral == "Other/unspecified" ~ "Other or Unknown",
+           TRUE ~ offgeneral
+         )) %>%
+
+  # create new offense descriptions
+  fnc_create_fbi_index() %>%
+
   # create parole eligibility status with custom function
   fnc_create_parelig_status() %>%
 
   # include unknown race in analysis
   # include unknown admission type in analysis???
   # create age categories
-  mutate(admtype = ifelse(is.na(admtype), "Unknown", admtype),
-         race = ifelse(is.na(race), "Unknown", race),
+  fnc_create_admtype() %>%
+  mutate(race = ifelse(is.na(race), "Unknown", race),
          ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend)) %>%
 
-  mutate(admtype = factor(admtype,
-                          levels = c("New court commitment",
-                                     "Parole return/revocation",
-                                     "Other admission (including unsentenced, transfer, AWOL/escapee return)",
-                                     "Unknown")),
-         race = factor(race,
+  mutate(race = factor(race,
                        levels = c("Unknown",
                                   "Other race(s), non-Hispanic",
                                   "White, non-Hispanic",

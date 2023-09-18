@@ -135,7 +135,32 @@ fnc_sentlgth_timesrvd_rel <- function(data) {
     )
 }
 
+fnc_create_fbi_index <- function(df){
+  df <- df %>%
+    mutate(fbi_index = case_when(
+      offdetail == "Aggravated or simple assault"                  ~ "Aggravated or Simple Assault",
+      offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder and Non-negligent Manslaughter",
+      offdetail == "Negligent manslaughter"                        ~ "Negligent Manslaughter",
+      offdetail == "Other violent offenses"                        ~ "Other Violent Offenses",
+      offdetail == "Rape/sexual assault"                           ~ "Rape or Sexual Assault",
+      offdetail == "Robbery"                                       ~ "Robbery",
+      offdetail == "Other/unspecified"                             ~ "Other or Unknown",
+      is.na(offdetail)                                             ~ "Other or Unknown",
+      TRUE ~ offgeneral
+    ))
+}
 
+fnc_create_admtype <- function(df){
+  df <- df %>%
+    mutate(admtype = case_when(
+      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other or Unknown",
+      is.na(admtype) ~ "Other or Unknown",
+      TRUE ~ admtype)) %>%
+    mutate(admtype = factor(admtype,
+                            levels = c("New court commitment",
+                                       "Parole return/revocation",
+                                       "Other or Unknown")))
+}
 
 
 ###################
