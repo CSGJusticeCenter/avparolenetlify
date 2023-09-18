@@ -17,28 +17,6 @@ load(file = paste0(sp_data_path, "/data/analysis/parole_info_by_state.rds"))
 
 
 
-
-################################################################################
-# Parole Eligibility
-################################################################################
-
-# Robina Institute information
-load(file = paste0(sp_data_path, "/data/analysis/robinainfo.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/robinadefinitions.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/robinaparoleeligibility.rds"))
-
-# Parole Eligibility
-load(file = paste0(sp_data_path, "/data/analysis/parole_eligibility_table_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_race.rds"))
-
-# Offenses
-load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_offense_new_crime.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_offense.rds"))
-
-
-
-
 ################################################################################
 # Prison Population
 ################################################################################
@@ -53,14 +31,44 @@ load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_
 
 # Who is in Prison?
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_race_2020.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_sex_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_gender_2020.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_prison_ageyrend_2020.rds"))
 
 # Sentence Length
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_prison_sentlgth_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_groupedbar_prison_sentlgth_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_prison_sentlgth_2020.rds")) # may not need
 
 # Offenses
-load(file = paste0(sp_data_path, "/data/analysis/all_bar_prison_fbi_index_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_groupedbar_prison_fbi_index_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_prison_fbi_index_2020.rds")) # may not need
+
+
+
+
+################################################################################
+# Parole Eligibility
+################################################################################
+
+# Robina Institute information
+load(file = paste0(sp_data_path, "/data/analysis/robinainfo.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/robinadefinitions.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/robinaparoleeligibility.rds"))
+
+# Parole Eligibility
+load(file = paste0(sp_data_path, "/data/analysis/parole_eligibility_table_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_gender.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_gender.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_ageyrend.rds"))
+
+# Offenses
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_fbi_index_new_crime.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_fbi_index_new_crime.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_fbi_index.rds"))
+
+
 
 
 ################################################################################

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_prison_population.R
 # Authors: Mari Roberts
-# Date last updated: September 5, 2023 (MAR)
+# Date last updated: September 18, 2023 (MAR)
 # Description:
 #    Prison population and graphics for shiny app
 #######################################
@@ -410,7 +410,10 @@ all_line_pop_released_to_parole$California
 
 ################################################################################
 
+##########
 # RACE
+##########
+
 # Get number/prop people by race
 ncrp_yearendpop_race_2020 <-
   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "race")
@@ -430,7 +433,10 @@ all_stackedbar_prison_race_2020 <- map(.x = states,  .f = function(x) {
 all_stackedbar_prison_race_2020 <- setNames(all_stackedbar_prison_race_2020, states)
 all_stackedbar_prison_race_2020$Georgia
 
+##########
 # AGE
+##########
+
 # Get number/prop people by ageyrend
 ncrp_yearendpop_ageyrend_2020 <-
   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "ageyrend")
@@ -450,16 +456,19 @@ all_stackedbar_prison_ageyrend_2020 <- map(.x = states,  .f = function(x) {
 all_stackedbar_prison_ageyrend_2020 <- setNames(all_stackedbar_prison_ageyrend_2020, states)
 all_stackedbar_prison_ageyrend_2020$Georgia
 
-# Sex
-# Get number/prop people by sex
-ncrp_yearendpop_sex_2020 <-
+##########
+# gender
+##########
+
+# Get number/prop people by gender
+ncrp_yearendpop_gender_2020 <-
   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "sex")
 
 # List of states
-states <- unique(ncrp_yearendpop_sex_2020$state)
+states <- unique(ncrp_yearendpop_gender_2020$state)
 
-all_stackedbar_prison_sex_2020 <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_yearendpop_sex_2020 %>%
+all_stackedbar_prison_gender_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_gender_2020 %>%
     ungroup() %>%
     filter(state == x) %>%
     distinct()
@@ -468,10 +477,13 @@ all_stackedbar_prison_sex_2020 <- map(.x = states,  .f = function(x) {
   return(highcharts)
 })
 
-all_stackedbar_prison_sex_2020 <- setNames(all_stackedbar_prison_sex_2020, states)
-all_stackedbar_prison_sex_2020$Georgia
+all_stackedbar_prison_gender_2020 <- setNames(all_stackedbar_prison_gender_2020, states)
+all_stackedbar_prison_gender_2020$Georgia
 
+##########
 # FBI INDEX
+##########
+
 # Get number/prop people by fbi_index
 ncrp_yearendpop_fbi_index_2020 <-
   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "fbi_index")
@@ -479,7 +491,7 @@ ncrp_yearendpop_fbi_index_2020 <-
 # List of states
 states <- unique(ncrp_yearendpop_fbi_index_2020$state)
 
-all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
+all_groupedbar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_yearendpop_fbi_index_2020 %>%
     ungroup() %>%
     filter(state == x) %>%
@@ -505,6 +517,79 @@ all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
     hc_colors(c(teal, yellow, purple)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
+    hc_chart(events = list(
+      load = JS("function() {
+                var series = this.series;
+                for (var i = 0; i < series.length; i++) {
+                    if (series[i].name === 'Other or Unknown') {
+                        series[i].setVisible(false, false);
+                    }
+                }
+                this.redraw();
+              }")
+    )) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD.", landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD.")))
+  return(highcharts)
+})
+
+all_groupedbar_prison_fbi_index_2020 <- setNames(all_groupedbar_prison_fbi_index_2020, states)
+all_groupedbar_prison_fbi_index_2020$Georgia
+
+##########
+# FBI INDEX - not grouped
+##########
+
+# Get number/prop people by fbi_index
+ncrp_yearendpop_fbi_index_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  group_by(state) %>%
+  count(fbi_index) %>%
+  mutate(
+    prop = (n / sum(n)) * 100,
+    prop_label = paste0(round(prop, 0), "%"),
+    n_label = formattable::comma(n, 0),
+    tooltip = paste0("<b>", state, "</b><br><br>",
+                     "<b>Criminal Offense: ", fbi_index,
+                     "</b><br><br>",
+                     "Percentage of People: <b>", prop_label, "</b><br>",
+                     "Number of People: <b>", formattable::comma(n, digits = 0), "</b>",
+                     sep = "")
+  )
+
+# List of states
+states <- unique(ncrp_yearendpop_fbi_index_2020$state)
+
+all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_fbi_index_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- hchart(df1, "column",
+                       hcaes(x = fbi_index,
+                             y = prop
+                       ),
+                       dataLabels = list(enabled = TRUE,
+                                         format = "{point.prop_label}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = "")) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_colors(c(teal, yellow, purple)) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(
       series = list(
         animation = FALSE, cursor = "pointer",
@@ -519,9 +604,10 @@ all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
 all_bar_prison_fbi_index_2020 <- setNames(all_bar_prison_fbi_index_2020, states)
 all_bar_prison_fbi_index_2020$Georgia
 
-
-
+##########
 # SENTENCE LENGTH
+##########
+
 # Get number/prop people by sentlgth
 ncrp_yearendpop_sentlgth_2020 <-
   fnc_generate_grouped_adm_data(ncrp_yearendpop, 2020, "sentlgth")
@@ -529,7 +615,7 @@ ncrp_yearendpop_sentlgth_2020 <-
 # List of states
 states <- unique(ncrp_yearendpop_sentlgth_2020$state)
 
-all_bar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
+all_groupedbar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_yearendpop_sentlgth_2020 %>%
     ungroup() %>%
     filter(state == x) %>%
@@ -547,6 +633,79 @@ all_bar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
              min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_colors(c(teal, yellow, purple)) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_chart(events = list(
+      load = JS("function() {
+                var series = this.series;
+                for (var i = 0; i < series.length; i++) {
+                    if (series[i].name === 'Other or Unknown') {
+                        series[i].setVisible(false, false);
+                    }
+                }
+                this.redraw();
+              }")
+    )) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD.", landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD.")))
+  return(highcharts)
+})
+
+all_groupedbar_prison_sentlgth_2020 <- setNames(all_groupedbar_prison_sentlgth_2020, states)
+all_groupedbar_prison_sentlgth_2020$Georgia
+
+##########
+# SENTENCE LENGTH - not grouped
+##########
+
+# Get number/prop people by sentlgth
+ncrp_yearendpop_sentlgth_2020 <- ncrp_yearendpop %>%
+  filter(rptyear == 2020) %>%
+  group_by(state) %>%
+  count(sentlgth) %>%
+  mutate(
+    prop = (n / sum(n)) * 100,
+    prop_label = paste0(round(prop, 0), "%"),
+    n_label = formattable::comma(n, 0),
+    tooltip = paste0("<b>", state, "</b><br><br>",
+                     "<b>Sentence Length: ", sentlgth,
+                     "</b><br><br>",
+                     "Percentage of People: <b>", prop_label, "</b><br>",
+                     "Number of People: <b>", formattable::comma(n, digits = 0), "</b>",
+                     sep = "")
+  )
+
+# List of states
+states <- unique(ncrp_yearendpop_sentlgth_2020$state)
+
+all_bar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_yearendpop_sentlgth_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- hchart(df1, "column",
+                       hcaes(x = sentlgth,
+                             y = prop
+                       ),
+                       dataLabels = list(enabled = TRUE,
+                                         format = "{point.prop_label}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = "")) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -577,33 +736,6 @@ all_bar_prison_sentlgth_2020$Georgia
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ################################################################################
 
 # Save data
@@ -614,15 +746,17 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_stackedbar_admtype_2020,         file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
+  save(all_stackedbar_admtype_2020,          file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
 
-  save(all_line_pop_released_to_parole,     file = file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_line_pop_released_to_parole,      file = file.path(folder, "all_line_pop_released_to_parole.rds"))
 
-  save(all_stackedbar_prison_race_2020,     file = file.path(folder, "all_stackedbar_prison_race_2020.rds"))
-  save(all_stackedbar_prison_sex_2020,      file = file.path(folder, "all_stackedbar_prison_sex_2020.rds"))
-  save(all_stackedbar_prison_ageyrend_2020, file = file.path(folder, "all_stackedbar_prison_ageyrend_2020.rds"))
+  save(all_stackedbar_prison_race_2020,      file = file.path(folder, "all_stackedbar_prison_race_2020.rds"))
+  save(all_stackedbar_prison_gender_2020,       file = file.path(folder, "all_stackedbar_prison_gender_2020.rds"))
+  save(all_stackedbar_prison_ageyrend_2020,  file = file.path(folder, "all_stackedbar_prison_ageyrend_2020.rds"))
 
-  save(all_bar_prison_sentlgth_2020,        file = file.path(folder, "all_bar_prison_sentlgth_2020.rds"))
-  save(all_bar_prison_fbi_index_2020,       file = file.path(folder, "all_bar_prison_fbi_index_2020.rds"))
+  save(all_groupedbar_prison_sentlgth_2020,  file = file.path(folder, "all_groupedbar_prison_sentlgth_2020.rds"))
+  save(all_groupedbar_prison_fbi_index_2020, file = file.path(folder, "all_groupedbar_prison_fbi_index_2020.rds"))
+  save(all_bar_prison_sentlgth_2020,         file = file.path(folder, "all_bar_prison_sentlgth_2020.rds"))
+  save(all_bar_prison_fbi_index_2020,        file = file.path(folder, "all_bar_prison_fbi_index_2020.rds"))
 
 }
