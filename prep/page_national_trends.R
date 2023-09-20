@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: August 25, 2023 (MAR)
+# Date last updated: September 20, 2023 (MAR)
 # Description:
 #    Parole eligibility table and data for national trends page
 #######################################
@@ -94,9 +94,12 @@ missing_data <- tibble(state = setdiff(state.name,
 #     new crime, not a parole return/revocation.
 parole_eligibility_table_2020 <-
   bind_rows(parole_eligibility_table_2020, missing_data) %>%
-  left_join(ncrp_prison_population, by = c("state", "rptyear")) %>%
-  left_join(ncrp_prison_population_125years_new_crime, by = c("state", "rptyear")) %>%
-  left_join(ncrp_missing_data, by = c("state", "rptyear")) %>%
+  left_join(ncrp_prison_population,
+            by = c("state", "rptyear")) %>%
+  left_join(ncrp_prison_population_125years_new_crime,
+            by = c("state", "rptyear")) %>%
+  left_join(ncrp_missing_data,
+            by = c("state", "rptyear")) %>%
   arrange(state) %>%
   select(state,
          rptyear,

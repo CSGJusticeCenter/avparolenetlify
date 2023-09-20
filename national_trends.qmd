@@ -47,7 +47,7 @@ htmltools::div(
       formattable::comma(num_people_current, digits = 0)
     ),
     div(
-      HTML("Currently Eligible for Parole but<br>in Prison for a New Crime"),
+      HTML("Currently Eligible for Parole but<br>in Prison (1-25 Year Sentences)"),
       id = "bold-text"
     )
   ),
@@ -58,7 +58,7 @@ htmltools::div(
       formattable::comma(num_people_1_5_years, digits = 0)
     ),
     div(
-      HTML("Eligible for Parole in the next 1-5 years<br>and in Prison for a New Crime"),
+      HTML("Eligible for Parole in the next 1-5 years<br>and in Prison (1-25 Year Sentences)"),
       id = "bold-text"
     )
   )
@@ -348,7 +348,7 @@ map_count <- highchart(height = 580) %>%
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People in Prison for a New Crime who are Currently Eligible for Parole in 2020"))
+    div(id = "big-section-title", "People in Prison Currently Eligible for Parole (1-25 Year Sentences) in 2020"))
 ```
 
 ::: {.panel-tabset}
@@ -377,72 +377,119 @@ br())
 
 ::: table-container
 ```{r}
-# https://github.com/quarto-dev/quarto-cli/issues/5702
+# Prepare the table data
 table_data <- parole_eligibility_table_2020 %>%
   left_join(parole_info_by_state_clean, by = "state") %>% 
-  select(state,
-         abolished_discretionary_parole,
-         yearendpop,
-         yearendpop_125years_new_crime,
-         current_count, current_perc,
-         future_1_5_years_count, future_1_5_years_perc, missing_count, missing_perc) 
+  select(
+    state,
+    abolished_discretionary_parole,
+    yearendpop,
+    yearendpop_125years_new_crime,
+    current_count, 
+    current_perc,
+    future_1_5_years_count, 
+    future_1_5_years_perc, 
+    missing_count, 
+    missing_perc
+  )
 
-reactable(table_data,
-          style = hc_reactable_style,
-          theme = hc_reactable_theme,
-          defaultColDef = colDef(format = colFormat(separators = TRUE),
-                                 align = "right",
-                                 minWidth = 110),
-          compact = TRUE,
-          fullWidth = FALSE,
-          defaultPageSize = 50,
-          columnGroups = list(
-              colGroup(name = "Currently Eligible for Parole",
-                       columns = c("current_perc", "current_count")),
-              colGroup(name = "Eligible for Parole in the Next 1-5 Years",
-                       columns = c("future_1_5_years_perc", "future_1_5_years_count")),
-              colGroup(name = "Missing Parole Eligibility Data",
-                       columns = c("missing_perc", "missing_count"))
-          ),
-          columns = list(
-            state         = colDef(name = "State",
-                                   minWidth = 125,
-                                   align = "left",
-                                   style = list(fontWeight = "bold")),
-            abolished_discretionary_parole = 
-              colDef(name = "Abolished Parole Release",
-                     minWidth = 115),
-            yearendpop    = colDef(name = "Total Prison Population",
-                                   minWidth = 120,
-                       headerStyle = list(fontWeight = "bold")),
-            yearendpop_125years_new_crime = colDef(name = "Total Prison Population (1-25 Year Sentences)",
-                                   minWidth = 140,
-                                   style = list(position = "sticky",
-                                                borderRight = "1px solid #d3d3d3"),
-                       headerStyle = list(fontWeight = "bold")),
-            current_perc  = colDef(name = "Percent of Prison Population",
-                                   format = colFormat(percent = TRUE,
-                                                      digits = 1),
-                                   style = list(position = "sticky",
-                                                borderRight = "1px solid #d3d3d3"),
-                                   headerStyle = list(fontWeight = "normal")),
-            future_1_5_years_perc   = colDef(name = "Percent of Prison Population",
-                                   format = colFormat(percent = TRUE,
-                                                      digits = 1),
-                                   style = list(position = "sticky",
-                                                borderRight = "1px solid #d3d3d3"),
-                                   headerStyle = list(fontWeight = "normal")),
-            missing_perc  = colDef(name = "Percent of Prison Population",
-                                   format = colFormat(percent = TRUE,
-                                                      digits = 1),
-                                   headerStyle = list(fontWeight = "normal")),
-            current_count = colDef(name = "Number of People",
-                                   headerStyle = list(fontWeight = "normal")),
-            future_1_5_years_count  = colDef(name = "Number of People",
-                                   headerStyle = list(fontWeight = "normal")),
-            missing_count = colDef(name = "Number of People",
-                                   headerStyle = list(fontWeight = "normal"))
-          )
+# Define common column styles
+common_col_style <- list(
+  position = "sticky",
+  borderRight = "1px solid #d3d3d3"
+)
+
+# Create reactable
+reactable(
+  table_data,
+  style = hc_reactable_style,
+  theme = hc_reactable_theme,
+  
+  # Default Column Definitions
+  defaultColDef = colDef(
+    format = colFormat(separators = TRUE),
+    align = "right",
+    minWidth = 110
+  ),
+  
+  # Table options
+  compact = TRUE,
+  fullWidth = FALSE,
+  defaultPageSize = 50,
+  
+  # Column Grouping
+  columnGroups = list(
+    colGroup(
+      name = "Currently Eligible for Parole",
+      columns = c("current_perc", "current_count")
+    ),
+    colGroup(
+      name = "Eligible for Parole in the Next 1-5 Years",
+      columns = c("future_1_5_years_perc", "future_1_5_years_count")
+    ),
+    colGroup(
+      name = "Missing Parole Eligibility Data",
+      columns = c("missing_perc", "missing_count")
+    )
+  ),
+  
+  # Individual Column Definitions
+  columns = list(
+    state = colDef(
+      name = "State",
+      minWidth = 125,
+      align = "left",
+      style = list(fontWeight = "bold")
+    ),
+    abolished_discretionary_parole = colDef(
+      name = "Abolished Parole Release",
+      minWidth = 115
+    ),
+    yearendpop = colDef(
+      name = "Total Prison Population",
+      minWidth = 120,
+      headerStyle = list(fontWeight = "bold")
+    ),
+    yearendpop_125years_new_crime = colDef(
+      name = "Total Prison Population (1-25 Year Sentences)",
+      minWidth = 140,
+      style = common_col_style,
+      headerStyle = list(fontWeight = "bold")
+    ),
+    current_perc = colDef(
+      name = "Percent of Prison Population",
+      format = colFormat(percent = TRUE, digits = 1),
+      style = common_col_style,
+      headerStyle = list(fontWeight = "normal")
+    ),
+    future_1_5_years_perc = colDef(
+      name = "Percent of Prison Population",
+      format = colFormat(percent = TRUE, digits = 1),
+      style = common_col_style,
+      headerStyle = list(fontWeight = "normal")
+    ),
+    missing_perc = colDef(
+      name = "Percent of Prison Population",
+      format = colFormat(percent = TRUE, digits = 1),
+      headerStyle = list(fontWeight = "normal")
+    ),
+    current_count = colDef(
+      name = "Number of People",
+      headerStyle = list(fontWeight = "normal")
+    ),
+    future_1_5_years_count = colDef(
+      name = "Number of People",
+      headerStyle = list(fontWeight = "normal")
+    ),
+    missing_count = colDef(
+      name = "Number of People",
+      headerStyle = list(fontWeight = "normal")
+    )
+  )
 )
 ```
+
 :::
+
+<br><br>
+<small><i>Notes: The prison population with sentence lengths between 1-25 years and the parole eligible prison population only includes people incarcerated for a new crime.</i></small>

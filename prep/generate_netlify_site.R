@@ -15,7 +15,7 @@ library(tidyverse)
 # run code
 source("prep/library.R")
 source("prep/functions.R")
-source("prep/import.R")
+# source("prep/import.R")
 # source("prep/dataframes.R")
 # source("prep/page_national_trends.R")
 # source("prep/tab_parole_eligibility.R")
@@ -30,8 +30,8 @@ source("prep/import.R")
 wd <- getwd()
 
 # get list of 50 states
-states <- c("Georgia")
-# states <- state.name
+# states <- c("Georgia")
+states <- state.name
 
 # read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

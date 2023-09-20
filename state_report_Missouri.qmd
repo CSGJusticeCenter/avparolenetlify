@@ -81,8 +81,8 @@ if (state_for_report %in% unique(parole_eligibility_table_2020$state)) {
 } else {
   state_data <- "No Data"
 }
-num_people_current   <- sum(state_data$current_new_crime_count, na.rm = TRUE)
-num_people_1_5_years <- sum(state_data$future_1_5_years_new_crime_count, na.rm = TRUE)
+num_people_current   <- sum(state_data$current_count, na.rm = TRUE)
+num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 
 
 
@@ -789,7 +789,7 @@ United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-u
 United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
 :::
 
-<br><br><br>
+<br><br>
 
 ---
 title: "`r state_for_report`"
