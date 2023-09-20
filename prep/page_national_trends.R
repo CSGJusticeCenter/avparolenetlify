@@ -22,38 +22,49 @@ ncrp_prison_population <- ncrp_yearendpop %>%
   count(parelig_status) %>%
   summarise(yearendpop = sum(n, na.rm = FALSE))
 
-# Merge prison population numbers
-# Get number of people by parole eligibility status
-# Just for people in prison for a new court commitment
-ncrp_parole_eligible_new_court <- ncrp_yearendpop %>%
+# Get total prison population serving 1-25years (restricted to new commits)  by state and year
+ncrp_prison_population_125years_new_crime <- ncrp_yearendpop %>%
   filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+         sentlgth == "2-4.9 years" |
+         sentlgth == "5-9.9 years" |
+         sentlgth == "10-24.9 years" |
+         sentlgth == ">=25 years") %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
-  left_join(ncrp_prison_population, by = c("state", "rptyear")) %>%
-  mutate(parelig_status = paste0(parelig_status, " (New Crime)"),
-         prop = n / yearendpop)
+  summarise(yearendpop_125years_new_crime = sum(n, na.rm = FALSE))
 
+# Get missing data by state and year
+ncrp_missing_data <- ncrp_yearendpop %>%
+  filter(parelig_status == "Missing") %>%
+  group_by(state, rptyear) %>%
+  count(parelig_status) %>%
+  summarise(missing_count = sum(n, na.rm = FALSE)) %>%
+  left_join(ncrp_prison_population,
+            by = c("state", "rptyear")) %>%
+  mutate(missing_perc = missing_count / yearendpop) %>%
+  select(-yearendpop)
+
+# Get non-missing data
 # Merge prison population numbers
-# Get number of people by parole eligibility status
-# Just for people in prison for a parole return/revocation
-ncrp_parole_eligible_other <- ncrp_yearendpop %>%
-  filter(admtype != "New court commitment" | is.na(admtype)) %>%
+# Get number of people by parole eligibility status (except Missing)
+# Just for people in prison for a new court commitment
+ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
+  filter(admtype == "New court commitment") %>%
+  filter(parelig_status != "Missing") %>%
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years" |
+           sentlgth == ">=25 years") %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
-  left_join(ncrp_prison_population, by = c("state", "rptyear")) %>%
-  mutate(parelig_status = paste0(parelig_status, " (Other)"),
-         prop = n / yearendpop)
+  left_join(ncrp_prison_population,
+            by = c("state", "rptyear")) %>%
+  mutate(prop = n / yearendpop)
 
-# Add data together
-ncrp_parole_eligible_all <- rbind(ncrp_parole_eligible_new_court,
-                                  ncrp_parole_eligible_other)
-
-
-# Combine missing data for people in prison for new crimes and other
-parole_eligibility_table <- ncrp_parole_eligible_all %>%
-  mutate(parelig_status = case_when(
-    parelig_status %in% c("Missing (New Crime)", "Missing (Other)") ~ "Missing",
-    TRUE ~ as.character(parelig_status))) %>%
+# Reshape data
+parole_eligibility_table <- ncrp_parole_eligible_125years_new_crime %>%
   group_by(state, rptyear, parelig_status) %>%
   summarise(
     n = sum(n, na.rm = TRUE),
@@ -84,17 +95,20 @@ missing_data <- tibble(state = setdiff(state.name,
 parole_eligibility_table_2020 <-
   bind_rows(parole_eligibility_table_2020, missing_data) %>%
   left_join(ncrp_prison_population, by = c("state", "rptyear")) %>%
+  left_join(ncrp_prison_population_125years_new_crime, by = c("state", "rptyear")) %>%
+  left_join(ncrp_missing_data, by = c("state", "rptyear")) %>%
   arrange(state) %>%
   select(state,
          rptyear,
          yearendpop,
-         current_new_crime_count,
-         future_1_5_years_new_crime_count,
-         future_6_years_new_crime_count,
+         yearendpop_125years_new_crime,
+         current_count,
+         future_1_5_years_count,
+         future_6_years_count,
          missing_count,
-         current_new_crime_perc,
-         future_1_5_years_new_crime_perc,
-         future_6_years_new_crime_perc,
+         current_perc,
+         future_1_5_years_perc,
+         future_6_years_perc,
          missing_perc)
 
 

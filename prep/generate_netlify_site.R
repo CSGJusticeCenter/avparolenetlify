@@ -1,7 +1,7 @@
 ############################################
 # Project: AV Parole Project
 # File: generate_state_reports.R
-# Last updated: September 6, 2023 (MAR)
+# Last updated: September 20, 2023 (MAR)
 # Author: Mari Roberts
 
 # Generate html documents for each state
@@ -15,8 +15,8 @@ library(tidyverse)
 # run code
 source("prep/library.R")
 source("prep/functions.R")
+source("prep/import.R")
 # source("prep/dataframes.R")
-# source("prep/import.R")
 # source("prep/page_national_trends.R")
 # source("prep/tab_parole_eligibility.R")
 # source("prep/tab_prison_population.R")
@@ -30,8 +30,8 @@ source("prep/functions.R")
 wd <- getwd()
 
 # get list of 50 states
-# states <- c("Georgia")
-states <- state.name
+states <- c("Georgia")
+# states <- state.name
 
 # read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
