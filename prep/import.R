@@ -7,6 +7,9 @@
 #    Import NCRP data (admissions, population, year end population)
 #######################################
 
+# select year
+select_year <- 2020
+
 # load prison sentencing system info from Robina
 robinainfo <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
 robinadefinitions <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
@@ -175,17 +178,18 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
                                   "Hispanic, any race",
                                   "Black, non-Hispanic")),
          # ageyrend = factor(ageyrend,
-         #                   levels = c("55+ years",
-         #                              "45-54 years",
-         #                              "35-44 years",
+         #                   levels = c("18-24 years",
          #                              "25-34 years",
-         #                              "18-24 years")),
+         #                              "35-44 years",
+         #                              "45-54 years",
+         #                              "55+ years"
+         #                              )),
          ageyrend = factor(ageyrend,
-                           levels = c("18-24 years",
-                                      "25-34 years",
-                                      "35-44 years",
+                           levels = c("55+ years",
                                       "45-54 years",
-                                      "55+ years"
+                                      "35-44 years",
+                                      "25-34 years",
+                                      "18-24 years"
                                       )),
          sentlgth = factor(sentlgth,
                            levels = c(
@@ -198,7 +202,6 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
                              "Life, LWOP, Life plus additional years, Death",
                              "Unknown"))
          )
-
 
 
 

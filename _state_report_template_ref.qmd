@@ -34,7 +34,7 @@ source("prep/library.R")
 source("prep/functions.R")
 source("prep/dataframes.R")
 
-state_for_report <- "Rhode Island"
+state_for_report <- "change_me"
 ```
 
 
@@ -76,8 +76,8 @@ prison_sentencing_system_tooltip <-
 prison_sentencing_system_info <- paste0('<span aria-label="', prison_sentencing_system_tooltip, '" tabindex="0" role="button">', prison_sentencing_system_info, '</span>')
 
 # Get number if people currently eligible and eligible in the future for parole
-if (state_for_report %in% unique(parole_eligibility_table_select_year$state)) {
-  state_data <- parole_eligibility_table_select_year %>% filter(state == state_for_report)
+if (state_for_report %in% unique(parole_eligibility_table$state)) {
+  state_data <- parole_eligibility_table %>% filter(state == state_for_report)
 } else {
   state_data <- "No Data"
 }
@@ -514,7 +514,7 @@ htmltools::div(
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "New Court Commitments vs. Parole Revocations"), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole. Understanding the relative proportion of these two groups is pivotal for evaluating the effectiveness of a state's criminal justice policies."), br(),
+    div(id = "regular-text", "While the public often envisions a prison population primarily made up of individuals serving long sentences for serious crimes, the reality is far more nuanced. In particular, the distinction between new court commitments—those incarcerated for a new crime—and parole revocations—those returned to prison for violating the conditions of their parole—is a critical one. Understanding the proportion of these two groups within the prison population can provide valuable insights into the effectiveness of the state's criminal justice policies, including sentencing and parole practices."), br(),
     div(id = "visualization", state_stackedbar_admtype), br(),
     div(id = "visualization", state_pie_admtype), br()
     )
@@ -528,7 +528,6 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population Trends"), br(),
-    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_line_pop_released_to_parole), br()
     )
 ```
@@ -541,7 +540,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Who's in Prison?"), br(),
-    div(id = "regular-text", "The following visualizations offer an overview of the demographic composition of the prison population by race and ethnicity, gender, and age."), br(),
+    div(id = "regular-text", "The following visualizations offer an overview of the demographic composition of the prison population in 2020 by race and ethnicity, gender, and age."), br(),
     )
 ```
 ::: {.panel-tabset}
@@ -570,7 +569,6 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Sentence Length"), br(),
-    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_groupedbar_prison_sentlgth), 
     div(id = "visualization", state_bar_prison_sentlgth), br()
     )
@@ -579,7 +577,6 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Criminal Offense"), br(),
-    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_groupedbar_prison_fbi_index), 
     div(id = "visualization", state_bar_prison_fbi_index), br()
     )
@@ -826,15 +823,14 @@ div(id = "body-section", br(),
 
 ::::
 
+
+
+
+
+
 ::: citation-section
 
-**Notes:**
-
-NCRP data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime.
-
-<br>
-
-**Citations:** 
+Citations:   
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 

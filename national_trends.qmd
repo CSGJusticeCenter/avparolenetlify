@@ -26,8 +26,8 @@ source("prep/dataframes.R")
 ```{r}
 page_summary <- "With the support of Arnold Ventures, the Council of State Governments (CSG) Justice Center analyzed data from the National Corrections Reporting Program (NCRP) and Robina Institute of Criminal Law and Criminal Justice to gain deeper insights into the relationship between parole practices and prison populations. The study specifically focused on understanding the dynamics of parole eligibility and lengths of stay, with a specific emphasis on examining racial, ethnic, and gender disparities."
   
-num_people_current   <- sum(parole_eligibility_table_2020$current_count, na.rm = TRUE)
-num_people_1_5_years <- sum(parole_eligibility_table_2020$future_1_5_years_count, na.rm = TRUE)
+num_people_current   <- sum(parole_eligibility_table_select_year$current_count, na.rm = TRUE)
+num_people_1_5_years <- sum(parole_eligibility_table_select_year$future_1_5_years_count, na.rm = TRUE)
 ```
 
 ::: narrow-section
@@ -47,7 +47,7 @@ htmltools::div(
       formattable::comma(num_people_current, digits = 0)
     ),
     div(
-      HTML("Currently Eligible for Parole but<br>in Prison (1-25 Year Sentences)"),
+      HTML("Currently Eligible for Parole"),
       id = "bold-text"
     )
   ),
@@ -58,7 +58,7 @@ htmltools::div(
       formattable::comma(num_people_1_5_years, digits = 0)
     ),
     div(
-      HTML("Eligible for Parole in the next 1-5 years<br>and in Prison (1-25 Year Sentences)"),
+      HTML("Eligible for Parole in the Next 1-5 Years"),
       id = "bold-text"
     )
   )
@@ -78,9 +78,9 @@ all_states <- state.name
 parole_info_by_state_clean <- parole_info_by_state %>% 
   select(state, abolished_discretionary_parole)
 
-# parole_eligibility_table_2020 created in tab_parole_elgibility.R
+# parole_eligibility_table_select_year created in tab_parole_elgibility.R
 # parole_info_by_state was imported in import.R
-map_data <- parole_eligibility_table_2020 %>% 
+map_data <- parole_eligibility_table_select_year %>% 
   
   # add missing states
   complete(state = all_states) %>% 
@@ -153,57 +153,6 @@ map_data_breaks <- map_data %>%
 ```
 
 ```{r}
-# create hex map showing the percent of the prison population that are parole eligible
-# map_percent <- 
-#   
-#   highchart(height = 580) %>%
-#   
-#   hc_chart(marginTop = -6) %>%
-#   
-#   hc_add_series_map(
-#     map = hex_gj,
-#     df = map_data_breaks,
-#     joinBy = "state_abb",
-#     value = "data_category_num",
-#     dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
-#                       style = list(fontSize = "14px",
-#                                    fontWeight = "regular",
-#                                    fontFamily = "Graphik",
-#                                    textOutline = 0)),
-#     nullColor = "#e8e8e8") %>%
-#   hc_colorAxis(dataClassColor="category",
-#                dataClasses = list(list(from = 0, to = 0, color="#D5F5F3", name = "0% - 5%"),
-#                                   list(from = 1, to = 1, color="#6AD0C9", name = "6% - 10%"),
-#                                   list(from = 2, to = 2, color="#00ABA0", name = "11% - 19%"),
-#                                   list(from = 3, to = 3, color="#006F8A", name = "22% - 54%"),
-#                                   list(from = 4, to = 4, color= yellow, name = "Determinate Prison Sentence"),
-#                                   list(from = 5, to = 5, color="#e8e8e8", name = "Missing Data")
-#                                   )) %>%
-#   
-#   hc_legend(align = "right",
-#           verticalAlign = "bottom",
-#           layout = "vertical",
-#           symbolHeight = 15,
-#           symbolWidth = 15,
-#           x = -40,
-#           y = -110) %>% 
-#   
-#   hc_xAxis(title = "") %>%
-#   hc_yAxis(title = "") %>%
-# 
-#   hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-#   hc_add_theme(hc_theme_map_jc) %>%
-# 
-#   hc_plotOptions(series = list(animation = FALSE,
-#                                cursor = "pointer",
-#                                borderWidth = 3),
-#                  accessibility = list(enabled = TRUE,
-#                                       keyboardNavigation = list(enabled = TRUE),
-#                                       linkedDescription = paste0("TEXT"),
-#                                       landmarkVerbosity = "one"),
-#                  area = list(accessibility = list(description = paste0("TEXT")))
-#   )
-
 # get minimum and maximum value
 min_map <- min(map_data$current_perc, na.rm = TRUE)
 max_map <- max(map_data$current_perc, na.rm = TRUE)
@@ -267,8 +216,8 @@ hc_plotOptions(series = list(animation = FALSE,
 
 
 
-# parole_eligibility_table_2020 created in tab_parole_eligibility.R
-map_data <- parole_eligibility_table_2020 %>% 
+# parole_eligibility_table_select_year created in tab_parole_eligibility.R
+map_data <- parole_eligibility_table_select_year %>% 
   # add missing states
   complete(state = all_states) %>% 
   
@@ -348,7 +297,7 @@ map_count <- highchart(height = 580) %>%
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People in Prison Currently Eligible for Parole (1-25 Year Sentences) in 2020"))
+    div(id = "big-section-title", "People in Prison Currently Eligible for Parole"))
 ```
 
 ::: {.panel-tabset}
@@ -378,7 +327,7 @@ br())
 ::: table-container
 ```{r}
 # Prepare the table data
-table_data <- parole_eligibility_table_2020 %>%
+table_data <- parole_eligibility_table_select_year %>%
   left_join(parole_info_by_state_clean, by = "state") %>% 
   select(
     state,
@@ -492,4 +441,4 @@ reactable(
 :::
 
 <br><br>
-<small><i>Notes: The prison population with sentence lengths between 1-25 years and the parole eligible prison population only includes people incarcerated for a new crime.</i></small>
+<small><i>Notes: Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime.</i></small>

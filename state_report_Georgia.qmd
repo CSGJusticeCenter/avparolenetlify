@@ -76,8 +76,8 @@ prison_sentencing_system_tooltip <-
 prison_sentencing_system_info <- paste0('<span aria-label="', prison_sentencing_system_tooltip, '" tabindex="0" role="button">', prison_sentencing_system_info, '</span>')
 
 # Get number if people currently eligible and eligible in the future for parole
-if (state_for_report %in% unique(parole_eligibility_table_2020$state)) {
-  state_data <- parole_eligibility_table_2020 %>% filter(state == state_for_report)
+if (state_for_report %in% unique(parole_eligibility_table_select_year$state)) {
+  state_data <- parole_eligibility_table_select_year %>% filter(state == state_for_report)
 } else {
   state_data <- "No Data"
 }
@@ -99,24 +99,24 @@ num_people_1_5_years <- sum(state_data$future_1_5_years_count, na.rm = TRUE)
 ################################################################################
 
 # Stacked bar chart showing distribution of prison population by admission type
-if (state_for_report %in% names(all_stackedbar_admtype_2020)) {
-  state_stackedbar_admtype_2020 <-
-    all_stackedbar_admtype_2020[[state_for_report]] %>%
+if (state_for_report %in% names(all_stackedbar_admtype)) {
+  state_stackedbar_admtype <-
+    all_stackedbar_admtype[[state_for_report]] %>%
     hc_size(width = 700,
             height = 200) %>%
     hc_title(text = "Option 1: Distribution of the Prison Population by Admission Type")
 } else {
-  state_stackedbar_admtype_2020 <- "No Data"
+  state_stackedbar_admtype <- "No Data"
 }
 
 # Pie chart showing distribution of prison population by admission type
-if (state_for_report %in% names(all_pie_admtype_2020)) {
-  state_pie_admtype_2020 <-
-    all_pie_admtype_2020[[state_for_report]] %>%
+if (state_for_report %in% names(all_pie_admtype)) {
+  state_pie_admtype <-
+    all_pie_admtype[[state_for_report]] %>%
     hc_size(height = 300) %>%
     hc_title(text = "Option 2: Distribution of the Prison Population by Admission Type")
 } else {
-  state_pie_admtype_2020 <- "No Data"
+  state_pie_admtype <- "No Data"
 }
 
 ###################
@@ -144,36 +144,36 @@ if (state_for_report %in% names(all_line_pop_released_to_parole)) {
 ###################
 
 # Stacked bar chart showing distribution of people by race
-if (state_for_report %in% names(all_stackedbar_prison_race_2020)) {
-  state_stackedbar_prison_race_2020 <-
-    all_stackedbar_prison_race_2020[[state_for_report]] %>%
+if (state_for_report %in% names(all_stackedbar_prison_race)) {
+  state_stackedbar_prison_race <-
+    all_stackedbar_prison_race[[state_for_report]] %>%
     hc_size(width = 700, 
             height = 400) %>%
     hc_title(text = "Race and Ethincity")
 } else {
-  state_stackedbar_prison_race_2020 <- "No Data"
+  state_stackedbar_prison_race <- "No Data"
 }
 
 # Stacked bar chart showing distribution of people by gender
-if (state_for_report %in% names(all_stackedbar_prison_gender_2020)) {
-  state_stackedbar_prison_gender_2020 <-
-    all_stackedbar_prison_gender_2020[[state_for_report]] %>%
+if (state_for_report %in% names(all_stackedbar_prison_gender)) {
+  state_stackedbar_prison_gender <-
+    all_stackedbar_prison_gender[[state_for_report]] %>%
     hc_size(width = 700, 
             height = 400) %>%
     hc_title(text = "Gender")
 } else {
-  state_stackedbar_prison_gender_2020 <- "No Data"
+  state_stackedbar_prison_gender <- "No Data"
 }
 
 # Stacked bar chart showing distribution of people by ageyrend
-if (state_for_report %in% names(all_stackedbar_prison_ageyrend_2020)) {
-  state_stackedbar_prison_ageyrend_2020 <-
-    all_stackedbar_prison_ageyrend_2020[[state_for_report]] %>%
+if (state_for_report %in% names(all_stackedbar_prison_ageyrend)) {
+  state_stackedbar_prison_ageyrend <-
+    all_stackedbar_prison_ageyrend[[state_for_report]] %>%
     hc_size(width = 700, 
             height = 400) %>%
     hc_title(text = "Age")
 } else {
-  state_stackedbar_prison_ageyrend_2020 <- "No Data"
+  state_stackedbar_prison_ageyrend <- "No Data"
 }
 
 ###################
@@ -181,25 +181,25 @@ if (state_for_report %in% names(all_stackedbar_prison_ageyrend_2020)) {
 ###################
 
 # grouped barchart showing the proportion of the prison population by sentlgth and admtype
-if (state_for_report %in% names(all_groupedbar_prison_sentlgth_2020)) {
-  state_groupedbar_prison_sentlgth_2020 <- 
-    all_groupedbar_prison_sentlgth_2020[[state_for_report]] %>% 
+if (state_for_report %in% names(all_groupedbar_prison_sentlgth)) {
+  state_groupedbar_prison_sentlgth <- 
+    all_groupedbar_prison_sentlgth[[state_for_report]] %>% 
     # hc_size(width = 700, 
     #         height = 700) %>%
     hc_title(text = "Option 1: Prison Population by Sentence Length and Admission Type")
 } else {
-  state_groupedbar_prison_sentlgth_2020 <- "No Data"
+  state_groupedbar_prison_sentlgth <- "No Data"
 }
 
 # barchart showing the proportion of the prison population by sentlgth
-if (state_for_report %in% names(all_bar_prison_sentlgth_2020)) {
-  state_bar_prison_sentlgth_2020 <- 
-    all_bar_prison_sentlgth_2020[[state_for_report]] %>% 
+if (state_for_report %in% names(all_bar_prison_sentlgth)) {
+  state_bar_prison_sentlgth <- 
+    all_bar_prison_sentlgth[[state_for_report]] %>% 
     hc_size(width = 700,
             height = 400) %>%
     hc_title(text = "Option 2: Prison Population by Sentence Length")
 } else {
-  state_bar_prison_sentlgth_2020 <- "No Data"
+  state_bar_prison_sentlgth <- "No Data"
 }
 
 ###################
@@ -207,25 +207,25 @@ if (state_for_report %in% names(all_bar_prison_sentlgth_2020)) {
 ###################
 
 # grouped barchart showing the proportion of the prison population by sentlgth and admtype
-if (state_for_report %in% names(all_groupedbar_prison_fbi_index_2020)) {
-  state_groupedbar_prison_fbi_index_2020 <- 
-    all_groupedbar_prison_fbi_index_2020[[state_for_report]] %>% 
+if (state_for_report %in% names(all_groupedbar_prison_fbi_index)) {
+  state_groupedbar_prison_fbi_index <- 
+    all_groupedbar_prison_fbi_index[[state_for_report]] %>% 
     # hc_size(width = 700,
     #         height = 700) %>%
     hc_title(text = "Option 1: Prison Population by Criminal Offense and Admission Type")
 } else {
-  state_groupedbar_prison_fbi_index_2020 <- "No Data"
+  state_groupedbar_prison_fbi_index <- "No Data"
 }
 
 # barchart showing the proportion of the prison population by sentlgth
-if (state_for_report %in% names(all_bar_prison_fbi_index_2020)) {
-  state_bar_prison_fbi_index_2020 <- 
-    all_bar_prison_fbi_index_2020[[state_for_report]] %>% 
+if (state_for_report %in% names(all_bar_prison_fbi_index)) {
+  state_bar_prison_fbi_index <- 
+    all_bar_prison_fbi_index[[state_for_report]] %>% 
     hc_size(width = 700,
             height = 400) %>%
     hc_title(text = "Option 2: Prison Population by Criminal Offense")
 } else {
-  state_bar_prison_fbi_index_2020 <- "No Data"
+  state_bar_prison_fbi_index <- "No Data"
 }
 
 
@@ -241,9 +241,9 @@ if (state_for_report %in% names(all_bar_prison_fbi_index_2020)) {
 ###################
 
 # Stacked bar chart showing the  proportion of parole eligibility types
-if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
-  state_stackedbar_pe_type_2020 <- 
-    all_stackedbar_pe_type_2020[[state_for_report]] %>% 
+if (state_for_report %in% names(all_stackedbar_pe_type)) {
+  state_stackedbar_pe_type <- 
+    all_stackedbar_pe_type[[state_for_report]] %>% 
     hc_size(width = 700,
             height = 270) %>%
     hc_title(text = "Prison Population by Parole Eligibility Status") %>% 
@@ -253,7 +253,7 @@ if (state_for_report %in% names(all_stackedbar_pe_type_2020)) {
                            verticalAlign = "bottom", 
                            x = 10, y = 0)) 
 } else {
-  state_stackedbar_pe_type_2020 <- "No Data"
+  state_stackedbar_pe_type <- "No Data"
 }
 
 # Sentence about parole-eligible population
@@ -514,9 +514,9 @@ htmltools::div(
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "New Court Commitments vs. Parole Revocations"), br(),
-    div(id = "regular-text", "While the public often envisions a prison population primarily made up of individuals serving long sentences for serious crimes, the reality is far more nuanced. In particular, the distinction between new court commitments—those incarcerated for a new crime—and parole revocations—those returned to prison for violating the conditions of their parole—is a critical one. Understanding the proportion of these two groups within the prison population can provide valuable insights into the effectiveness of the state's criminal justice policies, including sentencing and parole practices."), br(),
-    div(id = "visualization", state_stackedbar_admtype_2020), br(),
-    div(id = "visualization", state_pie_admtype_2020), br()
+    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole. Understanding the relative proportion of these two groups is pivotal for evaluating the effectiveness of a state's criminal justice policies."), br(),
+    div(id = "visualization", state_stackedbar_admtype), br(),
+    div(id = "visualization", state_pie_admtype), br()
     )
 ```
 
@@ -528,6 +528,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population Trends"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_line_pop_released_to_parole), br()
     )
 ```
@@ -540,28 +541,28 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Who's in Prison?"), br(),
-    div(id = "regular-text", "The following visualizations offer an overview of the demographic composition of the prison population in 2020 by race and ethnicity, gender, and age."), br(),
+    div(id = "regular-text", "The following visualizations offer an overview of the demographic composition of the prison population by race and ethnicity, gender, and age."), br(),
     )
 ```
 ::: {.panel-tabset}
 ### Race and Ethinicity
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_prison_race_2020)
+    div(id = "visualization", state_stackedbar_prison_race)
     )
 ```
 
 ### Gender
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_prison_gender_2020)
+    div(id = "visualization", state_stackedbar_prison_gender)
     )
 ```
 
 ### Age
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_stackedbar_prison_ageyrend_2020)
+    div(id = "visualization", state_stackedbar_prison_ageyrend)
     )
 ```
 :::
@@ -569,16 +570,18 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Sentence Length"), br(),
-    div(id = "visualization", state_groupedbar_prison_sentlgth_2020), 
-    div(id = "visualization", state_bar_prison_sentlgth_2020), br()
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_groupedbar_prison_sentlgth), 
+    div(id = "visualization", state_bar_prison_sentlgth), br()
     )
 ```
 
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Criminal Offense"), br(),
-    div(id = "visualization", state_groupedbar_prison_fbi_index_2020), 
-    div(id = "visualization", state_bar_prison_fbi_index_2020), br()
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_groupedbar_prison_fbi_index), 
+    div(id = "visualization", state_bar_prison_fbi_index), br()
     )
 ```
 
@@ -620,7 +623,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Parole-Eligible Prison Population"),           br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_population),  br(), 
-    div(id = "bar-chart",          state_stackedbar_pe_type_2020),                br()
+    div(id = "bar-chart",          state_stackedbar_pe_type),                br()
 )
 
 ########################################
@@ -823,14 +826,15 @@ div(id = "body-section", br(),
 
 ::::
 
-
-
-
-
-
 ::: citation-section
 
-Citations:   
+**Notes:**
+
+NCRP data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime.
+
+<br>
+
+**Citations:** 
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 

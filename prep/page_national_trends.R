@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: September 20, 2023 (MAR)
+# Date last updated: September 26, 2023 (MAR)
 # Description:
 #    Parole eligibility table and data for national trends page
 #######################################
@@ -10,7 +10,7 @@
 ################################################################################
 
 # Reactable table on "National Trends" page
-# Parole eligibility by state in 2020
+# Parole eligibility by state in select year
 
 # Obtained from NCRP year end population
 
@@ -50,8 +50,8 @@ ncrp_missing_data <- ncrp_yearendpop %>%
 # Get number of people by parole eligibility status (except Missing)
 # Just for people in prison for a new court commitment
 ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
-  filter(admtype == "New court commitment") %>%
   filter(parelig_status != "Missing") %>%
+  filter(admtype == "New court commitment") %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
@@ -79,21 +79,21 @@ parole_eligibility_table <- ncrp_parole_eligible_125years_new_crime %>%
   pivot_wider(names_from = name, values_from = value) %>%
   clean_names()
 
-# Filter to 2020
-parole_eligibility_table_2020 <- parole_eligibility_table %>%
-  filter(rptyear == 2020)
+# Filter to select year
+parole_eligibility_table_select_year <- parole_eligibility_table %>%
+  filter(rptyear == select_year)
 
 # Find missing states
 # Arizona, Michigan, New Jersey, New Mexico
 missing_data <- tibble(state = setdiff(state.name,
-                                       parole_eligibility_table_2020$state),
-                       rptyear = 2020)
+                                       parole_eligibility_table_select_year$state),
+                       rptyear = select_year)
 
 # Combine the missing states with the original dataframe to get all 50 states
 # This final table shows parole eligibility statuses for people in prison for a
 #     new crime, not a parole return/revocation.
-parole_eligibility_table_2020 <-
-  bind_rows(parole_eligibility_table_2020, missing_data) %>%
+parole_eligibility_table_select_year <-
+  bind_rows(parole_eligibility_table_select_year, missing_data) %>%
   left_join(ncrp_prison_population,
             by = c("state", "rptyear")) %>%
   left_join(ncrp_prison_population_125years_new_crime,
@@ -130,7 +130,7 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(parole_eligibility_table,      file=file.path(folder, "parole_eligibility_table.rds"))
-  save(parole_eligibility_table_2020, file=file.path(folder, "parole_eligibility_table_2020.rds"))
+  save(parole_eligibility_table,             file = file.path(folder, "parole_eligibility_table.rds"))
+  save(parole_eligibility_table_select_year, file = file.path(folder, "parole_eligibility_table_select_year.rds"))
 
 }

@@ -2,61 +2,12 @@
 # Project: AV Parole
 # File: functions.R
 # Authors: Mari Roberts
-# Date last updated: August 28, 2023 (MAR)
+# Date last updated: September 26, 2023 (MAR)
 # Description:
 #    Custom functions
 #######################################
 
-
-
-###################
-# Data prep
-###################
-
-# prepare annual parole survey data for analysis
-fnc_aps_prepare <- function(df){
-
-  df <- df %>%
-    mutate(rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-# prepare annual parole survey data for analysis
-# before 2008, there was no enreltsr variable so make NA
-fnc_aps_prepare_pre2008 <- function(df){
-
-  df <- df %>%
-    mutate(enreltsr = NA,
-           rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-
-# custom function to create parole eligibility status
+# Create parole eligibility status
 # if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
 # if year of parole eligibility is more than or equal to year reported to NCRP, then "eligible for parole in the future"
 # if year of parole eligibility NA, then "missing data on parole eligibility"
@@ -78,7 +29,7 @@ fnc_create_parelig_status <- function(df){
 
 }
 
-# create sentence length and timeserved order since they are categorical
+# Create sentence length and timeserved order since they are categorical
 # calculate proportion of sentence length served
 # determine timing of release
 #  https://www.icpsr.umich.edu/web/NACJD/studies/38492/datasets/0003/variables/PARELIG_YEAR?archive=nacjd
@@ -135,6 +86,7 @@ fnc_sentlgth_timesrvd_rel <- function(data) {
     )
 }
 
+# Re-categorize offense type
 fnc_create_fbi_index <- function(df){
   df <- df %>%
     mutate(fbi_index = case_when(
@@ -160,6 +112,7 @@ fnc_create_fbi_index <- function(df){
                                          "Other or Unknown")))
 }
 
+# Re-categorize admission type
 fnc_create_admtype <- function(df){
   df <- df %>%
     mutate(admtype = case_when(
@@ -171,6 +124,245 @@ fnc_create_admtype <- function(df){
                                        "Parole return/revocation",
                                        "Other or Unknown")))
 }
+
+# Calculate n, prop, and create labels and tooltips
+fnc_values_tooltip <- function(df, count_column) {
+  df %>%
+    count({{ count_column }}) %>%
+    mutate(
+      prop = (n / sum(n)) * 100,
+      prop_label = paste0(round(prop, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column }}, "</b><br><br>",
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
+    )
+}
+
+# Prepare APS data depending on the year
+fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
+  data <- data %>%
+    clean_names() %>%
+    mutate(rptyear = year)
+
+  if (pre_2008) {
+    data <- data %>%
+      select(-stateid) %>%
+      rename(stateid = state) %>%
+      mutate(stateid = str_trim(stateid)) %>%
+      left_join(state_names_abb, by = "stateid") %>%
+      fnc_aps_prepare_pre2008()
+  } else {
+    data <- data %>%
+      mutate(state = str_sub(stateid, 6, -1)) %>%
+      fnc_aps_prepare()
+  }
+  return(data)
+}
+
+fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
+  hchart(df, "bar",
+         hcaes(x = admtype,
+               y = prop,
+               group = !!sym(group_by_col)
+         ),
+         dataLabels = list(enabled = TRUE,
+                           format = "{point.prop_label}",
+                           style = list(fontWeight = "bold",
+                                        fontSize = "12px",
+                                        fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(categories = c("New court commitment",
+                            "Parole return/revocation",
+                            "Other or Unknown"),
+             title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        stacking = "normal", animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD.", landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD.")))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Create basic horizontal bar chart that isn't grouped
+fnc_basic_barchart <- function(df, x_column, colors, accessibility_text){
+  df1 <- df %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  highcharts <- hchart(df1, "bar",
+                       hcaes(x = {{ x_column }},
+                             y = prop),
+                       dataLabels = list(enabled = TRUE,
+                                         format = "{point.prop_label}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_colors(colors) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text, landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+  return(highcharts)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###################
+# Data prep
+###################
+
+# prepare annual parole survey data for analysis
+fnc_aps_prepare <- function(df){
+
+  df <- df %>%
+    mutate(rptyear = as.numeric(rptyear)) %>%
+    select(state,
+           rptyear,
+           endisrel,
+           enmanrel,
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
+    mutate(released_to_parole =
+             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
+                     na.rm = TRUE),
+           released_to_parole =
+             ifelse(released_to_parole == 0, NA, released_to_parole))
+
+  return(df)
+}
+
+# prepare annual parole survey data for analysis
+# before 2008, there was no enreltsr variable so make NA
+fnc_aps_prepare_pre2008 <- function(df){
+
+  df <- df %>%
+    mutate(enreltsr = NA,
+           rptyear = as.numeric(rptyear)) %>%
+    select(state,
+           rptyear,
+           endisrel,
+           enmanrel,
+           enreltsr,
+           incarcerated_from_parole = exincrev) %>%
+    mutate(released_to_parole =
+             rowSums(.[c("endisrel", "enmanrel")],
+                     na.rm = TRUE),
+           released_to_parole =
+             ifelse(released_to_parole == 0, NA, released_to_parole))
+
+  return(df)
+}
+
+
+
+
+
+
+
+
 
 
 ###################
@@ -351,14 +543,14 @@ hc_theme_jc_line <- hc_theme(
 # Create highchart bar chart showing timing of release (released before, on, after PED) by offense type
 fnc_create_bar_chart_released_at_ped <- function(selected_offgeneral, accessibility_text) {
 
-  states <- ncrp_released_at_ped_offgeneral_2020 %>%
+  states <- ncrp_released_at_ped_offgeneral_select_year %>%
     filter(offgeneral == selected_offgeneral) %>%
     pull(state) %>%
     unique()
 
   all_bar <- map(states, function(x) {
 
-    df1 <- ncrp_released_at_ped_offgeneral_2020 %>%
+    df1 <- ncrp_released_at_ped_offgeneral_select_year %>%
       filter(state == x, offgeneral == selected_offgeneral) %>%
       arrange(match(released_at_ped_status, desired_order))
 
@@ -403,14 +595,14 @@ fnc_create_bar_chart_released_at_ped <- function(selected_offgeneral, accessibil
 # Create highchart bar chart showing LOS by offense type
 fnc_create_bar_chart_los <- function(selected_offgeneral, accessibility_text) {
 
-  states <- ncrp_proportion_served_offenses_2020 %>%
+  states <- ncrp_proportion_served_offenses_select_year %>%
     filter(offgeneral == selected_offgeneral) %>%
     pull(state) %>%
     unique()
 
   all_bar <- map(states, function(x) {
 
-    df1 <- ncrp_proportion_served_offenses_2020 %>%
+    df1 <- ncrp_proportion_served_offenses_select_year %>%
       filter(state == x, offgeneral == selected_offgeneral) %>%
       arrange(match(timesrvd_rel_vs_sentlgth, desired_order))
 
