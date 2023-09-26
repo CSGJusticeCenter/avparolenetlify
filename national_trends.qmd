@@ -409,7 +409,7 @@ reactable(
   defaultColDef = colDef(
     format = colFormat(separators = TRUE),
     align = "right",
-    minWidth = 110
+    minWidth = 90
   ),
   
   # Table options
@@ -437,13 +437,13 @@ reactable(
   columns = list(
     state = colDef(
       name = "State",
-      minWidth = 125,
+      minWidth = 120,
       align = "left",
       style = list(fontWeight = "bold")
     ),
     abolished_discretionary_parole = colDef(
       name = "Abolished Parole Release",
-      minWidth = 115
+      minWidth = 100
     ),
     yearendpop = colDef(
       name = "Total Prison Population",

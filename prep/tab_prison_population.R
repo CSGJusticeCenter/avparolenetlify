@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_prison_population.R
 # Authors: Mari Roberts
-# Date last updated: September 18, 2023 (MAR)
+# Date last updated: September 26, 2023 (MAR)
 # Description:
 #    Prison population and graphics for shiny app
 #######################################
@@ -134,6 +134,55 @@ all_stackedbar_admtype_2020 <- setNames(all_stackedbar_admtype_2020, states)
 all_stackedbar_admtype_2020$Georgia
 all_stackedbar_admtype_2020$California
 
+# PIE CHART - Generate highchart for each state showing prison pop by admission type
+all_pie_admtype_2020 <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_yearendpop_admtype_2020 %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    select(admtype, prop) %>%
+    mutate(prop_label = paste0(round(prop, 0), "%"))
+
+  highcharts <- hchart(df1, "pie",
+                       hcaes(x = admtype, y = prop),
+                       dataLabels = list(
+                         style = list(fontSize = "1em",
+                                      fontWeight = "regular",
+                                      alignTo = "connectors",
+                                      color = neutralBlackText),
+                         enabled = TRUE,
+                         format = paste("{point.admtype}: ", "<b>{point.prop_label}</b>"))) %>%
+    hc_chart(plotBackgroundColor = "none",
+             plotBorderWidth = 0,
+             plotShadow = FALSE,
+             margin = c(100, 0, 18, 0)) %>%
+    hc_yAxis(maxPadding = 0) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = FALSE) %>%
+    hc_colors(c(teal, yellow)) %>%
+    hc_plotOptions(
+      series = list(animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = "TBD",
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD")))
+
+  return(highcharts)
+})
+
+# Assign state names
+all_pie_admtype_2020 <- setNames(all_pie_admtype_2020, states)
+all_pie_admtype_2020$Georgia
+all_pie_admtype_2020$California
+
+
+
+
+
 
 
 
@@ -227,12 +276,9 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
               list(name = "Parole Eligible but not Released from Prison (1-25 Year Sentences)",
                    data = df1$current_count)) %>%
     hc_add_theme(hc_theme_jc_line) %>%
-    hc_colors(colors = c(teal, "#75d9d4", yellow, orange)) %>%
+    hc_colors(colors = c(teal, purple, yellow)) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
     hc_exporting(enabled = TRUE) %>%
-    hc_credits(enabled = TRUE,
-               text = "Note: Parole eligible prison population only includes people incarcerated for a new crime.",
-               position = list(align = "left", verticalAlign = "bottom")) %>%
     hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
   return(highcharts)
 })
@@ -415,7 +461,7 @@ all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- hchart(df1, "column",
+  highcharts <- hchart(df1, "bar",
                        hcaes(x = fbi_index,
                              y = prop
                        ),
@@ -425,7 +471,8 @@ all_bar_prison_fbi_index_2020 <- map(.x = states,  .f = function(x) {
                                                       fontSize = "12px",
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = "")) %>%
+             title = list(text = ""),
+             min = 0, max = 100) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -539,7 +586,7 @@ all_bar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- hchart(df1, "column",
+  highcharts <- hchart(df1, "bar",
                        hcaes(x = sentlgth,
                              y = prop
                        ),
@@ -549,7 +596,8 @@ all_bar_prison_sentlgth_2020 <- map(.x = states,  .f = function(x) {
                                                       fontSize = "12px",
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = "")) %>%
+             title = list(text = ""),
+             min = 0, max = 100) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -591,6 +639,7 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 for (folder in theseFOLDERS){
 
   save(all_stackedbar_admtype_2020,          file = file.path(folder, "all_stackedbar_admtype_2020.rds"))
+  save(all_pie_admtype_2020,                 file = file.path(folder, "all_pie_admtype_2020.rds"))
 
   save(all_line_pop_released_to_parole,      file = file.path(folder, "all_line_pop_released_to_parole.rds"))
 

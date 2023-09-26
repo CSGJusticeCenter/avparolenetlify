@@ -23,6 +23,7 @@ load(file = paste0(sp_data_path, "/data/analysis/parole_info_by_state.rds"))
 
 # New crime vs Parole return
 load(file = paste0(sp_data_path, "/data/analysis/all_stackedbar_admtype_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_pie_admtype_2020.rds"))
 
 # Prison Population
 load(file = paste0(sp_data_path, "/data/analysis/all_line_pop_released_to_parole.rds"))
@@ -59,12 +60,14 @@ load(file = paste0(sp_data_path, "/data/analysis/parole_eligibility_table_2020.r
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_gender.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_sentlgth.rds"))
+
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_gender.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_sentlgth.rds"))
 
 # Offenses
-load(file = paste0(sp_data_path, "/data/analysis/all_pie_parole_elgibility_fbi_index_new_crime.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_bar_parole_elgibility_fbi_index_new_crime.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/all_sentence_parole_elgibility_fbi_index.rds"))
 

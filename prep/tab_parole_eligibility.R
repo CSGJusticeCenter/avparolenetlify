@@ -11,159 +11,187 @@
 
 ################################################################################
 
-# Highchart - horizontal stacked bar chart
 # Prison population by parole eligibility status
+# Stacked bar chart
+# Pie chart option
 
 # Obtained from NCRP year end population
 
 ################################################################################
 
-# Create long form based on perc variables (type and prop columns)
-ncrp_pe_type_2020_prop <- parole_eligibility_table %>%
-  filter(rptyear == 2020) %>%
-  mutate(other_perc = current_other_perc + future_1_5_years_other_perc + future_6_years_other_perc,
-         other_count = current_other_count + future_1_5_years_other_count + future_6_years_other_count) %>%
-  select(state,
-         rptyear,
-         current_new_crime_count,
-         future_1_5_years_new_crime_count,
-         future_6_years_new_crime_count,
-         other_count,
-         missing_count,
-         current_new_crime_perc,
-         future_1_5_years_new_crime_perc,
-         future_6_years_new_crime_perc,
-         other_perc,
-         missing_perc) %>%
-  pivot_longer(cols = c(current_new_crime_perc,
-                        future_1_5_years_new_crime_perc,
-                        future_6_years_new_crime_perc,
-                        other_perc,
-                        missing_perc),
-               names_to = "type",
-               values_to = "prop") %>%
-  mutate(type = case_when(
-    type == "current_new_crime_perc"          ~ "New Crime Population<br>Currently Eligible",
-    type == "future_1_5_years_new_crime_perc" ~ "New Crime Population<br>Eligible in 1-5 Years",
-    type == "future_6_years_new_crime_perc"   ~ "New Crime Population<br>Eligible in 6+ Years",
-    type == "other_perc"                      ~ "Other Population<br>Currently/Future Eligible",
-    type == "missing_perc"                    ~ "Missing Data"
-  ))
-
-# Create long form based on count variables (type and n columns)
-ncrp_pe_type_2020_count <- parole_eligibility_table %>%
-  filter(rptyear == 2020) %>%
-  mutate(other_count = current_other_count + future_1_5_years_other_count + future_6_years_other_count) %>%
-  select(state,
-         rptyear,
-         current_new_crime_count,
-         future_1_5_years_new_crime_count,
-         future_6_years_new_crime_count,
-         other_count,
-         missing_count) %>%
-  pivot_longer(cols = c(current_new_crime_count,
-                        future_1_5_years_new_crime_count,
-                        future_6_years_new_crime_count,
-                        other_count,
-                        missing_count),
-               names_to = "type",
-               values_to = "n") %>%
-  mutate(type = case_when(
-    type == "current_new_crime_count"          ~ "New Crime Population<br>Currently Eligible",
-    type == "future_1_5_years_new_crime_count" ~ "New Crime Population<br>Eligible in 1-5 Years",
-    type == "future_6_years_new_crime_count"   ~ "New Crime Population<br>Eligible in 6+ Years",
-    type == "other_count"                      ~ "Other Population<br>Currently/Future Eligible",
-    type == "missing_count"                    ~ "Missing Data"
-  ))
-
-# Join the two long forms together
-ncrp_pe_type_2020 <- ncrp_pe_type_2020_prop %>%
-  left_join(ncrp_pe_type_2020_count, by = c("state", "rptyear", "type")) %>%
-   mutate(type = factor(type,
-                        levels = c("Missing Data",
-                                   "Other Population<br>Currently/Future Eligible",
-                                   "New Crime Population<br>Eligible in 6+ Years",
-                                   "New Crime Population<br>Eligible in 1-5 Years",
-                                   "New Crime Population<br>Currently Eligible"))) %>%
-   mutate(tooltip =
-            paste0("<b>", state, "</b><br><br>",
-                   "<b>", type, "</b><br><br>",
-                   # "Number of People: <br><b>",
-                   #  formattable::comma(n, digits = 0), "</b><br><br>",
-                   "Percentage of the Prison Population: <br><b>",
-                    paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
-          prop_label = paste0(round(prop*100, 0), "%"))
-
-# get list of states
-states <- unique(ncrp_pe_type_2020$state)
-
-all_stackedbar_pe_type_2020 <- map(.x = states,  .f = function(x) {
-
-  df1 <- ncrp_pe_type_2020 %>%
-    filter(state == x)
-
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = state,
-                             y = prop,
-                             group = type),
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "bold",
-                                                      fontSize = "16px",
-                                                      fontFamily = "Graphik"))
-  ) %>%
-    hc_yAxis(labels = list(format = "{value}%",
-                           enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_legend(
-      layout = "horizontal",
-      align = "center",
-      verticalAlign = "top",
-      reversed = TRUE,
-      itemMarginTop = 10,
-      labelFormatter = JS("
-      function() {
-        var text = this.name;
-        switch(text) {
-          case 'Missing Data':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'New Crime Population<br>Currently Eligible':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'Other Population<br>Currently/Future Eligible':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'New Crime Population<br>Eligible in 6+ Years':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'New Crime Population<br>Eligible in 1-5 Years':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          default:
-            return '<span style=\"font-weight: bold;\">' + text + '</span>';
-        }
-      }
-    ")
-    ) %>%
-    hc_colors(c("gray", orange, yellow, purple, teal)) %>%
-    hc_plotOptions(
-      series = list(stacking = "normal",
-                    animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD.",
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
-
-  return(highcharts)
-})
-
-all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
+# # Create long form based on perc variables (type and prop columns)
+# ncrp_pe_type_2020_prop <- parole_eligibility_table %>%
+#   filter(rptyear == 2020) %>%
+#   mutate(other_perc = current_other_perc + future_1_5_years_other_perc + future_6_years_other_perc,
+#          other_count = current_other_count + future_1_5_years_other_count + future_6_years_other_count) %>%
+#   select(state,
+#          rptyear,
+#          current_new_crime_count,
+#          future_1_5_years_new_crime_count,
+#          future_6_years_new_crime_count,
+#          other_count,
+#          missing_count,
+#          current_new_crime_perc,
+#          future_1_5_years_new_crime_perc,
+#          future_6_years_new_crime_perc,
+#          other_perc,
+#          missing_perc) %>%
+#   pivot_longer(cols = c(current_new_crime_perc,
+#                         future_1_5_years_new_crime_perc,
+#                         future_6_years_new_crime_perc,
+#                         other_perc,
+#                         missing_perc),
+#                names_to = "type",
+#                values_to = "prop") %>%
+#   mutate(type = case_when(
+#     type == "current_new_crime_perc"          ~ "New Crime Population<br>Currently Eligible",
+#     type == "future_1_5_years_new_crime_perc" ~ "New Crime Population<br>Eligible in 1-5 Years",
+#     type == "future_6_years_new_crime_perc"   ~ "New Crime Population<br>Eligible in 6+ Years",
+#     type == "other_perc"                      ~ "Other Population<br>Currently/Future Eligible",
+#     type == "missing_perc"                    ~ "Missing Data"
+#   ))
+#
+# # Create long form based on count variables (type and n columns)
+# ncrp_pe_type_2020_count <- parole_eligibility_table %>%
+#   filter(rptyear == 2020) %>%
+#   mutate(other_count = current_other_count + future_1_5_years_other_count + future_6_years_other_count) %>%
+#   select(state,
+#          rptyear,
+#          current_new_crime_count,
+#          future_1_5_years_new_crime_count,
+#          future_6_years_new_crime_count,
+#          other_count,
+#          missing_count) %>%
+#   pivot_longer(cols = c(current_new_crime_count,
+#                         future_1_5_years_new_crime_count,
+#                         future_6_years_new_crime_count,
+#                         other_count,
+#                         missing_count),
+#                names_to = "type",
+#                values_to = "n") %>%
+#   mutate(type = case_when(
+#     type == "current_new_crime_count"          ~ "New Crime Population<br>Currently Eligible",
+#     type == "future_1_5_years_new_crime_count" ~ "New Crime Population<br>Eligible in 1-5 Years",
+#     type == "future_6_years_new_crime_count"   ~ "New Crime Population<br>Eligible in 6+ Years",
+#     type == "other_count"                      ~ "Other Population<br>Currently/Future Eligible",
+#     type == "missing_count"                    ~ "Missing Data"
+#   ))
+#
+# # Join the two long forms together
+# ncrp_pe_type_2020 <- ncrp_pe_type_2020_prop %>%
+#   left_join(ncrp_pe_type_2020_count, by = c("state", "rptyear", "type")) %>%
+#    mutate(type = factor(type,
+#                         levels = c("Missing Data",
+#                                    "Other Population<br>Currently/Future Eligible",
+#                                    "New Crime Population<br>Eligible in 6+ Years",
+#                                    "New Crime Population<br>Eligible in 1-5 Years",
+#                                    "New Crime Population<br>Currently Eligible"))) %>%
+#    mutate(tooltip =
+#             paste0("<b>", state, "</b><br><br>",
+#                    "<b>", type, "</b><br><br>",
+#                    # "Number of People: <br><b>",
+#                    #  formattable::comma(n, digits = 0), "</b><br><br>",
+#                    "Percentage of the Prison Population: <br><b>",
+#                     paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
+#           prop_label = paste0(round(prop*100, 0), "%"))
+#
+# # get list of states
+# states <- unique(ncrp_pe_type_2020$state)
+#
+# all_stackedbar_pe_type_2020 <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- ncrp_pe_type_2020 %>%
+#     filter(state == x)
+#
+#   highcharts <- hchart(df1, "bar",
+#                        hcaes(x = state,
+#                              y = prop,
+#                              group = type),
+#                        dataLabels = list(enabled = TRUE,
+#                                          format = "{point.prop_label}",
+#                                          style = list(fontWeight = "bold",
+#                                                       fontSize = "16px",
+#                                                       fontFamily = "Graphik"))
+#   ) %>%
+#     hc_yAxis(labels = list(format = "{value}%",
+#                            enabled = FALSE),
+#              title = list(text = ""),
+#              min = 0, max = 1) %>%
+#     hc_xAxis(title = list(text = ""),
+#              labels = list(enabled = FALSE)) %>%
+#     hc_add_theme(hc_theme_jc) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_legend(
+#       layout = "horizontal",
+#       align = "center",
+#       verticalAlign = "top",
+#       reversed = TRUE,
+#       itemMarginTop = 10,
+#       labelFormatter = JS("
+#       function() {
+#         var text = this.name;
+#         switch(text) {
+#           case 'Missing Data':
+#             return '<span style=\"font-weight: normal;\">' + text + '</span>';
+#           case 'New Crime Population<br>Currently Eligible':
+#             return '<span style=\"font-weight: normal;\">' + text + '</span>';
+#           case 'Other Population<br>Currently/Future Eligible':
+#             return '<span style=\"font-weight: normal;\">' + text + '</span>';
+#           case 'New Crime Population<br>Eligible in 6+ Years':
+#             return '<span style=\"font-weight: normal;\">' + text + '</span>';
+#           case 'New Crime Population<br>Eligible in 1-5 Years':
+#             return '<span style=\"font-weight: normal;\">' + text + '</span>';
+#           default:
+#             return '<span style=\"font-weight: bold;\">' + text + '</span>';
+#         }
+#       }
+#     ")
+#     ) %>%
+#     hc_colors(c("gray", orange, yellow, purple, teal)) %>%
+#     hc_plotOptions(
+#       series = list(stacking = "normal",
+#                     animation = FALSE,
+#                     cursor = "pointer",
+#                     borderWidth = 3,
+#                     minPointLength = 4),
+#       accessibility = list(enabled = TRUE,
+#                            keyboardNavigation = list(enabled = TRUE),
+#                            linkedDescription = "TBD.",
+#                            landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = "TBD.")))
+#
+#   return(highcharts)
+# })
+#
+# all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
+#
+#
+# ##########
+# # Sentence about parole eligible prison population:
+#
+# # In 2020, there were ___ people who were eligible for parole but remained incarcerated for a new crime.
+# # This group made up ___% of the prison population.
+# ##########
+#
+# # get list of states
+# states <- unique(ncrp_pe_type_2020$state)
+#
+# # generate sentence about most serious sentenced offense in 2020 by state
+# all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- ncrp_pe_type_2020 %>%
+#     filter(state == x &
+#              type == "New Crime Population<br>Currently Eligible")
+#
+#   sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
+#                       " people who were eligible for parole but remained incarcerated for a new crime. This group made up ",
+#                       df1$prop_label, " of the prison population.")
+#   return(sentences)
+# })
+#
+# all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibility_population, states)
+# all_sentence_parole_elgibility_population$Georgia
 
 
 
@@ -174,57 +202,28 @@ all_stackedbar_pe_type_2020 <- setNames(all_stackedbar_pe_type_2020, states)
 
 ################################################################################
 
-# Sentence about parole eligible prison population:
-
-# In 2020, there were ___ people who were eligible for parole but remained incarcerated for a new crime.
-# This group made up ___% of the prison population.
+# Parole eligibility by demographic
+# Highchart bar charts and sentences
 
 # Obtained from NCRP year end population
 
 ################################################################################
 
-# get list of states
-states <- unique(ncrp_pe_type_2020$state)
-
-# generate sentence about most serious sentenced offense in 2020 by state
-all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) {
-
-  df1 <- ncrp_pe_type_2020 %>%
-    filter(state == x &
-             type == "New Crime Population<br>Currently Eligible")
-
-  sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
-                      " people who were eligible for parole but remained incarcerated for a new crime. This group made up ",
-                      df1$prop_label, " of the prison population.")
-  return(sentences)
-})
-
-all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibility_population, states)
-all_sentence_parole_elgibility_population$Georgia
-
-
-
-
-
-
-
-
-################################################################################
-
-# Highchart - bar chart
-# Sentence about it
-# Parole eligibility by race
-
-# Obtained from NCRP year end population
-
-################################################################################
+##########
+# Race
+##########
 
 # Currently parole eligible population but still in prison by race in 2020
 # Only in for people in prison most recently for a new crime
 current_ped_2020_race <- ncrp_yearendpop %>%
-  filter(admtype == "New court commitment" &
-         rptyear == 2020 &
+  filter(rptyear == 2020 &
          parelig_status == "Current") %>%
+  filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years" |
+           sentlgth == ">=25 years") %>%
   group_by(state) %>%
   count(race) %>%
   mutate(
@@ -260,7 +259,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 
   highcharts <-
     highchart() %>%
-    hc_add_series(df1, type = "column",
+    hc_add_series(df1, type = "bar",
                   hcaes(x = factor(race), y = prop),
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
@@ -268,7 +267,9 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
@@ -304,12 +305,22 @@ all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
 all_sentence_parole_elgibility_race <- setNames(all_sentence_parole_elgibility_race, states)
 all_sentence_parole_elgibility_race$Georgia
 
+
+##########
+# Age
+##########
+
 # Currently parole eligible population but still in prison by ageyrend in 2020
 # Only in for people in prison most recently for a new crime
 current_ped_2020_ageyrend <- ncrp_yearendpop %>%
-  filter(admtype == "New court commitment" &
-           rptyear == 2020 &
-           parelig_status == "Current") %>%
+  filter(rptyear == 2020 &
+         parelig_status == "Current") %>%
+  filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years" |
+           sentlgth == ">=25 years") %>%
   group_by(state) %>%
   count(ageyrend) %>%
   mutate(
@@ -336,7 +347,7 @@ all_bar_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
 
   highcharts <-
     highchart() %>%
-    hc_add_series(df1, type = "column",
+    hc_add_series(df1, type = "bar",
                   hcaes(x = factor(ageyrend), y = prop),
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
@@ -344,7 +355,9 @@ all_bar_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
@@ -380,12 +393,22 @@ all_sentence_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
 all_sentence_parole_elgibility_ageyrend <- setNames(all_sentence_parole_elgibility_ageyrend, states)
 all_sentence_parole_elgibility_ageyrend$Georgia
 
+
+##########
+# Gender
+##########
+
 # Currently parole eligible population but still in prison by gender in 2020
 # Only in for people in prison most recently for a new crime
 current_ped_2020_gender <- ncrp_yearendpop %>%
-  filter(admtype == "New court commitment" &
-           rptyear == 2020 &
-           parelig_status == "Current") %>%
+  filter(rptyear == 2020 &
+         parelig_status == "Current") %>%
+  filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years" |
+           sentlgth == ">=25 years") %>%
   group_by(state) %>%
   count(sex) %>%
   mutate(
@@ -412,7 +435,7 @@ all_bar_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
 
   highcharts <-
     highchart() %>%
-    hc_add_series(df1, type = "column",
+    hc_add_series(df1, type = "bar",
                   hcaes(x = factor(sex), y = prop),
                   dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
@@ -420,7 +443,9 @@ all_bar_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE)) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
@@ -460,9 +485,124 @@ all_sentence_parole_elgibility_gender$Georgia
 
 
 
+
+
 ################################################################################
 
-# Most serious sentenced offenses for those in prison but not released in 2020
+# Sentence lengths for people eligible for parole but in prison in 2020
+
+# Obtained from NCRP year end population
+
+################################################################################
+
+# Currently parole eligible population but still in prison by sentence lenth in 2020
+# Only in for people in prison most recently for a new crime
+current_ped_2020_sentlgth_new_crime <- ncrp_yearendpop %>%
+  filter(rptyear == 2020 &
+         parelig_status == "Current") %>%
+  filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years" |
+           sentlgth == ">=25 years") %>%
+  group_by(state) %>%
+  count(sentlgth) %>%
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
+  ) %>%
+  ungroup() %>%
+  mutate(tooltip = paste0("<b>", state, " - ",
+                          sentlgth, "</b><br>",
+                          prop_label, "<br>"))
+
+##########
+# Sentence about sentence lengths
+##########
+
+# get list of states with data
+states <- unique(current_ped_2020_sentlgth_new_crime$state)
+
+# generate sentence about most serious sentenced offense in 2020 by state
+all_sentence_parole_elgibility_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- current_ped_2020_sentlgth_new_crime %>%
+    filter(state == x) %>%
+    arrange(-prop) %>%
+    slice(1)
+  sentences <- paste0("In 2020, ", df1$prop_label,
+                      " of the prison population eligible for parole, who were incarcerated for new crimes and had sentence lengths ranging from 1 to 25 years, were serving time for ",
+                      df1$sentlgth)
+  return(sentences)
+})
+
+all_sentence_parole_elgibility_sentlgth <- setNames(all_sentence_parole_elgibility_sentlgth, states)
+all_sentence_parole_elgibility_sentlgth$Georgia
+
+
+##########
+# Bar chart about sentence lengths
+##########
+
+# get states with data
+states <- unique(current_ped_2020_sentlgth_new_crime$state)
+
+# generate bar chart showing parole eligible populations by gender and state in 2020
+all_bar_parole_elgibility_sentlgth <- map(.x = states,  .f = function(x) {
+
+  # filter data
+  df1 <- current_ped_2020_sentlgth_new_crime %>%
+    filter(state == x)
+  xaxis_order <- (df1$sentlgth)
+
+  highcharts <-
+    highchart() %>%
+    hc_add_series(df1, type = "bar",
+                  hcaes(x = factor(sentlgth), y = prop),
+                  dataLabels = list(enabled = TRUE, format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = xaxis_order) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = FALSE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD")))
+
+  return(highcharts)
+})
+
+all_bar_parole_elgibility_sentlgth <- setNames(all_bar_parole_elgibility_sentlgth, states)
+all_bar_parole_elgibility_sentlgth$Georgia
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
+
+# Most serious sentenced offenses for people eligible for parole but in prison in 2020
 
 # Obtained from NCRP year end population
 
@@ -477,6 +617,11 @@ current_ped_2020_fbi_index_all <- ncrp_yearendpop %>%
 # Count most serious sentenced offense for people in prison for new crime
 current_ped_2020_fbi_index_new_crime <- current_ped_2020_fbi_index_all %>%
   filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years" |
+           sentlgth == ">=25 years") %>%
   group_by(state) %>%
   count(fbi_index) %>%
   mutate(
@@ -492,18 +637,9 @@ current_ped_2020_fbi_index_new_crime <- current_ped_2020_fbi_index_all %>%
          chart_label = paste0(fbi_index, " <b>", round(prop*100, 0), "%</b>"),
          prop_label = paste0(round(prop*100, 0), "%"))
 
-
-
-
-
-
-################################################################################
-
+##########
 # Sentence about most serious offense
-
-# Obtained from NCRP year end population
-
-################################################################################
+##########
 
 # get list of states with data
 states <- unique(current_ped_2020_fbi_index_new_crime$state)
@@ -512,76 +648,24 @@ states <- unique(current_ped_2020_fbi_index_new_crime$state)
 all_sentence_parole_elgibility_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_2020_fbi_index_new_crime %>%
     filter(state == x) %>%
-    group_by() %>%
-    summarise(n = sum(n, na.rm = TRUE),
-              prop = sum(prop, na.rm = TRUE)) %>%
-    mutate(prop = round(prop*100, 0),
-           prop_label = paste0(prop, "%"))
-  sentences <- "TBD sentence"
-  # sentences <- paste0("In 2020, there were ", formattable::comma(df1$n, digits = 0),
-  #                     " people who were parole eligible but still in prison for non-violent offenses, accounting for ",
-  #                     df1$prop_label, " of the parole-eligible prison population in prison for new crimes.")
+    arrange(-prop) %>%
+    slice(1)
+  sentences <- paste0("In 2020, ", df1$prop_label,
+                      "  of the prison population eligible for parole, who were incarcerated for new crimes and had sentence lengths ranging from 1 to 25 years, were serving time for ",
+                      tolower(df1$fbi_index),
+                      " offenses.")
   return(sentences)
 })
 
 all_sentence_parole_elgibility_fbi_index <- setNames(all_sentence_parole_elgibility_fbi_index, states)
 all_sentence_parole_elgibility_fbi_index$Georgia
 
-
-
-
-
-
-
-################################################################################
-
-# Pie chart about most serious offense
-
-# Obtained from NCRP year end population
-
-################################################################################
+##########
+# Bar chart
+##########
 
 # get list of states
 states <- unique(current_ped_2020_fbi_index_new_crime$state)
-
-# generate pie chart about most serious sentenced offense in 2020 by state - NEW CRIME ONLY
-all_pie_parole_elgibility_fbi_index_new_crime <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_2020_fbi_index_new_crime %>% filter(state == x)
-  highcharts <-
-    df1 %>%
-    hchart("pie",
-           hcaes(x = fbi_index, y = prop),
-           dataLabels = list(
-             style = list(fontSize = "1em",
-                          fontWeight = "regular",
-                          alignTo = "connectors",
-                          color = neutralBlackText),
-             enabled = TRUE,
-             format = paste("{point.fbi_index}: ", "<b>{point.prop_label}</b>")
-           )) %>%
-    hc_chart(plotBackgroundColor = "none",
-             plotBorderWidth = 0,
-             plotShadow = FALSE,
-             margin = c(100, 0, 18, 0)
-    ) %>%
-    hc_yAxis(maxPadding = 0) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = FALSE) %>%
-    hc_plotOptions(
-      series = list(animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD",
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD")))
-  return(highcharts)
-})
-
-all_pie_parole_elgibility_fbi_index_new_crime <- setNames(all_pie_parole_elgibility_fbi_index_new_crime, states)
-all_pie_parole_elgibility_fbi_index_new_crime$Georgia
 
 # generate bar chart about most serious sentenced offense in 2020 by state - NEW CRIME ONLY
 all_bar_parole_elgibility_fbi_index_new_crime <- map(.x = states,  .f = function(x) {
@@ -596,7 +680,8 @@ all_bar_parole_elgibility_fbi_index_new_crime <- map(.x = states,  .f = function
                                           fontSize = "12px",
                                           fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = "")) %>%
+             title = list(text = ""),
+             min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -635,8 +720,8 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
 
 for (folder in theseFOLDERS){
 
-  save(all_stackedbar_pe_type_2020,                   file = file.path(folder, "all_stackedbar_pe_type_2020.rds"))
-  save(all_sentence_parole_elgibility_population,     file = file.path(folder, "all_sentence_parole_elgibility_population.rds"))
+  # save(all_stackedbar_pe_type_2020,                   file = file.path(folder, "all_stackedbar_pe_type_2020.rds"))
+  # save(all_sentence_parole_elgibility_population,     file = file.path(folder, "all_sentence_parole_elgibility_population.rds"))
 
   save(current_ped_2020_race,                         file = file.path(folder, "current_ped_2020_race.rds"))
   save(all_sentence_parole_elgibility_race,           file = file.path(folder, "all_sentence_parole_elgibility_race.rds"))
@@ -648,8 +733,11 @@ for (folder in theseFOLDERS){
   save(all_sentence_parole_elgibility_gender,         file = file.path(folder, "all_sentence_parole_elgibility_gender.rds"))
   save(all_bar_parole_elgibility_gender,              file = file.path(folder, "all_bar_parole_elgibility_gender.rds"))
 
+  save(all_sentence_parole_elgibility_sentlgth,       file = file.path(folder, "all_sentence_parole_elgibility_sentlgth.rds"))
+  save(all_bar_parole_elgibility_sentlgth,            file = file.path(folder, "all_bar_parole_elgibility_sentlgth.rds"))
+
   save(all_sentence_parole_elgibility_fbi_index,      file = file.path(folder, "all_sentence_parole_elgibility_fbi_index.rds"))
-  save(all_pie_parole_elgibility_fbi_index_new_crime, file = file.path(folder, "all_pie_parole_elgibility_fbi_index_new_crime.rds"))
   save(all_bar_parole_elgibility_fbi_index_new_crime, file = file.path(folder, "all_bar_parole_elgibility_fbi_index_new_crime.rds"))
 
 }
+
