@@ -16,14 +16,10 @@ library(tidyverse)
 source("prep/library.R")
 source("prep/functions.R")
 # source("prep/import.R")
-# source("prep/dataframes.R")
-# source("prep/page_national_trends.R")
-# source("prep/tab_parole_eligibility.R")
-# source("prep/tab_prison_population.R")
-# source("prep/tab_releases_from_prison.R")
-# source("prep/tab_disparities.R")
-# source("prep/page_missing_data.R")
-# source("prep/rri.R")
+source("prep/dataframes.R")
+source("prep/page_national_trends.R")
+source("prep/tab_parole_eligibility.R")
+source("prep/tab_prison_population.R")
 
 
 # save working directory

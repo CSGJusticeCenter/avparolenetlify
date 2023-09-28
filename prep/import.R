@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: March 13, 2023 (MAR)
+# Date last updated: September 27, 2023 (MAR)
 # Description:
 #    Import NCRP data (admissions, population, year end population)
 #######################################
@@ -177,13 +177,6 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
                                   "White, non-Hispanic",
                                   "Hispanic, any race",
                                   "Black, non-Hispanic")),
-         # ageyrend = factor(ageyrend,
-         #                   levels = c("18-24 years",
-         #                              "25-34 years",
-         #                              "35-44 years",
-         #                              "45-54 years",
-         #                              "55+ years"
-         #                              )),
          ageyrend = factor(ageyrend,
                            levels = c("55+ years",
                                       "45-54 years",
@@ -271,11 +264,11 @@ parole_info_by_state <- parole_info_by_state  %>%
 #   save(ncrp_term_records, file=file.path(folder, "ncrp_term_records.rds"))
 #   save(ncrp_releases,     file=file.path(folder, "ncrp_releases.rds"))
 #
-#   save(hex_gj, file=file.path(folder, "hex_gj.rds"))
-#   save(robinadefinitions, file=file.path(folder, "robinadefinitions.rds"))
-#   save(robinainfo, file=file.path(folder, "robinainfo.rds"))
+#   save(hex_gj,                  file=file.path(folder, "hex_gj.rds"))
+#   save(robinadefinitions,       file=file.path(folder, "robinadefinitions.rds"))
+#   save(robinainfo,              file=file.path(folder, "robinainfo.rds"))
 #   save(robinaparoleeligibility, file=file.path(folder, "robinaparoleeligibility.rds"))
-#   save(parole_info_by_state, file=file.path(folder, "parole_info_by_state.rds"))
+#   save(parole_info_by_state,    file=file.path(folder, "parole_info_by_state.rds"))
 #
 # }
 
