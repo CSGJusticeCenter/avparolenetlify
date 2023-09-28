@@ -581,17 +581,17 @@ all_bar_prison_sentlgth$Georgia
 
 ################################################################################
 
-theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
   save(all_stackedbar_admtype,          file = file.path(folder, "all_stackedbar_admtype.rds"))
   save(all_pie_admtype,                 file = file.path(folder, "all_pie_admtype.rds"))
 
-  save(all_line_pop_released_to_parole,      file = file.path(folder, "all_line_pop_released_to_parole.rds"))
+  save(all_line_pop_released_to_parole, file = file.path(folder, "all_line_pop_released_to_parole.rds"))
 
   save(all_stackedbar_prison_race,      file = file.path(folder, "all_stackedbar_prison_race.rds"))
-  save(all_stackedbar_prison_gender,       file = file.path(folder, "all_stackedbar_prison_gender.rds"))
+  save(all_stackedbar_prison_gender,    file = file.path(folder, "all_stackedbar_prison_gender.rds"))
   save(all_stackedbar_prison_ageyrend,  file = file.path(folder, "all_stackedbar_prison_ageyrend.rds"))
 
   save(all_groupedbar_prison_sentlgth,  file = file.path(folder, "all_groupedbar_prison_sentlgth.rds"))

@@ -8,18 +8,19 @@
 # based on _state_report_template.qmd
 ############################################
 
+# select year for site
+select_year <- 2020
+
 # load packages for generating state report QMDs
 library(rmarkdown)
 library(tidyverse)
 
-# run code
-source("prep/library.R")
-source("prep/functions.R")
-# source("prep/import.R")
-source("prep/dataframes.R")
-source("prep/page_national_trends.R")
-source("prep/tab_parole_eligibility.R")
-source("prep/tab_prison_population.R")
+# # run code
+# source("prep/library.R")
+# source("prep/functions.R")
+# source("prep/page_national_trends.R")
+# source("prep/tab_parole_eligibility.R")
+# source("prep/tab_prison_population.R")
 
 
 # save working directory
@@ -46,5 +47,5 @@ replace_write_qmd <- function(state) {
 # iterate over replacement values and write new qmds
 walk(states_qmd, replace_write_qmd)
 
-# # render all QMDs
+# render all QMDs
 # quarto::quarto_render()

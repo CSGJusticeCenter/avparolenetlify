@@ -7,8 +7,9 @@
 #    Import NCRP data (admissions, population, year end population)
 #######################################
 
-# select year
-select_year <- 2020
+# load packages and functions
+source("prep/library.R")
+source("prep/functions.R")
 
 # load prison sentencing system info from Robina
 robinainfo <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
@@ -76,31 +77,35 @@ ncrp_term_records <- da38492.0001 %>% clean_names() %>%
     admtype      = str_sub(admtype, 5, -1),
     race         = str_sub(race, 5, -1),
     sex          = str_sub(sex, 5, -1),
-    sentlgth     = str_sub(sentlgth, 5, -1)) %>%
+    sentlgth     = str_sub(sentlgth, 5, -1),
+    education    = str_sub(education, 5, -1),
+    timesrvd     = str_sub(timesrvd, 5, -1),
+    reltype      = str_sub(reltype, 5, -1),
+    ageadmit     = str_sub(ageadmit, 5, -1),
+    agerelease   = str_sub(agerelease, 5, -1)) %>%
 
   mutate(across(everything(), ~ trimws(.)))
 
 
 
 #############
-# {repare NCRP Admissions
+# Prepare NCRP Admissions
 #############
 
 ncrp_admissions <- da38492.0002 %>% clean_names() %>%
 
   mutate(
+    sex          = str_sub(sex, 5, -1),
     state        = str_sub(state, 6, -1),
+    education    = str_sub(education, 5, -1),
+    admtype      = str_sub(admtype, 5, -1),
     offgeneral   = str_sub(offgeneral, 5, -1),
     offdetail    = str_sub(offdetail, 5, -1),
-    admtype      = str_sub(admtype, 5, -1),
     race         = str_sub(race, 5, -1),
-    sex          = str_sub(sex, 5, -1),
-    sentlgth     = str_sub(sentlgth, 5, -1)) %>%
+    sentlgth     = str_sub(sentlgth, 5, -1),
+    ageadmit     = str_sub(ageadmit, 5, -1)) %>%
 
-  mutate(offdetail = trimws(offdetail)) %>%
-
-  # create parole eligibility status with custom function
-  fnc_create_parelig_status()
+  mutate(offdetail = trimws(offdetail))
 
 
 
@@ -120,14 +125,15 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
     agerlse      = str_sub(agerlse, 5, -1),
     sentlgth     = str_sub(sentlgth, 5, -1),
     reltype      = str_sub(reltype, 5, -1),
-    timesrvd_rel = str_sub(timesrvd_rel, 5, -1)) %>%
+    timesrvd_rel = str_sub(timesrvd_rel, 5, -1),
+    education    = str_sub(education, 5, -1)) %>%
 
-  mutate(offdetail = trimws(offdetail)) %>%
+  mutate(offdetail = trimws(offdetail))
 
   # custom funciton that create sentence length and timeserved order since they are categorical
   # calculate proportion of sentence length served
   # determine timing of release
-  fnc_sentlgth_timesrvd_rel()
+  # fnc_sentlgth_timesrvd_rel()
 
 
 
@@ -143,6 +149,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     offgeneral     = str_sub(offgeneral, 5, -1),
     offdetail      = str_sub(offdetail, 5, -1),
     race           = str_sub(race, 5, -1),
+    education    = str_sub(education, 5, -1),
     admtype        = str_sub(admtype, 5, -1),
     sex            = str_sub(sex, 5, -1),
     sentlgth       = str_sub(sentlgth, 5, -1),
@@ -150,12 +157,13 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     ageyrend       = str_sub(ageyrend, 5, -1),
     timesrvd_yrend = str_sub(timesrvd_yrend, 5, -1)) %>%
 
-  mutate(offdetail = trimws(offdetail),
-         offgeneral = case_when(
-           is.na(offgeneral) ~ "Other or Unknown",
-           offgeneral == "Other/unspecified" ~ "Other or Unknown",
-           TRUE ~ offgeneral
-         )) %>%
+  # mutate(offdetail = trimws(offdetail),
+  #        offgeneral = case_when(
+  #          is.na(offgeneral) ~ "Other or Unknown",
+  #          offgeneral == "Other/unspecified" ~ "Other or Unknown",
+  #          TRUE ~ offgeneral
+  #        )) %>%
+  mutate(offdetail = trimws(offdetail)) %>%
 
   # create new offense descriptions
   fnc_create_fbi_index() %>%
@@ -166,7 +174,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # include unknown race in analysis
   # include unknown admission type in analysis???
   # create age categories
-  fnc_create_admtype() %>%
+  # fnc_create_admtype() %>%
   mutate(race = ifelse(is.na(race), "Unknown", race),
          ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend),
          sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
@@ -255,14 +263,27 @@ parole_info_by_state <- parole_info_by_state  %>%
 # Save data
 ##########
 
-# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+# # Save files to clean_files folder to be used for regression analysis
+# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/clean_files"))
 #
 # for (folder in theseFOLDERS){
 #
-#   save(ncrp_yearendpop,   file=file.path(folder, "ncrp_yearendpop.rds"))
-#   save(ncrp_admissions,   file=file.path(folder, "ncrp_admissions.rds"))
-#   save(ncrp_term_records, file=file.path(folder, "ncrp_term_records.rds"))
-#   save(ncrp_releases,     file=file.path(folder, "ncrp_releases.rds"))
+#   write_csv(ncrp_yearendpop,      file.path(folder, "ncrp_yearendpop_v1.csv"))
+#   write_csv(ncrp_admissions,      file.path(folder, "ncrp_admissions_v1.csv"))
+#   write_csv(ncrp_term_records,    file.path(folder, "ncrp_term_records_v1.csv"))
+#   write_csv(ncrp_releases,        file.path(folder, "ncrp_releases_v1.csv"))
+#
+# }
+#
+# # Save files to app folder
+# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
+#
+# for (folder in theseFOLDERS){
+#
+#   save(ncrp_yearendpop,         file=file.path(folder, "ncrp_yearendpop.rds"))
+#   save(ncrp_admissions,         file=file.path(folder, "ncrp_admissions.rds"))
+#   save(ncrp_term_records,       file=file.path(folder, "ncrp_term_records.rds"))
+#   save(ncrp_releases,           file=file.path(folder, "ncrp_releases.rds"))
 #
 #   save(hex_gj,                  file=file.path(folder, "hex_gj.rds"))
 #   save(robinadefinitions,       file=file.path(folder, "robinadefinitions.rds"))
@@ -271,4 +292,3 @@ parole_info_by_state <- parole_info_by_state  %>%
 #   save(parole_info_by_state,    file=file.path(folder, "parole_info_by_state.rds"))
 #
 # }
-

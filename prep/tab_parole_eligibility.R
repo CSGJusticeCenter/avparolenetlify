@@ -222,8 +222,7 @@ current_ped_race <- ncrp_yearendpop %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years" |
-           sentlgth == ">=25 years") %>%
+           sentlgth == "10-24.9 years") %>%
   group_by(state) %>%
   count(race) %>%
   mutate(
@@ -311,8 +310,7 @@ current_ped_ageyrend <- ncrp_yearendpop %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years" |
-           sentlgth == ">=25 years") %>%
+           sentlgth == "10-24.9 years") %>%
   group_by(state) %>%
   count(ageyrend) %>%
   mutate(
@@ -399,8 +397,7 @@ current_ped_gender <- ncrp_yearendpop %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years" |
-           sentlgth == ">=25 years") %>%
+           sentlgth == "10-24.9 years") %>%
   group_by(state) %>%
   count(sex) %>%
   mutate(
@@ -496,8 +493,7 @@ current_ped_sentlgth_new_crime <- ncrp_yearendpop %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years" |
-           sentlgth == ">=25 years") %>%
+           sentlgth == "10-24.9 years") %>%
   group_by(state) %>%
   count(sentlgth) %>%
   mutate(
@@ -611,8 +607,7 @@ current_ped_fbi_index_new_crime <- current_ped_fbi_index_all %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years" |
-           sentlgth == ">=25 years") %>%
+           sentlgth == "10-24.9 years") %>%
   group_by(state) %>%
   count(fbi_index) %>%
   mutate(
@@ -705,7 +700,7 @@ all_bar_parole_elgibility_fbi_index_new_crime$Georgia
 
 ################################################################################
 
-theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 

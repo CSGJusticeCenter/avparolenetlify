@@ -16,6 +16,17 @@
 
 ################################################################################
 
+# Recategorize offgeneral
+# Recategorize admtype
+ncrp_yearendpop <- ncrp_yearendpop %>%
+  mutate(offdetail = trimws(offdetail),
+         offgeneral = case_when(
+           is.na(offgeneral) ~ "Other or Unknown",
+           offgeneral == "Other/unspecified" ~ "Other or Unknown",
+           TRUE ~ offgeneral
+         )) %>%
+  fnc_create_admtype()
+
 # Get total prison population by state and year
 ncrp_prison_population <- ncrp_yearendpop %>%
   group_by(state, rptyear) %>%
@@ -28,8 +39,7 @@ ncrp_prison_population_125years_new_crime <- ncrp_yearendpop %>%
   filter(sentlgth == "1-1.9 years" |
          sentlgth == "2-4.9 years" |
          sentlgth == "5-9.9 years" |
-         sentlgth == "10-24.9 years" |
-         sentlgth == ">=25 years") %>%
+         sentlgth == "10-24.9 years") %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   summarise(yearendpop_125years_new_crime = sum(n, na.rm = FALSE))
@@ -55,8 +65,7 @@ ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
   filter(sentlgth == "1-1.9 years" |
            sentlgth == "2-4.9 years" |
            sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years" |
-           sentlgth == ">=25 years") %>%
+           sentlgth == "10-24.9 years") %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   left_join(ncrp_prison_population,
@@ -126,7 +135,7 @@ parole_eligibility_table_select_year <-
 
 ################################################################################
 
-theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis"))
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
