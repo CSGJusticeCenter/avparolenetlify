@@ -131,7 +131,7 @@ if (state_for_report %in% names(all_line_pop_released_to_parole)) {
     hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility") %>% 
     hc_chart(marginBottom = 50) %>%
     hc_credits(enabled = TRUE,
-               text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime.",
+               text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with original sentence lengths between 1-25 years.",
                position = list(align = "left", 
                                verticalAlign = "bottom", 
                                x = 10, y = 0)) 
@@ -513,7 +513,7 @@ htmltools::div(
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "New Court Commitments vs. Parole Revocations"), br(),
+    div(id = "big-section-title", "Admission Types"), br(),
     div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole. Understanding the relative proportion of these two groups is pivotal for evaluating the effectiveness of a state's criminal justice policies."), br(),
     div(id = "visualization", state_stackedbar_admtype), br(),
     div(id = "visualization", state_pie_admtype), br()

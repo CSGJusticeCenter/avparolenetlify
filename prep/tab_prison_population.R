@@ -10,7 +10,7 @@
 
 ################################################################################
 
-# Section: New crime vs Parole Revocations
+# Section: Admission Types
 
 # Prison population by admission type (new crime vs parole return)
 # Obtained from NCRP year end population
@@ -74,6 +74,7 @@ all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
   return(highcharts)
 })
 all_stackedbar_admtype <- setNames(all_stackedbar_admtype, states)
+all_stackedbar_admtype$Georgia
 
 
 ##########
@@ -104,7 +105,7 @@ all_pie_admtype <- map(.x = states, .f = function(x) {
     hc_yAxis(maxPadding = 0) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_colors(c(teal, yellow)) %>%
     hc_plotOptions(
       series = list(animation = FALSE,
@@ -139,45 +140,6 @@ all_pie_admtype$Georgia
 
 ################################################################################
 
-# Get state abb
-state_names_abb <- data.frame(abbreviation = state.abb,
-                              name = state.name,
-                              stringsAsFactors = FALSE) %>%
-  rename(state = name, stateid = abbreviation)
-
-# List of data frames and years
-aps_data_list <- list(da38058.0001,
-                      da37471.0001,
-                      da37441.0001,
-                      da36619.0001,
-                      da36320.0001,
-                      da35629.0001,
-                      da35257.0001,
-                      da34718.0001,
-                      da34382.0001,
-                      da34381.0001,
-                      da34380.0001,
-                      da31332.0001,
-                      da31331.0001,
-                      da31330.0001,
-                      da31329.0001,
-                      da31328.0001,
-                      da31327.0001,
-                      da31326.0001,
-                      da31325.0001)
-aps_years <- 2018:2000
-aps_pre_2008 <- rep(FALSE, 7) %>% c(rep(TRUE, 12))
-
-# Process and combine APS data
-aps_parole_combined <- lapply(seq_along(aps_data_list), function(i) {
-  fnc_prepare_aps_data(aps_data_list[[i]], aps_years[i], aps_pre_2008[i])
-})
-aps_parole_2000_2018 <- do.call(rbind, aps_parole_combined)
-
-# Remove DC
-aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
-  filter(!state %in% c("District of Columbia", "Federal") & !is.na(state))
-
 # Get prison population by report year and state
 # Merge with APS data for releases to parole and entries to parole from prison
 # Create prison population variable if people who are PE were released
@@ -210,7 +172,7 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
                    data = df1$total_prison_population),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
-              list(name = "Parole Eligible but not Released from Prison (1-25 Year Sentences)",
+              list(name = "Eligible for Parole",
                    data = df1$current_count)) %>%
     hc_add_theme(hc_theme_jc_line) %>%
     hc_colors(colors = c(teal, purple, yellow)) %>%

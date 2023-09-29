@@ -56,9 +56,9 @@ ncrp_pe_type_prop <- parole_eligibility_table_select_year %>%
 ncrp_pe_type_count <- parole_eligibility_table_select_year %>%
   filter(rptyear == select_year) %>%
   mutate(other_count = yearendpop - (current_count +
-                                       missing_count +
-                                       future_1_5_years_count +
-                                       future_6_years_count)) %>%
+                                     missing_count +
+                                     future_1_5_years_count +
+                                     future_6_years_count)) %>%
   select(state,
          rptyear,
          current_count,
@@ -264,7 +264,7 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
@@ -351,7 +351,7 @@ all_bar_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
@@ -438,7 +438,7 @@ all_bar_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
@@ -560,7 +560,7 @@ all_bar_parole_elgibility_sentlgth <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,

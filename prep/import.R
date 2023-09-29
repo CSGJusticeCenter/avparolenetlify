@@ -12,8 +12,8 @@ source("prep/library.R")
 source("prep/functions.R")
 
 # load prison sentencing system info from Robina
-robinainfo <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
-robinadefinitions <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
+robinainfo              <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
+robinadefinitions       <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
 robinaparoleeligibility <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "eligibility")
 
 # load NCRP data
@@ -58,7 +58,7 @@ hex <- read_sf(paste0(sp_data_path, "/data/raw/us_states_hexgrid.geojson")) %>%
 
 # load info on states that abolished parole
 parole_info_by_state <-
-  read.xlsx(paste0(sp_data_path, "/background/Parole Info by State.xlsx"),
+  read.xlsx(paste0(sp_data_path, "/background/app/Parole Info by State.xlsx"),
             sheet = "Overall")
 
 
@@ -157,13 +157,12 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     ageyrend       = str_sub(ageyrend, 5, -1),
     timesrvd_yrend = str_sub(timesrvd_yrend, 5, -1)) %>%
 
-  # mutate(offdetail = trimws(offdetail),
-  #        offgeneral = case_when(
-  #          is.na(offgeneral) ~ "Other or Unknown",
-  #          offgeneral == "Other/unspecified" ~ "Other or Unknown",
-  #          TRUE ~ offgeneral
-  #        )) %>%
-  mutate(offdetail = trimws(offdetail)) %>%
+  mutate(offdetail = trimws(offdetail),
+         offgeneral = case_when(
+           is.na(offgeneral) ~ "Other or Unknown",
+           offgeneral == "Other/unspecified" ~ "Other or Unknown",
+           TRUE ~ offgeneral
+         )) %>%
 
   # create new offense descriptions
   fnc_create_fbi_index() %>%
@@ -174,7 +173,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # include unknown race in analysis
   # include unknown admission type in analysis???
   # create age categories
-  # fnc_create_admtype() %>%
+  fnc_create_admtype() %>%
   mutate(race = ifelse(is.na(race), "Unknown", race),
          ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend),
          sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
@@ -259,6 +258,56 @@ parole_info_by_state <- parole_info_by_state  %>%
 
 
 
+
+##########
+# Prepare annual parole survey
+##########
+
+# Get state abb
+state_names_abb <- data.frame(abbreviation = state.abb,
+                              name = state.name,
+                              stringsAsFactors = FALSE) %>%
+  rename(state = name, stateid = abbreviation)
+
+# List of data frames and years
+aps_data_list <- list(da38058.0001,
+                      da37471.0001,
+                      da37441.0001,
+                      da36619.0001,
+                      da36320.0001,
+                      da35629.0001,
+                      da35257.0001,
+                      da34718.0001,
+                      da34382.0001,
+                      da34381.0001,
+                      da34380.0001,
+                      da31332.0001,
+                      da31331.0001,
+                      da31330.0001,
+                      da31329.0001,
+                      da31328.0001,
+                      da31327.0001,
+                      da31326.0001,
+                      da31325.0001)
+aps_years <- 2018:2000
+aps_pre_2008 <- rep(FALSE, 7) %>% c(rep(TRUE, 12))
+
+# Process and combine APS data
+aps_parole_combined <- lapply(seq_along(aps_data_list), function(i) {
+  fnc_prepare_aps_data(aps_data_list[[i]], aps_years[i], aps_pre_2008[i])
+})
+aps_parole_2000_2018 <- do.call(rbind, aps_parole_combined)
+
+# Remove DC
+aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
+  filter(!state %in% c("District of Columbia", "Federal") & !is.na(state))
+
+
+
+
+
+
+
 ##########
 # Save data
 ##########
@@ -275,20 +324,21 @@ parole_info_by_state <- parole_info_by_state  %>%
 #
 # }
 #
-# # Save files to app folder
-# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
-#
-# for (folder in theseFOLDERS){
-#
-#   save(ncrp_yearendpop,         file=file.path(folder, "ncrp_yearendpop.rds"))
-#   save(ncrp_admissions,         file=file.path(folder, "ncrp_admissions.rds"))
-#   save(ncrp_term_records,       file=file.path(folder, "ncrp_term_records.rds"))
-#   save(ncrp_releases,           file=file.path(folder, "ncrp_releases.rds"))
-#
-#   save(hex_gj,                  file=file.path(folder, "hex_gj.rds"))
-#   save(robinadefinitions,       file=file.path(folder, "robinadefinitions.rds"))
-#   save(robinainfo,              file=file.path(folder, "robinainfo.rds"))
-#   save(robinaparoleeligibility, file=file.path(folder, "robinaparoleeligibility.rds"))
-#   save(parole_info_by_state,    file=file.path(folder, "parole_info_by_state.rds"))
-#
-# }
+# Save files to app folder
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
+
+for (folder in theseFOLDERS){
+
+  save(ncrp_yearendpop,         file = file.path(folder, "ncrp_yearendpop.rds"))
+  save(ncrp_admissions,         file = file.path(folder, "ncrp_admissions.rds"))
+  save(ncrp_term_records,       file = file.path(folder, "ncrp_term_records.rds"))
+  save(ncrp_releases,           file = file.path(folder, "ncrp_releases.rds"))
+  save(aps_parole_2000_2018,    file = file.path(folder, "aps_parole_2000_2018.rds"))
+
+  save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
+  save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
+  save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
+  save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
+  save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
+
+}

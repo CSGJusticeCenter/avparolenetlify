@@ -8,35 +8,38 @@
 # based on _state_report_template.qmd
 ############################################
 
-# select year for site
+# Select year for site
 select_year <- 2020
 
-# load packages for generating state report QMDs
+# Load packages and dunctions for generating HTMLs from qmds
 library(rmarkdown)
 library(tidyverse)
+source("prep/library.R")
+source("prep/functions.R")
 
-# # run code
-# source("prep/library.R")
-# source("prep/functions.R")
-# source("prep/page_national_trends.R")
-# source("prep/tab_parole_eligibility.R")
-# source("prep/tab_prison_population.R")
+# Load NCRP and APS data
+load(file = paste0(sp_data_path, "/data/analysis/app/aps_parole_2000_2018.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
 
+# Run code to generate visualizations and tables for app
+source("prep/page_national_trends.R")
+source("prep/tab_parole_eligibility.R")
+source("prep/tab_prison_population.R")
 
-# save working directory
+# Save working directory
 wd <- getwd()
 
-# get list of 50 states
-# states <- c("Georgia")
-states <- state.name
+# Get list of 50 states
+states <- c("Georgia")
+# states <- state.name
 
-# read in original qmd
+# Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
 
-# replacement values
+# Replacement values
 states_qmd <- as.character(states)
 
-# function to replace place-holder text in orig qmd with our replacement values
+# Function to replace place-holder text in orig qmd with our replacement values
 # and write out to qmd - name of qmd should include replacement value
 replace_write_qmd <- function(state) {
   cleaned_state <- str_replace_all(state, "\\s+", "_") # replace spaces with underscores
@@ -44,8 +47,8 @@ replace_write_qmd <- function(state) {
     write_lines(paste0("state_report_", cleaned_state, ".qmd"))
 }
 
-# iterate over replacement values and write new qmds
+# Iterate over replacement values and write new qmds
 walk(states_qmd, replace_write_qmd)
 
-# render all QMDs
+# Render all qmds
 # quarto::quarto_render()

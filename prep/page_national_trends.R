@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: September 26, 2023 (MAR)
+# Date last updated: September 28, 2023 (MAR)
 # Description:
 #    Parole eligibility table and data for national trends page
 #######################################
@@ -16,24 +16,14 @@
 
 ################################################################################
 
-# Recategorize offgeneral
-# Recategorize admtype
-ncrp_yearendpop <- ncrp_yearendpop %>%
-  mutate(offdetail = trimws(offdetail),
-         offgeneral = case_when(
-           is.na(offgeneral) ~ "Other or Unknown",
-           offgeneral == "Other/unspecified" ~ "Other or Unknown",
-           TRUE ~ offgeneral
-         )) %>%
-  fnc_create_admtype()
-
 # Get total prison population by state and year
 ncrp_prison_population <- ncrp_yearendpop %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   summarise(yearendpop = sum(n, na.rm = FALSE))
 
-# Get total prison population serving 1-25years (restricted to new commits)  by state and year
+# Get total prison population by state and year
+# Just for people in prison for a new court commitment and sentence length 1-25 years
 ncrp_prison_population_125years_new_crime <- ncrp_yearendpop %>%
   filter(admtype == "New court commitment") %>%
   filter(sentlgth == "1-1.9 years" |
@@ -44,28 +34,15 @@ ncrp_prison_population_125years_new_crime <- ncrp_yearendpop %>%
   count(parelig_status) %>%
   summarise(yearendpop_125years_new_crime = sum(n, na.rm = FALSE))
 
-# Get missing data by state and year
-ncrp_missing_data <- ncrp_yearendpop %>%
-  filter(parelig_status == "Missing") %>%
-  group_by(state, rptyear) %>%
-  count(parelig_status) %>%
-  summarise(missing_count = sum(n, na.rm = FALSE)) %>%
-  left_join(ncrp_prison_population,
-            by = c("state", "rptyear")) %>%
-  mutate(missing_perc = missing_count / yearendpop) %>%
-  select(-yearendpop)
-
-# Get non-missing data
+# Get number of people by parole eligibility status
+# Just for people in prison for a new court commitment and sentence length 1-25 years
 # Merge prison population numbers
-# Get number of people by parole eligibility status (except Missing)
-# Just for people in prison for a new court commitment
 ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
-  filter(parelig_status != "Missing") %>%
   filter(admtype == "New court commitment") %>%
   filter(sentlgth == "1-1.9 years" |
-           sentlgth == "2-4.9 years" |
-           sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years") %>%
+         sentlgth == "2-4.9 years" |
+         sentlgth == "5-9.9 years" |
+         sentlgth == "10-24.9 years") %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   left_join(ncrp_prison_population,
@@ -106,8 +83,6 @@ parole_eligibility_table_select_year <-
   left_join(ncrp_prison_population,
             by = c("state", "rptyear")) %>%
   left_join(ncrp_prison_population_125years_new_crime,
-            by = c("state", "rptyear")) %>%
-  left_join(ncrp_missing_data,
             by = c("state", "rptyear")) %>%
   arrange(state) %>%
   select(state,

@@ -1,9 +1,4 @@
 
-# NCRP files
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_admissions.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_term_records.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
 
 ################################################################################
 # National Trends
