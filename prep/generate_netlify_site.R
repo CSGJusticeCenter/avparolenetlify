@@ -20,11 +20,14 @@ source("prep/functions.R")
 # Load NCRP and APS data
 load(file = paste0(sp_data_path, "/data/analysis/app/aps_parole_2000_2018.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
 
 # Run code to generate visualizations and tables for app
 source("prep/page_national_trends.R")
 source("prep/tab_parole_eligibility.R")
 source("prep/tab_prison_population.R")
+source("prep/tab_releases.R")
+source("prep/tab_disparities.R")
 
 # Save working directory
 wd <- getwd()
