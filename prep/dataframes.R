@@ -73,6 +73,9 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibil
 # Releases
 ################################################################################
 
+# Release Timing by Parole Eligibility Status
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_release.rds"))
+
 # # Maxout
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
 #

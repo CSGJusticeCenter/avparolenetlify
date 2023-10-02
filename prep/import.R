@@ -144,12 +144,25 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
     timesrvd_rel = str_sub(timesrvd_rel, 5, -1),
     education    = str_sub(education, 5, -1)) %>%
 
-  mutate(offdetail = trimws(offdetail))
+  mutate(offdetail = trimws(offdetail)) %>%
 
-  # custom funciton that create sentence length and timeserved order since they are categorical
-  # calculate proportion of sentence length served
-  # determine timing of release
-  # fnc_sentlgth_timesrvd_rel()
+  # calculate timing of release by parole eligibility date (year)
+  mutate(time_between_ped_release = relyr - parelig_year,
+         time_between_ped_release_category = case_when(
+           time_between_ped_release < 0     ~ "Released Before Parole Eligibility Year",
+            time_between_ped_release == 0   ~ "Released at Parole Eligibility Year",
+           time_between_ped_release <= 5 &
+             time_between_ped_release > 0   ~ "Released 1-5 Years After Parole Eligibility Year",
+           time_between_ped_release > 5     ~ "Released 5 Years After Parole Eligibility Year",
+           is.na(time_between_ped_release)  ~ "Missing Parole Eligibility Year"
+         )) %>%
+  mutate(time_between_ped_release_category =
+           factor(time_between_ped_release_category,
+                       levels = c("Released Before Parole Eligibility Year",
+                                  "Released at Parole Eligibility Year",
+                                  "Released 1-5 Years After Parole Eligibility Year",
+                                  "Released 5 Years After Parole Eligibility Year",
+                                  "Missing Parole Eligibility Year")))
 
 
 
@@ -252,23 +265,6 @@ bjs_prison_pop_by_state_2020 <- bjs_prison_pop_by_race_state_2020 %>%
 # Prepare BJS Prisoners Data (2010-2021) for analysis
 ##########
 
-# Custom function to prepare BJS data
-fnc_clean_bjs_data <- function(df){
-  df <- df %>%
-    mutate(state = str_replace(state, "/.*", "")) %>%
-    mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
-    mutate(state = str_replace(state, "Utahc", "Utah")) %>%
-    filter(state != "" &
-             state != "State" &
-             state != "Federal" &
-             state != "District of Columbia" &
-             state != "U.S. Total" &
-             state != "U.S. total" &
-             state != "U.S. tota") %>%
-    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) %>%
-    mutate(bjs_prison_population = as.numeric(bjs_prison_population))
-}
-
 # 2010 data
 bjs_prison_pop_by_state_2010 <- bjs_prison_pop_by_gender_state_2010.csv %>%
   clean_names() %>%
@@ -328,14 +324,14 @@ bjs_prison_pop_by_state_2017 <- bjs_prison_pop_by_gender_state_2017.csv %>%
 # 2018 data
 bjs_prison_pop_by_state_2018 <- bjs_prison_pop_by_gender_state_2018.csv %>%
   clean_names() %>%
-  select(state = x_1, bjs_prison_population = x2018) %>%
+  select(state = x, bjs_prison_population = x_5) %>%
   fnc_clean_bjs_data() %>%
   mutate(rptyear = 2018)
 
 # 2019 data
 bjs_prison_pop_by_state_2019 <- bjs_prison_pop_by_gender_state_2019.csv %>%
   clean_names() %>%
-  select(state = x_1, bjs_prison_population = x2019) %>%
+  select(state = x, bjs_prison_population = x_5) %>%
   fnc_clean_bjs_data() %>%
   mutate(rptyear = 2019)
 
@@ -478,10 +474,10 @@ for (folder in theseFOLDERS){
   save(bjs_prison_pop_by_race_state_2020,  file = file.path(folder, "bjs_prison_pop_by_race_state_2020.rds"))
   save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
 
-  # save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
-  # save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
-  # save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
-  # save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
-  # save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
+  save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
+  save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
+  save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
+  save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
+  save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
 
 }

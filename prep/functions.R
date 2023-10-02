@@ -33,58 +33,58 @@ fnc_create_parelig_status <- function(df){
 # calculate proportion of sentence length served
 # determine timing of release
 #  https://www.icpsr.umich.edu/web/NACJD/studies/38492/datasets/0003/variables/PARELIG_YEAR?archive=nacjd
-fnc_sentlgth_timesrvd_rel <- function(data) {
-  data %>%
-    mutate(
-      sentlgth_order = case_when(
-        sentlgth == "< 1 year"      ~ 1,
-        sentlgth == "1-1.9 years"   ~ 2,
-        sentlgth == "2-4.9 years"   ~ 3,
-        sentlgth == "5-9.9 years"   ~ 4,
-        sentlgth == "10-24.9 years" ~ 5,
-        sentlgth == ">=25 years"    ~ 5,
-        sentlgth == "Life, LWOP, Life plus additional years, Death" ~ 5,
-        TRUE ~ NA),
-      timesrvd_rel_order = case_when(
-        timesrvd_rel == "< 1 year"      ~ 1,
-        timesrvd_rel == "1-1.9 years"   ~ 2,
-        timesrvd_rel == "2-4.9 years"   ~ 3,
-        timesrvd_rel == "5-9.9 years"   ~ 4,
-        timesrvd_rel == ">=10 years"    ~ 5,
-        TRUE ~ NA),
-      timesrvd_rel_order = as.numeric(timesrvd_rel_order),
-      sentlgth_order = as.numeric(sentlgth_order),
-      proportion_served = ifelse(is.na(timesrvd_rel_order) |
-                                   is.na(sentlgth_order), NA,
-                                 timesrvd_rel_order / sentlgth_order)
-    ) %>%
-    mutate(
-      timesrvd_rel_vs_sentlgth = case_when(
-        is.na(timesrvd_rel_order) | is.na(sentlgth_order) ~ NA,
-        timesrvd_rel_order == sentlgth_order ~ "Full Sentence Length Served",
-        timesrvd_rel_order > sentlgth_order  ~ "More than Sentence Length Served",
-        timesrvd_rel_order < sentlgth_order  ~ "Less than Sentence Length Served"),
-      time_served = relyr - admityr
-    ) %>%
-    mutate(
-      parelig_year_clean =
-        ifelse(parelig_year <= 2105, parelig_year, NA),
-      mand_prisrel_year_clean =
-        ifelse(mand_prisrel_year <= 2105, mand_prisrel_year, NA),
-      time_between_release_ped = relyr - parelig_year_clean,
-      time_between_ped_admission = parelig_year_clean - admityr,
-      time_between_mandatoryrelease_release = mand_prisrel_year_clean - relyr,
-      time_between_release_admissions = relyr - admityr
-    ) %>%
-    mutate(
-      released_at_ped_status = case_when(
-        time_between_release_ped < 0 ~ "Released Before Parole Eligibility Year",
-        time_between_release_ped == 0 ~ "Released on Parole Eligibility Year",
-        time_between_release_ped > 0 ~ "Released After Parole Eligibility Year",
-        is.na(time_between_release_ped) ~ NA
-      )
-    )
-}
+# fnc_sentlgth_timesrvd_rel <- function(data) {
+#   data %>%
+#     mutate(
+#       sentlgth_order = case_when(
+#         sentlgth == "< 1 year"      ~ 1,
+#         sentlgth == "1-1.9 years"   ~ 2,
+#         sentlgth == "2-4.9 years"   ~ 3,
+#         sentlgth == "5-9.9 years"   ~ 4,
+#         sentlgth == "10-24.9 years" ~ 5,
+#         sentlgth == ">=25 years"    ~ 5,
+#         sentlgth == "Life, LWOP, Life plus additional years, Death" ~ 5,
+#         TRUE ~ NA),
+#       timesrvd_rel_order = case_when(
+#         timesrvd_rel == "< 1 year"      ~ 1,
+#         timesrvd_rel == "1-1.9 years"   ~ 2,
+#         timesrvd_rel == "2-4.9 years"   ~ 3,
+#         timesrvd_rel == "5-9.9 years"   ~ 4,
+#         timesrvd_rel == ">=10 years"    ~ 5,
+#         TRUE ~ NA),
+#       timesrvd_rel_order = as.numeric(timesrvd_rel_order),
+#       sentlgth_order = as.numeric(sentlgth_order),
+#       proportion_served = ifelse(is.na(timesrvd_rel_order) |
+#                                    is.na(sentlgth_order), NA,
+#                                  timesrvd_rel_order / sentlgth_order)
+#     ) %>%
+#     mutate(
+#       timesrvd_rel_vs_sentlgth = case_when(
+#         is.na(timesrvd_rel_order) | is.na(sentlgth_order) ~ NA,
+#         timesrvd_rel_order == sentlgth_order ~ "Full Sentence Length Served",
+#         timesrvd_rel_order > sentlgth_order  ~ "More than Sentence Length Served",
+#         timesrvd_rel_order < sentlgth_order  ~ "Less than Sentence Length Served"),
+#       time_served = relyr - admityr
+#     ) %>%
+#     mutate(
+#       parelig_year_clean =
+#         ifelse(parelig_year <= 2105, parelig_year, NA),
+#       mand_prisrel_year_clean =
+#         ifelse(mand_prisrel_year <= 2105, mand_prisrel_year, NA),
+#       time_between_release_ped = relyr - parelig_year_clean,
+#       time_between_ped_admission = parelig_year_clean - admityr,
+#       time_between_mandatoryrelease_release = mand_prisrel_year_clean - relyr,
+#       time_between_release_admissions = relyr - admityr
+#     ) %>%
+#     mutate(
+#       released_at_ped_status = case_when(
+#         time_between_release_ped < 0 ~ "Released Before Parole Eligibility Year",
+#         time_between_release_ped == 0 ~ "Released on Parole Eligibility Year",
+#         time_between_release_ped > 0 ~ "Released After Parole Eligibility Year",
+#         is.na(time_between_release_ped) ~ NA
+#       )
+#     )
+# }
 
 # Re-categorize offense type
 fnc_create_fbi_index <- function(df){
@@ -130,8 +130,8 @@ fnc_values_tooltip <- function(df, count_column) {
   df %>%
     count({{ count_column }}) %>%
     mutate(
-      prop = (n / sum(n)) * 100,
-      prop_label = paste0(round(prop, 0), "%"),
+      prop = (n / sum(n)),
+      prop_label = paste0(round(prop*100, 0), "%"),
       n_label = formattable::comma(n, 0),
       tooltip = paste0("<b>", state, "</b><br><br>",
                        "<b>", {{ count_column }}, "</b><br><br>",
@@ -160,161 +160,48 @@ fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
   return(data)
 }
 
-fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
-  hchart(df, "bar",
-         hcaes(x = admtype,
-               y = prop,
-               group = !!sym(group_by_col)
-         ),
-         dataLabels = list(enabled = TRUE,
-                           format = "{point.prop_label}",
-                           style = list(fontWeight = "bold",
-                                        fontSize = "12px",
-                                        fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 100) %>%
-    hc_xAxis(categories = c("New court commitment",
-                            "Parole return/revocation",
-                            "Other or Unknown"),
-             title = list(text = ""),
-             labels = list(enabled = TRUE)) %>%
-    hc_legend(enabled = TRUE,
-              reversed = TRUE) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(
-      series = list(
-        stacking = "normal", animation = FALSE, cursor = "pointer",
-        borderWidth = 3, minPointLength = 4),
-      accessibility = list(
-        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-        linkedDescription = "TBD.", landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
+# Prepare BJS data
+fnc_clean_bjs_data <- function(df){
+  df <- df %>%
+    mutate(state = str_replace(state, "/.*", "")) %>%
+    mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
+    mutate(state = str_replace(state, "Utahc", "Utah")) %>%
+    filter(state != "" &
+             state != "State" &
+             state != "Federal" &
+             state != "District of Columbia" &
+             state != "U.S. Total" &
+             state != "U.S. total" &
+             state != "U.S. tota") %>%
+    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) %>%
+    mutate(bjs_prison_population = as.numeric(bjs_prison_population))
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Create basic horizontal bar chart that isn't grouped
-fnc_basic_barchart <- function(df, x_column, colors, accessibility_text){
+# Prepare data for a simple bar graph
+fnc_prepare_basic_data <- function(df, count_column){
   df1 <- df %>%
+    filter(rptyear == select_year &
+             parelig_status == "Current") %>%
+    filter(admtype == "New court commitment") %>%
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years") %>%
+    group_by(state) %>%
+    count({{ count_column }}) %>%
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) %>%
     ungroup() %>%
-    filter(state == x) %>%
-    distinct()
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = {{ x_column }},
-                             y = prop),
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "regular",
-                                                      fontSize = "12px",
-                                                      fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 100) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = TRUE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_colors(colors) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(
-      series = list(
-        animation = FALSE, cursor = "pointer",
-        borderWidth = 3, minPointLength = 4),
-      accessibility = list(
-        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-        linkedDescription = accessibility_text, landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-  return(highcharts)
+    mutate(tooltip = paste0("<b>", state, " - ",
+                            {{ count_column }}, "</b><br>",
+                            prop_label, "<br>"))
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-###################
-# Data prep
-###################
-
-# prepare annual parole survey data for analysis
+# Prepare Annual Parole Survey data for analysis
 fnc_aps_prepare <- function(df){
 
   df <- df %>%
@@ -334,8 +221,8 @@ fnc_aps_prepare <- function(df){
   return(df)
 }
 
-# prepare annual parole survey data for analysis
-# before 2008, there was no enreltsr variable so make NA
+# Prepare Annual Parole Survey data for analysis
+# Before 2008, there was no enreltsr variable so make NA
 fnc_aps_prepare_pre2008 <- function(df){
 
   df <- df %>%
@@ -369,7 +256,7 @@ fnc_aps_prepare_pre2008 <- function(df){
 # Reactable
 ###################
 
-# highcharts theme for reactable tables
+# Highcharts theme for reactable tables
 hc_reactable_theme <-
   reactableTheme(borderColor = neutralBkgndLight,
                  stripedColor = neutralBkgndLight,
@@ -391,7 +278,7 @@ hc_reactable_style <- list(
 # Plots
 ###################
 
-# overall highcharts theme for plots
+# Overall highcharts theme for plots
 hc_theme_jc <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
@@ -455,7 +342,7 @@ hc_theme_jc <- hc_theme(
   )
 )
 
-# highcharts theme for hex map
+# Highcharts theme for hex map
 hc_theme_map_jc <- hc_theme_merge(
   hc_theme_smpl(),
   hc_theme(
@@ -487,7 +374,7 @@ hc_theme_map_jc <- hc_theme_merge(
   )
 )
 
-# highcharts theme for plots, has axis lines
+# Highcharts theme for plots, has axis lines
 hc_theme_jc_line <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
@@ -537,6 +424,192 @@ hc_theme_jc_line <- hc_theme(
     )
   )
 )
+
+# Create basic horizontal bar chart that isn't grouped
+fnc_basic_barchart <- function(df, filter_column, accessibility_text) {
+
+  xaxis_order <- levels(df[[filter_column]])
+
+  highcharts <- highchart() %>%
+    hc_add_series(df,
+                  type = "bar",
+                  hcaes(x = !!sym(filter_column),
+                        y = prop),
+                  dataLabels = list(enabled = TRUE,
+                                    format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = xaxis_order) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+}
+
+# Create basic horizontal bar chart that isn't grouped
+fnc_basic_columnchart <- function(df, filter_column, accessibility_text) {
+
+  xaxis_order <- levels(df[[filter_column]])
+
+  highcharts <- highchart() %>%
+    hc_add_series(df,
+                  type = "column",
+                  hcaes(x = !!sym(filter_column),
+                        y = prop),
+                  dataLabels = list(enabled = TRUE,
+                                    format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = xaxis_order) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+# Create basic horizontal bar chart that is grouped by adm type
+############################ NEEDS ACCESSIBILITY TEXT
+fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
+  highcharts <- hchart(df, "bar",
+         hcaes(x = admtype,
+               y = prop,
+               group = !!sym(group_by_col)
+         ),
+         dataLabels = list(enabled = TRUE,
+                           format = "{point.prop_label}",
+                           style = list(fontWeight = "bold",
+                                        fontSize = "12px",
+                                        fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 100) %>%
+    hc_xAxis(categories = c("New court commitment",
+                            "Parole return/revocation",
+                            "Other or Unknown"),
+             title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        stacking = "normal", animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = "TBD.", landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD.")))
+  return(highcharts)
+}
+
+# Create pie chart
+fnc_basic_piechart <- function(df, x_column, accessibility_text){
+
+  highcharts <- hchart(df,
+                       "pie",
+                       hcaes(x = !!sym(x_column), y = prop),
+                       dataLabels = list(
+                         style = list(fontSize = "1em",
+                                      fontWeight = "regular",
+                                      alignTo = "connectors",
+                                      color = neutralBlackText),
+                         enabled = TRUE,
+                         formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
+                         )
+                       ) %>%
+    hc_chart(plotBackgroundColor = "none",
+             plotBorderWidth = 0,
+             plotShadow = FALSE,
+             margin = c(30, 0, 10, 0)) %>%
+    hc_yAxis(maxPadding = 0) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

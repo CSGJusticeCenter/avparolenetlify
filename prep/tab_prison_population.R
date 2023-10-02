@@ -68,9 +68,9 @@ all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
                     minPointLength = 4),
       accessibility = list(enabled = TRUE,
                            keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD.",
+                           linkedDescription = "TBD accessibility text",
                            landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
+      area = list(accessibility = list(description = "TBD accessibility text")))
   return(highcharts)
 })
 all_stackedbar_admtype <- setNames(all_stackedbar_admtype, states)
@@ -81,42 +81,13 @@ all_stackedbar_admtype$Georgia
 # Pie chart
 ##########
 
-# Highchart showing prison pop by admission type
+# Highchart pie chart showing prison pop by admission type
 all_pie_admtype <- map(.x = states, .f = function(x) {
-
   df1 <- ncrp_yearendpop_admtype %>%
     ungroup() %>%
     filter(state == x) %>%
     select(admtype, prop, prop_label)
-
-  highcharts <- hchart(df1, "pie",
-                       hcaes(x = admtype, y = prop),
-                       dataLabels = list(
-                         style = list(fontSize = "1em",
-                                      fontWeight = "regular",
-                                      alignTo = "connectors",
-                                      color = neutralBlackText),
-                         enabled = TRUE,
-                         format = paste("{point.admtype}: ", "<b>{point.prop_label}</b>"))) %>%
-    hc_chart(plotBackgroundColor = "none",
-             plotBorderWidth = 0,
-             plotShadow = FALSE,
-             margin = c(30, 0, 10, 0)) %>%
-    hc_yAxis(maxPadding = 0) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_colors(c(teal, yellow)) %>%
-    hc_plotOptions(
-      series = list(animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD",
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD")))
-
+  highcharts <- fnc_basic_piechart(df1, "admtype", "TBD accessibility text")
   return(highcharts)
 })
 all_pie_admtype <- setNames(all_pie_admtype, states)
@@ -177,7 +148,13 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
     hc_colors(colors = c(teal, purple, yellow)) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
     hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))
+    hc_plotOptions(
+      column = list(dataLabels = list(enabled = TRUE)),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = "TBD accessibility text",
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = "TBD accessibility text")))
   return(highcharts)
 })
 all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
