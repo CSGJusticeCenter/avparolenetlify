@@ -26,7 +26,23 @@ load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0004/38492-000
 # load Prisoners in 2020 - Statistical Tables
 # Using this info for RRI's bc there is more race/ethnicity data
 # https://bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables
-prison_pop_by_race_state_2020 <- read.csv(paste0(sp_data_path, "/data/raw/p20st/p20stat02.csv"), skip = 10)
+bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(sp_data_path, "/data/raw/p20st/p20stat02.csv"), skip = 10)
+
+# load Prisoners data from 2010-2021
+# CHECK TO MAKE SURE THESE ARE THE RIGHT FILES
+bjs_prison_pop_by_gender_state_2010.csv <- read.csv(paste0(sp_data_path, "/data/raw/p10/p10at01.csv"))
+# bjs_prison_pop_by_gender_state_2011.csv <- read.csv(paste0(sp_data_path, "/data/raw/p11/p11at01.csv"))
+bjs_prison_pop_by_gender_state_2012.csv <- read.csv(paste0(sp_data_path, "/data/raw/p12tar9112/p12tar9112at06.csv"))
+bjs_prison_pop_by_gender_state_2013.csv <- read.csv(paste0(sp_data_path, "/data/raw/p13/p13t02.csv"))
+bjs_prison_pop_by_gender_state_2014.csv <- read.csv(paste0(sp_data_path, "/data/raw/p14/CSV tables/p14t02.csv"))
+bjs_prison_pop_by_gender_state_2015.csv <- read.csv(paste0(sp_data_path, "/data/raw/p15/p15t02.csv"))
+bjs_prison_pop_by_gender_state_2016.csv <- read.csv(paste0(sp_data_path, "/data/raw/p16/p16t02.csv"))
+bjs_prison_pop_by_gender_state_2017.csv <- read.csv(paste0(sp_data_path, "/data/raw/p17/p17t02.csv"))
+bjs_prison_pop_by_gender_state_2018.csv <- read.csv(paste0(sp_data_path, "/data/raw/p18/p18t02.csv"))
+bjs_prison_pop_by_gender_state_2019.csv <- read.csv(paste0(sp_data_path, "/data/raw/p19/p19t02.csv"))
+bjs_prison_pop_by_gender_state_2020.csv <- read.csv(paste0(sp_data_path, "/data/raw/p20st/p20stt02.csv"))
+bjs_prison_pop_by_gender_state_2021.csv <- read.csv(paste0(sp_data_path, "/data/raw/p21st/p21stt02.csv"))
+
 
 # load Annual Parole Survey Series
 # https://www.icpsr.umich.edu/web/NACJD/studies/38058
@@ -214,19 +230,144 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
 ##########
 
 # clean up file to create dataframe of state prison pop by race
-prison_pop_by_race_state_2020 <- prison_pop_by_race_state_2020 %>%
+bjs_prison_pop_by_race_state_2020 <- bjs_prison_pop_by_race_state_2020 %>%
   clean_names() %>%
   filter(jurisdiction == "") %>%
   select(-c(jurisdiction)) %>%
   rename(state = x) %>%
   mutate_all(~str_replace_all(.,",",""))
 
+# select variable for prison population only
+bjs_prison_pop_by_state_2020 <- bjs_prison_pop_by_race_state_2020 %>%
+  select(state, bjs_total_prison_population = total)
 
 
 
 
 
 
+
+
+##########
+# Prepare BJS Prisoners Data (2010-2021) for analysis
+##########
+
+# Custom function to prepare BJS data
+fnc_clean_bjs_data <- function(df){
+  df <- df %>%
+    mutate(state = str_replace(state, "/.*", "")) %>%
+    mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
+    mutate(state = str_replace(state, "Utahc", "Utah")) %>%
+    filter(state != "" &
+             state != "State" &
+             state != "Federal" &
+             state != "District of Columbia" &
+             state != "U.S. Total" &
+             state != "U.S. total" &
+             state != "U.S. tota") %>%
+    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) %>%
+    mutate(bjs_prison_population = as.numeric(bjs_prison_population))
+}
+
+# 2010 data
+bjs_prison_pop_by_state_2010 <- bjs_prison_pop_by_gender_state_2010.csv %>%
+  clean_names() %>%
+  select(state = x_1, bjs_prison_population = x_3) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2010)
+
+# 2011 data
+bjs_prison_pop_by_state_2011 <- bjs_prison_pop_by_gender_state_2012.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_1) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2011)
+
+# 2012 data
+bjs_prison_pop_by_state_2012 <- bjs_prison_pop_by_gender_state_2012.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_5) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2012)
+
+# 2013 data
+bjs_prison_pop_by_state_2013 <- bjs_prison_pop_by_gender_state_2013.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_5) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2013)
+
+# 2014 data
+bjs_prison_pop_by_state_2014 <- bjs_prison_pop_by_gender_state_2014.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_5) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2014)
+
+# 2015 data
+bjs_prison_pop_by_state_2015 <- bjs_prison_pop_by_gender_state_2015.csv %>%
+  clean_names() %>%
+  select(state = x_1, bjs_prison_population = x_6) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2015)
+
+# 2016 data
+bjs_prison_pop_by_state_2016 <- bjs_prison_pop_by_gender_state_2016.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_5) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2016)
+
+# 2017 data
+bjs_prison_pop_by_state_2017 <- bjs_prison_pop_by_gender_state_2017.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_5) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2017)
+
+# 2018 data
+bjs_prison_pop_by_state_2018 <- bjs_prison_pop_by_gender_state_2018.csv %>%
+  clean_names() %>%
+  select(state = x_1, bjs_prison_population = x2018) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2018)
+
+# 2019 data
+bjs_prison_pop_by_state_2019 <- bjs_prison_pop_by_gender_state_2019.csv %>%
+  clean_names() %>%
+  select(state = x_1, bjs_prison_population = x2019) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2019)
+
+# 2020 data
+bjs_prison_pop_by_state_2020 <- bjs_prison_pop_by_gender_state_2020.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_4) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2020)
+
+# 2021 data
+bjs_prison_pop_by_state_2021 <- bjs_prison_pop_by_gender_state_2021.csv %>%
+  clean_names() %>%
+  select(state = x, bjs_prison_population = x_4) %>%
+  fnc_clean_bjs_data() %>%
+  mutate(rptyear = 2021)
+
+# combine data
+bjs_prison_pop_by_state <- rbind(
+  bjs_prison_pop_by_state_2010,
+  bjs_prison_pop_by_state_2011,
+  bjs_prison_pop_by_state_2012,
+  bjs_prison_pop_by_state_2013,
+  bjs_prison_pop_by_state_2014,
+  bjs_prison_pop_by_state_2015,
+  bjs_prison_pop_by_state_2016,
+  bjs_prison_pop_by_state_2017,
+  bjs_prison_pop_by_state_2018,
+  bjs_prison_pop_by_state_2019,
+  bjs_prison_pop_by_state_2020,
+  bjs_prison_pop_by_state_2021
+)
 
 ##########
 # Prepare hex data for map
@@ -329,16 +470,18 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
-  save(ncrp_yearendpop,         file = file.path(folder, "ncrp_yearendpop.rds"))
-  save(ncrp_admissions,         file = file.path(folder, "ncrp_admissions.rds"))
-  save(ncrp_term_records,       file = file.path(folder, "ncrp_term_records.rds"))
-  save(ncrp_releases,           file = file.path(folder, "ncrp_releases.rds"))
-  save(aps_parole_2000_2018,    file = file.path(folder, "aps_parole_2000_2018.rds"))
+  save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
+  save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
+  save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
+  save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
+  save(aps_parole_2000_2018,               file = file.path(folder, "aps_parole_2000_2018.rds"))
+  save(bjs_prison_pop_by_race_state_2020,  file = file.path(folder, "bjs_prison_pop_by_race_state_2020.rds"))
+  save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
 
-  save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
-  save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
-  save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
-  save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
-  save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
+  # save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
+  # save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
+  # save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
+  # save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
+  # save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
 
 }

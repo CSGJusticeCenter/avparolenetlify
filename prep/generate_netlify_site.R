@@ -17,10 +17,14 @@ library(tidyverse)
 source("prep/library.R")
 source("prep/functions.R")
 
-# Load NCRP and APS data
-load(file = paste0(sp_data_path, "/data/analysis/app/aps_parole_2000_2018.rds"))
+# Load BJS, NCRP and APS data
+load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_state_2020.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_state.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/aps_parole_2000_2018.rds"))
+
 
 # Run code to generate visualizations and tables for app
 source("prep/page_national_trends.R")

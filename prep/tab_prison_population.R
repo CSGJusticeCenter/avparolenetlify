@@ -143,24 +143,23 @@ all_pie_admtype$Georgia
 # Get prison population by report year and state
 # Merge with APS data for releases to parole and entries to parole from prison
 # Create prison population variable if people who are PE were released
-all_ncrp_aps_pop_released_to_parole_by_year <- ncrp_yearendpop %>%
-  filter(rptyear >= 2000) %>%
+ncrp_bjs_aps_by_state <- ncrp_yearendpop %>%
+  filter(rptyear >= 2010) %>%
   group_by(rptyear, state) %>%
-  summarise(total_prison_population = n()) %>%
+  summarise(ncrp_prison_population = n()) %>%
   ungroup() %>%
+  left_join(bjs_prison_pop_by_state,
+            by = c("state", "rptyear")) %>%
   left_join(aps_parole_2000_2018,
             by = c("state", "rptyear")) %>%
   left_join(parole_eligibility_table,
-            by = c("state", "rptyear")) %>%
-  mutate(prison_population_without_pe = coalesce(total_prison_population, 0) - coalesce(current_count, 0),
-         prison_populations_same =
-           ifelse(prison_population_without_pe == total_prison_population, TRUE, FALSE))
+            by = c("state", "rptyear"))
 
 # Highchart of trend in prison population, people released from prison to parole, and parole eligible prison population from 2000-2020
-states <- unique(all_ncrp_aps_pop_released_to_parole_by_year$state)
+states <- unique(ncrp_bjs_aps_by_state$state)
 all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 
-  df1 <- all_ncrp_aps_pop_released_to_parole_by_year %>%
+  df1 <- ncrp_bjs_aps_by_state %>%
     filter(state == x)
 
   highcharts <-
@@ -169,7 +168,7 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
              labels = list(format = "{value}")) %>%
     hc_yAxis(labels = list(format = "{value:,.0f}")) %>%
     hc_series(list(name = "Prison Population",
-                   data = df1$total_prison_population),
+                   data = df1$bjs_prison_population),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
               list(name = "Eligible for Parole",

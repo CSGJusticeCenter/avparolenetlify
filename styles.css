@@ -203,7 +203,15 @@ body {
   color: #3E4B4B
 }
 
-
+/* note app text */
+#note-text {
+  font-size: .7em;
+  font-family: Graphik;
+  font-weight: regular;
+  font-style: italic;
+  text-align: left;
+  color: #3E4B4B
+}
 
 
 

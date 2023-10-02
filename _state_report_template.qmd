@@ -128,13 +128,13 @@ if (state_for_report %in% names(all_pie_admtype)) {
 if (state_for_report %in% names(all_line_pop_released_to_parole)) {
   state_line_pop_released_to_parole <- 
     all_line_pop_released_to_parole[[state_for_report]] %>% 
-    hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility") %>% 
-    hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE,
-               text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with original sentence lengths between 1-25 years.",
-               position = list(align = "left", 
-                               verticalAlign = "bottom", 
-                               x = 10, y = 0)) 
+    hc_title(text = "Trends in Prison Population, Releases to Parole, and Parole Eligibility")
+    # hc_chart(marginBottom = 50) %>%
+    # hc_credits(enabled = TRUE,
+    #            text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with original sentence lengths between 1-25 years.<br>Total prison population pulled from BJS Prisoners data (2010-2020), released from prison to parole pulled from Annual Parole Survey (2010-2018),<br>eligible for parole pulled from NCRP data (2010-2020).",
+    #            position = list(align = "left", 
+    #                            verticalAlign = "bottom", 
+    #                            x = 10, y = 0)) 
 } else {
   state_line_pop_released_to_parole <- "No Data"
 }
@@ -246,12 +246,12 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
     all_stackedbar_pe_type[[state_for_report]] %>% 
     hc_size(width = 700,
             height = 270) %>%
-    hc_title(text = "Prison Population by Parole Eligibility Status") %>% 
-    hc_credits(enabled = TRUE,
-           text = "Note: Parole-eligible prison population only includes people with sentence lengths between 1-25 years.",
-           position = list(align = "left", 
-                           verticalAlign = "bottom", 
-                           x = 10, y = 0)) 
+    hc_title(text = "Prison Population by Parole Eligibility Status") 
+    # hc_credits(enabled = TRUE,
+    #        text = "Note: Parole-eligible prison population only includes people with sentence lengths between 1-25 years.",
+    #        position = list(align = "left", 
+    #                        verticalAlign = "bottom", 
+    #                        x = 10, y = 0)) 
 } else {
   state_stackedbar_pe_type <- "No Data"
 }
@@ -297,13 +297,13 @@ if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
     hc_size(width = 700,
             height = 350) %>% 
     hc_colors(c(yellow)) %>% 
-    hc_title(text = "Parole-Eligible Prison Population by Race") %>% 
-    hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE,
-           text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-           position = list(align = "left", 
-                           verticalAlign = "bottom", 
-                           x = 10, y = 0)) 
+    hc_title(text = "Parole-Eligible Prison Population by Race")
+    # hc_chart(marginBottom = 50) %>%
+    # hc_credits(enabled = TRUE,
+    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
+    #        position = list(align = "left", 
+    #                        verticalAlign = "bottom", 
+    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_race <- "No Data"
 }
@@ -327,13 +327,13 @@ if (state_for_report %in% names(all_bar_parole_elgibility_gender)) {
     hc_size(width = 700, 
             height = 350) %>% 
     hc_colors(c(teal)) %>% 
-    hc_title(text = "Parole-Eligible Prison Population by Gender") %>% 
-    hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE,
-           text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-           position = list(align = "left", 
-                           verticalAlign = "bottom", 
-                           x = 10, y = 0)) 
+    hc_title(text = "Parole-Eligible Prison Population by Gender")
+    # hc_chart(marginBottom = 50) %>%
+    # hc_credits(enabled = TRUE,
+    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
+    #        position = list(align = "left", 
+    #                        verticalAlign = "bottom", 
+    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_gender <- "No Data"
 }
@@ -357,13 +357,13 @@ if (state_for_report %in% names(all_bar_parole_elgibility_ageyrend)) {
     hc_size(width = 700, 
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
-    hc_title(text = "Parole-Eligible Prison Population by Age") %>% 
-    hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE,
-           text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-           position = list(align = "left", 
-                           verticalAlign = "bottom", 
-                           x = 10, y = 0)) 
+    hc_title(text = "Parole-Eligible Prison Population by Age") 
+    # hc_chart(marginBottom = 50) %>%
+    # hc_credits(enabled = TRUE,
+    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
+    #        position = list(align = "left", 
+    #                        verticalAlign = "bottom", 
+    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_ageyrend <- "No Data"
 }
@@ -387,12 +387,12 @@ if (state_for_report %in% names(all_bar_parole_elgibility_sentlgth)) {
     all_bar_parole_elgibility_sentlgth[[state_for_report]] %>% 
     hc_size(width = 700, 
             height = 500) %>% 
-    hc_title(text = "Parole-Eligible Prison Population by Sentence Length") %>% 
-    hc_credits(enabled = TRUE,
-               text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-               position = list(align = "left", 
-                               verticalAlign = "bottom", 
-                               x = 10, y = 0)) 
+    hc_title(text = "Parole-Eligible Prison Population by Sentence Length") 
+    # hc_credits(enabled = TRUE,
+    #            text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
+    #            position = list(align = "left", 
+    #                            verticalAlign = "bottom", 
+    #                            x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_sentlgth <- "No Data"
 }
@@ -416,12 +416,12 @@ if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index_new_crime)) 
     all_bar_parole_elgibility_fbi_index_new_crime[[state_for_report]] %>% 
     hc_size(width = 700, 
             height = 500) %>% 
-    hc_title(text = "Parole-Eligible Prison Population by Criminal Offense") %>% 
-    hc_credits(enabled = TRUE,
-           text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-           position = list(align = "left", 
-                           verticalAlign = "bottom", 
-                           x = 10, y = 0)) 
+    hc_title(text = "Parole-Eligible Prison Population by Criminal Offense") 
+    # hc_credits(enabled = TRUE,
+    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
+    #        position = list(align = "left", 
+    #                        verticalAlign = "bottom", 
+    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_fbi_index_new_crime <- "No Data"
 }
@@ -529,7 +529,8 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population Trends"), br(),
     div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
-    div(id = "visualization", state_line_pop_released_to_parole), br()
+    div(id = "visualization", state_line_pop_released_to_parole), br(),
+    div(id = "note-text", "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with original sentence lengths between 1-25 years. Total prison population pulled from BJS Prisoners data (2010-2020), released from prison to parole pulled from Annual Parole Survey (2010-2018), eligible for parole pulled from NCRP data (2010-2020).")
     )
 ```
 
@@ -623,7 +624,8 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Parole-Eligible Prison Population"),           br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_population),  br(), 
-    div(id = "bar-chart",          state_stackedbar_pe_type),                br()
+    div(id = "bar-chart",          state_stackedbar_pe_type),                     br(),
+    div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
 )
 
 ########################################
@@ -640,7 +642,8 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text",  state_sentence_parole_elgibility_race), br(),
-    div(id = "visualization", state_bar_parole_elgibility_race)
+    div(id = "visualization", state_bar_parole_elgibility_race), br(),
+    div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
     )
 ```
 
@@ -648,7 +651,8 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text",  state_sentence_parole_elgibility_gender), br(),
-    div(id = "visualization", state_bar_parole_elgibility_gender)
+    div(id = "visualization", state_bar_parole_elgibility_gender), br(),
+    div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
     )
 ```
 
@@ -656,7 +660,8 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text",  state_sentence_parole_elgibility_ageyrend), br(),
-    div(id = "visualization", state_bar_parole_elgibility_ageyrend)
+    div(id = "visualization", state_bar_parole_elgibility_ageyrend), br(),
+    div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
     )
 ```
 
@@ -671,7 +676,8 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Sentence Lengths"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_sentlgth), br(),
-    div(id = "visualization", state_bar_parole_elgibility_sentlgth), br()
+    div(id = "visualization", state_bar_parole_elgibility_sentlgth), br(),
+    div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
     )
 ```
 
@@ -684,7 +690,8 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Criminal Offenses"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_fbi_index), br(),
-    div(id = "visualization", state_bar_parole_elgibility_fbi_index_new_crime), br()
+    div(id = "visualization", state_bar_parole_elgibility_fbi_index_new_crime), br(),
+    div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
     )
 ```
 </center>
@@ -827,12 +834,6 @@ div(id = "body-section", br(),
 ::::
 
 ::: citation-section
-
-**Notes:**
-
-NCRP data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime.
-
-<br>
 
 **Citations:** 
 
