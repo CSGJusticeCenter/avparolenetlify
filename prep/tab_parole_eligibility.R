@@ -439,7 +439,7 @@ for (folder in theseFOLDERS){
   save(all_bar_parole_elgibility_sentlgth,            file = file.path(folder, "all_bar_parole_elgibility_sentlgth.rds"))
 
   save(all_sentence_parole_elgibility_fbi_index,      file = file.path(folder, "all_sentence_parole_elgibility_fbi_index.rds"))
-  save(all_bar_parole_elgibility_fbi_index_new_crime, file = file.path(folder, "all_bar_parole_elgibility_fbi_index_new_crime.rds"))
+  save(all_bar_parole_elgibility_fbi_index,           file = file.path(folder, "all_bar_parole_elgibility_fbi_index.rds"))
 
 }
 

@@ -440,6 +440,19 @@ if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index_new_crime)) 
 
 ################################################################################
 
+# 
+if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
+  state_stackedbar_parole_eligibility_release <-
+    all_stackedbar_parole_eligibility_release[[state_for_report]] %>%
+    hc_colors(c(orange, yellow)) %>%
+    hc_size(width = 700, 
+            height = 400) %>% 
+    hc_title(text = "Proportion of Parole-Eligible Population Released by Year")
+} else {
+  state_stackedbar_parole_eligibility_release <- "No Data"
+}
+
+# 
 if (state_for_report %in% names(all_bar_parole_eligibility_release)) {
   state_bar_parole_eligibility_release <-
     all_bar_parole_eligibility_release[[state_for_report]] %>%
@@ -731,7 +744,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Trends"), br(),
-    div(id = "regular-text", "(1) # and % of parole-eligible people released each year, (2) out of all releases: % of people released each year at parole eligibility year, % 1-5 years after parole eligibility, % of people released more than 5 years after parole eligibility"), br(),
+    div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), br(),
     div(id = "visualization", state_bar_parole_eligibility_release), br()
     )
 ```

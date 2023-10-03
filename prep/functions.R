@@ -406,6 +406,7 @@ hc_theme_jc_line <- hc_theme(
   ),
   xAxis = list(
     labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -413,7 +414,9 @@ hc_theme_jc_line <- hc_theme(
     tickColor = "transparent"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText))
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "12px",
+                                               fontWeight = "regular"))
   ),
   plotOptions = list(
     bubble = list(maxSize = "10%"),
@@ -428,7 +431,7 @@ hc_theme_jc_line <- hc_theme(
 # Create basic horizontal bar chart that isn't grouped
 fnc_basic_barchart <- function(df, filter_column, accessibility_text) {
 
-  xaxis_order <- levels(df[[filter_column]])
+  xaxis_order <- df[[filter_column]]
 
   highcharts <- highchart() %>%
     hc_add_series(df,
@@ -525,7 +528,7 @@ fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
                                         fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 100) %>%
+             min = 0, max = 1) %>%
     hc_xAxis(categories = c("New court commitment",
                             "Parole return/revocation",
                             "Other or Unknown"),

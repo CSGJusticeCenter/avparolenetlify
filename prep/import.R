@@ -146,6 +146,9 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
 
   mutate(offdetail = trimws(offdetail)) %>%
 
+  # create parole eligibility status with custom function
+  fnc_create_parelig_status()
+
   # calculate timing of release by parole eligibility date (year)
   mutate(time_between_ped_release = relyr - parelig_year,
          time_between_ped_release_category = case_when(

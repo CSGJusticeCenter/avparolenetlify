@@ -18,6 +18,92 @@
 
 ################################################################################
 
+# 1) # and % of parole-eligible people released each year
+
+# We have the year-end population of those who were parole-eligible but were not released,
+#   and we have the number of parole-eligible individuals who were released but
+#   we don't have the total initial population of parole-eligible individuals for each year,
+#   which makes direct calculation of the proportion released a bit tricky.
+
+# Calculate the number of parole eligible people released by state and year
+ncrp_pe_releases_by_year <- ncrp_releases %>%
+  filter(rptyear >= 2010) %>%
+  filter(parelig_status == "Current") %>%
+  group_by(state, rptyear) %>%
+  summarise(total_parole_eligible_releases = n())
+
+# Calculate the number of parole eligible people in prison by state and year
+ncrp_pe_population_not_released_by_year <- ncrp_yearendpop %>%
+  filter(rptyear >= 2010) %>%
+  filter(parelig_status == "Current") %>%
+  group_by(state, rptyear) %>%
+  summarise(total_parole_eligible_population_not_released = n())
+
+# Merge data together
+ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year %>%
+  left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) %>%
+  mutate(total_parole_eligible_population =
+           total_parole_eligible_releases + total_parole_eligible_population_not_released,
+         prop_parole_elgible_released =
+           total_parole_eligible_releases/total_parole_eligible_population) %>%
+  select(state, rptyear,
+         total_parole_eligible_population_not_released,
+         total_parole_eligible_releases) %>%
+  pivot_longer(
+    cols = c(total_parole_eligible_population_not_released, total_parole_eligible_releases),
+    names_to = "status",
+    values_to = "n"
+  ) %>%
+  mutate(status = case_when(
+    status == "total_parole_eligible_population_not_released" ~ "Not Released",
+    status == "total_parole_eligible_releases" ~ "Released"
+  ))
+
+# Highchart stacked bar chart
+states <- unique(ncrp_pe_proportion_released$state)
+all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_pe_proportion_released %>%
+    filter(state == x)
+  jsFormatter <- JS("function() {
+                   var total = this.point.stackTotal;
+                   var percentage = Math.round((this.y / total) * 100);
+                   return percentage + '%';
+                  }")
+  highcharts <- df1 %>%
+    hchart(
+      type = "column",
+      hcaes(x = rptyear, y = n, group = status)
+    ) %>%
+    hc_yAxis(title = list(text = " Parole Eligible Population")) %>%
+    hc_xAxis(categories = unique(df1$rptyear),
+             title = "") %>%
+    hc_add_theme(hc_theme_jc_line) %>%
+    hc_legend(enabled = TRUE) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(series = list(stacking = "normal",
+                                 animation = FALSE,
+                                 cursor = "pointer",
+                                 dataLabels = list(enabled = TRUE, formatter = jsFormatter),
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = "TBD accessibility text",
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = "TBD accessibility text")))
+  return(highcharts)
+})
+all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
+all_stackedbar_parole_eligibility_release$Georgia
+
+
+
+
+
+
+
+
+
 
 # 2) Out of all releases: % of people released each year at parole eligibility year,
 #                         % 1-5 years after parole eligibility,
@@ -110,7 +196,8 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
-  save(all_bar_parole_eligibility_release, file = file.path(folder, "all_bar_parole_eligibility_release.rds"))
+  save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
+  save(all_bar_parole_eligibility_release,        file = file.path(folder, "all_bar_parole_eligibility_release.rds"))
 
 }
 

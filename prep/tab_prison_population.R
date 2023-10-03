@@ -51,7 +51,7 @@ all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
     hc_yAxis(labels = list(format = "{value}%",
                            enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 100) %>%
+             min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = FALSE)) %>%
     hc_add_theme(hc_theme_jc) %>%
@@ -295,7 +295,7 @@ all_groupedbar_prison_fbi_index <- map(.x = states,  .f = function(x) {
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 100) %>%
+             min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -356,7 +356,7 @@ all_bar_prison_fbi_index <- map(.x = states,  .f = function(x) {
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 100) %>%
+             min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -420,7 +420,7 @@ all_groupedbar_prison_sentlgth <- map(.x = states,  .f = function(x) {
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 100) %>%
+             min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -483,7 +483,7 @@ all_bar_prison_sentlgth <- map(.x = states,  .f = function(x) {
                                                       fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 100) %>%
+             min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
