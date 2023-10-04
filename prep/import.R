@@ -147,7 +147,7 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
   mutate(offdetail = trimws(offdetail)) %>%
 
   # create parole eligibility status with custom function
-  fnc_create_parelig_status()
+  fnc_create_parelig_status() %>%
 
   # calculate timing of release by parole eligibility date (year)
   mutate(time_between_ped_release = relyr - parelig_year,
@@ -242,7 +242,8 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
 
 
 ##########
-# Prepare Prisoners in 2020 data for analysis
+# Prepare BJS: Prisoners in 2020
+# This file is broken down by race
 ##########
 
 # clean up file to create dataframe of state prison pop by race
@@ -265,13 +266,13 @@ bjs_prison_pop_by_state_2020 <- bjs_prison_pop_by_race_state_2020 %>%
 
 
 ##########
-# Prepare BJS Prisoners Data (2010-2021) for analysis
+# Prepare BJS: Prisoners from 2010-2021 ############CHECK THIS
 ##########
 
 # 2010 data
 bjs_prison_pop_by_state_2010 <- bjs_prison_pop_by_gender_state_2010.csv %>%
   clean_names() %>%
-  select(state = x_1, bjs_prison_population = x_3) %>%
+  select(state = x, bjs_prison_population = x_3) %>%
   fnc_clean_bjs_data() %>%
   mutate(rptyear = 2010)
 
@@ -306,7 +307,7 @@ bjs_prison_pop_by_state_2014 <- bjs_prison_pop_by_gender_state_2014.csv %>%
 # 2015 data
 bjs_prison_pop_by_state_2015 <- bjs_prison_pop_by_gender_state_2015.csv %>%
   clean_names() %>%
-  select(state = x_1, bjs_prison_population = x_6) %>%
+  select(state = x, bjs_prison_population = x_6) %>%
   fnc_clean_bjs_data() %>%
   mutate(rptyear = 2015)
 

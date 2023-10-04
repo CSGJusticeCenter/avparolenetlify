@@ -8,9 +8,6 @@
 # based on _state_report_template.qmd
 ############################################
 
-# Select year for site
-select_year <- 2020
-
 # Load packages and dunctions for generating HTMLs from qmds
 library(rmarkdown)
 library(tidyverse)

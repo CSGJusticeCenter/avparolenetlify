@@ -7,9 +7,10 @@
 #    Load packages, colors, fonts
 #######################################
 
-##########
-# Instructions Packages
-##########
+#------ Action Required ------#
+
+# Select year for site
+select_year <- 2020
 
 # download CSGJCR package
 # devtools::install_github("CSGJusticeCenter/csgjcr@develop")
@@ -22,6 +23,17 @@ library(csgjcr)
 # install highcharter with the devtools package (NOT the remotes package):
 # install.packages("devtools")
 # devtools::install_github("mrjoh3/highcharter")
+
+# Change this to your project path
+csg_set_project_path(
+  project = "AVParole",
+  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
+  force = TRUE)
+
+# save data path
+sp_data_path <- csg_get_project_path("AVParole")
+
+# ----------------------------#
 
 # load other packages
 library(dplyr)
@@ -42,16 +54,6 @@ library(openxlsx)
 library(broom)
 library(broom.helpers)
 library(sjPlot) # missing data
-
-
-# CHANGE THIS TO YOUR PROJECT PATH
-csg_set_project_path(
-  project = "AVParole",
-  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
-  force = TRUE)
-
-# save data path
-sp_data_path <- csg_get_project_path("AVParole")
 
 # load fonts
 font_add("Graphik",     regular = "fonts/Graphik.ttf")
