@@ -76,12 +76,16 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibil
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_release.rds"))
 
+# Demographics
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_release_agerlse.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_release_gender.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_release_race.rds"))
+
 # Unconditional vs conditional release
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
 
 # Release Timing by Offense Type
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_release_timing_fbi_index.rds"))
-
 
 # Maxout
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
@@ -112,7 +116,10 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
 # Disparities
 ################################################################################
 
-# # Disparities
+# Disparities
+load(file = paste0(sp_data_path, "/data/analysis/app/all_grouped_disparities_race.rds"))
+
+
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_time_between_release_ped_by_race.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_pp_by_variable.rds"))
 #

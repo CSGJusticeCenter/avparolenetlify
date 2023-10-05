@@ -213,7 +213,7 @@ all_sentence_parole_elgibility_population$Georgia
 
 # Currently parole eligible population but still in prison by race in select year
 # Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
-current_ped_race <- fnc_prepare_basic_data(ncrp_yearendpop, race)
+current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
 
 # Create highcharts showing breakdown of parole-eligible prison population by race
 states <- unique(current_ped_race$state)
@@ -249,14 +249,13 @@ all_sentence_parole_elgibility_race$Georgia
 
 # Currently parole eligible population but still in prison by ageyrend in select year
 # Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
-current_ped_ageyrend <- fnc_prepare_basic_data(ncrp_yearendpop, ageyrend)
+current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
 # Create highcharts showing breakdown of parole-eligible prison population by ageyrend
 states <- unique(current_ped_ageyrend$state)
 all_bar_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_ageyrend %>%
-    filter(state == x) %>%
-    arrange(desc(n))
+    filter(state == x)
   highcharts <- fnc_basic_barchart(df1, "ageyrend", "TBD accessibility text")
   return(highcharts)
 })
@@ -285,7 +284,7 @@ all_sentence_parole_elgibility_ageyrend$Georgia
 
 # Currently parole eligible population but still in prison by gender in select year
 # Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
-current_ped_gender <- fnc_prepare_basic_data(ncrp_yearendpop, sex)
+current_ped_gender <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 
 # Create highcharts showing breakdown of parole-eligible prison population by gender
 states <- unique(current_ped_gender$state)
@@ -330,7 +329,7 @@ all_sentence_parole_elgibility_gender$Georgia
 
 # Currently parole eligible population but still in prison by sentlgth in select year
 # Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
-current_ped_sentlgth <- fnc_prepare_basic_data(ncrp_yearendpop, sentlgth)
+current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)
 
 # Create highcharts showing breakdown of parole-eligible prison population by sentlgth
 states <- unique(current_ped_sentlgth$state)
@@ -378,7 +377,7 @@ all_sentence_parole_elgibility_sentlgth$Georgia
 
 # Currently parole eligible population but still in prison by fbi_index in select year
 # Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
-current_ped_fbi_index <- fnc_prepare_basic_data(ncrp_yearendpop, fbi_index)
+current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
 
 # Create highcharts showing breakdown of parole-eligible prison population by fbi_index
 states <- unique(current_ped_fbi_index$state)

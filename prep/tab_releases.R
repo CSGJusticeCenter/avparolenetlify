@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Date last updated: October 2, 2023 (MAR)
+# Date last updated: October 5, 2023 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -98,13 +98,6 @@ all_stackedbar_parole_eligibility_release$Georgia
 
 
 
-
-
-
-
-
-
-
 # 2) Out of all releases: % of people released each year at parole eligibility year,
 #                         % 1-5 years after parole eligibility,
 #                         % of people released more than 5 years after parole eligibility
@@ -132,13 +125,70 @@ all_bar_parole_eligibility_release$Georgia
 
 
 
-
-
 ################################################################################
 
 # Section: Demographics
 
 ################################################################################
+
+# Releases by Race and Ethnicity
+ncrp_releases_race <- ncrp_releases %>%
+  filter(rptyear == select_year) %>%
+  group_by(state) %>%
+  fnc_values_tooltip(race)
+
+# Create highcharts showing breakdown of releases by race and ethnicity
+states <- unique(ncrp_releases_race$state)
+all_bar_release_race <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_releases_race %>%
+    filter(state == x) %>%
+    arrange(desc(n))
+  highcharts <- fnc_basic_barchart(df1, "race", "TBD accessibility text")
+  return(highcharts)
+})
+all_bar_release_race <- setNames(all_bar_release_race, states)
+all_bar_release_race$Georgia
+
+
+
+# Releases by Gender
+ncrp_releases_gender <- ncrp_releases %>%
+  filter(rptyear == select_year) %>%
+  group_by(state) %>%
+  fnc_values_tooltip(sex)
+
+# Create highcharts showing breakdown of releases by gender
+states <- unique(ncrp_releases_gender$state)
+all_bar_release_gender <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_releases_gender %>%
+    filter(state == x) %>%
+    arrange(desc(n))
+  highcharts <- fnc_basic_barchart(df1, "sex", "TBD accessibility text")
+  return(highcharts)
+})
+all_bar_release_gender <- setNames(all_bar_release_gender, states)
+all_bar_release_gender$Georgia
+
+
+
+# Releases by Age
+ncrp_releases_agerlse <- ncrp_releases %>%
+  filter(rptyear == select_year) %>%
+  group_by(state) %>%
+  fnc_values_tooltip(agerlse)
+
+# Create highcharts showing breakdown of releases by age
+states <- unique(ncrp_releases_agerlse$state)
+all_bar_release_agerlse <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_releases_agerlse %>%
+    filter(state == x)
+  highcharts <- fnc_basic_barchart(df1, "agerlse", "TBD accessibility text")
+  return(highcharts)
+})
+all_bar_release_agerlse <- setNames(all_bar_release_agerlse, states)
+all_bar_release_agerlse$Georgia
+
+
 
 
 
@@ -155,16 +205,16 @@ all_bar_parole_eligibility_release$Georgia
 
 # Filter to people with release type information
 # Remove "Other releases" - although Alabama has 30% other releases #######################?
-ncrp_release_type_select_year <- ncrp_releases %>%
+ncrp_release_type <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   filter(reltype == "Conditional release" | reltype == "Unconditional release") %>%
   group_by(state) %>%
   fnc_values_tooltip(reltype)
 
 # Highchart pie chart showing releases by release type
-states <- unique(ncrp_release_type_select_year$state)
+states <- unique(ncrp_release_type$state)
 all_pie_release_type <- map(.x = states, .f = function(x) {
-  df1 <- ncrp_release_type_select_year %>%
+  df1 <- ncrp_release_type %>%
     ungroup() %>%
     filter(state == x) %>%
     select(reltype, prop, prop_label)
@@ -179,6 +229,8 @@ all_pie_release_type$Georgia
 
 
 
+
+
 ################################################################################
 
 # Section: Release Timing by Offense Type
@@ -186,7 +238,7 @@ all_pie_release_type$Georgia
 ################################################################################
 
 # Prepare data
-ncrp_release_by_offense_select_year <- ncrp_releases %>%
+ncrp_release_by_offense <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   group_by(state, fbi_index) %>%
   fnc_values_tooltip(time_between_ped_release_category) %>%
@@ -200,9 +252,9 @@ ncrp_release_by_offense_select_year <- ncrp_releases %>%
 
 
 # Highchart stacked bar chart showing release timing by offense type
-states <- unique(ncrp_release_by_offense_select_year$state)
+states <- unique(ncrp_release_by_offense$state)
 all_groupedbar_release_timing_fbi_index <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_release_by_offense_select_year %>%
+  df1 <- ncrp_release_by_offense %>%
     ungroup() %>%
     filter(state == x) %>%
     distinct()
@@ -211,6 +263,10 @@ all_groupedbar_release_timing_fbi_index <- map(.x = states,  .f = function(x) {
 })
 all_groupedbar_release_timing_fbi_index <- setNames(all_groupedbar_release_timing_fbi_index, states)
 all_groupedbar_release_timing_fbi_index$Georgia
+
+
+
+
 
 
 
@@ -236,7 +292,7 @@ all_groupedbar_release_timing_fbi_index$Georgia
 
 # Determine if people were released on or after their mandatory
 # Remove people who were released after their mandatory - this is a mistake according to Carl
-ncrp_releases_maxout_select_year <- ncrp_releases %>%
+ncrp_releases_maxout <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   filter(!is.na(mand_prisrel_year) &
         !is.na(relyr) &
@@ -249,9 +305,9 @@ ncrp_releases_maxout_select_year <- ncrp_releases %>%
   fnc_values_tooltip(maxout)
 
 # Highchart pie chart showing releases by release type
-states <- unique(ncrp_releases_maxout_select_year$state)
+states <- unique(ncrp_releases_maxout$state)
 all_pie_maxout <- map(.x = states, .f = function(x) {
-  df1 <- ncrp_releases_maxout_select_year %>%
+  df1 <- ncrp_releases_maxout %>%
     ungroup() %>%
     filter(state == x)
   highcharts <- fnc_basic_piechart(df1, "maxout", "TBD accessibility text")
@@ -259,6 +315,10 @@ all_pie_maxout <- map(.x = states, .f = function(x) {
 })
 all_pie_maxout <- setNames(all_pie_maxout, states)
 all_pie_maxout$Georgia
+
+
+
+
 
 
 ################################################################################
@@ -273,6 +333,11 @@ for (folder in theseFOLDERS){
 
   save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
   save(all_bar_parole_eligibility_release,        file = file.path(folder, "all_bar_parole_eligibility_release.rds"))
+
+  save(all_bar_release_agerlse,                   file = file.path(folder, "all_bar_release_agerlse.rds"))
+  save(all_bar_release_gender,                    file = file.path(folder, "all_bar_release_gender.rds"))
+  save(all_bar_release_race,                      file = file.path(folder, "all_bar_release_race.rds"))
+
 
   save(all_pie_release_type,                      file = file.path(folder, "all_pie_release_type.rds"))
   save(all_groupedbar_release_timing_fbi_index,   file = file.path(folder, "all_groupedbar_release_timing_fbi_index.rds"))

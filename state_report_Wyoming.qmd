@@ -248,12 +248,8 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
     all_stackedbar_pe_type[[state_for_report]] %>% 
     hc_size(width = 700,
             height = 270) %>%
+    hc_colors(c(neutralBkgndMedium, yellow, darkblue, purple, teal)) %>% 
     hc_title(text = paste0("Prison Population by Parole Eligibility Status", " in ", select_year))
-    # hc_credits(enabled = TRUE,
-    #        text = "Note: Parole-eligible prison population only includes people with sentence lengths between 1-25 years.",
-    #        position = list(align = "left", 
-    #                        verticalAlign = "bottom", 
-    #                        x = 10, y = 0)) 
 } else {
   state_stackedbar_pe_type <- "No Data"
 }
@@ -292,20 +288,14 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_race)) {
   state_sentence_parole_elgibility_race <- ""
 }
 
-# Bar chart of people eligible for parole but still in prison by race and state
+# Bar chart of people eligible for parole but still in prison by race
 if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
   state_bar_parole_elgibility_race <- 
     all_bar_parole_elgibility_race[[state_for_report]] %>% 
     hc_size(width = 700,
             height = 350) %>% 
-    hc_colors(c(yellow)) %>% 
+    hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Race and Ethnicity", " in ", select_year))
-    # hc_chart(marginBottom = 50) %>%
-    # hc_credits(enabled = TRUE,
-    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-    #        position = list(align = "left", 
-    #                        verticalAlign = "bottom", 
-    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_race <- "No Data"
 }
@@ -322,7 +312,7 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_gender)) {
   state_sentence_parole_elgibility_gender <- ""
 }
 
-# Bar chart of people eligible for parole but still in prison by gender and state
+# Bar chart of people eligible for parole but still in prison by gender
 if (state_for_report %in% names(all_bar_parole_elgibility_gender)) {
   state_bar_parole_elgibility_gender <- 
     all_bar_parole_elgibility_gender[[state_for_report]] %>% 
@@ -330,12 +320,6 @@ if (state_for_report %in% names(all_bar_parole_elgibility_gender)) {
             height = 350) %>% 
     hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Gender", " in ", select_year))
-    # hc_chart(marginBottom = 50) %>%
-    # hc_credits(enabled = TRUE,
-    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-    #        position = list(align = "left", 
-    #                        verticalAlign = "bottom", 
-    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_gender <- "No Data"
 }
@@ -352,27 +336,21 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_ageyrend)) {
   state_sentence_parole_elgibility_ageyrend <- ""
 }
 
-# Bar chart of people eligible for parole but still in prison by ageyrend and state
+# Bar chart of people eligible for parole but still in prison by ageyrend
 if (state_for_report %in% names(all_bar_parole_elgibility_ageyrend)) {
   state_bar_parole_elgibility_ageyrend <- 
     all_bar_parole_elgibility_ageyrend[[state_for_report]] %>% 
     hc_size(width = 700, 
             height = 350) %>% 
-    hc_colors(c(purple)) %>% 
+    hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Age", " in ", select_year))
-    # hc_chart(marginBottom = 50) %>%
-    # hc_credits(enabled = TRUE,
-    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-    #        position = list(align = "left", 
-    #                        verticalAlign = "bottom", 
-    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_ageyrend <- "No Data"
 }
 
 
 ###################
-# Sentence Lengths the Parole-Eligible Prison Population
+# Sentence Lengths for the Parole-Eligible Prison Population
 ###################
 
 # Sentence
@@ -388,13 +366,9 @@ if (state_for_report %in% names(all_bar_parole_elgibility_sentlgth)) {
   state_bar_parole_elgibility_sentlgth <- 
     all_bar_parole_elgibility_sentlgth[[state_for_report]] %>% 
     hc_size(width = 700, 
-            height = 500) %>% 
+            height = 350) %>% 
+    hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Sentence Length", " in ", select_year))
-    # hc_credits(enabled = TRUE,
-    #            text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-    #            position = list(align = "left", 
-    #                            verticalAlign = "bottom", 
-    #                            x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_sentlgth <- "No Data"
 }
@@ -419,11 +393,6 @@ if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index_new_crime)) 
     hc_size(width = 700, 
             height = 500) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Criminal Offense", " in ", select_year))
-    # hc_credits(enabled = TRUE,
-    #        text = "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years.",
-    #        position = list(align = "left", 
-    #                        verticalAlign = "bottom", 
-    #                        x = 10, y = 0)) 
 } else {
   state_bar_parole_elgibility_fbi_index_new_crime <- "No Data"
 }
@@ -472,6 +441,44 @@ if (state_for_report %in% names(all_bar_parole_eligibility_release)) {
 ###################
 # Demographics
 ###################
+
+# Bar chart of releases by race and ethnicity
+if (state_for_report %in% names(all_bar_release_race)) {
+  state_bar_release_race <- 
+    all_bar_release_race[[state_for_report]] %>% 
+    hc_size(width = 700, 
+            height = 350) %>% 
+    hc_colors(c(purple)) %>% 
+    hc_title(text = paste0("Releases by Race and Ethnicity", " in ", select_year))
+} else {
+  state_bar_release_race <- "No Data"
+}
+
+# Bar chart of releases by gender
+if (state_for_report %in% names(all_bar_release_gender)) {
+  state_bar_release_gender <- 
+    all_bar_release_gender[[state_for_report]] %>% 
+    hc_size(width = 700, 
+            height = 350) %>% 
+    hc_colors(c(purple)) %>% 
+    hc_title(text = paste0("Releases by Gender", " in ", select_year))
+} else {
+  state_bar_release_gender <- "No Data"
+}
+
+# Bar chart of releases by age
+if (state_for_report %in% names(all_bar_release_agerlse)) {
+  state_bar_release_agerlse <- 
+    all_bar_release_agerlse[[state_for_report]] %>% 
+    hc_size(width = 700, 
+            height = 350) %>% 
+    hc_colors(c(purple)) %>% 
+    hc_title(text = paste0("Releases by Age", " in ", select_year))
+} else {
+  state_bar_release_agerlse <- "No Data"
+}
+
+
 
 ###################
 # Unconditional vs Conditional Releases
@@ -522,14 +529,30 @@ if (state_for_report %in% names(all_pie_maxout)) {
   state_pie_maxout <- "No Data"
 }
 
+
+
+
+
+
+
+
+
+
 ################################################################################
 
 # Disparities Tab
 
 ################################################################################
 
-
-
+# Stacked bar chart showing percentage of population in community and in prison but parole eligible
+if (state_for_report %in% names(all_grouped_disparities_race)) {
+  state_grouped_disparities_race <-
+    all_grouped_disparities_race[[state_for_report]] %>%
+    hc_colors(c(teal, neutralBkgndDisabled)) %>% 
+    hc_title(text = paste0("Racial and Ethnic Disparities: Community vs. Parole-Eligible Prison Population", " in ", select_year))
+} else {
+  state_grouped_disparities_race <- "No Data"
+}
 
 
 
@@ -551,7 +574,7 @@ htmltools::div(
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", formattable::comma(num_people_1_5_years, digits = 0)),
   div(style ="display: block; 
-              color: #ff6400; 
+              color: #3E4B4B; 
               font-size: 1.25em; 
               font-family: Graphik; 
               font-weight: bold; 
@@ -744,7 +767,6 @@ div(id = "body-section", br(),
     div(id = "note-text", "Note: The parole-eligible prison population only includes people incarcerated for a new crime and with sentence lengths between 1-25 years. Source: NCRP (2020)")
     )
 ```
-
 :::
 
 ```{r}
@@ -800,8 +822,10 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Trends"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), 
     div(id = "note-text", "Source: NCRP (2020)"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_bar_parole_eligibility_release), br(),
     div(id = "note-text", "Source: NCRP (2020)")
     )
@@ -814,10 +838,36 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Demographics"), br(),
-    div(id = "regular-text", "Gender, race, age"), br()
+    div(id = "big-section-title", "Demographics"), br()
     )
 ```
+::: {.panel-tabset}
+### Race and Ethnicity
+```{r}
+div(id = "body-section", br(),
+    div(id = "visualization", state_bar_release_race), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
+    )
+```
+
+### Gender
+```{r}
+div(id = "body-section", br(),
+    div(id = "visualization", state_bar_release_gender), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
+    )
+```
+
+### Age
+```{r}
+div(id = "body-section", br(),
+    div(id = "visualization", state_bar_release_agerlse), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
+    )
+```
+:::
+
+
 
 ```{r}
 ########################################
@@ -827,6 +877,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Type of Release"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_pie_release_type), br(),
     div(id = "note-text", "Source: NCRP (2020)")
     )
@@ -840,6 +891,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Timing by Offense Type"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_groupedbar_release_timing_fbi_index), br(),
     div(id = "note-text", "Source: NCRP (2020)")
     )
@@ -852,7 +904,8 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Time Served by Offense Type"), br()
+    div(id = "big-section-title", "Time Served by Offense Type"), br(),
+    div(id = "regular-text", "TBD: Average LOS? Proportion of sentence length (categorical) served?")
     )
 ```
 
@@ -864,6 +917,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Max Out"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "visualization", state_pie_maxout), br(),
     div(id = "note-text", "Source: NCRP (2020)")
     )
@@ -912,6 +966,8 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Race and Ethnicity"), br(),
     div(id = "regular-text", "(1) bar charts including community, prison pop, parole-eligible pop, paroled at first opportunity pop (2) RRIs for each of those populations, (3) release date compared to first eligibility date (e.g., 50% released first year, 22% year after first eligibility, 15% 2 years after eligible, etc.)"), br(),
+    div(id = "visualization", state_grouped_disparities_race), br(),
+    div(id = "note-text", "Source: NCRP (2020), Census (2020)")
     )
 ```
 

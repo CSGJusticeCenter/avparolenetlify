@@ -1,17 +1,15 @@
 ############################################
 # Project: AV Parole Project
 # File: generate_state_reports.R
-# Last updated: October 3, 2023 (MAR)
+# Date last updated: October 5, 2023 (MAR)
 # Author: Mari Roberts
 
 # Generate html documents for each state
 # based on _state_report_template.qmd
 ############################################
 
-# Load packages and dunctions for generating HTMLs from qmds
-library(rmarkdown)
-library(tidyverse)
-source("prep/library.R")
+# Load packages and functions for generating HTMLs from QMDs
+source("prep/library.R") # ACTION REQUIRED BY NEW USER
 source("prep/functions.R")
 
 # Load BJS, NCRP and APS data
@@ -34,7 +32,7 @@ wd <- getwd()
 
 # Get list of 50 states
 states <- c("Georgia")
-# states <- state.name
+#states <- state.name
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

@@ -182,7 +182,14 @@ body {
   font-size: 2.5em;
   font-family: Graphik;
   font-weight: bold;
-  color: teal;
+  color: #00aba0;
+  text-align: center;
+}
+#highlight-text2 {
+  font-size: 2.5em;
+  font-family: Graphik;
+  font-weight: bold;
+  color: #c376fb;
   text-align: center;
 }
 

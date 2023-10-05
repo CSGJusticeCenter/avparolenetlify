@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: functions.R
 # Authors: Mari Roberts
-# Date last updated: September 26, 2023 (MAR)
+# Date last updated: October 5, 2023 (MAR)
 # Description:
 #    Custom functions
 #######################################
@@ -10,11 +10,11 @@
 # Filter by
 fnc_parameters <- function(df){
   df <- df %>%
-  filter(admtype == "New court commitment") %>%
-  filter(sentlgth == "1-1.9 years" |
-         sentlgth == "2-4.9 years" |
-         sentlgth == "5-9.9 years" |
-         sentlgth == "10-24.9 years")
+    filter(admtype == "New court commitment") %>%
+    filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years")
 
 }
 
@@ -188,12 +188,11 @@ fnc_clean_bjs_data <- function(df){
     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
 }
 
-
 # Prepare data for a simple bar graph
-fnc_prepare_basic_data <- function(df, count_column){
+fnc_prepare_pe_data <- function(df, count_column){
   df1 <- df %>%
     filter(rptyear == select_year &
-          parelig_status == "Current") %>%
+           parelig_status == "Current") %>%
     fnc_parameters() %>%
     group_by(state) %>%
     count({{ count_column }}) %>%
@@ -251,7 +250,29 @@ fnc_aps_prepare_pre2008 <- function(df){
   return(df)
 }
 
-
+# Define  function to retrieve and process census data for a given state
+fnc_get_census_data <- function(state) {
+  df <-
+    tidycensus::get_decennial(
+      geography = "state",
+      state = state,
+      variables = race_vars,
+      summary_var = "P3_001N",
+      year = select_year,
+      geometry = FALSE) %>%
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race = case_when(
+        variable %in% c("estimate_american_indian", "estimate_asian", "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    )
+  return(df)
+}
 
 
 
@@ -552,7 +573,45 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
 }
 
 
+# Create grouped, not stacked bar chart
+fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text) {
 
+  highcharts <-
+    hchart(df, "bar",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+}
 
 
 

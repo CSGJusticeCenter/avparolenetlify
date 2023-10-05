@@ -54,6 +54,7 @@ library(openxlsx)
 library(broom)
 library(broom.helpers)
 library(sjPlot) # missing data
+library(rmarkdown) # render pages
 
 # load fonts
 font_add("Graphik",     regular = "fonts/Graphik.ttf")
