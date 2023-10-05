@@ -7,6 +7,17 @@
 #    Custom functions
 #######################################
 
+# Filter by
+fnc_parameters <- function(df){
+  df <- df %>%
+  filter(admtype == "New court commitment") %>%
+  filter(sentlgth == "1-1.9 years" |
+         sentlgth == "2-4.9 years" |
+         sentlgth == "5-9.9 years" |
+         sentlgth == "10-24.9 years")
+
+}
+
 # Create parole eligibility status
 # if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
 # if year of parole eligibility is more than or equal to year reported to NCRP, then "eligible for parole in the future"
@@ -177,16 +188,13 @@ fnc_clean_bjs_data <- function(df){
     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
 }
 
+
 # Prepare data for a simple bar graph
 fnc_prepare_basic_data <- function(df, count_column){
   df1 <- df %>%
     filter(rptyear == select_year &
-             parelig_status == "Current") %>%
-    filter(admtype == "New court commitment") %>%
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") %>%
+          parelig_status == "Current") %>%
+    fnc_parameters() %>%
     group_by(state) %>%
     count({{ count_column }}) %>%
     mutate(
@@ -502,7 +510,46 @@ fnc_basic_columnchart <- function(df, filter_column, accessibility_text) {
   return(highcharts)
 }
 
+# Create grouped, stacked bar chart
+fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibility_text) {
 
+  highcharts <-
+    hchart(df, "bar",
+         hcaes(x = !!sym(x_column),
+               y = prop,
+               group = !!sym(group_by_col)
+         ),
+         dataLabels = list(enabled = TRUE,
+                           format = "{point.prop_label}",
+                           style = list(fontWeight = "regular",
+                                        fontSize = "12px",
+                                        fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        stacking = "normal",
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+}
 
 
 
@@ -514,7 +561,7 @@ fnc_basic_columnchart <- function(df, filter_column, accessibility_text) {
 
 
 # Create basic horizontal bar chart that is grouped by adm type
-############################ NEEDS ACCESSIBILITY TEXT
+############################ NEEDS ACCESSIBILITY TEXT CHANGE IN POP FILE
 fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
   highcharts <- hchart(df, "bar",
          hcaes(x = admtype,
@@ -616,104 +663,104 @@ fnc_basic_piechart <- function(df, x_column, accessibility_text){
 
 
 
-# Create highchart bar chart showing timing of release (released before, on, after PED) by offense type
-fnc_create_bar_chart_released_at_ped <- function(selected_offgeneral, accessibility_text) {
-
-  states <- ncrp_released_at_ped_offgeneral_select_year %>%
-    filter(offgeneral == selected_offgeneral) %>%
-    pull(state) %>%
-    unique()
-
-  all_bar <- map(states, function(x) {
-
-    df1 <- ncrp_released_at_ped_offgeneral_select_year %>%
-      filter(state == x, offgeneral == selected_offgeneral) %>%
-      arrange(match(released_at_ped_status, desired_order))
-
-    # assign color for each race
-    df1$color <- case_when(df1$released_at_ped_status == "Released Before Parole Eligibility Year" ~ purple,
-                           df1$released_at_ped_status == "Released on Parole Eligibility Year" ~ teal,
-                           df1$released_at_ped_status == "Released After Parole Eligibility Year" ~ orange)
-    df1$color <- htmltools::parseCssColors(df1$color)
-
-    highcharts <- highchart() %>%
-      hc_add_series(df1, type = "column",
-                    hcaes(x = factor(released_at_ped_status), y = prop, color = color),
-                    dataLabels = list(enabled = TRUE,
-                                      format = "{point.prop_label}",
-                                      style = list(fontWeight = "bold",
-                                                   fontSize = "1em",
-                                                   fontFamily = "Graphik",
-                                                   textOutline = 0))) %>%
-      hc_xAxis(categories = df1$released_at_ped_status) %>%
-      hc_yAxis(labels = list(enabled = FALSE)) %>%
-      hc_add_theme(hc_theme_jc) %>%
-      hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-      hc_legend(enabled = FALSE) %>%
-      hc_exporting(enabled = FALSE) %>%
-      hc_plotOptions(series = list(animation = FALSE,
-                                   cursor = "pointer",
-                                   borderWidth = 3,
-                                   minPointLength = 4),
-                     accessibility = list(enabled = TRUE,
-                                          keyboardNavigation = list(enabled = TRUE),
-                                          linkedDescription = "TBD",
-                                          landmarkVerbosity = "one"),
-                     area = list(accessibility = list(description = "TBD")))
-
-    return(highcharts)
-  })
-
-  return(setNames(all_bar, states))
-}
-
-
-# Create highchart bar chart showing LOS by offense type
-fnc_create_bar_chart_los <- function(selected_offgeneral, accessibility_text) {
-
-  states <- ncrp_proportion_served_offenses_select_year %>%
-    filter(offgeneral == selected_offgeneral) %>%
-    pull(state) %>%
-    unique()
-
-  all_bar <- map(states, function(x) {
-
-    df1 <- ncrp_proportion_served_offenses_select_year %>%
-      filter(state == x, offgeneral == selected_offgeneral) %>%
-      arrange(match(timesrvd_rel_vs_sentlgth, desired_order))
-
-    # assign color for each race
-    df1$color <- case_when(df1$timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served" ~ yellow,
-                           df1$timesrvd_rel_vs_sentlgth == "Full Sentence Length Served" ~ purple)
-    df1$color <- htmltools::parseCssColors(df1$color)
-
-    highcharts <- highchart() %>%
-      hc_add_series(df1, type = "column",
-                    hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = prop, color = color),
-                    dataLabels = list(enabled = TRUE,
-                                      format = "{point.prop_label}",
-                                      style = list(fontWeight = "bold",
-                                                   fontSize = "1em",
-                                                   fontFamily = "Graphik",
-                                                   textOutline = 0))) %>%
-      hc_xAxis(categories = df1$timesrvd_rel_vs_sentlgth) %>%
-      hc_yAxis(labels = list(enabled = FALSE)) %>%
-      hc_add_theme(hc_theme_jc) %>%
-      hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-      hc_legend(enabled = FALSE) %>%
-      hc_exporting(enabled = FALSE) %>%
-      hc_plotOptions(series = list(animation = FALSE,
-                                   cursor = "pointer",
-                                   borderWidth = 3,
-                                   minPointLength = 4),
-                     accessibility = list(enabled = TRUE,
-                                          keyboardNavigation = list(enabled = TRUE),
-                                          linkedDescription = "TBD",
-                                          landmarkVerbosity = "one"),
-                     area = list(accessibility = list(description = "TBD")))
-
-    return(highcharts)
-  })
-
-  return(setNames(all_bar, states))
-}
+# # Create highchart bar chart showing timing of release (released before, on, after PED) by offense type
+# fnc_create_bar_chart_released_at_ped <- function(selected_offgeneral, accessibility_text) {
+#
+#   states <- ncrp_released_at_ped_offgeneral_select_year %>%
+#     filter(offgeneral == selected_offgeneral) %>%
+#     pull(state) %>%
+#     unique()
+#
+#   all_bar <- map(states, function(x) {
+#
+#     df1 <- ncrp_released_at_ped_offgeneral_select_year %>%
+#       filter(state == x, offgeneral == selected_offgeneral) %>%
+#       arrange(match(released_at_ped_status, desired_order))
+#
+#     # assign color for each race
+#     df1$color <- case_when(df1$released_at_ped_status == "Released Before Parole Eligibility Year" ~ purple,
+#                            df1$released_at_ped_status == "Released on Parole Eligibility Year" ~ teal,
+#                            df1$released_at_ped_status == "Released After Parole Eligibility Year" ~ orange)
+#     df1$color <- htmltools::parseCssColors(df1$color)
+#
+#     highcharts <- highchart() %>%
+#       hc_add_series(df1, type = "column",
+#                     hcaes(x = factor(released_at_ped_status), y = prop, color = color),
+#                     dataLabels = list(enabled = TRUE,
+#                                       format = "{point.prop_label}",
+#                                       style = list(fontWeight = "bold",
+#                                                    fontSize = "1em",
+#                                                    fontFamily = "Graphik",
+#                                                    textOutline = 0))) %>%
+#       hc_xAxis(categories = df1$released_at_ped_status) %>%
+#       hc_yAxis(labels = list(enabled = FALSE)) %>%
+#       hc_add_theme(hc_theme_jc) %>%
+#       hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#       hc_legend(enabled = FALSE) %>%
+#       hc_exporting(enabled = FALSE) %>%
+#       hc_plotOptions(series = list(animation = FALSE,
+#                                    cursor = "pointer",
+#                                    borderWidth = 3,
+#                                    minPointLength = 4),
+#                      accessibility = list(enabled = TRUE,
+#                                           keyboardNavigation = list(enabled = TRUE),
+#                                           linkedDescription = "TBD",
+#                                           landmarkVerbosity = "one"),
+#                      area = list(accessibility = list(description = "TBD")))
+#
+#     return(highcharts)
+#   })
+#
+#   return(setNames(all_bar, states))
+# }
+#
+#
+# # Create highchart bar chart showing LOS by offense type
+# fnc_create_bar_chart_los <- function(selected_offgeneral, accessibility_text) {
+#
+#   states <- ncrp_proportion_served_offenses_select_year %>%
+#     filter(offgeneral == selected_offgeneral) %>%
+#     pull(state) %>%
+#     unique()
+#
+#   all_bar <- map(states, function(x) {
+#
+#     df1 <- ncrp_proportion_served_offenses_select_year %>%
+#       filter(state == x, offgeneral == selected_offgeneral) %>%
+#       arrange(match(timesrvd_rel_vs_sentlgth, desired_order))
+#
+#     # assign color for each race
+#     df1$color <- case_when(df1$timesrvd_rel_vs_sentlgth == "Less than Sentence Length Served" ~ yellow,
+#                            df1$timesrvd_rel_vs_sentlgth == "Full Sentence Length Served" ~ purple)
+#     df1$color <- htmltools::parseCssColors(df1$color)
+#
+#     highcharts <- highchart() %>%
+#       hc_add_series(df1, type = "column",
+#                     hcaes(x = factor(timesrvd_rel_vs_sentlgth), y = prop, color = color),
+#                     dataLabels = list(enabled = TRUE,
+#                                       format = "{point.prop_label}",
+#                                       style = list(fontWeight = "bold",
+#                                                    fontSize = "1em",
+#                                                    fontFamily = "Graphik",
+#                                                    textOutline = 0))) %>%
+#       hc_xAxis(categories = df1$timesrvd_rel_vs_sentlgth) %>%
+#       hc_yAxis(labels = list(enabled = FALSE)) %>%
+#       hc_add_theme(hc_theme_jc) %>%
+#       hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#       hc_legend(enabled = FALSE) %>%
+#       hc_exporting(enabled = FALSE) %>%
+#       hc_plotOptions(series = list(animation = FALSE,
+#                                    cursor = "pointer",
+#                                    borderWidth = 3,
+#                                    minPointLength = 4),
+#                      accessibility = list(enabled = TRUE,
+#                                           keyboardNavigation = list(enabled = TRUE),
+#                                           linkedDescription = "TBD",
+#                                           landmarkVerbosity = "one"),
+#                      area = list(accessibility = list(description = "TBD")))
+#
+#     return(highcharts)
+#   })
+#
+#   return(setNames(all_bar, states))
+# }

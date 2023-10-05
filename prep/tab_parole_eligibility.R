@@ -150,7 +150,6 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
       }
     ")
     ) %>%
-    hc_colors(c("gray", orange, yellow, purple, teal)) %>%
     hc_plotOptions(
       series = list(stacking = "normal",
                     animation = FALSE,

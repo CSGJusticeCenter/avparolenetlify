@@ -57,7 +57,6 @@ all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
-    hc_colors(c(teal, yellow)) %>%
     hc_legend(enabled = TRUE,
               reversed = TRUE) %>%
     hc_plotOptions(
@@ -145,7 +144,6 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
               list(name = "Eligible for Parole",
                    data = df1$current_count)) %>%
     hc_add_theme(hc_theme_jc_line) %>%
-    hc_colors(colors = c(teal, purple, yellow)) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(
@@ -243,7 +241,6 @@ all_stackedbar_prison_gender <- map(.x = states,  .f = function(x) {
     filter(state == x) %>%
     distinct()
   highcharts <- fnc_stackedbar_admtype_chart(df1, "sex")
-  highcharts <- highcharts %>% hc_colors(c(yellow, teal))
   return(highcharts)
 })
 
@@ -301,7 +298,6 @@ all_groupedbar_prison_fbi_index <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = TRUE,
               reversed = FALSE) %>%
     hc_add_theme(hc_theme_jc) %>%
-    hc_colors(c(teal, yellow, purple)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_chart(events = list(
@@ -362,7 +358,6 @@ all_bar_prison_fbi_index <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = TRUE,
               reversed = FALSE) %>%
     hc_add_theme(hc_theme_jc) %>%
-    hc_colors(c(teal, yellow, purple)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(
@@ -426,7 +421,6 @@ all_groupedbar_prison_sentlgth <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = TRUE,
               reversed = FALSE) %>%
     hc_add_theme(hc_theme_jc) %>%
-    hc_colors(c(teal, yellow, purple)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_chart(events = list(
@@ -489,7 +483,6 @@ all_bar_prison_sentlgth <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = TRUE,
               reversed = FALSE) %>%
     hc_add_theme(hc_theme_jc) %>%
-    hc_colors(c(teal, yellow, purple)) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(

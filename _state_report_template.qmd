@@ -114,7 +114,7 @@ if (state_for_report %in% names(all_stackedbar_admtype)) {
 if (state_for_report %in% names(all_pie_admtype)) {
   state_pie_admtype <-
     all_pie_admtype[[state_for_report]] %>%
-    hc_size(height = 300) %>%
+    hc_size(height = 275) %>%
     hc_colors(c(teal, yellow)) %>%
     hc_title(text = paste0("Option 2: Distribution of the Prison Population by Admission Type", " in ", select_year))
 } else {
@@ -440,7 +440,11 @@ if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index_new_crime)) 
 
 ################################################################################
 
-# 
+###################
+# Release Trends
+###################
+
+# Proportion of Parole-Eligible Population Released from 2010 to select year
 if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
   state_stackedbar_parole_eligibility_release <-
     all_stackedbar_parole_eligibility_release[[state_for_report]] %>%
@@ -452,7 +456,7 @@ if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
   state_stackedbar_parole_eligibility_release <- "No Data"
 }
 
-# 
+# Timing of Releases Relative to Parole Eligibility Year in select year
 if (state_for_report %in% names(all_bar_parole_eligibility_release)) {
   state_bar_parole_eligibility_release <-
     all_bar_parole_eligibility_release[[state_for_report]] %>%
@@ -465,6 +469,58 @@ if (state_for_report %in% names(all_bar_parole_eligibility_release)) {
 }
 
 
+###################
+# Demographics
+###################
+
+###################
+# Unconditional vs Conditional Releases
+###################
+
+# Pie chart showing distribution of releases by release type
+if (state_for_report %in% names(all_pie_release_type)) {
+  state_pie_release_type <-
+    all_pie_release_type[[state_for_report]] %>%
+    hc_size(height = 275) %>%
+    hc_colors(c(teal, purple)) %>%
+    hc_title(text = paste0("Distribution of Releases by Release Type", " in ", select_year))
+} else {
+  state_pie_release_type <- "No Data"
+}
+
+###################
+# Release Timing by Offense Type
+###################
+
+# Stacked bar chart showing release timing by offense type
+if (state_for_report %in% names(all_groupedbar_release_timing_fbi_index)) {
+  state_groupedbar_release_timing_fbi_index <-
+    all_groupedbar_release_timing_fbi_index[[state_for_report]] %>%
+    hc_colors(c(neutralBkgndMedium, darkblue, yellow, teal, purple)) %>% 
+    hc_title(text = paste0("Release Timing by Offense Type", " in ", select_year))
+} else {
+  state_groupedbar_release_timing_fbi_index <- "No Data"
+}
+
+###################
+# Time Served by Offense Type
+###################
+
+
+###################
+# Maxout
+###################
+
+# Pie chart showing distribution of releases by release type
+if (state_for_report %in% names(all_pie_maxout)) {
+  state_pie_maxout <-
+    all_pie_maxout[[state_for_report]] %>%
+    hc_size(height = 275) %>%
+    hc_colors(c(darkblue, yellow)) %>%
+    hc_title(text = paste0("Distribution of People Who Maxed Out", " in ", select_year))
+} else {
+  state_pie_maxout <- "No Data"
+}
 
 ################################################################################
 
@@ -744,8 +800,12 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Trends"), br(),
-    div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), br(),
-    div(id = "visualization", state_bar_parole_eligibility_release), br()
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), 
+    div(id = "note-text", "Source: NCRP (2020)"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_bar_parole_eligibility_release), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
     )
 ```
 
@@ -757,6 +817,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Demographics"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
     div(id = "regular-text", "Gender, race, age"), br()
     )
 ```
@@ -769,7 +830,9 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Type of Release"), br(),
-    div(id = "regular-text", "(1) Unconditional vs. Conditional release, 2020, (2) Conditional vs. unconditional release, 2020"), br()
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_pie_release_type), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
     )
 ```
 
@@ -780,7 +843,10 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Release Timing by Offense Type"), br()
+    div(id = "big-section-title", "Release Timing by Offense Type"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_groupedbar_release_timing_fbi_index), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
     )
 ```
 
@@ -792,6 +858,20 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Time Served by Offense Type"), br()
+    )
+```
+
+```{r}
+########################################
+
+# Maxout
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Max Out"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "visualization", state_pie_maxout), br(),
+    div(id = "note-text", "Source: NCRP (2020)")
     )
 ```
 </center>

@@ -76,12 +76,17 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibil
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_release.rds"))
 
-# # Maxout
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
-#
-# # Unconditional vs conditional release
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
-#
+# Unconditional vs conditional release
+load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
+
+# Release Timing by Offense Type
+load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_release_timing_fbi_index.rds"))
+
+
+# Maxout
+load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
+
+
 # # Releases from Prison
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped_publicorder.rds"))
