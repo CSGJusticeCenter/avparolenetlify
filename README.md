@@ -65,25 +65,24 @@ An extremely brief (and mostly accurate) overview of the types of files needed t
     |-- state_report_STATE.qmd     # State reports for all 50 states  
     |--      
     |-- prep 
-      |-- library.R                    # Packages
+      |-- library.R                    # Action required/packages
       |-- function.R                   # Custom functions
       |-- import.R                     # Imports data
       |-- page_missing_data.R          # Prepares tables exploring missing data for missing data page
       |-- page_national_trends.R       # Prepares visualizations and data for national trends page
       |-- tab_eligibility.R            # Prepares visualizations and data for eligibility tab
-      |-- tab_releases_from_prison.R   # Prepares visualizations and data for releases tab
-      |-- tab_offenses.R               # Prepares visualizations and data for offenses tab
+      |-- tab_releases.R               # Prepares visualizations and data for releases tab
       |-- tab_prison_population.R      # Prepares visualizations and data for population tab
       |-- tab_disparities.R            # Prepares visualizations and data for disparities tab
       |-- dataframes.R                 # Loads dataframes needed to run each page's QMD.
       |-- 
-      |-- generate_netlfy_site.R       # Generates each state page based on the _state_report_template.qmd
+      |-- generate_netlfy_site.R       # The only file needed to generate the app (action required in library.R)
   
 ```
 
 ## Processes
 
-To clean NCRP data, prepare visualizations, and generate website pages, run the following generate_netlify_site.R
+To clean NCRP data, prepare visualizations, and generate website pages, run the following generate_netlify_site.R. First, open the library.R file and make sure you have all packages downloaded.
 
 ## Data Information
 

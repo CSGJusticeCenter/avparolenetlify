@@ -31,8 +31,8 @@ source("prep/tab_disparities.R")
 wd <- getwd()
 
 # Get list of 50 states
-states <- c("Georgia")
-#states <- state.name
+# states <- c("Georgia")
+# states <- state.name
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
@@ -51,5 +51,5 @@ replace_write_qmd <- function(state) {
 # Iterate over replacement values and write new qmds
 walk(states_qmd, replace_write_qmd)
 
-# Render all qmds
+# # Render all qmds - takes ~5 minutes
 # quarto::quarto_render()

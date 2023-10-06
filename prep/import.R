@@ -177,9 +177,8 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
     sentlgth == "1-1.9 years"   ~ 1.5,
     sentlgth == "2-4.9 years"   ~ 3.5,
     sentlgth == "5-9.9 years"   ~ 7.5,
-    sentlgth == "10-24.9 years" ~ 17.5,
+    sentlgth == "10-24.9 years" ~ 17.5
     # >=25 years
-    TRUE ~ NA_real_
   )) %>%
 
   # include unknown race in analysis
@@ -509,23 +508,23 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
 #
 # }
 #
-# Save files to app folder
-theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
-
-for (folder in theseFOLDERS){
-
-  save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
-  save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
-  save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
-  save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
-  save(aps_parole_2000_2018,               file = file.path(folder, "aps_parole_2000_2018.rds"))
-  save(bjs_prison_pop_by_race_state_2020,  file = file.path(folder, "bjs_prison_pop_by_race_state_2020.rds"))
-  save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
-
-  save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
-  save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
-  save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
-  save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
-  save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
-
-}
+# # Save files to app folder
+# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
+#
+# for (folder in theseFOLDERS){
+#
+#   save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
+#   save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
+#   save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
+#   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
+#   save(aps_parole_2000_2018,               file = file.path(folder, "aps_parole_2000_2018.rds"))
+#   save(bjs_prison_pop_by_race_state_2020,  file = file.path(folder, "bjs_prison_pop_by_race_state_2020.rds"))
+#   save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
+#
+#   save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
+#   save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
+#   save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
+#   save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
+#   save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
+#
+# }

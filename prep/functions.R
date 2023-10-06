@@ -150,6 +150,21 @@ fnc_values_tooltip <- function(df, count_column) {
     )
 }
 
+# Calculate n, prop, and create labels and tooltips
+fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
+  df %>%
+    count({{count_column1}}) %>%
+    mutate(
+      prop = (n / sum(n)),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column2 }}, "</b><br><br>",
+                       "<b>", {{ count_column1 }}, "</b><br><br>",
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
+    )
+}
+
 # Prepare APS data depending on the year
 fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
   data <- data %>%
@@ -326,7 +341,7 @@ hc_theme_jc <- hc_theme(
     align = "center",
     style = list(
       fontFamily = "Graphik",
-      fontWeight = "regular",
+      fontWeight = "bold",
       color = neutralBlackText,
       fontSize = "14px"
     )
@@ -476,7 +491,8 @@ fnc_basic_barchart <- function(df, filter_column, accessibility_text) {
     hc_xAxis(categories = xaxis_order) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 1) %>%
+             min = 0, max = 1
+             ) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
@@ -513,7 +529,8 @@ fnc_basic_columnchart <- function(df, filter_column, accessibility_text) {
     hc_xAxis(categories = xaxis_order) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 1) %>%
+             min = 0, max = 1
+             ) %>%
     hc_add_theme(hc_theme_jc) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
@@ -547,7 +564,8 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
                                         fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 1) %>%
+             min = 0, max = 1
+             ) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -589,7 +607,49 @@ fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text)
                                           fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 1) %>%
+             min = 0, max = 1
+             ) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme_jc) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+}
+
+# Create grouped, not stacked bar chart
+fnc_grouped_columnchart <- function(df, x_column, group_by_col, accessibility_text) {
+
+  highcharts <-
+    hchart(df, "column",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1
+             ) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
@@ -617,8 +677,6 @@ fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text)
 
 
 
-
-
 # Create basic horizontal bar chart that is grouped by adm type
 ############################ NEEDS ACCESSIBILITY TEXT CHANGE IN POP FILE
 fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
@@ -634,7 +692,8 @@ fnc_stackedbar_admtype_chart <- function(df, group_by_col) {
                                         fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
              title = list(text = ""),
-             min = 0, max = 1) %>%
+             min = 0, max = 1
+             ) %>%
     hc_xAxis(categories = c("New court commitment",
                             "Parole return/revocation",
                             "Other or Unknown"),

@@ -544,21 +544,43 @@ if (state_for_report %in% names(all_pie_maxout)) {
 
 ################################################################################
 
-# Stacked bar chart showing percentage of population in community and in prison but parole eligible
-if (state_for_report %in% names(all_grouped_disparities_race)) {
-  state_grouped_disparities_race <-
-    all_grouped_disparities_race[[state_for_report]] %>%
-    hc_colors(c(teal, neutralBkgndDisabled)) %>% 
-    hc_title(text = paste0("Racial and Ethnic Disparities: Community vs. Parole-Eligible Prison Population", " in ", select_year))
+###################
+# Gender
+###################
+
+###################
+# Race and Ethnicity
+###################
+
+# Grouped bar chart showing percentage of population in community, in prison but parole eligible,
+# and people released at parole eligibility 
+if (state_for_report %in% names(all_groupedbar_disparities_race)) {
+  state_groupedbar_disparities_race <-
+    all_groupedbar_disparities_race[[state_for_report]] %>%
+    hc_colors(c(neutralBkgndDisabled, teal, orange)) %>% 
+    hc_title(text = paste0("People in the Community, Parole-Eligible Prison Population, and Parole-Eligible People Released at First Opportunity by Race and Ethnicity", " in ", select_year))
 } else {
-  state_grouped_disparities_race <- "No Data"
+  state_groupedbar_disparities_race <- "No Data"
 }
 
 
+# Grouped column chart showing percentage of population in community and in prison but parole eligible
+if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
+  state_groupedcolumn_disparities_release_race <-
+    all_groupedcolumn_disparities_release_race[[state_for_report]] %>%
+    hc_colors(c("#FFAF00","#CC9617", "#997E2E","#666546","#334D5D", "#003474")) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) 
+} else {
+  state_groupedcolumn_disparities_release_race <- "No Data"
+}
 
+###################
+# Predicted Probabilities
+###################
 
 
 ```
+
 
 ::: narrow-section
 ```{r}
@@ -568,7 +590,11 @@ if (state_for_report %in% names(all_grouped_disparities_race)) {
 
 ########################################
 
-htmltools::div(
+intro_text <- paste0("Parole eligibility offers a potential pathway to reentry. Explore how ", state_for_report, "'s prison  system functions, and understand the disparities in release decisions.")
+
+div(id = "regular-text", intro_text)
+
+div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center;",
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
@@ -617,7 +643,7 @@ htmltools::div(
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Admission Types"), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole. Understanding the relative proportion of these two groups is pivotal for evaluating the effectiveness of a state's criminal justice policies."), br(),
+    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
     div(id = "visualization", state_stackedbar_admtype), br(),
     div(id = "visualization", state_pie_admtype), br()
     )
@@ -838,7 +864,8 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Demographics"), br()
+    div(id = "big-section-title", "Demographics"), br(),
+    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br()
     )
 ```
 ::: {.panel-tabset}
@@ -966,8 +993,10 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Race and Ethnicity"), br(),
     div(id = "regular-text", "(1) bar charts including community, prison pop, parole-eligible pop, paroled at first opportunity pop (2) RRIs for each of those populations, (3) release date compared to first eligibility date (e.g., 50% released first year, 22% year after first eligibility, 15% 2 years after eligible, etc.)"), br(),
-    div(id = "visualization", state_grouped_disparities_race), br(),
-    div(id = "note-text", "Source: NCRP (2020), Census (2020)")
+    div(id = "visualization", state_groupedbar_disparities_race), br(),
+    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br(),
+    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
+    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br()
     )
 ```
 
@@ -1001,7 +1030,7 @@ United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-u
 United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
 :::
 
-<br><br>
+<br>
 
 ---
 title: "`r state_for_report`"
