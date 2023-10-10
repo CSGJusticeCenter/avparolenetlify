@@ -164,6 +164,14 @@ if (state_for_report %in% names(all_stackedbar_prison_race)) {
   state_stackedbar_prison_race <- "No Data"
 }
 
+# Sentence
+if (state_for_report %in% names(all_sentence_prison_race)) {
+  state_sentence_prison_race <- 
+    all_sentence_prison_race[[state_for_report]]
+} else {
+  state_sentence_prison_race <- ""
+}
+
 # Stacked bar chart showing distribution of people by gender
 if (state_for_report %in% names(all_stackedbar_prison_gender)) {
   state_stackedbar_prison_gender <-
@@ -175,6 +183,14 @@ if (state_for_report %in% names(all_stackedbar_prison_gender)) {
   state_stackedbar_prison_gender <- "No Data"
 }
 
+# Sentence
+if (state_for_report %in% names(all_sentence_prison_gender)) {
+  state_sentence_prison_gender <- 
+    all_sentence_prison_gender[[state_for_report]]
+} else {
+  state_sentence_prison_gender <- ""
+}
+
 # Stacked bar chart showing distribution of people by ageyrend
 if (state_for_report %in% names(all_stackedbar_prison_ageyrend)) {
   state_stackedbar_prison_ageyrend <-
@@ -184,6 +200,14 @@ if (state_for_report %in% names(all_stackedbar_prison_ageyrend)) {
     hc_title(text = paste0("Prison Population by Age", " in ", select_year))
 } else {
   state_stackedbar_prison_ageyrend <- "No Data"
+}
+
+# Sentence
+if (state_for_report %in% names(all_sentence_prison_ageyrend)) {
+  state_sentence_prison_ageyrend <- 
+    all_sentence_prison_ageyrend[[state_for_report]]
+} else {
+  state_sentence_prison_ageyrend <- ""
 }
 
 ###################
@@ -683,13 +707,13 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Who's in Prison?"), br(),
-    div(id = "regular-text", "The following visualizations offer an overview of the demographic composition of the prison population by race and ethnicity, gender, and age."), br(),
     )
 ```
 ::: {.panel-tabset}
 ### Race and Ethinicity
 ```{r}
 div(id = "body-section", br(),
+    div(id = "regular-text", state_sentence_prison_race), br(),
     div(id = "visualization", state_stackedbar_prison_race)
     )
 ```
@@ -697,6 +721,7 @@ div(id = "body-section", br(),
 ### Gender
 ```{r}
 div(id = "body-section", br(),
+    div(id = "regular-text", state_sentence_prison_gender), br(),
     div(id = "visualization", state_stackedbar_prison_gender)
     )
 ```
@@ -704,6 +729,7 @@ div(id = "body-section", br(),
 ### Age
 ```{r}
 div(id = "body-section", br(),
+    div(id = "regular-text", state_sentence_prison_ageyrend), br(),
     div(id = "visualization", state_stackedbar_prison_ageyrend)
     )
 ```

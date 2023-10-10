@@ -106,7 +106,7 @@ all_sentence_admtype <- map(.x = states,  .f = function(x) {
   prop_new_court_commitment <- df1$prop_label[df1$admtype == "New court commitment"]
   prop_parole_return <- df1$prop_label[df1$admtype == "Parole return/revocation"]
 
-  sentences <- paste0("In ", select_year,
+  sentences <- paste0("In ", x, " in ", select_year,
                       ", people in prison for new court commitments accounted for ",
                       prop_new_court_commitment, " of the prison population, while parole returns and revocations accounted for ",
                       prop_parole_return, ".")
@@ -209,14 +209,56 @@ states <- unique(ncrp_yearendpop_race$state)
 all_stackedbar_prison_race <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_yearendpop_race %>%
     ungroup() %>%
-    filter(state == x) %>%
-    distinct()
+    filter(state == x)
   highcharts <- fnc_stackedbar_admtype_chart(df1, "race")
   highcharts <- highcharts %>% hc_chart(marginBottom = 45) %>%
   return(highcharts)
 })
 all_stackedbar_prison_race <- setNames(all_stackedbar_prison_race, states)
 all_stackedbar_prison_race$Georgia
+
+# Create sentences describing who is in prison by race and ethnicity
+states <- ncrp_yearendpop_race %>%
+  group_by(state) %>%
+  filter(any(admtype == "New court commitment") &
+         any(admtype == "Parole return/revocation")) %>%
+  pull(state) %>%
+  unique()
+
+all_sentence_prison_race <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_race %>%
+    filter(state == x)
+
+  max_new_court <- df1 %>%
+    filter(admtype == "New court commitment") %>%
+    arrange(desc(prop)) %>%
+    slice(1) %>%
+    pull(race)
+
+  max_parole_return <- df1 %>%
+    filter(admtype == "Parole return/revocation") %>%
+    arrange(desc(prop)) %>%
+    slice(1) %>%
+    pull(race)
+
+  if(max_new_court == max_parole_return) {
+    sentences <- paste0("In ", select_year, ", ", max_new_court,
+                        " individuals made up the largest portion of people in prison for both new court commitments and parole returns and revocations.")
+  } else {
+    sentences <- paste0("In ", select_year, ", ", max_new_court,
+                        " individuals made up the largest portion of people in prison for new court commitments, while ",
+                        max_parole_return,
+                        " individuals made up the largest portion of people in prison for parole returns and revocations.")
+  }
+
+  return(sentences)
+})
+
+all_sentence_prison_race <- setNames(all_sentence_prison_race, states)
+all_sentence_prison_race$Georgia
+
+
 
 
 ##########
@@ -241,6 +283,51 @@ all_stackedbar_prison_ageyrend <- map(.x = states,  .f = function(x) {
 })
 all_stackedbar_prison_ageyrend <- setNames(all_stackedbar_prison_ageyrend, states)
 all_stackedbar_prison_ageyrend$Georgia
+
+# Sentence
+states <- ncrp_yearendpop_ageyrend  %>%
+  group_by(state) %>%
+  filter(any(admtype == "New court commitment") &
+         any(admtype == "Parole return/revocation")) %>%
+  pull(state) %>%
+  unique()
+
+all_sentence_prison_ageyrend  <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_ageyrend  %>%
+    filter(state == x)
+
+  max_new_court_age <- df1 %>%
+    filter(admtype == "New court commitment") %>%
+    arrange(desc(prop)) %>%
+    slice(1) %>%
+    pull(ageyrend)
+
+  max_parole_return_age <- df1 %>%
+    filter(admtype == "Parole return/revocation") %>%
+    arrange(desc(prop)) %>%
+    slice(1) %>%
+    pull(ageyrend)
+
+  if(max_new_court_age == max_parole_return_age) {
+    sentences <- paste0("In ", select_year, ", individuals aged ", max_new_court_age,
+                        " made up the largest portion of people in prison for both new court commitments and parole returns and revocations.")
+  } else {
+    sentences <- paste0("In ", select_year, ", individuals aged ", max_new_court_age,
+                        " made up the largest portion of people in prison for new court commitments, while individuals aged ",
+                        max_parole_return_age,
+                        " made up the largest portion of people in prison for parole returns and revocations.")
+  }
+
+  return(sentences)
+})
+
+all_sentence_prison_ageyrend <- setNames(all_sentence_prison_ageyrend, states)
+all_sentence_prison_ageyrend$Georgia
+
+
+
+
 
 
 ##########
@@ -267,7 +354,46 @@ all_stackedbar_prison_gender <- map(.x = states,  .f = function(x) {
 all_stackedbar_prison_gender <- setNames(all_stackedbar_prison_gender, states)
 all_stackedbar_prison_gender$Georgia
 
+# Create sentences describing who is in prison by gender
+states <- ncrp_yearendpop_gender %>%
+  group_by(state) %>%
+  filter(any(admtype == "New court commitment") &
+           any(admtype == "Parole return/revocation")) %>%
+  pull(state) %>%
+  unique()
 
+all_sentence_prison_gender <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_yearendpop_gender %>%
+    filter(state == x)
+
+  max_new_court <- df1 %>%
+    filter(admtype == "New court commitment") %>%
+    arrange(desc(prop)) %>%
+    slice(1) %>%
+    pull(sex)
+
+  max_parole_return <- df1 %>%
+    filter(admtype == "Parole return/revocation") %>%
+    arrange(desc(prop)) %>%
+    slice(1) %>%
+    pull(sex)
+
+  if(max_new_court == max_parole_return) {
+    sentences <- paste0("In ", select_year, ", ", max_new_court,
+                        " individuals made up the largest portion of people in prison for both new court commitments and parole returns and revocations.")
+  } else {
+    sentences <- paste0("In ", select_year, ", ", max_new_court,
+                        " individuals made up the largest portion of people in prison for new court commitments, while ",
+                        max_parole_return,
+                        " individuals made up the largest portion of people in prison for parole returns and revocations.")
+  }
+
+  return(sentences)
+})
+
+all_sentence_prison_gender <- setNames(all_sentence_prison_gender, states)
+all_sentence_prison_gender$Georgia
 
 
 
@@ -545,6 +671,10 @@ for (folder in theseFOLDERS){
   save(all_stackedbar_prison_race,      file = file.path(folder, "all_stackedbar_prison_race.rds"))
   save(all_stackedbar_prison_gender,    file = file.path(folder, "all_stackedbar_prison_gender.rds"))
   save(all_stackedbar_prison_ageyrend,  file = file.path(folder, "all_stackedbar_prison_ageyrend.rds"))
+
+  save(all_sentence_prison_race,        file = file.path(folder, "all_sentence_prison_race.rds"))
+  save(all_sentence_prison_ageyrend,    file = file.path(folder, "all_sentence_prison_ageyrend.rds"))
+  save(all_sentence_prison_gender,      file = file.path(folder, "all_sentence_prison_gender.rds"))
 
   save(all_groupedbar_prison_sentlgth,  file = file.path(folder, "all_groupedbar_prison_sentlgth.rds"))
   save(all_groupedbar_prison_fbi_index, file = file.path(folder, "all_groupedbar_prison_fbi_index.rds"))

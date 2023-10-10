@@ -226,8 +226,9 @@ rri_in_prison_data <- nonwhite_rate %>%
 # all_rri_infographic_race$Georgia
 
 states <- unique(rri_in_prison_data$state)
-states <- "Georgia" ############################################################
+# states <- "Georgia" ############################################################
 
+# create infographics - takes ~10 minutes to run
 map(states, fnc_create_and_save_infograph)
 
 

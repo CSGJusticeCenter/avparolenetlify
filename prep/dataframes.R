@@ -23,13 +23,16 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_admtype.rds"))
 # Prison Population
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_pop_released_to_parole.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibility_population.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
 
 # Who is in Prison?
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_prison_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_prison_gender.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_prison_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_prison_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_prison_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_prison_gender.rds"))
+
 
 # Sentence Length
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_prison_sentlgth.rds"))
