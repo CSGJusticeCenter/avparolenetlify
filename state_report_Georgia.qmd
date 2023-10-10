@@ -557,8 +557,8 @@ if (state_for_report %in% names(all_pie_maxout)) {
 if (state_for_report %in% names(all_groupedbar_disparities_race)) {
   state_groupedbar_disparities_race <-
     all_groupedbar_disparities_race[[state_for_report]] %>%
-    hc_colors(c(neutralBkgndDisabled, teal, orange)) %>% 
-    hc_title(text = paste0("People in the Community, Parole-Eligible Prison Population, and Parole-Eligible People Released at First Opportunity by Race and Ethnicity", " in ", select_year))
+    hc_colors(c(neutralBkgndDisabled, teal, orange, yellow)) %>% 
+    hc_title(text = paste0("People in the Community and in Prison, Parole-Eligible Prison Population, and Parole-Eligible People Released at First Opportunity by Race and Ethnicity", " in ", select_year))
 } else {
   state_groupedbar_disparities_race <- "No Data"
 }
@@ -574,12 +574,16 @@ if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
   state_groupedcolumn_disparities_release_race <- "No Data"
 }
 
+# RRI for race and ethnicity
+# state_rri_infographic_race <- "TBD"
+
 ###################
 # Predicted Probabilities
 ###################
 
 
 ```
+
 
 
 ::: narrow-section
@@ -996,10 +1000,18 @@ div(id = "body-section", br(),
     div(id = "visualization", state_groupedbar_disparities_race), br(),
     div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br(),
     div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
-    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br()
+    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br(),
+    # div(id = "visualization", state_rri_infographic_race), br(),
+    # div(id = "note-text", "Source: BJS Prisoners (2020), Census (2020)"), br()
+    div(id = "infographic-text", "For every White person in prison, there are 3.06 Black people in prison.")
     )
 ```
 
+<div id="infographic-section">
+![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png){ width=300px }
+</div>
+
+  
 ```{r}
 ########################################
 

@@ -90,6 +90,11 @@ census_state_population <- census_state_population %>%
   select(-total_state_population) %>%
   mutate(population_type = "In the Community")
 
+# Calculate prison population by race and ethnicity
+
+
+
+
 # Calculate proportion of people parole-eligible in prison by race and ethnicity
 ncrp_parole_eligible_population <- ncrp_yearendpop %>%
 
@@ -130,6 +135,7 @@ ncrp_released_at_parole_eligibility_year <- ncrp_releases %>%
 
 # Add all data together
 merged_population_data <- rbind(census_state_population,
+                                bjs_prison_pop_by_race,
                                 ncrp_parole_eligible_population,
                                 ncrp_released_at_parole_eligibility_year)
 merged_population_data <- merged_population_data %>%
@@ -141,6 +147,7 @@ merged_population_data <- merged_population_data %>%
          population_type = factor(population_type,
                        levels = c("In the Community",
                                   "Released on Parole Eligibility Year",
+                                  "In Prison",
                                   "In Prison but Parole-Eligible"))) %>%
   arrange(state, population_type, desc(race)) %>%
   mutate(tooltip = paste0("<b>", state, "</b><br><br>",
@@ -179,7 +186,57 @@ all_groupedbar_disparities_race$Georgia
 
 
 
+# (2) RRIs for each of those populations
 
+# Select columns and add data together
+# Combine data
+# Calculate rate and RRIs
+census_race <- census_state_population %>%
+  select(state, race, n_census = n)
+bjs_race <- bjs_prison_pop_by_race %>%
+  select(state, race, n_prison = n)
+merged_race_data <- census_race %>%
+  left_join(bjs_race, by = c("state", "race"))
+
+white_rate <- merged_race_data %>%
+  filter(race == "White, non-Hispanic") %>%
+  mutate(white_rate = (n_prison / n_census) * 100000) %>%
+  select(state, white_rate)
+
+nonwhite_rate <- merged_race_data %>%
+  filter(race != "White, non-Hispanic") %>%
+  mutate(nonwhite_rate = (n_prison / n_census) * 100000) %>%
+  select(state, race, nonwhite_rate)
+
+rri_in_prison_data <- nonwhite_rate %>%
+  left_join(white_rate, by = "state") %>%
+  mutate(rri = nonwhite_rate / white_rate)
+
+
+
+# ggplot showing rri of race for people in prison
+# states <- unique(rri_in_prison_data$state)
+# states <- "Georgia"
+# all_rri_infographic_race <- map(.x = states,  .f = function(x) {
+#   df1 <- rri_in_prison_data %>%
+#     filter(state == x) %>%
+#     filter(race == "Black, non-Hispanic")
+#   infographics <- create_infograph(df1$rri, emptyhumans=FALSE)
+#   return(infographics)
+# })
+# all_rri_infographic_race <- setNames(all_rri_infographic_race, states)
+# all_rri_infographic_race$Georgia
+
+states <- unique(rri_in_prison_data$state)
+states <- "Georgia"
+# race_names <- unique(rri_in_prison_data$race)
+
+map(states, create_and_save_infograph)
+
+
+# (3) release date compared to first eligibility date (e.g., 50% released first year,
+#                                                            22% year after first eligibility,
+#                                                            15% 2 years after eligible, etc.)
 ncrp_time_between_ped_release <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   filter(time_between_ped_release_category != "Missing" &
@@ -259,8 +316,9 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
-  save(all_groupedbar_disparities_race,         file = file.path(folder, "all_groupedbar_disparities_race.rds"))
+  save(all_groupedbar_disparities_race,            file = file.path(folder, "all_groupedbar_disparities_race.rds"))
   save(all_groupedcolumn_disparities_release_race, file = file.path(folder, "all_groupedcolumn_disparities_release_race.rds"))
+  save(all_rri_infographic_race,                   file = file.path(folder, "all_rri_infographic_race.rds"))
 
 
 }

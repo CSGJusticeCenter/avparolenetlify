@@ -119,6 +119,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
 # Disparities
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedcolumn_disparities_release_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_rri_infographic_race.rds"))
 
 
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_time_between_release_ped_by_race.rds"))

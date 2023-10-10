@@ -290,16 +290,54 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
 ##########
 
 # clean up file to create dataframe of state prison pop by race
-bjs_prison_pop_by_race_state_2020 <- bjs_prison_pop_by_race_state_2020 %>%
+# NAs generated are for cells that had / or ~ and are now NA
+total_pop <- bjs_prison_pop_by_race_state_2020 %>%
+  clean_names() %>%
+  filter(jurisdiction == "") %>%
+  select(x, total) %>%
+  rename(state = x) %>%
+  mutate(total = str_replace_all(total, ",", ""),
+         total = as.numeric(total))
+
+bjs_prison_pop_by_race <- bjs_prison_pop_by_race_state_2020 %>%
   clean_names() %>%
   filter(jurisdiction == "") %>%
   select(-c(jurisdiction)) %>%
   rename(state = x) %>%
-  mutate_all(~str_replace_all(.,",",""))
+  mutate_all(~str_replace_all(., ",", "")) %>%
+  mutate(across(-state, as.numeric)) %>%
+  pivot_longer(cols = total:did_not_report,
+               names_to = "race",
+               values_to = "n") %>%
+  mutate(race = case_when(
+    race == "total" ~ "Total Population",
+    race == "white_a" ~ "White, non-Hispanic",
+    race == "black_a" ~ "Black, non-Hispanic",
+    race == "hispanic" ~ "Hispanic, any race",
+    race %in% c("american_indian_alaska_native_a",
+                "asian_a",
+                "native_hawaiian_other_pacific_islander_a",
+                "two_or_more_races_a",
+                "other_a") ~ "Other race(s), non-Hispanic",
+    race == "unknown" ~ "Unknown",
+    race == "did_not_report" ~ "Unknown",
+    TRUE ~ race
+  )) %>%
+  filter(race != "Unknown" & race != "Total Population") %>%
+  group_by(state, race) %>%
+  summarise(n = sum(n, na.rm = TRUE)) %>%
+  left_join(total_pop, by = "state") %>%
+  ungroup() %>%
+  mutate(prop = n / total,
+         prop_label = paste0(round(prop*100, 0), "%"),
+         n_label = formattable::comma(n, 0),
+         population_type = "In Prison") %>%
+  select(-total)
 
-# select variable for prison population only
-bjs_prison_pop_by_state_2020 <- bjs_prison_pop_by_race_state_2020 %>%
-  select(state, bjs_total_prison_population = total)
+# # select variable for prison population only
+# bjs_prison_pop_by_state <- bjs_prison_pop_by_race_state %>%
+#   select(state, bjs_total_prison_population = total) %>%
+
 
 
 
@@ -518,7 +556,7 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
 #   save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
 #   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
 #   save(aps_parole_2000_2018,               file = file.path(folder, "aps_parole_2000_2018.rds"))
-#   save(bjs_prison_pop_by_race_state_2020,  file = file.path(folder, "bjs_prison_pop_by_race_state_2020.rds"))
+#   save(bjs_prison_pop_by_race,             file = file.path(folder, "bjs_prison_pop_by_race.rds"))
 #   save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
 #
 #   save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))

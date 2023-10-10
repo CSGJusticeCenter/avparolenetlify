@@ -106,7 +106,6 @@ all_pie_admtype$Georgia
 # Change in prison population, parole-eligible prison population, and people released to parole
 
 # Obtained from NCRP year end population and APS Surveys from 2000-2018
-# NEED TO CHANGE NCRP YEAR END POPULATION TO BJS CORRECTIONAL STATISTICS????????????
 
 ################################################################################
 
