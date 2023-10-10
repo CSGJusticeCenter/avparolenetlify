@@ -92,8 +92,29 @@ all_pie_admtype <- map(.x = states, .f = function(x) {
 all_pie_admtype <- setNames(all_pie_admtype, states)
 all_pie_admtype$Georgia
 
+##########
+# Sentence
+##########
 
+# Create sentences describing breakdown of prison population by admission type
+states <- unique(ncrp_yearendpop_admtype$state)
+all_sentence_admtype <- map(.x = states,  .f = function(x) {
 
+  df1 <- ncrp_yearendpop_admtype %>%
+    filter(state == x)
+
+  prop_new_court_commitment <- df1$prop_label[df1$admtype == "New court commitment"]
+  prop_parole_return <- df1$prop_label[df1$admtype == "Parole return/revocation"]
+
+  sentences <- paste0("In ", select_year,
+                      ", people in prison for new court commitments accounted for ",
+                      prop_new_court_commitment, " of the prison population, while parole returns and revocations accounted for ",
+                      prop_parole_return, ".")
+  return(sentences)
+})
+
+all_sentence_admtype <- setNames(all_sentence_admtype, states)
+all_sentence_admtype$Georgia
 
 
 
@@ -517,6 +538,7 @@ for (folder in theseFOLDERS){
 
   save(all_stackedbar_admtype,          file = file.path(folder, "all_stackedbar_admtype.rds"))
   save(all_pie_admtype,                 file = file.path(folder, "all_pie_admtype.rds"))
+  save(all_sentence_admtype,            file = file.path(folder, "all_sentence_admtype.rds"))
 
   save(all_line_pop_released_to_parole, file = file.path(folder, "all_line_pop_released_to_parole.rds"))
 

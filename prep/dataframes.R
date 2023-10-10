@@ -18,6 +18,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_se
 # New crime vs Parole return
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_admtype.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_admtype.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_admtype.rds"))
 
 # Prison Population
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_pop_released_to_parole.rds"))

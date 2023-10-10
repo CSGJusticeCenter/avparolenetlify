@@ -121,6 +121,14 @@ if (state_for_report %in% names(all_pie_admtype)) {
   state_pie_admtype <- "No Data"
 }
 
+# Sentence about distribution of prison population by admission type
+if (state_for_report %in% names(all_sentence_parole_elgibility_fbi_index)) {
+  state_sentence_admtype <- 
+    all_sentence_admtype[[state_for_report]]
+} else {
+  state_sentence_admtype <- ""
+}
+
 ###################
 # Prison Population Trends
 ###################
@@ -647,7 +655,7 @@ div(
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Admission Types"), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
+    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole.", state_sentence_admtype), br(),
     div(id = "visualization", state_stackedbar_admtype), br(),
     div(id = "visualization", state_pie_admtype), br()
     )
