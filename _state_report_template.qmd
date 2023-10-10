@@ -661,7 +661,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Population Trends"), br(),
-    div(id = "regular-text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."), br(),
+    div(id = "regular-text", paste0("The graph below provides a decade-long perspective on the prison system in ", state_for_report, ", highlighting three key metrics from 2010 to 2020. It showcases the overall prison population trend, comparing it with the number of individuals who were released from prison to parole, as well as those who met the eligibility criteria for parole but remained incarcerated.")), br(),
     div(id = "visualization", state_line_pop_released_to_parole), br(),
     div(id = "note-text", "Note: Parole-eligible prison population only includes people incarcerated for a new crime and with original sentence lengths between 1-25 years. Total prison population pulled from BJS Prisoners data (2010-2020), released from prison to parole pulled from Annual Parole Survey (2010-2018), eligible for parole pulled from NCRP data (2010-2020).")
     )

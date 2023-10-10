@@ -140,7 +140,7 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
                    data = df1$bjs_prison_population),
               list(name = "Released from Prison to Parole",
                    data = df1$released_to_parole),
-              list(name = "Eligible for Parole",
+              list(name = "Eligible for Parole but in Prison",
                    data = df1$current_count)) %>%
     hc_add_theme(hc_theme_jc_line) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
