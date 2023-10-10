@@ -594,9 +594,9 @@ if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
 
 ########################################
 
-intro_text <- paste0("Parole eligibility offers a potential pathway to reentry. Explore how ", state_for_report, "'s prison  system functions, and understand the disparities in release decisions.")
-
-div(id = "regular-text", intro_text)
+# intro_text <- paste0("Parole eligibility offers a potential pathway to reentry. Explore how ", state_for_report, "'s prison  system functions, and understand the disparities in release decisions.")
+# 
+# div(id = "regular-text", intro_text)
 
 div(
   id = "grid-container",
