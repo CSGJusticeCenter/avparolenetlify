@@ -988,6 +988,8 @@ div(id = "body-section", br(),
     )
 ```
 
+
+
 ```{r}
 ########################################
 
@@ -996,17 +998,27 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Race and Ethnicity"), br(),
-    div(id = "regular-text", "(1) bar charts including community, prison pop, parole-eligible pop, paroled at first opportunity pop (2) RRIs for each of those populations, (3) release date compared to first eligibility date (e.g., 50% released first year, 22% year after first eligibility, 15% 2 years after eligible, etc.)"), br(),
-    div(id = "visualization", state_groupedbar_disparities_race), br(),
-    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br(),
-    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
-    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br()
-    # div(id = "visualization", state_rri_infographic_race), br(),
-    # div(id = "note-text", "Source: BJS Prisoners (2020), Census (2020)"), br()
-    )
+    div(id = "bold-text", "For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.")
+)
 ```
 
-![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png)
+<div id="body-section">
+![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png){ width=200px }
+</div>
+
+```{r}
+div(id = "body-section", 
+    div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented. Source: BJS Prisoners (2020), Census (2020)"), br(), br(), br(),
+    div(id = "visualization", state_groupedbar_disparities_race), br(),
+    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br(), br(), br(),
+    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
+    div(id = "note-text", "Source: NCRP (2020), Census (2020)"), br(), br()
+)
+```
+
+
+
+
 
 ```{r}
 ########################################

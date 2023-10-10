@@ -212,8 +212,6 @@ rri_in_prison_data <- nonwhite_rate %>%
   left_join(white_rate, by = "state") %>%
   mutate(rri = nonwhite_rate / white_rate)
 
-
-
 # ggplot showing rri of race for people in prison
 # states <- unique(rri_in_prison_data$state)
 # states <- "Georgia"
@@ -228,10 +226,18 @@ rri_in_prison_data <- nonwhite_rate %>%
 # all_rri_infographic_race$Georgia
 
 states <- unique(rri_in_prison_data$state)
-states <- "Georgia"
-# race_names <- unique(rri_in_prison_data$race)
+states <- "Georgia" ############################################################
 
-map(states, create_and_save_infograph)
+map(states, fnc_create_and_save_infograph)
+
+
+
+
+
+
+
+
+
 
 
 # (3) release date compared to first eligibility date (e.g., 50% released first year,
