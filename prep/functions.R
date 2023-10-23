@@ -2,21 +2,10 @@
 # Project: AV Parole
 # File: functions.R
 # Authors: Mari Roberts
-# Date last updated: October 5, 2023 (MAR)
+# Date last updated: October 23, 2023 (MAR)
 # Description:
 #    Custom functions
 #######################################
-
-# Filter by
-fnc_parameters <- function(df){
-  df <- df %>%
-    filter(admtype == "New court commitment") %>%
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years")
-
-}
 
 # Create parole eligibility status
 # if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
@@ -39,7 +28,6 @@ fnc_create_parelig_status <- function(df){
                                          "Missing")))
 
 }
-
 
 # Re-categorize offense type
 fnc_create_fbi_index <- function(df){
@@ -80,34 +68,31 @@ fnc_create_admtype <- function(df){
                                        "Other or Unknown")))
 }
 
-# Calculate n, prop, and create labels and tooltips
-fnc_values_tooltip <- function(df, count_column) {
-  df %>%
-    count({{ count_column }}) %>%
-    mutate(
-      prop = (n / sum(n)),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0),
-      tooltip = paste0("<b>", state, "</b><br><br>",
-                       "<b>", {{ count_column }}, "</b><br><br>",
-                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
-    )
+# Filter by
+fnc_parameters <- function(df){
+  df <- df %>%
+    filter(admtype == "New court commitment") %>%
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years")
+
 }
 
-# Calculate n, prop, and create labels and tooltips when there are two columns of interest
-fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
-  df %>%
-    count({{count_column1}}) %>%
-    mutate(
-      prop = (n / sum(n)),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0),
-      tooltip = paste0("<b>", state, "</b><br><br>",
-                       "<b>", {{ count_column2 }}, "</b><br><br>",
-                       "<b>", {{ count_column1 }}, "</b><br><br>",
-                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
-    )
-}
+# # Calculate n, prop, and create labels and tooltips when there are two columns of interest
+# fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
+#   df %>%
+#     count({{count_column1}}) %>%
+#     mutate(
+#       prop = (n / sum(n)),
+#       prop_label = paste0(round(prop*100, 0), "%"),
+#       n_label = formattable::comma(n, 0),
+#       tooltip = paste0("<b>", state, "</b><br><br>",
+#                        "<b>", {{ count_column2 }}, "</b><br><br>",
+#                        "<b>", {{ count_column1 }}, "</b><br><br>",
+#                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
+#     )
+# }
 
 # Prepare Annual Parole Survey data for analysis (after 2008)
 fnc_aps_prepare <- function(df){
@@ -210,6 +195,19 @@ fnc_prepare_pe_data <- function(df, count_column){
                             prop_label, "<br>"))
 }
 
+# Calculate n, prop, and create labels and tooltips
+fnc_values_tooltip <- function(df, count_column) {
+  df %>%
+    count({{ count_column }}) %>%
+    mutate(
+      prop = (n / sum(n)),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column }}, "</b><br><br>",
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
+    )
+}
 
 # Retrieve and process census data for a given state
 fnc_get_census_data <- function(state) {
@@ -238,37 +236,6 @@ fnc_get_census_data <- function(state) {
 }
 
 
-
-
-
-
-
-
-###################
-# Reactable
-###################
-
-# Reactable table themes
-reactable_theme <-
-  reactableTheme(borderColor = neutralBkgndLight,
-                 stripedColor = neutralBkgndLight,
-                 cellStyle = list(display = "flex",
-                                  flexDirection = "column",
-                                  justifyContent = "center"))
-
-reactable_style <- list(
-  fontFamily = "Graphik, sans-serif",
-  fontSize = "0.9rem",
-  color = neutralBlackText
-)
-
-
-
-
-
-
-
-
 ###################
 # Highcharter
 ###################
@@ -277,15 +244,15 @@ reactable_style <- list(
 hc_theme <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
-                            fontSize = "18px",
-                            color = "black")),
+                            fontSize = "12px",
+                            color = neutralBlackText)),
   title = list(
     align = "center",
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = "black",
-      fontSize = "22px"
+      color = neutralBlackText,
+      fontSize = "16px"
     )
   ),
   subtitle = list(
@@ -293,20 +260,20 @@ hc_theme <- hc_theme(
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = "black",
-      fontSize = "20px"
+      color = neutralBlackText,
+      fontSize = "14px"
     )
   ),
   legend = list(
     align = "center",
     verticalAlign = "top",
-    itemStyle = list(color = "black",
-                     fontSize = "18px",
+    itemStyle = list(color = neutralBlackText,
+                     fontSize = "12px",
                      fontWeight = "regular")
   ),
   xAxis = list(
-    labels = list(enabled = TRUE, style = list(color = "black",
-                                               fontSize = "18px",
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -314,8 +281,8 @@ hc_theme <- hc_theme(
     tickColor = "transparent"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = "black",
-                                               fontSize = "18px",
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -332,7 +299,7 @@ hc_theme <- hc_theme(
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
-        style = list(color = "black")
+        style = list(color = neutralBlackText)
       )
     )
   )
@@ -341,15 +308,15 @@ hc_theme <- hc_theme(
 hc_theme_with_line <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
-                            fontSize = "18px",
-                            color = "black")),
+                            fontSize = "12px",
+                            color = neutralBlackText)),
   title = list(
     align = "center",
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = "black",
-      fontSize = "22px"
+      color = neutralBlackText,
+      fontSize = "16px"
     )
   ),
   subtitle = list(
@@ -357,20 +324,20 @@ hc_theme_with_line <- hc_theme(
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = "black",
-      fontSize = "20px"
+      color = neutralBlackText,
+      fontSize = "14px"
     )
   ),
   legend = list(
     align = "center",
     verticalAlign = "top",
-    itemStyle = list(color = "black",
-                     fontSize = "18px",
+    itemStyle = list(color = neutralBlackText,
+                     fontSize = "12px",
                      fontWeight = "regular")
   ),
   xAxis = list(
-    labels = list(enabled = TRUE, style = list(color = "black",
-                                               fontSize = "18px",
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -378,8 +345,8 @@ hc_theme_with_line <- hc_theme(
     tickColor = "transparent"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = "black",
-                                               fontSize = "18px",
+    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+                                               fontSize = "12px",
                                                fontWeight = "regular"))
   ),
   plotOptions = list(
@@ -391,14 +358,14 @@ hc_theme_with_line <- hc_theme(
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
-        style = list(color = "black")
+        style = list(color = neutralBlackText)
       )
     )
   )
 )
 
 # Create single horizontal bar chart that is grouped
-fnc_hc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
+fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
 
   highchart <- hchart(df, "bar",
                        hcaes(x = !!sym(x_axis),
@@ -415,7 +382,7 @@ fnc_hc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis
              min = 0, max = 1) %>%
     hc_xAxis(title = list(text = ""),
              labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
+    hc_add_theme(hc_theme) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_legend(enabled = TRUE,
@@ -434,6 +401,42 @@ fnc_hc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis
   return(highchart)
 }
 
+# Create pie chart
+fnc_piechart <- function(df, x_column, accessibility_text){
+
+  highcharts <- hchart(df,
+                       "pie",
+                       hcaes(x = !!sym(x_column), y = prop),
+                       dataLabels = list(
+                         style = list(fontSize = "1em",
+                                      fontWeight = "regular",
+                                      alignTo = "connectors",
+                                      color = neutralBlackText),
+                         enabled = TRUE,
+                         formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
+                       )
+  ) %>%
+    hc_chart(plotBackgroundColor = "none",
+             plotBorderWidth = 0,
+             plotShadow = FALSE,
+             margin = c(30, 0, 10, 0)) %>%
+    hc_yAxis(maxPadding = 0) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+}
+
+# Number of people by category by admission type
 fnc_stackedbar_admtype_chart <- function(df, group_by_col, accessibility_text) {
   highchart <- hchart(df, "bar",
                        hcaes(x = admtype,
@@ -456,7 +459,7 @@ fnc_stackedbar_admtype_chart <- function(df, group_by_col, accessibility_text) {
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
               reversed = TRUE) %>%
-    hc_add_theme(hc_theme_jc) %>%
+    hc_add_theme(hc_theme) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(
@@ -471,90 +474,29 @@ fnc_stackedbar_admtype_chart <- function(df, group_by_col, accessibility_text) {
   return(highchart)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Create basic horizontal bar chart that isn't grouped
-fnc_hc_basic_columnchart <- function(df, value, x_axis, x_axis_text, y_axis_text, theme, accessibility_text) {
+fnc_barchart <- function(df, filter_column, accessibility_text) {
 
-  xaxis_order <- levels(df[[x_axis]]) # must be factor to work
+  xaxis_order <- df[[filter_column]]
 
-  highchart <- highchart() %>%
+  highcharts <- highchart() %>%
     hc_add_series(df,
-                  type = "column",
-                  hcaes(x = !!sym(x_axis),
-                        y = !!sym(value)),
+                  type = "bar",
+                  hcaes(x = !!sym(filter_column),
+                        y = prop),
                   dataLabels = list(enabled = TRUE,
-                                    format = "{point.data_label}",
+                                    format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
-                                                 fontSize = "18px",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order,
-             title = list(text = x_axis_text)) %>%
+    hc_xAxis(categories = xaxis_order) %>%
     hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = y_axis_text)) %>%
-    # make bars wider
-    hc_plotOptions(column = list(
-      pointPadding = 0.05,
-      groupPadding = 0.1)) %>%
-    hc_add_theme(theme) %>%
+             title = list(text = ""),
+             min = 0, max = 1
+    ) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(animation = FALSE,
@@ -566,126 +508,49 @@ fnc_hc_basic_columnchart <- function(df, value, x_axis, x_axis_text, y_axis_text
                                         linkedDescription = accessibility_text,
                                         landmarkVerbosity = "one"),
                    area = list(accessibility = list(description = accessibility_text)))
-  return(highchart)
+
+  return(highcharts)
 }
 
+# Create grouped, stacked bar chart
+fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibility_text) {
 
-# Create basic horizontal bar chart that is grouped
-fnc_hc_grouped_columnchart <- function(df, value, group_by_column, x_axis, x_axis_text, y_axis_text, theme, accessibility_text) {
-
-  xaxis_order <- levels(df[[x_axis]]) # must be factor to work
-
-  highchart <- highchart() %>%
-    hc_add_series(df,
-                  type = "column",
-                  hcaes(x = !!sym(x_axis),
-                        y = !!sym(value),
-                        group = !!sym(group_by_column)), # fixed here
-                  dataLabels = list(enabled = TRUE,
-                                    format = "{point.data_label}",
-                                    style = list(fontWeight = "regular",
-                                                 fontSize = "18px",
-                                                 textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order,
-             title = list(text = x_axis_text)) %>%
+  highcharts <-
+    hchart(df, "bar",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
     hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = y_axis_text)) %>%
-    # make bars wider
-    hc_plotOptions(column = list(
-      pointPadding = 0.05,
-      groupPadding = 0.1)) %>%
-    hc_add_theme(theme) %>%
-    hc_legend(enabled = TRUE) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
-
-  return(highchart)
-}
-
-fnc_hc_stacked_columnchart <- function(df, value, group_by_column, x_axis, x_axis_text, y_axis_text, theme, accessibility_text) {
-
-  xaxis_order <- levels(df[[x_axis]]) # must be factor to work
-
-  highchart <- highchart() %>%
-    hc_add_series(df,
-                  type = "column",
-                  hcaes(x = !!sym(x_axis),
-                        y = !!sym(value),
-                        group = !!sym(group_by_column)), # fixed here
-                  dataLabels = list(enabled = TRUE,
-                                    format = "{point.data_label}",
-                                    style = list(fontWeight = "regular",
-                                                 fontSize = "18px",
-                                                 color = "white",
-                                                 textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order,
-             title = list(text = x_axis_text)) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = y_axis_text)) %>%
-    # make bars wider
-    hc_plotOptions(column = list(
-      pointPadding = 0.05,
-      groupPadding = 0.1)) %>%
-    hc_add_theme(theme) %>%
-    hc_legend(enabled = TRUE) %>%
+             title = list(text = ""),
+             min = 0, max = 1
+    ) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(
-      series = list(animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4,
-                    stacking = "normal"),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
+      series = list(
+        stacking = "normal",
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
       area = list(accessibility = list(description = accessibility_text)))
 
-  return(highchart)
+  return(highcharts)
+
 }
 
-
-
-
-
-
-
-
-
-
-# Create a sentence based on pct changes by year
-fnc_generate_sentence <- function(data, value, metric_name, year_start1, year_end1, year_start2, year_end2) {
-
-  # extract the relevant populations
-  pop_start1 <- data[[value]][data$year == as.character(year_start1)]
-  pop_end1 <- data[[value]][data$year == as.character(year_end1)]
-  pop_start2 <- data[[value]][data$year == as.character(year_start2)]
-  pop_end2 <- data[[value]][data$year == as.character(year_end2)]
-
-  # calculate percent changes
-  pct_change_1 <- ((pop_end1 - pop_start1) / pop_start1) * 100
-  pct_change_2 <- ((pop_end2 - pop_start2) / pop_start2) * 100
-
-  # determine the direction of the change for the sentences
-  direction_1 <- ifelse(pct_change_1 >= 0, "increase", "decrease")
-  direction_2 <- ifelse(pct_change_2 >= 0, "increase", "decrease")
-
-  # create the sentences
-  sentence_1 <- paste0("From FY ", year_start1, " to FY ", year_end1, ", there was a ",
-                       round(pct_change_1, 2), "% ", direction_1,
-                       " in ", metric_name, ".")
-  sentence_2 <- paste0("From FY ", year_start2, " to FY ", year_end2, ", there was a ",
-                       round(pct_change_2, 2), "% ", direction_2,
-                       " in ", metric_name, ".")
-  sentences <- paste0(sentence_1, " ", sentence_2)
-
-  return(sentences)
-}

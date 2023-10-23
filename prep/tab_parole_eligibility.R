@@ -101,67 +101,15 @@ ncrp_pe_type <- ncrp_pe_type_prop %>%
 # Horizontal stacked bar chart showing prison population by parole eligibility status
 states <- unique(ncrp_pe_type$state)
 all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
-
   df1 <- ncrp_pe_type %>%
     filter(state == x)
-
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = state,
-                             y = prop,
-                             group = type),
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "bold",
-                                                      fontSize = "16px",
-                                                      fontFamily = "Graphik"))
-  ) %>%
-    hc_yAxis(labels = list(format = "{value}%",
-                           enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_legend(
-      layout = "horizontal",
-      align = "center",
-      verticalAlign = "top",
-      reversed = TRUE,
-      itemMarginTop = 10,
-      labelFormatter = JS("
-      function() {
-        var text = this.name;
-        switch(text) {
-          case 'Missing Data':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'New Crime Population<br>Currently Eligible':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'Other Population<br>Currently/Future Eligible':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'New Crime Population<br>Eligible in 6+ Years':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          case 'New Crime Population<br>Eligible in 1-5 Years':
-            return '<span style=\"font-weight: normal;\">' + text + '</span>';
-          default:
-            return '<span style=\"font-weight: bold;\">' + text + '</span>';
-        }
-      }
-    ")
-    ) %>%
-    hc_plotOptions(
-      series = list(stacking = "normal",
-                    animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD.",
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
-
+    hc_accessibility_text <-
+      paste0("This graph shows the proportion of the prison population by parole eligibility status in ",
+      select_year, " in the state of ", x, ". Parole eligibility statuses include the new crime popultion currently eligible,
+      new crime population eligible in 1 to 5 years, new crime population eligible in 6 or more years, other population currently or
+      eligible in the future, and population with missing parole eligibility data.")
+    highcharts <-
+      fnc_single_grouped_columnchart(df1, "prop", "type", "state", hc_accessibility_text)
   return(highcharts)
 })
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
@@ -221,7 +169,11 @@ all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_race %>%
     filter(state == x) %>%
     arrange(desc(n))
-  highcharts <- fnc_basic_barchart(df1, "race", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  race in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "race", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_parole_elgibility_race <- setNames(all_bar_parole_elgibility_race, states)
@@ -256,7 +208,11 @@ states <- unique(current_ped_ageyrend$state)
 all_bar_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_ageyrend %>%
     filter(state == x)
-  highcharts <- fnc_basic_barchart(df1, "ageyrend", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  age in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "ageyrend", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_parole_elgibility_ageyrend <- setNames(all_bar_parole_elgibility_ageyrend, states)
@@ -292,7 +248,11 @@ all_bar_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_gender %>%
     filter(state == x) %>%
     arrange(desc(n))
-  highcharts <- fnc_basic_barchart(df1, "sex", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  gender in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "sex", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_parole_elgibility_gender <- setNames(all_bar_parole_elgibility_gender, states)
@@ -336,7 +296,11 @@ states <- unique(current_ped_sentlgth$state)
 all_bar_parole_elgibility_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_sentlgth %>%
     filter(state == x)
-  highcharts <- fnc_basic_barchart(df1, "sentlgth", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  their original sentence length in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "sentlgth", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_parole_elgibility_sentlgth <- setNames(all_bar_parole_elgibility_sentlgth, states)
@@ -384,7 +348,11 @@ states <- unique(current_ped_fbi_index$state)
 all_bar_parole_elgibility_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_fbi_index %>%
     filter(state == x)
-  highcharts <- fnc_basic_barchart(df1, "fbi_index", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  their most serious sentenced offense in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "fbi_index", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_parole_elgibility_fbi_index <- setNames(all_bar_parole_elgibility_fbi_index, states)

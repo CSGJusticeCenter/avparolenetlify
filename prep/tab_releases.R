@@ -77,7 +77,7 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
     hc_yAxis(title = list(text = " Parole Eligible Population")) %>%
     hc_xAxis(categories = unique(df1$rptyear),
              title = "") %>%
-    hc_add_theme(hc_theme_jc_line) %>%
+    hc_add_theme(hc_theme_with_line) %>%
     hc_legend(enabled = TRUE) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(series = list(stacking = "normal",
@@ -102,22 +102,43 @@ all_stackedbar_parole_eligibility_release$Georgia
 #                         % 1-5 years after parole eligibility,
 #                         % of people released more than 5 years after parole eligibility
 
-# Prepare data
-ncrp_time_between_ped_release_category <- ncrp_releases %>%
-  filter(rptyear == select_year) %>%
-  group_by(state) %>%
-  fnc_values_tooltip(time_between_ped_release_category)
 
-# Highchart bar chart showing relationship between release year and parole eligibility year
-states <- unique(ncrp_time_between_ped_release_category$state)
-all_bar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_time_between_ped_release_category %>%
-    filter(state == x)
-  highcharts <- fnc_basic_columnchart(df1, "time_between_ped_release_category", "TBD accessibility text")
+# Highchart bar chart showing relationship between release year and parole eligibility
+#     year by release type (unconditional vs conditional release)
+# Prepare data
+ncrp_release_by_reltype <- ncrp_releases %>%
+  filter(rptyear == select_year) %>%
+  filter(reltype == "Unconditional release" |
+           reltype == "Conditional release") %>%
+  group_by(state, reltype) %>%
+  fnc_values_tooltip(time_between_ped_release_category) %>%
+  mutate(time_between_ped_release_category =
+           factor(time_between_ped_release_category,
+                  levels = c("Missing Parole Eligibility Year",
+                             "Released 5 Years After Parole Eligibility Year",
+                             "Released 1-5 Years After Parole Eligibility Year",
+                             "Released at Parole Eligibility Year",
+                             "Released Before Parole Eligibility Year")))
+
+# Highchart stacked bar chart showing release timing by reltype type
+states <- unique(ncrp_release_by_reltype$state)
+all_groupedbar_release_timing_reltype <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_release_by_reltype %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released before their parole eligibility year,
+                                  at their parole eligibility year, 1 to 5 years after their parole eligibility year,
+                                  5 years after their parole eligibility year, or missing their parole eligibility year
+                                  by release type (unconditional release vs. conditional release) in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "reltype", "time_between_ped_release_category", hc_accessibility_text)
   return(highcharts)
 })
-all_bar_parole_eligibility_release <- setNames(all_bar_parole_eligibility_release, states)
-all_bar_parole_eligibility_release$Georgia
+all_groupedbar_release_timing_reltype <- setNames(all_groupedbar_release_timing_reltype, states)
+all_groupedbar_release_timing_reltype$Georgia
+
 
 
 
@@ -143,7 +164,10 @@ all_bar_release_race <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_releases_race %>%
     filter(state == x) %>%
     arrange(desc(n))
-  highcharts <- fnc_basic_barchart(df1, "race", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released by race and ethnicity in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "race", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_release_race <- setNames(all_bar_release_race, states)
@@ -163,7 +187,10 @@ all_bar_release_gender <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_releases_gender %>%
     filter(state == x) %>%
     arrange(desc(n))
-  highcharts <- fnc_basic_barchart(df1, "sex", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released by gender in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "sex", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_release_gender <- setNames(all_bar_release_gender, states)
@@ -182,7 +209,10 @@ states <- unique(ncrp_releases_agerlse$state)
 all_bar_release_agerlse <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_releases_agerlse %>%
     filter(state == x)
-  highcharts <- fnc_basic_barchart(df1, "agerlse", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released by age in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "agerlse", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_release_agerlse <- setNames(all_bar_release_agerlse, states)
@@ -218,7 +248,11 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     select(reltype, prop, prop_label)
-  highcharts <- fnc_basic_piechart(df1, "reltype", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released by release type (unconditional release vs. conditional
+                                  release) in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_piechart(df1, "reltype", hc_accessibility_text)
   return(highcharts)
 })
 all_pie_release_type <- setNames(all_pie_release_type, states)
@@ -258,7 +292,10 @@ all_groupedbar_release_timing_fbi_index <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_grouped_stacked_barchart(df1, "fbi_index", "time_between_ped_release_category", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released by most serious sentenced offense in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "fbi_index", "time_between_ped_release_category", hc_accessibility_text)
   return(highcharts)
 })
 all_groupedbar_release_timing_fbi_index <- setNames(all_groupedbar_release_timing_fbi_index, states)
@@ -284,37 +321,6 @@ all_groupedbar_release_timing_fbi_index$Georgia
 
 
 
-# ################################################################################
-#
-# # Section: Maxout
-#
-# ################################################################################
-#
-# # Determine if people were released on or after their mandatory
-# # Remove people who were released after their mandatory - this is a mistake according to Carl
-# ncrp_releases_maxout <- ncrp_releases %>%
-#   filter(rptyear == select_year) %>%
-#   filter(!is.na(mand_prisrel_year) &
-#         !is.na(relyr) &
-#         mand_prisrel_year >= relyr) %>%
-#   mutate(maxout = case_when(
-#     mand_prisrel_year > relyr  ~ "Released Before Mandatory Release Year",
-#     mand_prisrel_year == relyr ~ "Released On Mandatory Release Year")
-#   ) %>%
-#   group_by(state) %>%
-#   fnc_values_tooltip(maxout)
-#
-# # Highchart pie chart showing releases by release type
-# states <- unique(ncrp_releases_maxout$state)
-# all_pie_maxout <- map(.x = states, .f = function(x) {
-#   df1 <- ncrp_releases_maxout %>%
-#     ungroup() %>%
-#     filter(state == x)
-#   highcharts <- fnc_basic_piechart(df1, "maxout", "TBD accessibility text")
-#   return(highcharts)
-# })
-# all_pie_maxout <- setNames(all_pie_maxout, states)
-# all_pie_maxout$Georgia
 
 
 
@@ -332,7 +338,8 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 for (folder in theseFOLDERS){
 
   save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
-  save(all_bar_parole_eligibility_release,        file = file.path(folder, "all_bar_parole_eligibility_release.rds"))
+
+  save(all_groupedbar_release_timing_reltype,     file = file.path(folder, "all_groupedbar_release_timing_reltype.rds"))
 
   save(all_bar_release_agerlse,                   file = file.path(folder, "all_bar_release_agerlse.rds"))
   save(all_bar_release_gender,                    file = file.path(folder, "all_bar_release_gender.rds"))
@@ -341,8 +348,6 @@ for (folder in theseFOLDERS){
 
   save(all_pie_release_type,                      file = file.path(folder, "all_pie_release_type.rds"))
   save(all_groupedbar_release_timing_fbi_index,   file = file.path(folder, "all_groupedbar_release_timing_fbi_index.rds"))
-
-  # save(all_pie_maxout,                            file = file.path(folder, "all_pie_maxout.rds"))
 
 }
 

@@ -34,13 +34,13 @@ ncrp_yearendpop_admtype <- ncrp_yearendpop %>%
 # Highchart showing prison pop by admission type
 states <- unique(ncrp_yearendpop_admtype$state)
 all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
-
   df1 <- ncrp_yearendpop_admtype %>%
     ungroup() %>%
     filter(state == x)
-
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by admission type (parole returns and revocations vs. new court commitments) in ",
+                               select_year, " in the state of ", x, ".")
   highchart <-
-    fnc_hc_single_grouped_columnchart(df1, "prop", "admtype", "state", "TBD accssibility text")
+    fnc_single_grouped_columnchart(df1, "prop", "admtype", "state", hc_accessibility_text)
   return(highchart)
 })
 all_stackedbar_admtype <- setNames(all_stackedbar_admtype, states)
@@ -57,7 +57,9 @@ all_pie_admtype <- map(.x = states, .f = function(x) {
   df1 <- ncrp_yearendpop_admtype %>%
     ungroup() %>%
     filter(state == x)
-  highcharts <- fnc_piechart(df1, "admtype", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by admission type (parole returns and revocations vs. new court commitments) in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_piechart(df1, "admtype", hc_accessibility_text)
   return(highcharts)
 })
 all_pie_admtype <- setNames(all_pie_admtype, states)
@@ -126,6 +128,12 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_bjs_aps_by_state %>%
     filter(state == x)
 
+  hc_accessibility_text <- paste0("This graph shows the change in the number of
+                                  people in prison, number of people released from
+                                  prison to parole, the number of people eligible
+                                  for parole but in prison, from 2010 to ",
+                                  select_year, " in the state of ", x, ".")
+
   highcharts <-
     highchart() %>%
     hc_xAxis(categories = df1$rptyear,
@@ -137,16 +145,16 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
                    data = df1$released_to_parole),
               list(name = "Eligible for Parole but in Prison",
                    data = df1$current_count)) %>%
-    hc_add_theme(hc_theme_jc_line) %>%
+    hc_add_theme(hc_theme_with_line) %>%
     hc_tooltip(shared = TRUE, crosshairs = TRUE) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_plotOptions(
       column = list(dataLabels = list(enabled = TRUE)),
       accessibility = list(enabled = TRUE,
                            keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD accessibility text",
+                           linkedDescription = hc_accessibility_text,
                            landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD accessibility text")))
+      area = list(accessibility = list(description = hc_accessibility_text)))
 
   return(highcharts)
 })
@@ -186,8 +194,9 @@ all_stackedbar_prison_race <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_yearendpop_race %>%
     ungroup() %>%
     filter(state == x)
-  highcharts <- fnc_stackedbar_admtype_chart(df1, "race", "TBD accessibility text")
-  highcharts <- highcharts %>% hc_chart(marginBottom = 45) %>%
+  hc_accessibility_text <- paste0("This graph shows the number of people in prison by race and ethnicity in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_stackedbar_admtype_chart(df1, "race", hc_accessibility_text)
   return(highcharts)
 })
 all_stackedbar_prison_race <- setNames(all_stackedbar_prison_race, states)
@@ -254,7 +263,9 @@ all_stackedbar_prison_ageyrend <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_stackedbar_admtype_chart(df1, "ageyrend", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the number of people in prison by age in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_stackedbar_admtype_chart(df1, "ageyrend", hc_accessibility_text)
   return(highcharts)
 })
 all_stackedbar_prison_ageyrend <- setNames(all_stackedbar_prison_ageyrend, states)
@@ -323,7 +334,9 @@ all_stackedbar_prison_gender <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_stackedbar_admtype_chart(df1, "sex", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the number of people in prison by gender in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_stackedbar_admtype_chart(df1, "sex", hc_accessibility_text)
   return(highcharts)
 })
 
@@ -402,6 +415,8 @@ all_groupedbar_prison_fbi_index <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
+  hc_accessibility_text <- paste0("This graph shows the proportion people in prison population by most serious sentenced offense by admission type in ",
+                                  select_year, " in the state of ", x, ".")
   highcharts <- hchart(df1, "bar",
                        hcaes(x = fbi_index,
                              y = prop,
@@ -419,7 +434,7 @@ all_groupedbar_prison_fbi_index <- map(.x = states,  .f = function(x) {
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
               reversed = FALSE) %>%
-    hc_add_theme(hc_theme_jc) %>%
+    hc_add_theme(hc_theme) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_chart(events = list(
@@ -438,8 +453,8 @@ all_groupedbar_prison_fbi_index <- map(.x = states,  .f = function(x) {
         borderWidth = 3, minPointLength = 4),
       accessibility = list(
         enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-        linkedDescription = "TBD.", landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
+        linkedDescription = hc_accessibility_text, landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = hc_accessibility_text)))
   return(highcharts)
 })
 all_groupedbar_prison_fbi_index <- setNames(all_groupedbar_prison_fbi_index, states)
@@ -463,7 +478,9 @@ all_bar_prison_fbi_index <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_basic_barchart(df1, "fbi_index", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion people in prison population by most serious sentenced offense in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "fbi_index", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_prison_fbi_index <- setNames(all_bar_prison_fbi_index, states)
@@ -499,6 +516,8 @@ all_groupedbar_prison_sentlgth <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
+  hc_accessibility_text <- paste0("This graph shows the proportion people in prison population by original sentence length and admission type in ",
+                                  select_year, " in the state of ", x, ".")
   highcharts <- hchart(df1, "bar",
                        hcaes(x = sentlgth,
                              y = prop,
@@ -516,7 +535,7 @@ all_groupedbar_prison_sentlgth <- map(.x = states,  .f = function(x) {
              labels = list(enabled = TRUE)) %>%
     hc_legend(enabled = TRUE,
               reversed = FALSE) %>%
-    hc_add_theme(hc_theme_jc) %>%
+    hc_add_theme(hc_theme) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
     hc_chart(events = list(
@@ -536,8 +555,8 @@ all_groupedbar_prison_sentlgth <- map(.x = states,  .f = function(x) {
         borderWidth = 3, minPointLength = 4),
       accessibility = list(
         enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-        linkedDescription = "TBD.", landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
+        linkedDescription = hc_accessibility_text, landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = hc_accessibility_text)))
   return(highcharts)
 })
 
@@ -562,7 +581,9 @@ all_bar_prison_sentlgth <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_basic_barchart(df1, "sentlgth", "TBD accessibility text")
+  hc_accessibility_text <- paste0("This graph shows the proportion people in prison population by original sentence length in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_barchart(df1, "sentlgth", hc_accessibility_text)
   return(highcharts)
 })
 all_bar_prison_sentlgth <- setNames(all_bar_prison_sentlgth, states)

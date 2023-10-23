@@ -78,7 +78,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibil
 
 # Release Timing by Parole Eligibility Status
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_release.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_release_timing_reltype.rds"))
 
 # Demographics
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_release_agerlse.rds"))
@@ -90,27 +90,6 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
 
 # Release Timing by Offense Type
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_release_timing_fbi_index.rds"))
-
-# Maxout
-load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
-
-
-# # Releases from Prison
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped_publicorder.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped_property.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped_other.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped_drugs.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_released_at_ped_violent.rds"))
-#
-# # Length of Stay
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_overview.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_publicorder.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_property.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_other.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_drugs.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_violent.rds"))
-
 
 
 
@@ -124,16 +103,6 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_maxout.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedcolumn_disparities_release_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_rri_infographic_race.rds"))
-
-
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_time_between_release_ped_by_race.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_pp_by_variable.rds"))
-#
-# # RRI
-# load(file = paste0(sp_data_path, "/data/analysis/app/race_eth_rri_table.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_rri_sentence_length_black.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_rri_sentence_length_hispanic.rds"))
-#
 
 
 
