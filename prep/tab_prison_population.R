@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_prison_population.R
 # Authors: Mari Roberts
-# Date last updated: October 5, 2023 (MAR)
+# Date last updated: October 23, 2023 (MAR)
 # Description:
 #    Prison population and graphics for shiny app
 #    All figures and tables are for select year
@@ -18,7 +18,7 @@
 ################################################################################
 
 ##########
-# Stacked single bar chart
+# Stacked single bar chart (option 1)
 ##########
 
 # Get number/prop of people by admission type and state
@@ -27,7 +27,7 @@
 ncrp_yearendpop_admtype <- ncrp_yearendpop %>%
   filter(admtype == "New court commitment" |
          admtype == "Parole return/revocation") %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state) %>%
   fnc_values_tooltip(admtype)
 
@@ -39,58 +39,31 @@ all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x)
 
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = state,
-                             y = prop,
-                             group = admtype),
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "bold",
-                                                      fontSize = "12px",
-                                                      fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(format = "{value}%",
-                           enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_legend(enabled = TRUE,
-              reversed = TRUE) %>%
-    hc_plotOptions(
-      series = list(stacking = "normal",
-                    animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = "TBD accessibility text",
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD accessibility text")))
-  return(highcharts)
+  highchart <-
+    fnc_hc_single_grouped_columnchart(df1, "prop", "admtype", "state", "TBD accssibility text")
+  return(highchart)
 })
 all_stackedbar_admtype <- setNames(all_stackedbar_admtype, states)
 all_stackedbar_admtype$Georgia
 
 
+
 ##########
-# Pie chart
+# Pie chart (option 2)
 ##########
 
 # Highchart pie chart showing prison pop by admission type
 all_pie_admtype <- map(.x = states, .f = function(x) {
   df1 <- ncrp_yearendpop_admtype %>%
     ungroup() %>%
-    filter(state == x) %>%
-    select(admtype, prop, prop_label)
-  highcharts <- fnc_basic_piechart(df1, "admtype", "TBD accessibility text")
+    filter(state == x)
+  highcharts <- fnc_piechart(df1, "admtype", "TBD accessibility text")
   return(highcharts)
 })
 all_pie_admtype <- setNames(all_pie_admtype, states)
 all_pie_admtype$Georgia
+
+
 
 ##########
 # Sentence
@@ -145,7 +118,8 @@ ncrp_bjs_aps_by_state <- ncrp_yearendpop %>%
   left_join(parole_eligibility_table,
             by = c("state", "rptyear"))
 
-# Highchart of trend in prison population, people released from prison to parole, and parole eligible prison population from 2000-2020
+# Highchart of trend in prison population, people released from prison to parole,
+#     and parole eligible prison population from 2000-2020
 states <- unique(ncrp_bjs_aps_by_state$state)
 all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
 
@@ -173,8 +147,10 @@ all_line_pop_released_to_parole <- map(.x = states,  .f = function(x) {
                            linkedDescription = "TBD accessibility text",
                            landmarkVerbosity = "one"),
       area = list(accessibility = list(description = "TBD accessibility text")))
+
   return(highcharts)
 })
+
 all_line_pop_released_to_parole <- setNames(all_line_pop_released_to_parole, states)
 all_line_pop_released_to_parole$Georgia
 
@@ -200,7 +176,7 @@ all_line_pop_released_to_parole$Georgia
 
 # Get number/prop people by race and admission type
 ncrp_yearendpop_race <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state, admtype) %>%
   fnc_values_tooltip(race)
 
@@ -210,7 +186,7 @@ all_stackedbar_prison_race <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_yearendpop_race %>%
     ungroup() %>%
     filter(state == x)
-  highcharts <- fnc_stackedbar_admtype_chart(df1, "race")
+  highcharts <- fnc_stackedbar_admtype_chart(df1, "race", "TBD accessibility text")
   highcharts <- highcharts %>% hc_chart(marginBottom = 45) %>%
   return(highcharts)
 })
@@ -267,7 +243,7 @@ all_sentence_prison_race$Georgia
 
 # Get number/prop people by ageyrend
 ncrp_yearendpop_ageyrend <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state, admtype) %>%
   fnc_values_tooltip(ageyrend)
 
@@ -278,7 +254,7 @@ all_stackedbar_prison_ageyrend <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_stackedbar_admtype_chart(df1, "ageyrend")
+  highcharts <- fnc_stackedbar_admtype_chart(df1, "ageyrend", "TBD accessibility text")
   return(highcharts)
 })
 all_stackedbar_prison_ageyrend <- setNames(all_stackedbar_prison_ageyrend, states)
@@ -336,7 +312,7 @@ all_sentence_prison_ageyrend$Georgia
 
 # Get number/prop people by gender
 ncrp_yearendpop_gender <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state, admtype) %>%
   fnc_values_tooltip(sex)
 
@@ -347,7 +323,7 @@ all_stackedbar_prison_gender <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- fnc_stackedbar_admtype_chart(df1, "sex")
+  highcharts <- fnc_stackedbar_admtype_chart(df1, "sex", "TBD accessibility text")
   return(highcharts)
 })
 
@@ -380,12 +356,12 @@ all_sentence_prison_gender <- map(.x = states,  .f = function(x) {
     pull(sex)
 
   if(max_new_court == max_parole_return) {
-    sentences <- paste0("In ", select_year, ", ", max_new_court,
+    sentences <- paste0("In ", select_year, ", ", tolower(max_new_court),
                         " individuals made up the largest portion of people in prison for both new court commitments and parole returns and revocations.")
   } else {
-    sentences <- paste0("In ", select_year, ", ", max_new_court,
+    sentences <- paste0("In ", select_year, ", ", tolower(max_new_court),
                         " individuals made up the largest portion of people in prison for new court commitments, while ",
-                        max_parole_return,
+                        tolower(max_parole_return),
                         " individuals made up the largest portion of people in prison for parole returns and revocations.")
   }
 
@@ -415,7 +391,7 @@ all_sentence_prison_gender$Georgia
 
 # Get number/prop people by fbi_index
 ncrp_yearendpop_fbi_index <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state, admtype) %>%
   fnc_values_tooltip(fbi_index)
 
@@ -476,7 +452,7 @@ all_groupedbar_prison_fbi_index$Georgia
 
 # Get number/prop people by fbi_index
 ncrp_yearendpop_fbi_index <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state) %>%
   fnc_values_tooltip(fbi_index)
 
@@ -487,33 +463,7 @@ all_bar_prison_fbi_index <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = fbi_index,
-                             y = prop
-                       ),
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "regular",
-                                                      fontSize = "12px",
-                                                      fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = TRUE)) %>%
-    hc_legend(enabled = TRUE,
-              reversed = FALSE) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(
-      series = list(
-        animation = FALSE, cursor = "pointer",
-        borderWidth = 3, minPointLength = 4),
-      accessibility = list(
-        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-        linkedDescription = "TBD.", landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
+  highcharts <- fnc_basic_barchart(df1, "fbi_index", "TBD accessibility text")
   return(highcharts)
 })
 all_bar_prison_fbi_index <- setNames(all_bar_prison_fbi_index, states)
@@ -538,7 +488,7 @@ all_bar_prison_fbi_index$Georgia
 
 # Get number/prop people by sentlgth
 ncrp_yearendpop_sentlgth <-  ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state, admtype) %>%
   fnc_values_tooltip(sentlgth)
 
@@ -601,7 +551,7 @@ all_groupedbar_prison_sentlgth$Georgia
 
 # Get number/prop people by sentlgth
 ncrp_yearendpop_sentlgth <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) %>% ####### FILTER YEAR
+  filter(rptyear == select_year) %>%
   group_by(state) %>%
   fnc_values_tooltip(sentlgth)
 
@@ -612,33 +562,7 @@ all_bar_prison_sentlgth <- map(.x = states,  .f = function(x) {
     ungroup() %>%
     filter(state == x) %>%
     distinct()
-  highcharts <- hchart(df1, "bar",
-                       hcaes(x = sentlgth,
-                             y = prop
-                       ),
-                       dataLabels = list(enabled = TRUE,
-                                         format = "{point.prop_label}",
-                                         style = list(fontWeight = "regular",
-                                                      fontSize = "12px",
-                                                      fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = TRUE)) %>%
-    hc_legend(enabled = TRUE,
-              reversed = FALSE) %>%
-    hc_add_theme(hc_theme_jc) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(
-      series = list(
-        animation = FALSE, cursor = "pointer",
-        borderWidth = 3, minPointLength = 4),
-      accessibility = list(
-        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-        linkedDescription = "TBD.", landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = "TBD.")))
+  highcharts <- fnc_basic_barchart(df1, "sentlgth", "TBD accessibility text")
   return(highcharts)
 })
 all_bar_prison_sentlgth <- setNames(all_bar_prison_sentlgth, states)
@@ -680,6 +604,10 @@ for (folder in theseFOLDERS){
   save(all_groupedbar_prison_fbi_index, file = file.path(folder, "all_groupedbar_prison_fbi_index.rds"))
   save(all_bar_prison_sentlgth,         file = file.path(folder, "all_bar_prison_sentlgth.rds"))
   save(all_bar_prison_fbi_index,        file = file.path(folder, "all_bar_prison_fbi_index.rds"))
+
+  # TO DO ONCE TEAM DECIDES ON CHART OPTIONS
+  # save(all_sentence_prison_sentlgth,    file = file.path(folder, "all_sentence_prison_sentlgth.rds"))
+  # save(all_sentence_prison_fbi_index,   file = file.path(folder, "all_sentence_prison_fbi_index.rds"))
 
 }
 

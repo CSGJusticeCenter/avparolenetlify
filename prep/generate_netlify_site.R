@@ -8,9 +8,6 @@
 # based on _state_report_template.qmd
 ############################################
 
-# Select year for analysis
-select_year <- 2020
-
 # There are two options for running this code. Scroll to your desired section.
 # OPTION 1: To run all code and generate data and visualizations (takes time)
 # OPTION 2: Render the site using saved data and visualizations (faster)
