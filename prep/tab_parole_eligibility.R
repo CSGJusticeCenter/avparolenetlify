@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: October 2, 2023 (MAR)
+# Date last updated: October 23, 2023 (MAR)
 
 # Description:
 #    Parole eligibility tables and graphics for "Parole Eligibility" tab
@@ -183,7 +183,7 @@ all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) 
              type == "New Crime Population<br>Currently Eligible")
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people were eligible for parole but still in prison for new crimes, with original sentence lengths ranging from 1 to 25 years. This group made up ",
+                      " people were eligible for parole but still in prison for new crimes and with original sentence lengths ranging from 1 to 25 years. This group made up ",
                       df1$prop_label, " of the prison population.")
   return(sentences)
 })
@@ -234,7 +234,7 @@ all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
     arrange(desc(n)) %>%
     slice(1)
   sentences <- paste0("In ", select_year, ", ", df1$race,
-                      " people made up the largest proportion of those eligible for parole yet still incarcerated for a new criminal offense, comprising ",
+                      " people made up the largest proportion of those eligible for parole yet still incarcerated, comprising ",
                       df1$prop_label, " of the parole-eligible population serving time for new crimes and with an original sentence length between 1-25 years.")
   return(sentences)
 })
@@ -269,7 +269,7 @@ all_sentence_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
     arrange(desc(n)) %>%
     slice(1)
   sentences <- paste0("In ", select_year, ", people who were between the ages of ", df1$ageyrend,
-                      " made up the largest proportion of those eligible for parole yet still incarcerated for a new criminal offense, comprising ",
+                      " made up the largest proportion of those eligible for parole yet still incarcerated, comprising ",
                       df1$prop_label, " of the parole-eligible population serving time for new crimes and with an original sentence length between 1-25 years.")
   return(sentences)
 })
@@ -305,7 +305,7 @@ all_sentence_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
     arrange(desc(n)) %>%
     slice(1)
   sentences <- paste0("In ", select_year, ", ", tolower(df1$sex),
-                      " people made up the largest proportion of those eligible for parole yet still incarcerated for a new criminal offense, comprising ",
+                      " people made up the largest proportion of those eligible for parole yet still incarcerated, comprising ",
                       df1$prop_label, " of the parole-eligible population serving time for new crimes and with an original sentence length between 1-25 years.")
   return(sentences)
 })
