@@ -486,7 +486,7 @@ if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
 if (state_for_report %in% names(all_groupedbar_release_timing_reltype)) {
   state_groupedbar_release_timing_reltype <-
     all_groupedbar_release_timing_reltype[[state_for_report]] %>%
-    hc_size(height = 400) %>% 
+    hc_size(height = 375) %>% 
     hc_colors(c(neutralBkgndMedium, darkblue, yellow, teal, purple)) %>% 
     hc_title(text = paste0("Timing of Releases Relative to Parole Eligibility Year by Release Type", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
