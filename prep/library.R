@@ -9,9 +9,6 @@
 
 #------ Action Required ------#
 
-# Select year for site
-select_year <- 2020
-
 # download CSGJCR package
 # devtools::install_github("CSGJusticeCenter/csgjcr@develop")
 # in your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token"

@@ -244,7 +244,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # create new offense descriptions
   fnc_create_fbi_index() %>%
 
-  # create parole eligibility status with custom function
+  # create parole eligibility status
   fnc_create_parelig_status() %>%
 
   # include unknown race in analysis
@@ -534,35 +534,23 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
 # Save data
 ##########
 
-# # Save files to clean_files folder to be used for regression analysis
-# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/clean_files"))
-#
-# for (folder in theseFOLDERS){
-#
-#   write_csv(ncrp_yearendpop,      file.path(folder, "ncrp_yearendpop_v1.csv"))
-#   write_csv(ncrp_admissions,      file.path(folder, "ncrp_admissions_v1.csv"))
-#   write_csv(ncrp_term_records,    file.path(folder, "ncrp_term_records_v1.csv"))
-#   write_csv(ncrp_releases,        file.path(folder, "ncrp_releases_v1.csv"))
-#
-# }
-#
-# # Save files to app folder
-# theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
-#
-# for (folder in theseFOLDERS){
-#
-#   save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
-#   save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
-#   save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
-#   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
-#   save(aps_parole_2000_2018,               file = file.path(folder, "aps_parole_2000_2018.rds"))
-#   save(bjs_prison_pop_by_race,             file = file.path(folder, "bjs_prison_pop_by_race.rds"))
-#   save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
-#
-#   save(hex_gj,                  file = file.path(folder, "hex_gj.rds"))
-#   save(robinadefinitions,       file = file.path(folder, "robinadefinitions.rds"))
-#   save(robinainfo,              file = file.path(folder, "robinainfo.rds"))
-#   save(robinaparoleeligibility, file = file.path(folder, "robinaparoleeligibility.rds"))
-#   save(parole_info_by_state,    file = file.path(folder, "parole_info_by_state.rds"))
-#
-# }
+# Save files to app folder
+theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
+
+for (folder in theseFOLDERS){
+
+  save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
+  save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
+  save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
+  save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
+  save(aps_parole_2000_2018,               file = file.path(folder, "aps_parole_2000_2018.rds"))
+  save(bjs_prison_pop_by_race,             file = file.path(folder, "bjs_prison_pop_by_race.rds"))
+  save(bjs_prison_pop_by_state,            file = file.path(folder, "bjs_prison_pop_by_state.rds"))
+
+  save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))
+  save(robinadefinitions,                  file = file.path(folder, "robinadefinitions.rds"))
+  save(robinainfo,                         file = file.path(folder, "robinainfo.rds"))
+  save(robinaparoleeligibility,            file = file.path(folder, "robinaparoleeligibility.rds"))
+  save(parole_info_by_state,               file = file.path(folder, "parole_info_by_state.rds"))
+
+}

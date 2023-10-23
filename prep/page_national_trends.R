@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: September 28, 2023 (MAR)
+# Date last updated: OCtober 23, 2023 (MAR)
 # Description:
 #    Parole eligibility table and data for national trends page
 #######################################
@@ -25,24 +25,16 @@ ncrp_prison_population <- ncrp_yearendpop %>%
 # Get total prison population by state and year
 # Just for people in prison for a new court commitment and sentence length 1-25 years
 ncrp_prison_population_125years_new_crime <- ncrp_yearendpop %>%
-  filter(admtype == "New court commitment") %>%
-  filter(sentlgth == "1-1.9 years" |
-         sentlgth == "2-4.9 years" |
-         sentlgth == "5-9.9 years" |
-         sentlgth == "10-24.9 years") %>%
+  fnc_parameters() %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   summarise(yearendpop_125years_new_crime = sum(n, na.rm = FALSE))
 
-# Get number of people by parole eligibility status
+# Get number of people in prison by parole eligibility status
 # Just for people in prison for a new court commitment and sentence length 1-25 years
-# Merge prison population numbers
+# Merge prison population numbers to get proportions
 ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
-  filter(admtype == "New court commitment") %>%
-  filter(sentlgth == "1-1.9 years" |
-         sentlgth == "2-4.9 years" |
-         sentlgth == "5-9.9 years" |
-         sentlgth == "10-24.9 years") %>%
+  fnc_parameters() %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   left_join(ncrp_prison_population,
