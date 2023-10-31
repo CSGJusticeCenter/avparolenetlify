@@ -30,7 +30,7 @@ body {
 html,
 body {
   font-family: 'Graphik', sans-serif;
-  color: #3E4B4B!important;
+  color: black!important;
 }
 
 
@@ -67,7 +67,7 @@ body {
   font-size: 0.8em;
   font-family: Graphik;
   text-align: left;
-  color: #3E4B4B
+  color: black
 }
 
 #body-section{
@@ -78,12 +78,6 @@ body {
 #infographic-section{
   max-width: 700px;
   text-align: left;
-}
-
-#first-graph{
-  margin-top: 0em;
-  margin-bottom: 0;
-  padding: 0px;
 }
 
 #visualization{
@@ -131,7 +125,7 @@ body {
   font-family: Graphik;
   font-weight: bold;
   text-align: center;
-  color: #3E4B4B;
+  color: black;
 }
 
 
@@ -141,7 +135,7 @@ body {
   font-family: Graphik;
   font-weight: bold;
   text-align: center;
-  color: #3E4B4B;
+  color: black;
 }
 
 /* title of section under tabs */
@@ -150,7 +144,7 @@ body {
   font-family: Graphik;
   font-weight: bold;
   text-align: center;
-  color: #3E4B4B;
+  color: black;
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
@@ -161,7 +155,7 @@ body {
   font-family: Graphik;
   font-weight: bold;
   text-align: center;
-  color: #3E4B4B;
+  color: black;
 }
 
 
@@ -170,7 +164,7 @@ body {
   font-family: Graphik;
   font-weight: bold;
   text-align: center;
-  color: #3E4B4B;
+  color: black;
 }
 
 
@@ -179,7 +173,7 @@ body {
   font-size: 1em;
   font-family: Graphik;
   text-align: center;
-  color: #3E4B4B;
+  color: black;
 }
 
 /* highlighted text underneath state name*/
@@ -200,10 +194,10 @@ body {
 
 /* regular app text */
 #regular-text {
-  font-size: 0.8em;
+  font-size: 0.9em;
   font-family: Graphik;
   text-align: left;
-  color: #3E4B4B
+  color: black
 }
 
 /* bold app text */
@@ -212,7 +206,7 @@ body {
   font-family: Graphik;
   font-weight: bold;
   text-align: center;
-  color: #3E4B4B
+  color: black
 }
 
 /* note app text */
@@ -222,7 +216,7 @@ body {
   font-weight: regular;
   font-style: italic;
   text-align: left;
-  color: #3E4B4B
+  color: black
 }
 
 
@@ -271,7 +265,7 @@ body {
 /******************************************************************************/
 
 .navbar {
-background-color: #3E4B4B;
+background-color: black;
 color: #fff;
 border-radius: 0;
 height: 60px;
@@ -331,7 +325,7 @@ color: #fff;
 
 /* Styling for the .panel-tabset */
 .panel-tabset .nav-link {
-  color: #3E4B4B;
+  color: black;
   border-radius: 10px;
   padding: 6px 12px;
   background-color: #fff;
@@ -344,7 +338,7 @@ color: #fff;
 }
 
 .panel-tabset .nav-link.active {
-  background-color: #3E4B4B;
+  background-color: black;
   font-weight: bold;
   color: #fff;
   font-size: 1em;

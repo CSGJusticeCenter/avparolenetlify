@@ -2,9 +2,9 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: OCtober 23, 2023 (MAR)
+# Date last updated: OCtober 31, 2023 (MAR)
 # Description:
-#    Parole eligibility table and data for national trends page
+#    Parole eligibility map and table for national trends page
 #######################################
 
 ################################################################################
@@ -16,23 +16,23 @@
 
 ################################################################################
 
-# Get total prison population by state and year
+# get total prison population by state and year
 ncrp_prison_population <- ncrp_yearendpop %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   summarise(yearendpop = sum(n, na.rm = FALSE))
 
-# Get total prison population by state and year
-# Just for people in prison for a new court commitment and sentence length 1-25 years
+# get total prison population by state and year
+# but just for people in prison for a new court commitment and sentence length 1-25 years
 ncrp_prison_population_125years_new_crime <- ncrp_yearendpop %>%
   fnc_parameters() %>%
   group_by(state, rptyear) %>%
   count(parelig_status) %>%
   summarise(yearendpop_125years_new_crime = sum(n, na.rm = FALSE))
 
-# Get number of people in prison by parole eligibility status
-# Just for people in prison for a new court commitment and sentence length 1-25 years
-# Merge prison population numbers to get proportions
+# get number of people in prison by parole eligibility status
+# but just for people in prison for a new court commitment and sentence length 1-25 years
+# merge prison population numbers to get percentages
 ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
   fnc_parameters() %>%
   group_by(state, rptyear) %>%
@@ -41,7 +41,7 @@ ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
             by = c("state", "rptyear")) %>%
   mutate(prop = n / yearendpop)
 
-# Reshape data
+# reshape data for table
 parole_eligibility_table <- ncrp_parole_eligible_125years_new_crime %>%
   group_by(state, rptyear, parelig_status) %>%
   summarise(

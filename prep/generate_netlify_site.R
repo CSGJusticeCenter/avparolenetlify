@@ -1,10 +1,10 @@
 ############################################
 # Project: AV Parole Project
 # File: generate_state_reports.R
-# Date last updated: October 20, 2023 (MAR)
+# Date last updated: October 31, 2023 (MAR)
 # Author: Mari Roberts
 
-# Generate html documents for each state
+# Generate html documents for each state which represent web pages
 # based on _state_report_template.qmd
 ############################################
 

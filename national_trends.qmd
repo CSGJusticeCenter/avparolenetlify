@@ -24,7 +24,7 @@ source("prep/dataframes.R")
 ```
 
 ```{r}
-page_summary <- "With the support of Arnold Ventures, the Council of State Governments (CSG) Justice Center analyzed data from the National Corrections Reporting Program (NCRP) and Robina Institute of Criminal Law and Criminal Justice to gain deeper insights into the relationship between parole practices and prison populations. The study specifically focused on understanding the dynamics of parole eligibility and lengths of stay, with a specific emphasis on examining racial, ethnic, and gender disparities."
+page_summary <- "With the support of Arnold Ventures, the Council of State Governments (CSG) Justice Center analyzed data from the National Corrections Reporting Program (NCRP), Bureau of Justice Statistics (BJS) Prisoner Series, and Robina Institute of Criminal Law and Criminal Justice to gain deeper insights into the relationship between parole practices and prison populations. The study specifically focused on understanding the dynamics of parole eligibility and lengths of stay, with a specific emphasis on examining racial, ethnic, and gender disparities."
   
 num_people_current   <- sum(parole_eligibility_table_select_year$current_count, na.rm = TRUE)
 num_people_1_5_years <- sum(parole_eligibility_table_select_year$future_1_5_years_count, na.rm = TRUE)
@@ -47,7 +47,7 @@ htmltools::div(
       formattable::comma(num_people_current, digits = 0)
     ),
     div(
-      HTML("Currently Eligible for Parole"),
+      HTML("Currently Eligible for Parole<br>but in Prison"),
       id = "bold-text"
     )
   ),
@@ -58,28 +58,31 @@ htmltools::div(
       formattable::comma(num_people_1_5_years, digits = 0)
     ),
     div(
-      HTML("Eligible for Parole in the Next 1-5 Years"),
+      HTML("Eligible for Parole in the Next 1-5 Years<br>but in Prison"),
       id = "bold-text"
     )
   )
 )
-
-
 ```
 :::
 
 <br><br>
 
 ```{r}
-# create a vector of all states
+# create a vector of all state names
 all_states <- state.name
 
 # get parole eligibility information
 parole_info_by_state_clean <- parole_info_by_state %>% 
   select(state, abolished_discretionary_parole)
 
-# parole_eligibility_table_select_year created in tab_parole_elgibility.R
-# parole_info_by_state was imported in import.R
+####################
+# Option 1: Map (Percent)
+####################
+
+# format hex map data
+# parole_eligibility_table_select_year created in page_national_trends.R
+# parole_info_by_state (which states abolished parole release) was imported in import.R
 map_data <- parole_eligibility_table_select_year %>% 
   
   # add missing states
@@ -105,22 +108,33 @@ map_data <- parole_eligibility_table_select_year %>%
                   tooltip = str_replace_all(tooltip, "NA%", "No Data")) %>% 
   
   # create data labels
-  mutate(datalabel = ifelse(is.na(current_perc),
-                            paste0("", state_abb, ""),
-                            paste0("<p style=", "text-align:center", ">",
-                                   state_abb, "", "<br>",
-                                   round(current_perc, 0), "%</p>")),
+  mutate(change_label = paste0(round(current_perc, 0), "%"),
+         change_label = str_replace_all(change_label, "NA%", "-"),
+         
+         # datalabel = ifelse(is.na(current_perc),
+         #                    paste0("", state_abb, ""),
+         #                    paste0("<p style=", "text-align:center", ">",
+         #                           state_abb, "", "<br>",
+         #                           round(current_perc, 0), "%</p>")),
+         # datalabel = ifelse(is.na(current_perc),
+         #           paste0(state_abb),
+         #           paste0("<p style='text-align:center;'>",
+         #                  state_abb, "<br>",
+         #                  round(current_perc, 0), "%</p>")),
+         # datalabel = ifelse(is.na(current_perc),
+         #                             paste0("<div style='text-align:center; height: 50px; line-height: 50px;'>", state_abb, "</div>"),
+         #                             paste0("<div style='text-align:center; height: 40px; line-height: 20px;'>", state_abb, "<br>", round(current_perc, 0), "%</div>")),
          
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) %>% 
   
-  # add info about whether state abolished parole
+  # add info about whether state abolished parole release
   left_join(parole_info_by_state_clean, by = "state")
 
 # define the gradient colors
 gradient_colors <- c("#D5F5F3", "#6AD0C9", "#00ABA0", "#006F8A", "#003474")
 
-# calculate the breaks for current_perc
+# calculate the breaks for the percent of people currently eligible for parole (current_perc)
 num_breaks <- length(gradient_colors) + 1
 breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks), na.rm = TRUE)
 
@@ -150,73 +164,92 @@ map_data_breaks <- map_data %>%
     data_category == "Determinate Prison Sentence" ~ 4,
     data_category == "Missing Data" ~ 5
   ))
-```
 
-```{r}
-# get minimum and maximum value
+# get minimum and maximum value for legend scale
 min_map <- min(map_data$current_perc, na.rm = TRUE)
 max_map <- max(map_data$current_perc, na.rm = TRUE)
 
 # create hex map
-map_percent <- highchart(height = 580) %>%
+map_percent <- highchart(height = 600) %>% ##########################################################################################
 
-  hc_chart(marginTop = -6) %>%
+    hc_chart(marginTop = 60,   
+             marginBottom = 50,
+             marginRight = 50) %>%
+  
+    hc_add_series_map(
+      map = hex_gj,
+      df = map_data,
+      joinBy = "state_abb",
+      value = "current_perc",
+      # dataLabels = list(enabled = TRUE, 
+      #                   useHTML = TRUE,
+      #                   format = "{point.datalabel}",
+      #                   style = list(fontSize = "14px",
+      #                                fontWeight = "regular",
+      #                                fontFamily = "Graphik",
+      #                                textOutline = 0)),
+      dataLabels = list(enabled = TRUE,
+                            useHTML = TRUE,
+                            formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+                                '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
+                                '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
+      nullColor = "#e8e8e8",
+      accessibility = list(
+        enabled = TRUE,
+        keyboardNavigation = list(enabled = TRUE),
+        point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
+  
+    hc_colorAxis(min = min_map,
+                 max = max_map,
+                 stops = color_stops(4, gradient_colors),
+                 reversed = FALSE,
+                 labels = list(format = "{value}%",
+                               style = list(fontSize = "14px"))) %>%
+  
+    hc_legend(align = "right",
+              verticalAlign = "bottom",
+              layout = "vertical",
+              symbolHeight = 200,
+              symbolWidth = 25,
+              x = -25,
+              y = -25) %>%
 
-  hc_add_series_map(
-    map = hex_gj,
-    df = map_data,
-    joinBy = "state_abb",
-    value = "current_perc",
-    dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
-                      style = list(fontSize = "14px",
-                                   fontWeight = "regular",
-                                   fontFamily = "Graphik",
-                                   textOutline = 0)),
-    nullColor = "#e8e8e8",
-    accessibility = list(
-      enabled = TRUE,
-      keyboardNavigation = list(enabled = TRUE),
-      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
-
-  hc_colorAxis(min = min_map,
-               max = max_map,
-               stops = color_stops(4, gradient_colors),
-               reversed = FALSE,
-               labels = list(format = "{value}%",
-                             style = list(fontSize = "14px"))) %>%
-
-  hc_legend(align = "right",
-            verticalAlign = "bottom",
-            layout = "vertical",
-            symbolHeight = 200,
-            symbolWidth = 25,
-            x = -25,
-            y = 0) %>%
-
-hc_xAxis(title = "") %>%
-hc_yAxis(title = "") %>%
-
-hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-hc_add_theme(hc_theme_map_jc) %>%
-
-hc_plotOptions(series = list(animation = FALSE,
-                             cursor = "pointer",
-                             borderWidth = 3),
-               accessibility = list(enabled = TRUE,
-                                    keyboardNavigation = list(enabled = TRUE),
-                                    linkedDescription = paste0("TEXT"),
-                                    landmarkVerbosity = "one"),
-               area = list(accessibility = list(description = paste0("TEXT")))
-)
+    hc_xAxis(title = "") %>%
+    hc_yAxis(title = "") %>%
+    hc_title(text = "The Percentage of People in Prison who are Eligible for Parole in 2020") %>% 
+    
+    hc_exporting(enabled = TRUE,
+                   buttons = list(contextButton = list(align = 'right', 
+                                                       verticalAlign = 'top', 
+                                                       y = 3,  
+                                                       x = -85))) %>%
+    
+    # hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_tooltip(
+          formatter = JS("function() {
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; padding: 8px; border: none;\">' +
+          this.point.tooltip +
+          '</div>';}"),
+          useHTML = TRUE
+        ) %>% 
+  
+    hc_add_theme(hc_theme_map) %>%
+    
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = paste0("TEXT"),
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = paste0("TEXT")))
+    )
 
 
+####################
+# Option 1: Map (Count)
+####################
 
-
-
-
-
-
-# parole_eligibility_table_select_year created in tab_parole_eligibility.R
 map_data <- parole_eligibility_table_select_year %>% 
   # add missing states
   complete(state = all_states) %>% 
@@ -235,7 +268,10 @@ map_data <- parole_eligibility_table_select_year %>%
                    formattable::comma(yearendpop, digits = 0), "</b>"),
                   tooltip = str_replace_all(tooltip, "NA", "No Data")) %>% 
   
-  mutate(datalabel = ifelse(is.na(current_count),
+  mutate(change_label = formattable::comma(current_count, 0),
+         change_label = str_replace_all(change_label, "NA", "-"),
+         
+         datalabel = ifelse(is.na(current_count),
                             paste0("", state_abb, ""),
                             paste0("<p style=", "text-align:center", ">",
                                    state_abb, "", "<br>",
@@ -244,21 +280,28 @@ map_data <- parole_eligibility_table_select_year %>%
          currentcountlabel = paste0(round(current_count, 0), "%"),
          currentcountlabel = str_replace_all(currentcountlabel, "NA%", "No Data")) 
 
-# create hex map for counts
-map_count <- highchart(height = 580) %>%
+# create hex map for counts ##########################################################################################
+map_count <- highchart(height = 600) %>%
   
-  hc_chart(marginTop = -6) %>% 
+  hc_chart(marginTop = 60,   
+           marginBottom = 50,
+           marginRight = 50) %>%
   
   hc_add_series_map(
     map = hex_gj,
     df = map_data,
     joinBy = "state_abb",
     value = "current_count",
-    dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
-                      style = list(fontSize = "14px",
-                                   fontWeight = "regular",
-                                   fontFamily = "Graphik",
-                                   textOutline = 0)),
+    # dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
+    #                   style = list(fontSize = "14px",
+    #                                fontWeight = "regular",
+    #                                fontFamily = "Graphik",
+    #                                textOutline = 0)),
+    dataLabels = list(enabled = TRUE,
+                      useHTML = TRUE,
+                      formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+                          '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
+                          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
     nullColor = "#e8e8e8",
     accessibility = list(
       enabled = TRUE,
@@ -275,14 +318,29 @@ map_count <- highchart(height = 580) %>%
             layout = "vertical",
             symbolHeight = 200,
             symbolWidth = 25,
-            x = -25,
-            y = 0) %>%
+            x = -5,
+            y = -25) %>%
   
   hc_xAxis(title = "") %>%
   hc_yAxis(title = "") %>%
+  hc_title(text = "The Number of People in Prison who are Eligible for Parole in 2020") %>% 
   
-  hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-  hc_add_theme(hc_theme_map_jc) %>%
+  hc_exporting(enabled = TRUE,
+               buttons = list(contextButton = list(align = 'right', 
+                                                   verticalAlign = 'top', 
+                                                   y = 5,  
+                                                   x = -85))) %>%
+  
+  #hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+  hc_tooltip(
+      formatter = JS("function() {
+      return '<div style=\"background-color: #FFFFFF; opacity: 1; padding: 8px; border: none;\">' +
+      this.point.tooltip +
+      '</div>';}"),
+      useHTML = TRUE
+    ) %>% 
+  
+  hc_add_theme(hc_theme_map) %>%
   
   hc_plotOptions(series = list(animation = FALSE,
                                cursor = "pointer",
@@ -297,19 +355,21 @@ map_count <- highchart(height = 580) %>%
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People in Prison Currently Eligible for Parole"))
+    div(id = "big-section-title", "People in Prison Currently Eligible for Parole"),
+    div(id = "regular-text", "These maps show the percentage and number of individuals in prison in each state during 2020 who, although eligible for parole, remained incarcerated. Toggle between viewing data based on the percentage of these individuals or the actual number of eligible people still in prison. The stark variations across states emphasize the diversity of parole policies and practices in the U.S."), br()
+    )
 ```
 
 ::: {.panel-tabset}
 
 ## Percentage of People
 ```{r}
-map_percent
+map_percent %>% hc_size(height = 550)
 ```
 
 ## Number of People
 ```{r}
-map_count
+map_count %>% hc_size(height = 550)
 ```
 
 :::
@@ -351,8 +411,8 @@ common_col_style <- list(
 # Create reactable
 reactable(
   table_data,
-  style = hc_reactable_style,
-  theme = hc_reactable_theme,
+  style = reactable_style,
+  theme = reactable_theme,
   
   # Default Column Definitions
   defaultColDef = colDef(
@@ -441,4 +501,4 @@ reactable(
 :::
 
 <br><br>
-<small><i>Notes: Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime.</i></small>
+<small><i>Notes: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime.</i></small>

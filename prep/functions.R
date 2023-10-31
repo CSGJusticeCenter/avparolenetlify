@@ -236,6 +236,32 @@ fnc_get_census_data <- function(state) {
 }
 
 
+
+
+
+###################
+# Reactable
+###################
+
+# Reactable table themes
+reactable_theme <-
+  reactableTheme(borderColor = neutralBkgndLight,
+                 stripedColor = neutralBkgndLight,
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center"))
+
+reactable_style <- list(
+  fontFamily = "Graphik, sans-serif",
+  fontSize = "0.9rem",
+  color = "black"
+)
+
+
+
+
+
+
 ###################
 # Highcharter
 ###################
@@ -245,13 +271,13 @@ hc_theme <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
                             fontSize = "12px",
-                            color = neutralBlackText)),
+                            color = "black")),
   title = list(
     align = "center",
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = neutralBlackText,
+      color = "black",
       fontSize = "16px"
     )
   ),
@@ -260,19 +286,19 @@ hc_theme <- hc_theme(
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = neutralBlackText,
+      color = "black",
       fontSize = "14px"
     )
   ),
   legend = list(
     align = "center",
     verticalAlign = "top",
-    itemStyle = list(color = neutralBlackText,
+    itemStyle = list(color = "black",
                      fontSize = "12px",
                      fontWeight = "regular")
   ),
   xAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+    labels = list(enabled = TRUE, style = list(color = "black",
                                                fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
@@ -281,7 +307,7 @@ hc_theme <- hc_theme(
     tickColor = "transparent"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+    labels = list(enabled = TRUE, style = list(color = "black",
                                                fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
@@ -299,7 +325,7 @@ hc_theme <- hc_theme(
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
-        style = list(color = neutralBlackText)
+        style = list(color = "black")
       )
     )
   )
@@ -309,13 +335,13 @@ hc_theme_with_line <- hc_theme(
   colors = c(orange, yellow, purple, darkblue, teal, blue),
   chart = list(style = list(fontFamily = "Graphik",
                             fontSize = "12px",
-                            color = neutralBlackText)),
+                            color = "black")),
   title = list(
     align = "center",
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = neutralBlackText,
+      color = "black",
       fontSize = "16px"
     )
   ),
@@ -324,19 +350,19 @@ hc_theme_with_line <- hc_theme(
     style = list(
       fontFamily = "Graphik",
       fontWeight = "bold",
-      color = neutralBlackText,
+      color = "black",
       fontSize = "14px"
     )
   ),
   legend = list(
     align = "center",
     verticalAlign = "top",
-    itemStyle = list(color = neutralBlackText,
+    itemStyle = list(color = "black",
                      fontSize = "12px",
                      fontWeight = "regular")
   ),
   xAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+    labels = list(enabled = TRUE, style = list(color = "black",
                                                fontSize = "12px",
                                                fontWeight = "regular")),
     gridLineColor = "transparent",
@@ -345,7 +371,7 @@ hc_theme_with_line <- hc_theme(
     tickColor = "transparent"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = list(color = neutralBlackText,
+    labels = list(enabled = TRUE, style = list(color = "black",
                                                fontSize = "12px",
                                                fontWeight = "regular"))
   ),
@@ -358,11 +384,42 @@ hc_theme_with_line <- hc_theme(
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
-        style = list(color = neutralBlackText)
+        style = list(color = "black")
       )
     )
   )
 )
+
+# Highcharts theme for hex map
+hc_theme_map <- hc_theme_merge(
+  hc_theme_smpl(),
+  hc_theme(
+    chart = list(style = list(fontFamily = "Graphik",
+                              fontSize = "14px",
+                              color = "black")),
+    title = list(
+      align = "center",
+      style = list(
+        fontFamily = "Graphik",
+        fontWeight = "bold",
+        color = "black",
+        fontSize = "22px"
+      )
+    ),
+    plotOptions = list(
+      series = list(states = list(inactive = list(opacity = 1))),
+      line = list(marker = list(enabled = TRUE)),
+      spline = list(marker = list(enabled = TRUE)),
+      area = list(marker = list(enabled = TRUE)),
+      areaspline = list(marker = list(enabled = TRUE))
+    ),
+    legend = list(
+      itemStyle = list(fontSize = "16px",
+                       fontWeight = "regular")
+    )
+  )
+)
+
 
 # Create single horizontal bar chart that is grouped
 fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
@@ -411,7 +468,7 @@ fnc_piechart <- function(df, x_column, accessibility_text){
                          style = list(fontSize = "1em",
                                       fontWeight = "regular",
                                       alignTo = "connectors",
-                                      color = neutralBlackText),
+                                      color = "black"),
                          enabled = TRUE,
                          formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
                        )
@@ -540,6 +597,248 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
     hc_plotOptions(
       series = list(
         stacking = "normal",
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+}
+
+fnc_create_infograph <- function(setrri, infogs = 9, emptyhumans = TRUE, fillcolor = "#00aba0", fillHoriz=TRUE) {
+
+  #######COLORS
+  #not full human
+  cols2 <- c(rgb(255,255,255,maxColorValue = 255), #white
+             rgb(167,169,172,maxColorValue = 255), #CSGJC gray
+             rgb(col2rgb(fillcolor)[1],col2rgb(fillcolor)[2],col2rgb(fillcolor)[3],
+                 maxColorValue = 255))    #CSGJC blue
+  #empty human colors
+  cols0 <- c(rgb(255,255,255,maxColorValue = 255),
+             rgb(167,169,172,maxColorValue = 255))
+  #full human
+  cols1 <- c(rgb(255,255,255,maxColorValue = 255),
+             rgb(col2rgb(fillcolor)[1],col2rgb(fillcolor)[2],col2rgb(fillcolor)[3],
+                 maxColorValue = 255))
+
+  #########set RRI
+  RRI       <- setrri        #RRI
+  numfull   <- floor(RRI)    #round RRI to determine how many filled infographics
+  numremain <- RRI - numfull #find partial fill for single infographic
+
+  #########set number of rows to plot infographics
+  if (infogs-setrri<1) {
+    infogs<-floor(setrri)+2;
+    warning(paste0("There are not enough infographics to plot! Number of infographics reset to ",floor(setrri)+2))
+  }
+  if (infogs>=10) {
+    rows<-2
+  } else {
+    rows<-1
+  }
+
+  #########starting position of blank infographic humans
+  blank <- numfull + 2
+
+  # Find the rows where left arm starts and right arm ends
+  if (fillHoriz==TRUE) {
+    pos1 <- which(apply(img[,,1], 2, function(y) any(y==1)))
+    max  <- 182 #max position must be adjusted due to issues with finding max PNG fill
+  } else {
+    pos1 <- which(apply(img[,,1], 1, function(y) any(y==1)))
+    max  <- 437 #max position must be adjusted due to issues with finding max PNG fill
+  }
+  h     <- dim(img)[1]
+  w     <- dim(img)[2]
+  min   <- min(pos1)
+
+  #set colors, plots, and RRIs for looping graphics
+  finalcolors <- c('cols2',       'cols0', 'cols1')
+  finalplots  <- c('plot2',       'plot0', 'plot1')
+  finalpcts   <- c(numremain*100, 0,       100)
+
+  #configure how many plots to create based on user request
+  if (emptyhumans==TRUE) {
+    if (RRI>1) {numplots<-1:3} else {numplots<-1:2}
+  } else {
+    if (RRI>1) {numplots<-c(1,3)} else {numplots<-1}
+  }
+
+  #create three types of plots (not full, empty, full human)
+  for (j in numplots) {
+    #percent of interest
+    pcts    <- finalpcts[j]
+    pospct  <- round((max-min)*pcts/100+min)
+
+    # Fill bodies with a different color according to percentages
+    finalimg                 <- img[h:1,,1]
+    bkgr                     <- (finalimg==1)
+    colfill                  <- matrix(rep(FALSE,h*w),nrow=h)
+    if (fillHoriz==TRUE) {
+      colfill[1:h,max:pospct]  <- TRUE
+    } else {
+      colfill[max:pospct,1:w]  <- TRUE
+    }
+    finalimg[bkgr & colfill] <- 0.5
+
+    #convert matrix into  df for ggplot
+    df <- reshape2::melt(finalimg)
+
+    #plot df
+    plot <- ggplot(df, aes(x = Var2, y = Var1, fill = factor(value))) +
+      geom_tile() +
+      scale_fill_manual(values = unlist(mget(finalcolors[j]), use.names=FALSE)) +
+      blankitout
+    assign(finalplots[j],plot)
+  }
+
+  ############create grid of RRIs
+  plot_list <- list()
+
+  ############SET UP PLOTTING LIST
+  #plot empty humans
+  if (emptyhumans==TRUE) {
+
+    #for RRI>1, create full human(s), not full human, empty human(s)
+    if (RRI>1) {
+
+      #create initial list of filled in infographics
+      for (i in 1:numfull){
+        #RRI>1, full human
+        plot_list[[i]] <- plot1
+      }
+      #RRI>1, not full human
+      plot_list[[numfull+1]] <- plot2
+
+      #RRI>1, empty human
+      for (i in blank:infogs){
+        plot_list[[i]] <- plot0
+      }
+
+      #for RRI<1, not full human, empty humans
+    } else {
+      plot_list[[1]] <- plot2
+
+      for (i in blank:infogs){
+        plot_list[[i]] <- plot0
+      }
+    }
+
+    #otherwise, DO NOT plot empty humans
+  } else {
+
+    #for RRI>1, create full human(s), not full human
+    if (RRI>1) {
+
+      #create initial list of filled in infographics
+      for (i in 1:numfull){
+        #RRI>1, full human
+        plot_list[[i]] <- plot1
+      }
+      #RRI>1, not full human
+      plot_list[[numfull+1]] <- plot2
+
+      #for RRI<1, not full human
+    } else {
+      plot_list[[1]] <- plot2
+    }
+  }
+
+  #plot the infographics!
+  plot_grid(plotlist=plot_list,nrow=rows)
+
+}
+
+
+fnc_create_and_save_infograph <- function(state_name) {
+
+  df1 <- rri_in_prison_data %>%
+    filter(state == state_name) %>%
+    filter(race == "Black, non-Hispanic")
+
+  infographics <- fnc_create_infograph(df1$rri, emptyhumans = FALSE)
+
+  file_name <- paste("rri_infograph_", state_name, ".png", sep = "")
+
+  ggsave(file_name, plot = infographics, device = "png",
+         width = 9, height = 5,
+         path = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots")
+}
+
+# Create grouped, not stacked bar chart
+fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text) {
+
+  highcharts <-
+    hchart(df, "bar",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1
+    ) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+}
+
+# Create grouped, not stacked bar chart
+fnc_grouped_columnchart <- function(df, x_column, group_by_col, accessibility_text) {
+
+  highcharts <-
+    hchart(df, "column",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1
+    ) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
         animation = FALSE,
         cursor = "pointer",
         borderWidth = 3,

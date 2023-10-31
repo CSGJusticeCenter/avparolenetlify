@@ -2,34 +2,41 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: October 5, 2023 (MAR)
+# Date last updated: October 31, 2023 (MAR)
 # Description:
 #    Import NCRP data (admissions, population, year end population)
+#    Import BJS Prisoners data
+#    Import Annual Parole Survey data
+#    Format data files for analysis and website visualizations
 #######################################
 
-# load packages and functions
+# load packages and functions (user action required in library.R)
 source("prep/library.R")
 source("prep/functions.R")
 
-# load prison sentencing system info from Robina
+# load prison sentencing system information from Robina Institute
 robinainfo              <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "classifications")
 robinadefinitions       <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "definitions")
 robinaparoleeligibility <- read.xlsx(paste0(sp_data_path, "/data/raw/robinainfo.xlsx"), sheet = "eligibility")
 
-# load NCRP data
-# https://www.icpsr.umich.edu/web/NACJD/studies/38492
+# load NCRP data admissions, releases, term records, and year end population
+# term records = admissions from 1950 to 2020
+# admissions = from 1991 to 2020
+# releases = from 1991 to 2020
+# year end population = from 1999 to 2020
+# source = https://www.icpsr.umich.edu/web/NACJD/studies/38492
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0001/38492-0001-Data.rda"))
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0002/38492-0002-Data.rda"))
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0003/38492-0003-Data.rda"))
 load(paste0(sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/DS0004/38492-0004-Data.rda"))
 
-# load Prisoners in 2020 - Statistical Tables
-# Using this info for RRI's bc there is more race/ethnicity data
-# https://bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables
+# load BJS Prisoners in 2020 - Statistical Tables
+# using this data instead of NCRP for disparities analysus bc there is more complete race and ethnicity data
+# source: https://bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables
 bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(sp_data_path, "/data/raw/p20st/p20stat02.csv"), skip = 10)
 
 # load Prisoners data from 2010-2021
-# CHECK TO MAKE SURE THESE ARE THE RIGHT FILES
+# CHECK TO MAKE SURE THESE ARE THE RIGHT FILES WITH JESS/SEBA
 bjs_prison_pop_by_gender_state_2010.csv <- read.csv(paste0(sp_data_path, "/data/raw/p10/p10at01.csv"))
 # bjs_prison_pop_by_gender_state_2011.csv <- read.csv(paste0(sp_data_path, "/data/raw/p11/p11at01.csv"))
 bjs_prison_pop_by_gender_state_2012.csv <- read.csv(paste0(sp_data_path, "/data/raw/p12tar9112/p12tar9112at06.csv"))
@@ -45,8 +52,8 @@ bjs_prison_pop_by_gender_state_2021.csv <- read.csv(paste0(sp_data_path, "/data/
 
 
 # load Annual Parole Survey Series
-# https://www.icpsr.umich.edu/web/NACJD/studies/38058
-# from 2000 to 2018 (most recent)
+# 2000 to 2018 (most recent)
+# source: https://www.icpsr.umich.edu/web/NACJD/studies/38058
 aps_parole_2018 <- load(paste0(sp_data_path, "/data/raw/ICPSR_38058-V1/ICPSR_38058/DS0001/38058-0001-Data.rda"))
 aps_parole_2017 <- load(paste0(sp_data_path, "/data/raw/ICPSR_37471-V1/ICPSR_37471/DS0001/37471-0001-Data.rda"))
 aps_parole_2016 <- load(paste0(sp_data_path, "/data/raw/ICPSR_37441-V1/ICPSR_37441/DS0001/37441-0001-Data.rda"))
@@ -67,12 +74,13 @@ aps_parole_2002 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31327-V1/ICPSR_313
 aps_parole_2001 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31326-V1/ICPSR_31326/DS0001/31326-0001-Data.rda"))
 aps_parole_2000 <- load(paste0(sp_data_path, "/data/raw/ICPSR_31325-V1/ICPSR_31325/DS0001/31325-0001-Data.rda"))
 
-# load sp file
+# load shapefile for hex map on national trends page
+# remove DC
 hex <- read_sf(paste0(sp_data_path, "/data/raw/us_states_hexgrid.geojson")) %>%
   select(state_abb = iso3166_2) %>%
   filter(state_abb != "DC")
 
-# load info on states that abolished parole
+# load information on states that abolished parole release for national trends page
 parole_info_by_state <-
   read.xlsx(paste0(sp_data_path, "/background/app/Parole Info by State.xlsx"),
             sheet = "Overall")
@@ -85,6 +93,7 @@ parole_info_by_state <-
 # Prepare NCRP Term Records
 #############
 
+# Remove unwanted characters from strings
 ncrp_term_records <- da38492.0001 %>% clean_names() %>%
   mutate(
     state        = str_sub(state, 6, -1),
@@ -108,6 +117,7 @@ ncrp_term_records <- da38492.0001 %>% clean_names() %>%
 # Prepare NCRP Admissions
 #############
 
+# Remove unwanted characters from strings
 ncrp_admissions <- da38492.0002 %>% clean_names() %>%
 
   mutate(
@@ -129,6 +139,7 @@ ncrp_admissions <- da38492.0002 %>% clean_names() %>%
 # Prepare NCRP Releases
 #############
 
+# Remove unwanted characters from strings
 ncrp_releases   <- da38492.0003 %>% clean_names() %>%
   mutate(
     state        = str_sub(state, 6, -1),
@@ -146,13 +157,14 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
 
   mutate(offdetail = trimws(offdetail)) %>%
 
-  # create parole eligibility status with custom function
+  # determine parole eligibility status
   fnc_create_parelig_status() %>%
 
   # create new offense descriptions
   fnc_create_fbi_index() %>%
 
   # calculate timing of release by parole eligibility date (year)
+  # released before, on, or after parole eligibility year
   mutate(time_between_admisson_release = relyr - admityr,
          time_between_ped_release = relyr - parelig_year,
          time_between_ped_release_category = case_when(
@@ -171,24 +183,13 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
                                   "Released 5 Years After Parole Eligibility Year",
                                   "Missing Parole Eligibility Year"))) %>%
 
-  # Calculate time served vs original sentence length
-  mutate(sentlgth_avg <- case_when(
-    sentlgth == "< 1 year"      ~ 0.5,
-    sentlgth == "1-1.9 years"   ~ 1.5,
-    sentlgth == "2-4.9 years"   ~ 3.5,
-    sentlgth == "5-9.9 years"   ~ 7.5,
-    sentlgth == "10-24.9 years" ~ 17.5
-    # >=25 years
-  )) %>%
-
-  # include unknown race in analysis
-  # include unknown admission type in analysis???
-  # create age categories
+  # change NAs to "Unknown"
   fnc_create_admtype() %>%
   mutate(race     = ifelse(is.na(race), "Unknown", race),
          agerlse  = ifelse(is.na(agerlse), "Unknown", agerlse),
          sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
 
+  # factor variables
   mutate(race = factor(race,
                        levels = c("Unknown",
                                   "Other race(s), non-Hispanic",
@@ -221,6 +222,7 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
 # Prepare NCRP Year End Population
 #############
 
+# Remove unwanted characters from strings
 ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   mutate(
     state          = str_sub(state, 6, -1),
@@ -235,6 +237,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     ageyrend       = str_sub(ageyrend, 5, -1),
     timesrvd_yrend = str_sub(timesrvd_yrend, 5, -1)) %>%
 
+  # combine other and unknown
   mutate(offdetail = trimws(offdetail),
          offgeneral = case_when(
            is.na(offgeneral) ~ "Other or Unknown",
@@ -244,17 +247,16 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # create new offense descriptions
   fnc_create_fbi_index() %>%
 
-  # create parole eligibility status
+  # determine parole eligibility status
   fnc_create_parelig_status() %>%
 
-  # include unknown race in analysis
-  # include unknown admission type in analysis???
-  # create age categories
+  # change NAs to "Unknown"
   fnc_create_admtype() %>%
   mutate(race = ifelse(is.na(race), "Unknown", race),
          ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend),
          sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
 
+  # factor variables
   mutate(race = factor(race,
                        levels = c("Unknown",
                                   "Other race(s), non-Hispanic",
@@ -286,11 +288,11 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
 
 ##########
 # Prepare BJS: Prisoners in 2020
-# This file is broken down by race
+# This file is broken down by race and ethnicity which is needed for the disparities analysis
 ##########
 
-# clean up file to create dataframe of state prison pop by race
-# NAs generated are for cells that had / or ~ and are now NA
+# extract data from messy spreadsheet of unwanted cells and charactrs
+# Warning message regarding NAs generated are for cells that had / or ~ and are now NA
 total_pop <- bjs_prison_pop_by_race_state_2020 %>%
   clean_names() %>%
   filter(jurisdiction == "") %>%
@@ -299,6 +301,7 @@ total_pop <- bjs_prison_pop_by_race_state_2020 %>%
   mutate(total = str_replace_all(total, ",", ""),
          total = as.numeric(total))
 
+# reshape data
 bjs_prison_pop_by_race <- bjs_prison_pop_by_race_state_2020 %>%
   clean_names() %>%
   filter(jurisdiction == "") %>%
@@ -334,20 +337,14 @@ bjs_prison_pop_by_race <- bjs_prison_pop_by_race_state_2020 %>%
          population_type = "In Prison") %>%
   select(-total)
 
-# # select variable for prison population only
-# bjs_prison_pop_by_state <- bjs_prison_pop_by_race_state %>%
-#   select(state, bjs_total_prison_population = total) %>%
-
-
-
-
 
 
 
 
 
 ##########
-# Prepare BJS: Prisoners from 2010-2021 ############CHECK THIS
+# Prepare BJS: Prisoners from 2010-2021
+# This file is broken down by gender which is needed for the disparities analysis
 ##########
 
 # 2010 data
@@ -434,7 +431,7 @@ bjs_prison_pop_by_state_2021 <- bjs_prison_pop_by_gender_state_2021.csv %>%
   fnc_clean_bjs_data() %>%
   mutate(rptyear = 2021)
 
-# combine data
+# combine 2010 - 2021 data
 bjs_prison_pop_by_state <- rbind(
   bjs_prison_pop_by_state_2010,
   bjs_prison_pop_by_state_2011,
@@ -451,10 +448,10 @@ bjs_prison_pop_by_state <- rbind(
 )
 
 ##########
-# Prepare hex data for map
+# Prepare shapefile for map
 ##########
 
-# Reformat hex data for map
+# Reformat hex data for ideal map shape
 hex_gj <- hex %>%
   st_transform(3857) %>%
   sf_geojson() %>%
@@ -471,7 +468,9 @@ hex_gj <- hex %>%
 # Prepare parole info by state for map
 ##########
 
-parole_info_by_state <- parole_info_by_state  %>%
+# clean variable names
+parole_info_by_state <-
+  parole_info_by_state  %>%
   clean_names()
 
 
@@ -482,16 +481,17 @@ parole_info_by_state <- parole_info_by_state  %>%
 
 
 ##########
-# Prepare annual parole survey
+# Prepare BJS Annual Parole Survey
+# Only have data up to 2018
 ##########
 
-# Get state abb
+# get state abbreviations and state names
 state_names_abb <- data.frame(abbreviation = state.abb,
                               name = state.name,
                               stringsAsFactors = FALSE) %>%
   rename(state = name, stateid = abbreviation)
 
-# List of data frames and years
+# list of APS data frames and years
 aps_data_list <- list(da38058.0001,
                       da37471.0001,
                       da37441.0001,
@@ -514,13 +514,13 @@ aps_data_list <- list(da38058.0001,
 aps_years <- 2018:2000
 aps_pre_2008 <- rep(FALSE, 7) %>% c(rep(TRUE, 12))
 
-# Process and combine APS data
+# process and combine APS data
 aps_parole_combined <- lapply(seq_along(aps_data_list), function(i) {
   fnc_prepare_aps_data(aps_data_list[[i]], aps_years[i], aps_pre_2008[i])
 })
 aps_parole_2000_2018 <- do.call(rbind, aps_parole_combined)
 
-# Remove DC
+# remove DC
 aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
   filter(!state %in% c("District of Columbia", "Federal") & !is.na(state))
 
@@ -531,10 +531,9 @@ aps_parole_2000_2018 <- aps_parole_2000_2018 %>%
 
 
 ##########
-# Save data
+# Save data to SharePoint
 ##########
 
-# Save files to app folder
 theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){

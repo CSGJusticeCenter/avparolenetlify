@@ -155,19 +155,6 @@ merged_population_data <- merged_population_data %>%
                           "<b>", population_type, "</b><br><br>",
                           "Percentage of People: <b>", prop_label, "</b>", sep = "")
          )
-# merged_population_data <- rbind(census_state_population,
-#                                 ncrp_parole_eligible_population)
-# merged_population_data <- merged_population_data %>%
-#   mutate(race = factor(race,
-#                        levels = c("Other race(s), non-Hispanic",
-#                                   "White, non-Hispanic",
-#                                   "Hispanic, any race",
-#                                   "Black, non-Hispanic")),
-#          population_type = factor(population_type,
-#                                   levels = c("In the Community",
-#                                              "In Prison but Parole-Eligible"))) %>%
-#   arrange(state, population_type, desc(race))
-
 
 # Highchart showing race population in the community and in prison but parole-eligible
 states <- unique(merged_population_data$state)
@@ -183,6 +170,11 @@ all_groupedbar_disparities_race <- map(.x = states,  .f = function(x) {
 })
 all_groupedbar_disparities_race <- setNames(all_groupedbar_disparities_race, states)
 all_groupedbar_disparities_race$Georgia
+
+
+
+
+
 
 
 
@@ -212,21 +204,8 @@ rri_in_prison_data <- nonwhite_rate %>%
   left_join(white_rate, by = "state") %>%
   mutate(rri = nonwhite_rate / white_rate)
 
-# ggplot showing rri of race for people in prison
-# states <- unique(rri_in_prison_data$state)
-# states <- "Georgia"
-# all_rri_infographic_race <- map(.x = states,  .f = function(x) {
-#   df1 <- rri_in_prison_data %>%
-#     filter(state == x) %>%
-#     filter(race == "Black, non-Hispanic")
-#   infographics <- create_infograph(df1$rri, emptyhumans=FALSE)
-#   return(infographics)
-# })
-# all_rri_infographic_race <- setNames(all_rri_infographic_race, states)
-# all_rri_infographic_race$Georgia
-
-states <- unique(rri_in_prison_data$state)
-# states <- "Georgia" ############################################################
+#states <- unique(rri_in_prison_data$state)
+states <- "Georgia" ############################################################
 
 # create infographics - takes ~10 minutes to run
 map(states, fnc_create_and_save_infograph)

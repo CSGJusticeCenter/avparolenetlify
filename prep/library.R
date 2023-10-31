@@ -2,35 +2,39 @@
 # Project: AV Parole
 # File: library.R
 # Authors: Mari Roberts
-# Date last updated: June 12, 2023 (MAR)
+# Date last updated: October 31, 2023 (MAR)
 # Description:
 #    Load packages, colors, fonts
 #######################################
 
 #------ Action Required ------#
 
-# Select year for analysis
+# select year for analysis
 select_year <- 2020
 
-# download CSGJCR package
-# devtools::install_github("CSGJusticeCenter/csgjcr@develop")
-# in your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token"
+# csgjcr installation instructions:
+# Install remotes package in order to install CSGJCR package
+# uncomment the three lines of code below for installation.
+# install.packages("remotes")
+# library("remotes")
+# remotes::install_github("CSGJCResearch/csgjcr")
+# In your Renviron (usethis::edit_r_environ(), set CSG_SP_PATH = "your sharepoint path here" and GITHUB_PAT = "your token"
 library(csgjcr)
 
-# Highcharter download instructions:
+# highcharter installation instructions:
 # remove the existing highcharter package from your R session: remove.packages("highcharter")
 # restart your R session
 # install highcharter with the devtools package (NOT the remotes package):
 # install.packages("devtools")
 # devtools::install_github("mrjoh3/highcharter")
 
-# Change this to your project path
+# change the sp_folder to your project path:
 csg_set_project_path(
   project = "AVParole",
   sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
   force = TRUE)
 
-# save data path
+# save data path:
 sp_data_path <- csg_get_project_path("AVParole")
 
 # ----------------------------#
@@ -60,7 +64,7 @@ library(rmarkdown) # render pages
 font_add("Graphik",     regular = "fonts/Graphik.ttf")
 font_add("GraphikBold", regular = "fonts/GraphikBold.ttf")
 
-# set options so that y axis has comma separator
+# set options so that y axis has comma separator on highcharts
 hcoptslang <- getOption("highcharter.lang")
 hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
