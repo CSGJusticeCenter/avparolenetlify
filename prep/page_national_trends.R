@@ -57,18 +57,18 @@ parole_eligibility_table <- ncrp_parole_eligible_125years_new_crime %>%
   pivot_wider(names_from = name, values_from = value) %>%
   clean_names()
 
-# Filter to select year
+# filter to select year
 parole_eligibility_table_select_year <- parole_eligibility_table %>%
   filter(rptyear == select_year)
 
-# Find missing states
+# find missing states
 # Arizona, Michigan, New Jersey, New Mexico
 missing_data <- tibble(state = setdiff(state.name,
                                        parole_eligibility_table_select_year$state),
                        rptyear = select_year)
 
-# Combine the missing states with the original dataframe to get all 50 states
-# This final table shows parole eligibility statuses for people in prison for a
+# combine the missing states with the original dataframe to get all 50 states
+# this final table shows parole eligibility statuses for people in prison for a
 #     new crime, not a parole return/revocation.
 parole_eligibility_table_select_year <-
   bind_rows(parole_eligibility_table_select_year, missing_data) %>%

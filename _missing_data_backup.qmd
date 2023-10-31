@@ -1,0 +1,656 @@
+---
+title: "Missing Data"
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+
+source("prep/library.R")
+source("prep/functions.R")
+
+# # load data
+# load(file = paste0(sp_data_path, "/data/analysis/all_sentlgth_ped.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_offgeneral_ped.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_offdetail_ped.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_sentlgth_offgeneral.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/all_offgeneral_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/all_sentlgth_125_ped.rds"))
+```
+
+**Questions**
+
+1. **Depending on the state, can we assume that people in prison with missing parole eligibility data who have a sentence length of "Life, LWOP, Life plus additional years, Death" are not eligible for parole? Does offense type matter?** For example, in the state of Georgia, 30% of people have missing parole eligibility data. Of these people, 70% had a violent offense and 20% had a Life/LWOP/Death sentence length. Of the people with a Life/LWOP/Death sentence length and missing parole eligibility data, 97% had a violent offense.   
+<br>
+2. **Depending on the state, can we assume that someone is not eligible for parole because they have a short sentence? Is time served so brief that the parole process might not be deemed necessary?** For example, in Georgia, 83% of people with a sentence length of <1 year are missing parole eligibility information.   
+<br>
+3. **Do we need to take into account the prison sentencing system of the state to determine who is potentially eligible or not eligible for parole?** For example, in Georgia,  "While the grant of parole is discretionary, consideration for parole is often not; most inmates are entitled to automatic consideration for parole. In general, this occurs after serving 1/3 of the total sentence. However, at minimum, a person serving a misdemeanor sentence must serve 6 months and a person serving a felony sentence must serve 9 months. Inmates serving 21 years or more, but not a life sentence, become eligible after serving a 7 year term. In addition, inmates convicted of certain serious crimes (e.g. aggravated assault, incest, drug trafficking) are not eligible for parole until they have served 7 years or 1/3 of the prison term, whichever comes first."  
+<br>
+[Word document](https://csgorg.sharepoint.com/:w:/s/Team-JC-Research/EZCeIZ0UTgNCu9aCZ4eXqpYBsHeh_ETS4EM3a-nOJmB5Cg?e=BXUemM) in Sharepoint for discussing missingness.  
+
+```{r}
+################################################################################
+
+# Missingness by sentence length and parole eligibility status
+
+# Obtained from NCRP year end population
+
+################################################################################
+
+# reactable table
+all_cross_tab_sentlgth_125 <-
+  reactable(all_sentlgth_125_ped,
+            elementId = "filter1-select",
+            style = list(
+              fontFamily = "Graphik, sans-serif",
+              fontSize = "0.8rem",
+              color = neutralBlackText
+            ),
+            theme = reactable_theme,
+            defaultColDef = colDef(format = colFormat(separators = TRUE),
+                                   align = "right",
+                                   minWidth = 70),
+            compact = TRUE,
+            defaultPageSize = 50,
+            columnGroups = list(
+              colGroup(name = "Number of People",
+                       columns = c("current",
+                                   "future_1_5_years",
+                                   "future_6_years",
+                                   "missing")),
+              colGroup(name = "Percentage of the Prison Population",
+                       columns = c("current_percent",
+                                   "future_1_5_years_percent",
+                                   "future_6_years_percent",
+                                   "missing_percent"))),
+            columns = list(
+              state         = colDef(name = "State",
+                                     minWidth = 120,
+                                     align = "left",
+                                     style = list(fontWeight = "bold")
+                                     ),
+              sentlgth_category      = colDef(name = "Sentence Length",
+                                       style = list(fontWeight = "bold"),
+                                       minWidth = 120,
+                                       align = "left"),
+
+              current          = colDef(name = "Current"),
+              future_1_5_years = colDef(name = "Future 1-5 Years"),
+              future_6_years   = colDef(name = "Future 6+ Years"),
+              missing          = colDef(name = "Missing"),
+
+              current_percent          = colDef(name = "Current",
+                                                format = colFormat(percent = TRUE, digits = 0)),
+              future_1_5_years_percent = colDef(name = "Future 1-5 Years",
+                                                format = colFormat(percent = TRUE, digits = 0)),
+              future_6_years_percent   = colDef(name = "Future 6+ Years",
+                                                format = colFormat(percent = TRUE, digits = 0)),
+              missing_percent          = colDef(name = "Missing",
+                                                style = list(fontWeight = "bold"),
+                                                format = colFormat(percent = TRUE, digits = 0)),
+
+              total           = colDef(name = "Total",
+                                       style = list(borderRight = "1px solid #d3d3d3"))
+            )
+  )
+
+
+# # reactable table
+# all_cross_tab_sentlgth <-
+#   reactable(all_sentlgth_ped,
+#             elementId = "filter1-select",
+#             style = list(
+#               fontFamily = "Graphik, sans-serif",
+#               fontSize = "0.8rem",
+#               color = neutralBlackText
+#             ),
+#             theme = reactable_theme,
+#             defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                    align = "right",
+#                                    minWidth = 70),
+#             groupBy = "state",
+#             compact = TRUE,
+#             filterable = TRUE,
+#             defaultExpanded = TRUE,
+#             defaultPageSize = 3,
+#             columnGroups = list(
+#               colGroup(name = "Number of People",
+#                        columns = c("current",
+#                                    "future_1_5_years",
+#                                    "future_6_years",
+#                                    "missing")),
+#               colGroup(name = "Percentage of the Prison Population",
+#                        columns = c("current_percent",
+#                                    "future_1_5_years_percent",
+#                                    "future_6_years_percent",
+#                                    "missing_percent"))),
+#             columns = list(
+#               state         = colDef(name = "State",
+#                                      minWidth = 120,
+#                                      align = "left",
+#                                      style = list(fontWeight = "bold"),
+#                                      filterInput = function(values, name) {
+#                                        tags$select(
+#                                          onchange = sprintf("Reactable.setFilter('filter1-select', '%s', event.target.value || undefined)", name),
+#                                          tags$option(value = "", "All"),
+#                                          lapply(unique(values), tags$option),
+#                                          "aria-label" = sprintf("Filter %s", name),
+#                                          style = "width: 100%; height: 28px;"
+#                                        )
+#                                      }),
+#               sentlgth      = colDef(name = "Sentence Length",
+#                                        #style = fnc_highlight_cell
+#                                        style = list(fontWeight = "bold"),
+#                                        minWidth = 120,
+#                                        align = "left",
+#                                      filterInput = function(values, name) {
+#                                        tags$select(
+#                                          onchange = sprintf("Reactable.setFilter('filter1-select', '%s', event.target.value || undefined)", name),
+#                                          tags$option(value = "", "All"),
+#                                          lapply(unique(values), tags$option),
+#                                          "aria-label" = sprintf("Filter %s", name),
+#                                          style = "width: 100%; height: 28px;"
+#                                        )
+#                                      }),
+# 
+#               current          = colDef(name = "Current"),
+#               future_1_5_years = colDef(name = "Future 1-5 Years"),
+#               future_6_years   = colDef(name = "Future 6+ Years"),
+#               missing          = colDef(name = "Missing"),
+# 
+#               current_percent          = colDef(name = "Current",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               future_1_5_years_percent = colDef(name = "Future 1-5 Years",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               future_6_years_percent   = colDef(name = "Future 6+ Years",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               missing_percent          = colDef(name = "Missing",
+#                                                 style = list(fontWeight = "bold"),
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+# 
+#               total           = colDef(name = "Total",
+#                                        style = list(borderRight = "1px solid #d3d3d3"))
+#             )
+#   )
+# 
+# 
+# 
+# 
+# 
+# 
+# ################################################################################
+# 
+# # Missingness by offense type and parole eligibility status
+# 
+# # Obtained from NCRP year end population
+# 
+# ################################################################################
+# 
+# # reactable table
+# all_cross_tab_offgeneral <-
+#   reactable(all_offgeneral_ped,
+#             elementId = "filter2-select",
+#             style = list(
+#               fontFamily = "Graphik, sans-serif",
+#               fontSize = "0.8rem",
+#               color = neutralBlackText
+#             ),
+#             theme = reactable_theme,
+#             defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                    align = "right",
+#                                    minWidth = 70),
+#             groupBy = "state",
+#             compact = TRUE,
+#             filterable = TRUE,
+#             defaultExpanded = TRUE,
+#             defaultPageSize = 3,
+#             columnGroups = list(
+#               colGroup(name = "Number of People",
+#                        columns = c("current",
+#                                    "future_1_5_years",
+#                                    "future_6_years",
+#                                    "missing")),
+#               colGroup(name = "Percentage of the Prison Population",
+#                        columns = c("current_percent",
+#                                    "future_1_5_years_percent",
+#                                    "future_6_years_percent",
+#                                    "missing_percent"))),
+#             columns = list(
+#               state         = colDef(name = "State",
+#                                      minWidth = 120,
+#                                      align = "left",
+#                                      style = list(fontWeight = "bold"),
+#                                      filterInput = function(values, name) {
+#                                        tags$select(
+#                                          onchange = sprintf("Reactable.setFilter('filter2-select', '%s', event.target.value || undefined)", name),
+#                                          tags$option(value = "", "All"),
+#                                          lapply(unique(values), tags$option),
+#                                          "aria-label" = sprintf("Filter %s", name),
+#                                          style = "width: 100%; height: 28px;"
+#                                        )
+#                                      }),
+#               offgeneral      = colDef(name = "Offense Type",
+#                                        #style = fnc_highlight_cell
+#                                        style = list(fontWeight = "bold"),
+#                                        minWidth = 120,
+#                                        align = "left",
+#                                        filterInput = function(values, name) {
+#                                          tags$select(
+#                                            onchange = sprintf("Reactable.setFilter('filter2-select', '%s', event.target.value || undefined)", name),
+#                                            tags$option(value = "", "All"),
+#                                            lapply(unique(values), tags$option),
+#                                            "aria-label" = sprintf("Filter %s", name),
+#                                            style = "width: 100%; height: 28px;"
+#                                          )
+#                                        }),
+# 
+#               current          = colDef(name = "Current"),
+#               future_1_5_years = colDef(name = "Future 1-5 Years"),
+#               future_6_years   = colDef(name = "Future 6+ Years"),
+#               missing          = colDef(name = "Missing"),
+# 
+#               current_percent          = colDef(name = "Current",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               future_1_5_years_percent = colDef(name = "Future 1-5 Years",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               future_6_years_percent   = colDef(name = "Future 6+ Years",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               missing_percent          = colDef(name = "Missing",
+#                                                 style = list(fontWeight = "bold"),
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+# 
+#               total           = colDef(name = "Total",
+#                                        style = list(borderRight = "1px solid #d3d3d3"))
+#             )
+#   )
+# 
+# # reactable table
+# # more detailed offense
+# all_cross_tab_offdetail <-
+#   reactable(all_offdetail_ped,
+#             elementId = "filter3-select",
+#             style = list(
+#               fontFamily = "Graphik, sans-serif",
+#               fontSize = "0.8rem",
+#               color = neutralBlackText
+#             ),
+#             theme = reactable_theme,
+#             defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                    align = "right",
+#                                    minWidth = 70),
+#             groupBy = "state",
+#             compact = TRUE,
+#             filterable = TRUE,
+#             defaultExpanded = TRUE,
+#             defaultPageSize = 3,
+#             columnGroups = list(
+#               colGroup(name = "Number of People",
+#                        columns = c("current",
+#                                    "future_1_5_years",
+#                                    "future_6_years",
+#                                    "missing")),
+#               colGroup(name = "Percentage of the Prison Population",
+#                        columns = c("current_percent",
+#                                    "future_1_5_years_percent",
+#                                    "future_6_years_percent",
+#                                    "missing_percent"))),
+#             columns = list(
+#               state         = colDef(name = "State",
+#                                      minWidth = 120,
+#                                      align = "left",
+#                                      style = list(fontWeight = "bold"),
+#                                      filterInput = function(values, name) {
+#                                        tags$select(
+#                                          onchange = sprintf("Reactable.setFilter('filter3-select', '%s', event.target.value || undefined)", name),
+#                                          tags$option(value = "", "All"),
+#                                          lapply(unique(values), tags$option),
+#                                          "aria-label" = sprintf("Filter %s", name),
+#                                          style = "width: 100%; height: 28px;"
+#                                        )
+#                                      }),
+#               offdetail      = colDef(name = "Offense Detail",
+#                                       #style = fnc_highlight_cell
+#                                       style = list(fontWeight = "bold"),
+#                                       minWidth = 120,
+#                                       align = "left",
+#                                       filterInput = function(values, name) {
+#                                         tags$select(
+#                                           onchange = sprintf("Reactable.setFilter('filter3-select', '%s', event.target.value || undefined)", name),
+#                                           tags$option(value = "", "All"),
+#                                           lapply(unique(values), tags$option),
+#                                           "aria-label" = sprintf("Filter %s", name),
+#                                           style = "width: 100%; height: 28px;"
+#                                         )
+#                                       }),
+#               
+#               current          = colDef(name = "Current"),
+#               future_1_5_years = colDef(name = "Future 1-5 Years"),
+#               future_6_years   = colDef(name = "Future 6+ Years"),
+#               missing          = colDef(name = "Missing"),
+#               
+#               current_percent          = colDef(name = "Current",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               future_1_5_years_percent = colDef(name = "Future 1-5 Years",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               future_6_years_percent   = colDef(name = "Future 6+ Years",
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               missing_percent          = colDef(name = "Missing",
+#                                                 style = list(fontWeight = "bold"),
+#                                                 format = colFormat(percent = TRUE, digits = 0)),
+#               
+#               total           = colDef(name = "Total",
+#                                        style = list(borderRight = "1px solid #d3d3d3"))
+#             )
+#   )
+# 
+# 
+# 
+# 
+# 
+# 
+# ################################################################################
+# 
+# # Missingness by sentence length and offense type (general) - COLUMN SUMS
+# 
+# # Obtained from NCRP year end population (missing data only)
+# 
+# ################################################################################
+# 
+# # reactable table
+# all_cross_tab_sentlgth_offgeneral <- reactable(
+#           all_sentlgth_offgeneral,
+#             elementId = "filter-select",
+#           style = list(
+#             fontFamily = "Graphik, sans-serif",
+#             fontSize = "0.8rem",
+#             color = neutralBlackText
+#           ),
+#           theme = reactable_theme,
+#           defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                                  align = "right",
+#                                  minWidth = 55),
+#           groupBy = "state",
+#           compact = TRUE,
+#           filterable = TRUE,
+#           defaultExpanded = TRUE,
+#           defaultPageSize = 3,
+#           columnGroups = list(
+#             colGroup(name = "Number of People",
+#                      columns = c("x1_year", 
+#                                  "x1_1_9_years", 
+#                                  "x2_4_9_years", 
+#                                  "x5_9_9_years", 
+#                                  "x10_24_9_years",
+#                                  "x25_years", 
+#                                  "life_lwop_life_plus_additional_years_death")),
+#             colGroup(name = "Percentage of the Prison Population",
+#                      columns = c("x1_year_percent", 
+#                                  "x1_1_9_years_percent", 
+#                                  "x2_4_9_years_percent", 
+#                                  "x5_9_9_years_percent", 
+#                                  "x10_24_9_years_percent",
+#                                  "x25_years_percent", 
+#                                  "life_lwop_life_plus_additional_years_death_percent"))
+#           ),
+#           columns = list(
+#             state         = colDef(name = "State",
+#                                    minWidth = 120,
+#                                    align = "left",
+#                                    style = list(fontWeight = "bold"),
+#                                    filterInput = function(values, name) {
+#                                      tags$select(
+#                                        onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
+#                                        tags$option(value = "", "All"),
+#                                        lapply(unique(values), tags$option),
+#                                        "aria-label" = sprintf("Filter %s", name),
+#                                        style = "width: 100%; height: 28px;"
+#                                      )
+#                                    }
+#             ),
+#             offgeneral      = colDef(name = "Offense with Missing PED",
+#                                      #style = fnc_highlight_cell
+#                                      style = list(fontWeight = "bold"),
+#                                      minWidth = 120,
+#                                      align = "left",
+#                                      filterInput = function(values, name) {
+#                                        tags$select(
+#                                          onchange = sprintf("Reactable.setFilter('filter-select', '%s', event.target.value || undefined)", name),
+#                                          tags$option(value = "", "All"),
+#                                          lapply(unique(values), tags$option),
+#                                          "aria-label" = sprintf("Filter %s", name),
+#                                          style = "width: 100%; height: 28px;"
+#                                        )
+#                                      }),
+# 
+#             x1_year         = colDef(name = "< 1 year"),
+#             x1_year_percent = colDef(name = "< 1 year",
+#                                      format = colFormat(percent = TRUE, digits = 0)),
+# 
+#             x1_1_9_years         = colDef(name = "1-1.9 years"),
+#             x1_1_9_years_percent = colDef(name = "1-1.9 years",
+#                                           format = colFormat(percent = TRUE, digits = 0)),
+# 
+#             x2_4_9_years         = colDef(name = "2-4.9 years"),
+#             x2_4_9_years_percent = colDef(name = "2-4.9 years",
+#                                           format = colFormat(percent = TRUE, digits = 0)),
+# 
+#             x5_9_9_years  = colDef(name = "5-9.9 years"),
+#             x5_9_9_years_percent = colDef(name = "5-9.9 years",
+#                                           format = colFormat(percent = TRUE, digits = 0)),
+# 
+#             x10_24_9_years         = colDef(name = "10-24.9 years"),
+#             x10_24_9_years_percent = colDef(name = "10-24.9 years",
+#                                             format = colFormat(percent = TRUE, digits = 0)),
+# 
+#             x25_years         = colDef(name = ">=25 years"),
+#             x25_years_percent = colDef(name = ">=25 years",
+#                                        #style = fnc_highlight_cell,
+#                                        format = colFormat(percent = TRUE, digits = 0)),
+# 
+#             life_lwop_life_plus_additional_years_death = colDef(name = "Life/LWOP"),
+#             life_lwop_life_plus_additional_years_death_percent = colDef(name = "Life/LWOP",
+#                                                                         format = colFormat(percent = TRUE,
+#                                                                                            digits = 0)),
+# 
+#             total           = colDef(name = "Total",
+#                                      style = list(borderRight = "1px solid #d3d3d3"))
+#           )
+# )
+# 
+# 
+# 
+# 
+# 
+# 
+# ################################################################################
+# 
+# # Missingness by sentence length and offense type (general) - COLUMN SUMS
+# 
+# # Obtained from NCRP year end population (missing data only)
+# 
+# ################################################################################
+# 
+# # reactable table
+# all_cross_tab_offgeneral_sentlgth <- reactable(
+#   all_offgeneral_sentlgth,
+#   elementId = "filter4-select",
+#   style = list(
+#     fontFamily = "Graphik, sans-serif",
+#     fontSize = "0.8rem",
+#     color = neutralBlackText
+#   ),
+#   theme = reactable_theme,
+#   defaultColDef = colDef(format = colFormat(separators = TRUE),
+#                          align = "right",
+#                          minWidth = 55),
+#   groupBy = "state",
+#   compact = TRUE,
+#   filterable = TRUE,
+#   defaultExpanded = TRUE,
+#   defaultPageSize = 3,
+#   columnGroups = list(
+#     colGroup(name = "Number of People",
+#              columns = c("drugs", 
+#                          "public_order", 
+#                          "property", 
+#                          "other_or_unspecified", 
+#                          "violent")),
+#     colGroup(name = "Percentage of the Prison Population",
+#              columns = c("drugs_percent", 
+#                          "public_order_percent", 
+#                          "property_percent", 
+#                          "other_or_unspecified_percent", 
+#                          "violent_percent"))
+#   ),
+#   columns = list(
+#     state         = colDef(name = "State",
+#                            minWidth = 120,
+#                            align = "left",
+#                            style = list(fontWeight = "bold"),
+#                            filterInput = function(values, name) {
+#                              tags$select(
+#                                onchange = sprintf("Reactable.setFilter('filter4-select', '%s', event.target.value || undefined)", name),
+#                                tags$option(value = "", "All"),
+#                                lapply(unique(values), tags$option),
+#                                "aria-label" = sprintf("Filter %s", name),
+#                                style = "width: 100%; height: 28px;"
+#                              )
+#                            }
+#     ),
+#     sentlgth      = colDef(name = "Sentence Length with Missing PED",
+#                              #style = fnc_highlight_cell
+#                              style = list(fontWeight = "bold"),
+#                              minWidth = 120,
+#                              align = "left",
+#                              filterInput = function(values, name) {
+#                                tags$select(
+#                                  onchange = sprintf("Reactable.setFilter('filter4-select', '%s', event.target.value || undefined)", name),
+#                                  tags$option(value = "", "All"),
+#                                  lapply(unique(values), tags$option),
+#                                  "aria-label" = sprintf("Filter %s", name),
+#                                  style = "width: 100%; height: 28px;"
+#                                )
+#                              }),
+#     
+#     drugs         = colDef(name = "Drugs"),
+#     drugs_percent = colDef(name = "Drugs",
+#                              format = colFormat(percent = TRUE, digits = 0)),
+#     
+#     public_order         = colDef(name = "Public Order"),
+#     public_order_percent = colDef(name = "Public Order",
+#                                   format = colFormat(percent = TRUE, digits = 0)),
+#     
+#     property         = colDef(name = "Property"),
+#     property_percent = colDef(name = "Property",
+#                                   format = colFormat(percent = TRUE, digits = 0)),
+#     
+#     other_or_unspecified  = colDef(name = "Other or Unspecified"),
+#     other_or_unspecified_percent = colDef(name = "Other or Unspecified",
+#                                   format = colFormat(percent = TRUE, digits = 0)),
+#     
+#     violent         = colDef(name = "Violent"),
+#     violent_percent = colDef(name = "Violent",
+#                                     format = colFormat(percent = TRUE, digits = 0)),
+#     
+#     total           = colDef(name = "Total", 
+#                              style = list(borderRight = "1px solid #d3d3d3"))
+#   )
+# )
+```
+
+<br>
+
+
+
+
+
+
+**Parole Eligibility Status by Sentence Length**
+
+Data: NCRP year-end population  
+
+```{r}
+all_cross_tab_sentlgth_125
+```
+<br><br>
+```{r}
+# all_cross_tab_sentlgth
+```
+
+<br><br>
+
+
+
+
+
+
+**Parole Eligibility Status by Offense Type**
+
+Data: NCRP year-end population  
+
+```{r}
+all_cross_tab_offgeneral
+```
+
+<br><br>
+
+
+
+
+
+
+
+**Parole Eligibility Status by Detailed Offense Type**
+
+```{r}
+all_cross_tab_offdetail
+```
+
+<br><br>
+
+
+
+
+
+**Missing Data: Sentence Length vs Offense Type - Column Sums**  
+
+Data: NCRP year-end population, Missing parole eligibility information.
+
+Life/LWOP = Life, LWOP, Life plus additional years, Death  
+
+Notes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 34% of people in prison for violent charges with missing parole eligibility data had a Life/LWOP sentence length.  
+
+```{r}
+all_cross_tab_sentlgth_offgeneral
+```
+
+
+
+
+
+
+<br><br>
+
+**Missing Data: Sentence Length vs Offense Type - Row Sums**  
+
+Data: NCRP year-end population, Missing parole eligibility information.
+
+Life/LWOP = Life, LWOP, Life plus additional years, Death  
+
+Notes: The following table shows the number of people (year end population) who had missing parole eligibility data, broken out by most serious sentenced offense and sentence length. For example, in Alabama and in 2020, 89% of people in prison for a Life/LWOP sentence length with missing parole eligibility data had a violent most serious sentenced offense.    
+
+```{r}
+all_cross_tab_offgeneral_sentlgth
+```

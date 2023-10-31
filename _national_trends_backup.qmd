@@ -121,9 +121,9 @@ map_data <- parole_eligibility_table_select_year %>%
          #           paste0("<p style='text-align:center;'>",
          #                  state_abb, "<br>",
          #                  round(current_perc, 0), "%</p>")),
-         datalabel = ifelse(is.na(current_perc),
-                                     paste0("<div style='text-align:center; height: 40px;'>", state_abb, "</div>"),
-                                     paste0("<div style='text-align:center; height: 40px; line-height: 20px;'>", state_abb, "<br>", round(current_perc, 0), "%</div>")),
+         # datalabel = ifelse(is.na(current_perc),
+         #                             paste0("<div style='text-align:center; height: 50px; line-height: 50px;'>", state_abb, "</div>"),
+         #                             paste0("<div style='text-align:center; height: 40px; line-height: 20px;'>", state_abb, "<br>", round(current_perc, 0), "%</div>")),
          
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) %>% 
@@ -181,7 +181,7 @@ map_percent <- highchart(height = 600) %>% #####################################
       df = map_data,
       joinBy = "state_abb",
       value = "current_perc",
-      # dataLabels = list(enabled = TRUE,
+      # dataLabels = list(enabled = TRUE, 
       #                   useHTML = TRUE,
       #                   format = "{point.datalabel}",
       #                   style = list(fontSize = "14px",
@@ -189,10 +189,10 @@ map_percent <- highchart(height = 600) %>% #####################################
       #                                fontFamily = "Graphik",
       #                                textOutline = 0)),
       dataLabels = list(enabled = TRUE,
-                        useHTML = TRUE,
-                        formatter = JS("function() {return '<div style=\"text-align:center;\">' +
-                            '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
-                            '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
+                            useHTML = TRUE,
+                            formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+                                '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
+                                '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
       nullColor = "#e8e8e8",
       accessibility = list(
         enabled = TRUE,
@@ -224,19 +224,15 @@ map_percent <- highchart(height = 600) %>% #####################################
                                                        y = 3,  
                                                        x = -85))) %>%
     
-    #hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    # hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_tooltip(
-        borderWidth = 1,                           
-        borderRadius = 0,                         
-        backgroundColor = 'rgba(255, 255, 255, 1)', 
-        formatter = JS("function() {
-          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+          formatter = JS("function() {
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; padding: 8px; border: none;\">' +
           this.point.tooltip +
-          '</div>';}"
-        ),
-        useHTML = TRUE
-    ) %>%
-      
+          '</div>';}"),
+          useHTML = TRUE
+        ) %>% 
+  
     hc_add_theme(hc_theme_map) %>%
     
     hc_plotOptions(series = list(animation = FALSE,
@@ -287,72 +283,74 @@ map_data <- parole_eligibility_table_select_year %>%
 # create hex map for counts ##########################################################################################
 map_count <- highchart(height = 600) %>%
   
-    hc_chart(marginTop = 60,   
-             marginBottom = 50,
-             marginRight = 50) %>%
-    
-    hc_add_series_map(
-      map = hex_gj,
-      df = map_data,
-      joinBy = "state_abb",
-      value = "current_count",
-      dataLabels = list(enabled = TRUE,
-                        useHTML = TRUE,
-                        formatter = JS("function() {return '<div style=\"text-align:center;\">' +
-                            '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
-                            '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
-      nullColor = "#e8e8e8",
-      accessibility = list(
-        enabled = TRUE,
-        keyboardNavigation = list(enabled = TRUE),
-        point = list(valueDescriptionFormat = "{point.state}, {point.currentcountlabel}"))) %>%
-    
-    hc_colorAxis(stops = color_stops(4, gradient_colors),
-                 reversed = FALSE,
-                 labels = list(format = "{value:,.0f}",
-                               style = list(fontSize = "14px"))) %>%
-    
-    hc_legend(align = "right",
-              verticalAlign = "bottom",
-              layout = "vertical",
-              symbolHeight = 200,
-              symbolWidth = 25,
-              x = -5,
-              y = -25) %>%
-    
-    hc_xAxis(title = "") %>%
-    hc_yAxis(title = "") %>%
-    hc_title(text = "The Number of People in Prison who are Eligible for Parole in 2020") %>% 
-    
-    hc_exporting(enabled = TRUE,
-                 buttons = list(contextButton = list(align = 'right', 
-                                                     verticalAlign = 'top', 
-                                                     y = 5,  
-                                                     x = -85))) %>%
-    
-    hc_tooltip(
-        borderWidth = 1,                           
-        borderRadius = 0,                         
-        backgroundColor = 'rgba(255, 255, 255, 1)', 
-        formatter = JS("function() {
-          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
-          this.point.tooltip +
-          '</div>';}"
-        ),
-        useHTML = TRUE
-    ) %>%
+  hc_chart(marginTop = 60,   
+           marginBottom = 50,
+           marginRight = 50) %>%
   
-    hc_add_theme(hc_theme_map) %>%
-    
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = paste0("TEXT"),
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = paste0("TEXT")))
-    )
+  hc_add_series_map(
+    map = hex_gj,
+    df = map_data,
+    joinBy = "state_abb",
+    value = "current_count",
+    # dataLabels = list(enabled = TRUE, format = "{point.datalabel}",
+    #                   style = list(fontSize = "14px",
+    #                                fontWeight = "regular",
+    #                                fontFamily = "Graphik",
+    #                                textOutline = 0)),
+    dataLabels = list(enabled = TRUE,
+                      useHTML = TRUE,
+                      formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+                          '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
+                          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
+    nullColor = "#e8e8e8",
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      point = list(valueDescriptionFormat = "{point.state}, {point.currentcountlabel}"))) %>%
+  
+  hc_colorAxis(stops = color_stops(4, gradient_colors),
+               reversed = FALSE,
+               labels = list(format = "{value:,.0f}",
+                             style = list(fontSize = "14px"))) %>%
+  
+  hc_legend(align = "right",
+            verticalAlign = "bottom",
+            layout = "vertical",
+            symbolHeight = 200,
+            symbolWidth = 25,
+            x = -5,
+            y = -25) %>%
+  
+  hc_xAxis(title = "") %>%
+  hc_yAxis(title = "") %>%
+  hc_title(text = "The Number of People in Prison who are Eligible for Parole in 2020") %>% 
+  
+  hc_exporting(enabled = TRUE,
+               buttons = list(contextButton = list(align = 'right', 
+                                                   verticalAlign = 'top', 
+                                                   y = 5,  
+                                                   x = -85))) %>%
+  
+  #hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+  hc_tooltip(
+      formatter = JS("function() {
+      return '<div style=\"background-color: #FFFFFF; opacity: 1; padding: 8px; border: none;\">' +
+      this.point.tooltip +
+      '</div>';}"),
+      useHTML = TRUE
+    ) %>% 
+  
+  hc_add_theme(hc_theme_map) %>%
+  
+  hc_plotOptions(series = list(animation = FALSE,
+                               cursor = "pointer",
+                               borderWidth = 3),
+                 accessibility = list(enabled = TRUE,
+                                      keyboardNavigation = list(enabled = TRUE),
+                                      linkedDescription = paste0("TEXT"),
+                                      landmarkVerbosity = "one"),
+                 area = list(accessibility = list(description = paste0("TEXT")))
+  )
 ```
 
 ```{r}
