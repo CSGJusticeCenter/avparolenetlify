@@ -7,6 +7,7 @@ format:
     code-fold: true
     page-layout: full
     fig_caption: yes
+    toc: false
 ---
 
 ```{r setup, include=FALSE}
@@ -381,6 +382,21 @@ div(id = "body-section", br(),
     div(id = "note-text", "Notes: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime."), br()
     )
 ```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Other National Visualization Ideas"), br(),
+    div(id = "regular-text", "People Infographics: National disparities for race, ethnicity, and gender"), br(),
+    div(id = "regular-text", "Stacked Bar Chart: National proportion of the parole-eligible population that was released each year compared to those who remained incarcerated despite their parole eligibility (2010-2020)"), br(),
+    div(id = "regular-text", "Highlighted Finding: Depict the average length of time people are incarcerated after their parole eligibility date."), br(),
+    div(id = "regular-text", "Stacked Bar Chart: Parole eligibility by offense type. Bars representing different crime categories (e.g., violent crimes, property crimes) and their corresponding parole-eligible numbers."), br(),
+    div(id = "regular-text", "List: 'Top States' in any of the findings above."), br(),
+    div(id = "regular-text", "Map: Robina Institute's prison sentencing system rating."), br(),
+    div(id = "regular-text", "Table: Simpler table than the one below. Parole-eligible prison populations by state"), br()
+
+    )
+```
+
 
 <br>
 

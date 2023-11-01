@@ -79,20 +79,20 @@ fnc_parameters <- function(df){
 
 }
 
-# # Calculate n, prop, and create labels and tooltips when there are two columns of interest
-# fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
-#   df %>%
-#     count({{count_column1}}) %>%
-#     mutate(
-#       prop = (n / sum(n)),
-#       prop_label = paste0(round(prop*100, 0), "%"),
-#       n_label = formattable::comma(n, 0),
-#       tooltip = paste0("<b>", state, "</b><br><br>",
-#                        "<b>", {{ count_column2 }}, "</b><br><br>",
-#                        "<b>", {{ count_column1 }}, "</b><br><br>",
-#                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
-#     )
-# }
+# Calculate n, prop, and create labels and tooltips when there are two columns of interest
+fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
+  df %>%
+    count({{count_column1}}) %>%
+    mutate(
+      prop = (n / sum(n)),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column2 }}, "</b><br><br>",
+                       "<b>", {{ count_column1 }}, "</b><br><br>",
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
+    )
+}
 
 # Prepare Annual Parole Survey data for analysis (after 2008)
 fnc_aps_prepare <- function(df){

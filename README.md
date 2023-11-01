@@ -43,7 +43,7 @@ Password: csgjcavparole
 
 ## How to Run this Code
 
-To clean NCRP data, prepare visualizations, and generate website pages, open the library.R file and make sure you have all packages downloaded and that your Sharepoint path is set. Then run generate_netlify_site.R.
+To clean NCRP data, prepare visualizations, and generate website pages, open the library.R file and make sure you have all packages downloaded and that your Sharepoint path is set. Then run generate_netlify_site.R. In the generate_netlify_site.R file, you have the option to re-run all code to create the Netlify site or load saved data to create the Netlify site.  
 
 ## Data Limitations
 

@@ -258,13 +258,48 @@ all_groupedcolumn_disparities_release_race <- map(.x = states,  .f = function(x)
     ungroup() %>%
     filter(state == x) %>%
     arrange(desc(race))
-  highcharts <- fnc_grouped_columnchart(df1, "race", "time_between_ped_release_category2", "TBD accessibility text") %>%
+  max_y_value <- (max(df1$prop*100) + 5)/100
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_columnchart(df1, "race", "time_between_ped_release_category2",
+                                        hc_accessibility_text) %>%
     hc_legend(enabled = TRUE,
-              reversed = FALSE)
+              reversed = FALSE) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = max_y_value
+    ) %>%
   return(highcharts)
 })
 all_groupedcolumn_disparities_release_race <- setNames(all_groupedcolumn_disparities_release_race, states)
 all_groupedcolumn_disparities_release_race$Georgia
+
+
+all_stackedcolumn_disparities_release_race <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_time_between_ped_release %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    arrange(desc(race)) %>%
+    mutate(time_between_ped_release_category2 =
+             factor(time_between_ped_release_category2,
+                    levels = c("More than Fifth Year",
+                               "Fifth Year",
+                               "Fourth Year",
+                               "Third Year",
+                               "Second Year",
+                               "First Year")))
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "race", "time_between_ped_release_category2", hc_accessibility_text)
+  return(highcharts)
+})
+all_stackedcolumn_disparities_release_race <- setNames(all_stackedcolumn_disparities_release_race, states)
+all_stackedcolumn_disparities_release_race$Georgia
+
 
 
 
@@ -304,7 +339,7 @@ for (folder in theseFOLDERS){
 
   save(all_groupedbar_disparities_race,            file = file.path(folder, "all_groupedbar_disparities_race.rds"))
   save(all_groupedcolumn_disparities_release_race, file = file.path(folder, "all_groupedcolumn_disparities_release_race.rds"))
-  save(all_rri_infographic_race,                   file = file.path(folder, "all_rri_infographic_race.rds"))
-
+  save(all_stackedcolumn_disparities_release_race, file = file.path(folder, "all_stackedcolumn_disparities_release_race.rds"))
+  # save(all_rri_infographic_race,                   file = file.path(folder, "all_rri_infographic_race.rds"))
 
 }

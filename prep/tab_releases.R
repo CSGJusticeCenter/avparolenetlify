@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Date last updated: October 5, 2023 (MAR)
+# Date last updated: October 31, 2023 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -23,7 +23,7 @@
 # We have the year-end population of those who were parole-eligible but were not released,
 #   and we have the number of parole-eligible individuals who were released but
 #   we don't have the total initial population of parole-eligible individuals for each year,
-#   which makes direct calculation of the proportion released a bit tricky.
+#   so, determine this below.
 
 # Calculate the number of parole eligible people released by state and year
 ncrp_pe_releases_by_year <- ncrp_releases %>%
@@ -315,7 +315,63 @@ all_groupedbar_release_timing_fbi_index$Georgia
 
 ################################################################################
 
+# Calculate the average and median length of stay by state and by offense type
+ncrp_los_by_offense_type <- ncrp_releases %>%
+  filter(rptyear == select_year) %>%
+  group_by(state, fbi_index) %>%
+  summarise(
+    Average = mean(time_between_admisson_release, na.rm = TRUE),
+    Median  = median(time_between_admisson_release, na.rm = TRUE)) %>%
+  pivot_longer(
+    cols = c(Average, Median),
+    names_to = "type",
+    values_to = "value") %>%
+  mutate(data_label = round(value, 1))
 
+# Highchart
+states <- unique(ncrp_los_by_offense_type$state)
+all_groupedbar_los_by_offense <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_los_by_offense_type %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+  max_y_value <- max(df1$value) + 5
+
+  hc_accessibility_text <- paste0("This graph shows the average and median length of stay by offense type in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- hchart(df1, "bar",
+                       hcaes(x = fbi_index,
+                             y = value,
+                             group = type
+                       ),
+                       dataLabels = list(enabled = TRUE,
+                                         format = "{point.data_label}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = "Number of Years"),
+             max = max_y_value) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE, cursor = "pointer",
+        borderWidth = 3, minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = hc_accessibility_text, landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = hc_accessibility_text)))
+  return(highcharts)
+})
+
+all_groupedbar_los_by_offense <- setNames(all_groupedbar_los_by_offense, states)
+all_groupedbar_los_by_offense$Georgia
 
 
 
@@ -348,6 +404,8 @@ for (folder in theseFOLDERS){
 
   save(all_pie_release_type,                      file = file.path(folder, "all_pie_release_type.rds"))
   save(all_groupedbar_release_timing_fbi_index,   file = file.path(folder, "all_groupedbar_release_timing_fbi_index.rds"))
+
+  save(all_groupedbar_los_by_offense,             file = file.path(folder, "all_groupedbar_los_by_offense.rds"))
 
 }
 

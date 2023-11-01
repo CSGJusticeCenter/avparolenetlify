@@ -44,7 +44,7 @@ source("prep/tab_disparities.R")
 wd <- getwd()
 
 # Get list of 50 states
-# states <- c("Georgia")
+#states <- c("Georgia")
 states <- state.name
 
 # Read in original qmd

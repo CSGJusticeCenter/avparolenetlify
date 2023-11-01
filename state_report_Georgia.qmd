@@ -488,7 +488,7 @@ if (state_for_report %in% names(all_groupedbar_release_timing_reltype)) {
     all_groupedbar_release_timing_reltype[[state_for_report]] %>%
     hc_size(height = 375) %>% 
     hc_colors(c(neutralBkgndMedium, darkblue, yellow, teal, purple)) %>% 
-    hc_title(text = paste0("Timing of Releases Relative to Parole Eligibility Year by Release Type", " in ", select_year)) %>% 
+    hc_title(text = paste0("Timing of Prison Releases Relative to Parole Eligibility Year by Release Type", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
                text = paste0("Source: ", ncrp_rel_source))
 } else {
@@ -507,7 +507,7 @@ if (state_for_report %in% names(all_bar_release_race)) {
     hc_size(width = 700, 
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
-    hc_title(text = paste0("Releases by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_title(text = paste0("Prison Releases by Race and Ethnicity", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
            text = paste0("Source: ", ncrp_rel_source))
 } else {
@@ -521,7 +521,7 @@ if (state_for_report %in% names(all_bar_release_gender)) {
     hc_size(width = 700, 
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
-    hc_title(text = paste0("Releases by Gender", " in ", select_year)) %>% 
+    hc_title(text = paste0("Prison Releases by Gender", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
            text = paste0("Source: ", ncrp_rel_source))
 } else {
@@ -535,7 +535,7 @@ if (state_for_report %in% names(all_bar_release_agerlse)) {
     hc_size(width = 700, 
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
-    hc_title(text = paste0("Releases by Age", " in ", select_year)) %>% 
+    hc_title(text = paste0("Prison Releases by Age", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
            text = paste0("Source: ", ncrp_rel_source))
 } else {
@@ -554,7 +554,7 @@ if (state_for_report %in% names(all_pie_release_type)) {
     all_pie_release_type[[state_for_report]] %>%
     hc_size(height = 275) %>%
     hc_colors(c(teal, purple)) %>%
-    hc_title(text = paste0("Distribution of Releases by Release Type", " in ", select_year)) %>% 
+    hc_title(text = paste0("Distribution of Prison Releases by Release Type", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
            text = paste0("Source: ", ncrp_rel_source))
 } else {
@@ -581,6 +581,15 @@ if (state_for_report %in% names(all_groupedbar_release_timing_fbi_index)) {
 # Time Served by Offense Type
 ###################
 
+if (state_for_report %in% names(all_groupedbar_los_by_offense)) {
+  state_groupedbar_los_by_offense <-
+    all_groupedbar_los_by_offense[[state_for_report]] %>%
+    hc_title(text = paste0("Average and Median Length of Stay by Offense Type", " in ", select_year)) %>% 
+    hc_credits(enabled = TRUE, 
+           text = paste0("Source: ", ncrp_rel_source))
+} else {
+  state_groupedbar_los_by_offense <- no_data_text
+}
 
 # ###################
 # # Maxout
@@ -638,14 +647,43 @@ if (state_for_report %in% names(all_groupedbar_disparities_race)) {
 if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
   state_groupedcolumn_disparities_release_race <-
     all_groupedcolumn_disparities_release_race[[state_for_report]] %>%
-    hc_colors(c("#FFAF00","#CC9617", "#997E2E","#666546","#334D5D", "#003474")) %>% 
-    hc_title(text = paste0("Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
+    # hc_colors(c("#FFAF00","#CC9617", "#997E2E","#666546","#334D5D", "#003474")) %>% 
+    hc_colors(c("#FFAF00","#CCAE20", "#99AD40","#66AD60","#33AC80", "#00ABA0")) %>% 
+    hc_title(text = paste0("Option 1: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
     hc_credits(enabled = TRUE, 
            text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_groupedcolumn_disparities_release_race <- no_data_text
 }
+
+# Stacked column chart showing percentage of population in community and in prison but parole eligible
+if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
+  state_stackedcolumn_disparities_release_race <-
+    all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
+    hc_colors(c(orange, yellow, teal, blue, purple, darkblue)) %>% 
+    hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_chart(marginBottom = 50) %>%
+    hc_credits(enabled = TRUE, 
+           text = paste0("Source: ", ncrp_pop_source))
+} else {
+  state_stackedcolumn_disparities_release_race <- no_data_text
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # RRI for race and ethnicity
 # state_rri_infographic_race <- "TBD"
@@ -986,7 +1024,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Type of Release"), br(),
     # div(id = "regular-text", ""), br(),
-    div(id = "visualization", state_pie_release_type), br(), br()
+    div(id = "visualization", state_pie_release_type), br(), br(), br()
     )
 ```
 
@@ -999,7 +1037,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Timing by Offense Type"), br(),
     # div(id = "regular-text", ""), br(),
-    div(id = "visualization", state_groupedbar_release_timing_fbi_index), br()
+    div(id = "visualization", state_groupedbar_release_timing_fbi_index), br(), br(), br()
     )
 ```
 
@@ -1011,7 +1049,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Time Served by Offense Type"), br(),
-    div(id = "regular-text", "TBD: Average LOS? Proportion of sentence length (categorical) served?")
+    div(id = "visualization", state_groupedbar_los_by_offense), br()
     )
 ```
 
@@ -1084,7 +1122,8 @@ div(id = "body-section", br(),
 div(id = "body-section", 
     div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented. Source: BJS Prisoners (2020), Census (2020)"), br(), br(), br(),
     div(id = "visualization", state_groupedbar_disparities_race), br(), br(), br(),
-    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(), br()
+    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(), 
+    div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br()
 )
 ```
 
