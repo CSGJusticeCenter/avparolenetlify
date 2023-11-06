@@ -6,6 +6,8 @@
 # Map
 load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_info_by_state.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/map_count.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
 
 # Table
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))

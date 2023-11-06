@@ -1128,21 +1128,6 @@ div(id = "body-section",
 ```
 
 
-
-
-
-```{r}
-########################################
-
-# Predicted Probabilities
-
-########################################
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Predicted Probabilities"), br(),
-    div(id = "regular-text", "Predicted probabilities: Controlling for offense and sentence length, predicted probabilities of release before/at eligibility date.  Something like “After controlling for differences in ages, offenses, and sentence length, 66% of White people, 40% of Black people, and 55% of Hispanic people are released before/on parole eligibility date. Similarly, 80% of women and 74% of men were released before/on parole eligibility date"), br(),
-    )
-```
-
 </center>
 <br>
 

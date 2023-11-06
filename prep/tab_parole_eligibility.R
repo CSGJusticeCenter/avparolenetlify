@@ -46,11 +46,11 @@ ncrp_pe_type_prop <- parole_eligibility_table_select_year %>%
                names_to = "type",
                values_to = "prop") %>%
   mutate(type = case_when(
-    type == "current_perc"          ~ "New Crime Population<br>Currently Eligible",
-    type == "future_1_5_years_perc" ~ "New Crime Population<br>Eligible in 1-5 Years",
-    type == "future_6_years_perc"   ~ "New Crime Population<br>Eligible in 6+ Years",
-    type == "other_perc"            ~ "Other Population<br>Currently/Future Eligible",
-    type == "missing_perc"          ~ "Missing Data"
+    type == "current_perc"          ~ "Currently Eligible",
+    type == "future_1_5_years_perc" ~ "Eligible in 1-5 Years",
+    type == "future_6_years_perc"   ~ "Eligible in 6+ Years",
+    type == "other_perc"            ~ "Other",
+    type == "missing_perc"          ~ "Missing Parole Eligibility Data"
   ))
 
 # Create long form based on count variables (type and n columns)
