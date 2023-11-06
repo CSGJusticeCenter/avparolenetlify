@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: October 23, 2023 (MAR)
+# Date last updated: November 6, 2023 (MAR)
 
 # Description:
 #    Parole eligibility tables and graphics for "Parole Eligibility" tab
@@ -75,22 +75,22 @@ ncrp_pe_type_count <- parole_eligibility_table_select_year %>%
                names_to = "type",
                values_to = "n") %>%
   mutate(type = case_when(
-    type == "current_count"          ~ "New Crime Population<br>Currently Eligible",
-    type == "future_1_5_years_count" ~ "New Crime Population<br>Eligible in 1-5 Years",
-    type == "future_6_years_count"   ~ "New Crime Population<br>Eligible in 6+ Years",
-    type == "other_count"                      ~ "Other Population<br>Currently/Future Eligible",
-    type == "missing_count"                    ~ "Missing Data"
+    type == "current_count"          ~ "Currently Eligible",
+    type == "future_1_5_years_count" ~ "Eligible in 1-5 Years",
+    type == "future_6_years_count"   ~ "Eligible in 6+ Years",
+    type == "other_count"            ~ "Other",
+    type == "missing_count"          ~ "Missing Parole Eligibility Data"
   ))
 
 # Join the two long forms together
 ncrp_pe_type <- ncrp_pe_type_prop %>%
   left_join(ncrp_pe_type_count, by = c("state", "rptyear", "type")) %>%
    mutate(type = factor(type,
-                        levels = c("Missing Data",
-                                   "Other Population<br>Currently/Future Eligible",
-                                   "New Crime Population<br>Eligible in 6+ Years",
-                                   "New Crime Population<br>Eligible in 1-5 Years",
-                                   "New Crime Population<br>Currently Eligible"))) %>%
+                        levels = c("Missing Parole Eligibility Data",
+                                   "Other",
+                                   "Eligible in 6+ Years",
+                                   "Eligible in 1-5 Years",
+                                   "Currently Eligible"))) %>%
    mutate(tooltip =
             paste0("<b>", state, "</b><br><br>",
                    "<b>", type, "</b><br><br>",
@@ -128,7 +128,7 @@ all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) 
 
   df1 <- ncrp_pe_type %>%
     filter(state == x &
-             type == "New Crime Population<br>Currently Eligible")
+           type == "Currently Eligible")
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
                       " people were eligible for parole but still in prison for new crimes and with original sentence lengths ranging from 1 to 25 years. This group made up ",

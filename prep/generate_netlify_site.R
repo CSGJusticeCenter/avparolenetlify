@@ -29,6 +29,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_stat
 load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_state.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_admissions.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/aps_parole_2000_2018.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race.rds"))
 
@@ -45,7 +46,7 @@ wd <- getwd()
 
 # Get list of 50 states
 states <- c("Georgia")
-#states <- state.name
+states <- state.name
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

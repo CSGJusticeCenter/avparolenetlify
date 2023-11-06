@@ -12,7 +12,6 @@ load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
 
 ################################################################################
 
-# Reactable table on "National Trends" page
 # Parole eligibility by state in select year
 
 # Obtained from NCRP year end population

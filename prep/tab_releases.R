@@ -111,7 +111,9 @@ ncrp_release_by_reltype <- ncrp_releases %>%
   filter(reltype == "Unconditional release" |
            reltype == "Conditional release") %>%
   group_by(state, reltype) %>%
-  fnc_values_tooltip(time_between_ped_release_category) %>%
+  fnc_values_labels(time_between_ped_release_category) %>%
+  fnc_tooltip(time_between_ped_release_category, prop_label,
+              paste0("Timing of Release: ", select_year)) %>%
   mutate(time_between_ped_release_category =
            factor(time_between_ped_release_category,
                   levels = c("Missing Parole Eligibility Year",
@@ -156,7 +158,9 @@ all_groupedbar_release_timing_reltype$Georgia
 ncrp_releases_race <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   group_by(state) %>%
-  fnc_values_tooltip(race)
+  fnc_values_labels(race) %>%
+  fnc_tooltip(race, prop_label,
+              paste0("Race and Ethnicity: "))
 
 # Create highcharts showing breakdown of releases by race and ethnicity
 states <- unique(ncrp_releases_race$state)
@@ -179,7 +183,10 @@ all_bar_release_race$Georgia
 ncrp_releases_gender <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   group_by(state) %>%
-  fnc_values_tooltip(sex)
+  fnc_values_labels(sex) %>%
+  fnc_tooltip(sex, prop_label,
+              paste0("Gender: "))
+
 
 # Create highcharts showing breakdown of releases by gender
 states <- unique(ncrp_releases_gender$state)
@@ -202,7 +209,9 @@ all_bar_release_gender$Georgia
 ncrp_releases_agerlse <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   group_by(state) %>%
-  fnc_values_tooltip(agerlse)
+  fnc_values_labels(agerlse) %>%
+  fnc_tooltip(agerlse, prop_label,
+              paste0("Age: "))
 
 # Create highcharts showing breakdown of releases by age
 states <- unique(ncrp_releases_agerlse$state)
@@ -239,7 +248,10 @@ ncrp_release_type <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   filter(reltype == "Conditional release" | reltype == "Unconditional release") %>%
   group_by(state) %>%
-  fnc_values_tooltip(reltype)
+  fnc_values_labels(reltype) %>%
+  fnc_tooltip(reltype, prop_label,
+              paste0("Release Type: "))
+
 
 # Highchart pie chart showing releases by release type
 states <- unique(ncrp_release_type$state)
@@ -275,7 +287,9 @@ all_pie_release_type$Georgia
 ncrp_release_by_offense <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   group_by(state, fbi_index) %>%
-  fnc_values_tooltip(time_between_ped_release_category) %>%
+  fnc_values_labels(time_between_ped_release_category) %>%
+  fnc_tooltip(time_between_ped_release_category, prop_label,
+              paste0("Timing of Release: ")) %>%
   mutate(time_between_ped_release_category =
            factor(time_between_ped_release_category,
                   levels = c("Missing Parole Eligibility Year",
@@ -375,6 +389,74 @@ all_groupedbar_los_by_offense$Georgia
 
 
 
+# Calculate the average length of stay by state and by offense type
+ncrp_los_by_offense_type <- ncrp_releases %>%
+  group_by(state, fbi_index, rptyear) %>%
+  summarise(
+    Average = mean(time_between_admisson_release, na.rm = TRUE)) %>%
+  pivot_longer(cols = Average, names_to = "type", values_to = "value") %>%
+  group_by(state) %>%
+  mutate(max_rptyear = max(rptyear),
+         min_rptyear = max_rptyear - 10) %>%
+  filter(rptyear == min_rptyear | rptyear == max_rptyear) %>%
+  group_by(state, fbi_index) %>%
+  mutate(change_value_10_years = last(value) - first(value),
+         prop = (last(value) - first(value)) / first(value) * 100,
+         change_sentence = ifelse(prop >= 0,
+                                  paste0(round(value, 1), "<br><b>", "\u2191", "</b> ", round(prop, 0), "% from 10 years ago"),
+                                  paste0(round(value, 1), "<br><b>", "\u2193", "</b> ", round(abs(prop), 0), "% from 10 years ago")))
+
+
+# Highchart
+states <- unique(ncrp_los_by_offense_type$state)
+all_bar_los_by_offense <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_los_by_offense_type %>%
+    ungroup() %>%
+    filter(state == x & type == "Average") %>%
+    distinct()
+  max_y_value <- max(df1$value) + 10
+
+  hc_accessibility_text <- paste0("This graph shows the average length of stay by offense type in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- hchart(df1, "bar",
+                       hcaes(x = fbi_index,
+                             y = value
+                       ),
+                       dataLabels = list(enabled = TRUE,
+                                         align = 'left',
+                                         useHTML = TRUE,
+                                         inside = FALSE,
+                                         format = "{point.change_sentence}",
+                                         style = list(fontWeight = "regular",
+                                                      fontSize = "12px",
+                                                      fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = "Average Number of Years"),
+             max = max_y_value) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = hc_accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = hc_accessibility_text)))
+  return(highcharts)
+})
+
+all_bar_los_by_offense <- setNames(all_bar_los_by_offense, states)
+all_bar_los_by_offense$Georgia
+
 
 
 
@@ -406,6 +488,7 @@ for (folder in theseFOLDERS){
   save(all_groupedbar_release_timing_fbi_index,   file = file.path(folder, "all_groupedbar_release_timing_fbi_index.rds"))
 
   save(all_groupedbar_los_by_offense,             file = file.path(folder, "all_groupedbar_los_by_offense.rds"))
+  save(all_bar_los_by_offense,                    file = file.path(folder, "all_bar_los_by_offense.rds"))
 
 }
 
