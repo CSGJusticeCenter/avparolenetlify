@@ -119,6 +119,9 @@ map_data <- parole_eligibility_table_select_year %>%
   # add missing states
   complete(state = all_states) %>%
 
+  # add info about whether state abolished parole release
+  left_join(parole_info_by_state_clean, by = "state") %>%
+
   # format data and create tooltip
   mutate(current_perc           = current_perc*100,
          future_1_5_years_perc  = future_1_5_years_perc*100,
@@ -126,64 +129,103 @@ map_data <- parole_eligibility_table_select_year %>%
 
          state_abb = state.abb[match(state, state.name)],
 
-         tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "Percent of Prison Population<br> Currently Eligible for Parole Release:<br><b>",
-                  paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
-                  "Percent of Prison Population<br> Eligible for Parole in the Next 1-5 Years:<br><b>",
-                  paste(round(future_1_5_years_perc, 0), "%</b>", sep = ""), "<br><br>",
-                  "Percent of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
-                  paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
-                  "Total Prison Population:<br><b>",
-                  formattable::comma(yearendpop, digits = 0), "</b>"),
-         tooltip = str_replace_all(tooltip, "NA%", "No Data")) %>%
+         all_na = rowSums(is.na(select(.,
+                                       yearendpop_125years_new_crime,
+                                       current_count,
+                                       future_1_5_years_count,
+                                       future_6_years_count,
+                                       missing_count))) ==
+           length(select(.,
+                         yearendpop_125years_new_crime,
+                         current_count,
+                         future_1_5_years_count,
+                         future_6_years_count,
+                         missing_count)),
+
+         tooltip = ifelse(all_na & abolished_discretionary_parole == "No",
+                          paste0("<b>", state, "</b><br><br>",
+                                 "Parole eligibility data is not available.<br><br>",
+                                 "Total Prison Population:<br><b>",
+                                 formattable::comma(yearendpop, digits = 0), "</b>"),
+
+                          ifelse(abolished_discretionary_parole == "Yes",
+                                 paste0("<b>", state, "</b><br><br>",
+                                        state, " abolished discretionary parole.<br><br>",
+
+                                        "Total Prison Population:<br><b>",
+                                        formattable::comma(yearendpop, digits = 0), "</b>"),
+
+                                 paste0("<b>", state, "</b><br><br>",
+                                        "Percent of Prison Population<br> Currently Eligible for Release:<br><b>",
+                                        paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
+
+                                        "Percent of Prison Population<br> Eligible for Release in the Next 1-5 Years:<br><b>",
+                                        paste(round(future_1_5_years_perc, 0), "%</b>", sep = ""), "<br><br>",
+
+                                        "Percent of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
+                                        paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
+
+                                        "Total Prison Population:<br><b>",
+                                        formattable::comma(yearendpop, digits = 0), "</b>"))),
+
+         tooltip = str_replace_all(tooltip, "NA%", "No Data"),
+         tooltip = str_replace_all(tooltip, "NA", "No Data")) %>%
 
   # create data labels
   mutate(change_label = paste0(round(current_perc, 0), "%"),
          change_label = str_replace_all(change_label, "NA%", "-"),
 
          currentperclabel = paste0(round(current_perc, 0), "%"),
-         currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data")) %>%
+         currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
-  # add info about whether state abolished parole release
-  left_join(parole_info_by_state_clean, by = "state")
-
-# define the gradient colors
+# Define the gradient colors for categories
 gradient_colors <- c("#D5F5F3", "#6AD0C9", "#00ABA0", "#006F8A", "#003474")
 
-# calculate the breaks for the percent of people currently eligible for parole (current_perc)
-num_breaks <- length(gradient_colors) + 1
-breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks), na.rm = TRUE)
+# Calculate the breaks for the percent of people eligible for parole
+num_breaks <- length(gradient_colors) - 1
+breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+breaks[1] <- 0  # Set the first break to 0
+breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
+breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 
-# assign legend info and gradient colors based on current_perc values
+# Process map_data to include gradient color and data category
 map_data_breaks <- map_data %>%
-  mutate(gradient_color = case_when(
-    is.na(current_perc) ~ NA_character_,
-    current_perc <= breaks[2] ~ gradient_colors[1],
-    current_perc <= breaks[3] ~ gradient_colors[2],
-    current_perc <= breaks[4] ~ gradient_colors[3],
-    TRUE ~ gradient_colors[4]
-  )) %>%
   mutate(
-    current_perc = round(current_perc, 0)) %>%
+    all_na = rowSums(is.na(select(., current_count, future_1_5_years_count, future_6_years_count))) ==
+      length(select(., current_count, future_1_5_years_count, future_6_years_count)),
+    gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+    gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
+    current_perc = round(current_perc, 0),
+    data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
+  ) %>%
   group_by(gradient_color) %>%
-  mutate(data_category = paste0(min(current_perc), "% - ",max(current_perc), "%")) %>%
-  mutate(data_category = case_when(
-    data_category == "NA% - NA%" & abolished_discretionary_parole == "Yes" ~ "Abolished Discretionary Parole",
-    data_category == "NA% - NA%" & abolished_discretionary_parole == "No"  ~ "Missing Data",
-    TRUE ~ data_category
-  )) %>%
-  mutate(data_category_num = case_when(
-    data_category == "0% - 2%"                        ~ 0,
-    data_category == "2% - 9%"                        ~ 1,
-    data_category == "10% - 15%"                      ~ 2,
-    data_category == "16% - 39%"                      ~ 3,
-    data_category == "Abolished Discretionary Parole" ~ 4,
-    data_category == "Missing Data"                   ~ 5
-  ))
+  mutate(
+    data_category = case_when(
+      gradient_color == gradient_colors[1] ~ paste0(breaks[1], "% - ", breaks[2], "%"),
+      gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
+      gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
+      gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
+      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$current_perc, na.rm = TRUE), "%")
+    ),
+    data_category = case_when(
+      is.na(data_category) & all_na & abolished_discretionary_parole == "No" ~ "Missing Data",
+      is.na(data_category) & abolished_discretionary_parole == "Yes" ~ "Abolished Discretionary Parole",
+      TRUE ~ data_category
+    ),
+    gradient_color = case_when(
+      is.na(gradient_color) & data_category == "Missing Data" ~ "#e8e8e8",
+      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ "#ffaf00",
+      TRUE ~ gradient_color
+    ),
+    data_category_num = case_when(
+      is.na(data_category_num) & data_category == "Missing Data" ~ 6,
+      is.na(data_category_num) & data_category == "Abolished Discretionary Parole" ~ 5,
+      TRUE ~ data_category_num
+    )
+  )
 
 # create hex map
-map_percent <- highchart(height = 600) %>% ##########################################################################################
+map_percent <- highchart(height = 600) %>%
 
 hc_chart(marginTop = 60,
          marginBottom = 50,
@@ -206,12 +248,12 @@ hc_chart(marginTop = 60,
       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) %>%
 
   hc_colorAxis(dataClassColor="category",
-               dataClasses = list(list(from = 0, to = 0, color="#D5F5F3", name = "0% - 2%"),
-                                  list(from = 1, to = 1, color="#6AD0C9", name = "2% - 9%"),
-                                  list(from = 2, to = 2, color="#00ABA0", name = "10% - 15%"),
-                                  list(from = 3, to = 3, color="#006F8A", name = "16% - 39%"),
-                                  list(from = 4, to = 4, color="#ffaf00", name = "Abolished Discretionary Parole"),
-                                  list(from = 5, to = 5, color="#e8e8e8", name = "Missing Data")
+               dataClasses = list(list(from = 1, to = 1, color="#D5F5F3", name = "0 - 3%"),
+                                  list(from = 2, to = 2, color="#6AD0C9", name = "4 - 12%"),
+                                  list(from = 3, to = 3, color="#00ABA0", name = "13 - 20%"),
+                                  list(from = 4, to = 4, color="#006F8A", name = "21 - 39%"),
+                                  list(from = 5, to = 5, color="#ffaf00", name = "Abolished Discretionary Parole"),
+                                  list(from = 6, to = 6, color="#e8e8e8", name = "Missing Data")
                )) %>%
 
   hc_legend(align = "right",
@@ -225,7 +267,6 @@ hc_chart(marginTop = 60,
   hc_xAxis(title = "") %>%
   hc_yAxis(title = "") %>%
 
-  #hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
   hc_tooltip(
     borderWidth = 1,
     borderRadius = 0,
@@ -259,57 +300,95 @@ map_data <- parole_eligibility_table_select_year %>%
   # add missing states
   complete(state = all_states) %>%
 
-  mutate(state_abb = state.abb[match(state, state.name)],
+  # add info about whether state abolished parole release
+  left_join(parole_info_by_state_clean, by = "state") %>%
 
-         tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
-                  paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
-                  "Number of People in Prison<br> Eligible for Parole in the Next 1-5 Years:<br><b>",
-                  paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
-                  "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
-                  paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
-                  "Total Prison Population:<br><b>",
-                  formattable::comma(yearendpop, digits = 0), "</b>"),
+  # create the abolished_label for use in tooltips
+  mutate(state_abb = state.abb[match(state, state.name)],
+         all_na = rowSums(is.na(select(.,
+                                       current_count,
+                                       future_1_5_years_count,
+                                       missing_count))) ==
+           length(select(.,
+                         current_count,
+                         future_1_5_years_count,
+                         missing_count)),
+
+         tooltip = ifelse(all_na & abolished_discretionary_parole == "No",
+                          paste0("<b>", state, "</b><br><br>",
+                                 "Parole eligibility data is not available.<br><br>",
+                                 "Total Prison Population:<br><b>",
+                                 formattable::comma(yearendpop, digits = 0), "</b>"),
+
+                          ifelse(abolished_discretionary_parole == "Yes",
+                                 paste0("<b>", state, "</b><br><br>",
+                                        state, " abolished discretionary parole.<br><br>",
+                                        "Total Prison Population:<br><b>",
+                                        formattable::comma(yearendpop, digits = 0), "</b>"),
+
+                                 paste0("<b>", state, "</b><br><br>",
+                                        "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
+                                        paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+                                        "Number of People in Prison<br> Eligible for Release in the Next 1-5 Years:<br><b>",
+                                        paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
+                                        "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
+                                        paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
+                                        "Total Prison Population:<br><b>",
+                                        formattable::comma(yearendpop, digits = 0), "</b>"))),
+
          tooltip = str_replace_all(tooltip, "NA", "No Data")) %>%
 
+  # create labels for counts
   mutate(count_label = formattable::comma(current_count, 0),
          count_label = str_replace_all(count_label, "NA", "-"),
-
          currentcountlabel = round(current_count, 0),
-         currentcountlabel = str_replace_all(currentcountlabel, "NA", "No Data")) %>%
+         currentcountlabel = str_replace_all(currentcountlabel, "NA", "No Data"))
 
-  # add info about whether state abolished parole release
-  left_join(parole_info_by_state_clean, by = "state")
+# Define the gradient colors for categories
+gradient_colors <- c("#D5F5F3", "#6AD0C9", "#00ABA0", "#006F8A", "#003474")
 
-breaks <- quantile(map_data$current_count, probs = seq(0, 1, length.out = num_breaks), na.rm = TRUE)
+# Calculate the breaks for the percent of people eligible for parole
+num_breaks <- length(gradient_colors) - 1
+breaks <- quantile(map_data$current_count, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+breaks[1] <- 0  # Set the first break to 0
+breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
+breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 
-# assign legend info and gradient colors based on current_count values
+# Process map_data to include gradient color and data category
 map_data_breaks <- map_data %>%
-  mutate(gradient_color = case_when(
-    is.na(current_count) ~ NA_character_,
-    current_count <= breaks[2] ~ gradient_colors[1],
-    current_count <= breaks[3] ~ gradient_colors[2],
-    current_count <= breaks[4] ~ gradient_colors[3],
-    TRUE ~ gradient_colors[4]
-  )) %>%
   mutate(
-    current_count = formattable::comma(current_count, 0)) %>%
+    all_na = rowSums(is.na(select(., current_count, future_1_5_years_count, future_6_years_count))) ==
+      length(select(., current_count, future_1_5_years_count, future_6_years_count)),
+    gradient_color = findInterval(current_count, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+    gradient_color = ifelse(is.na(current_count), NA, gradient_colors[gradient_color]),
+    current_count = round(current_count, 0),
+    data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
+  ) %>%
   group_by(gradient_color) %>%
-  mutate(data_category = paste0(min(current_count), " - ", max(current_count))) %>%
-  mutate(data_category = case_when(
-    data_category == "NA - NA" & abolished_discretionary_parole == "Yes" ~ "Abolished Discretionary Parole",
-    data_category == "NA - NA" & abolished_discretionary_parole == "No"  ~ "Missing Data",
-    TRUE ~ data_category
-  )) %>%
-  mutate(data_category_num = case_when(
-    data_category == "10 - 238"                       ~ 0,
-    data_category == "390 - 631"                      ~ 1,
-    data_category == "655 - 1,414"                    ~ 2,
-    data_category == "1,766 - 35,668"                 ~ 3,
-    data_category == "Abolished Discretionary Parole" ~ 4,
-    data_category == "Missing Data"                   ~ 5
-  ))
+  mutate(
+    data_category = case_when(
+      gradient_color == gradient_colors[1] ~ paste0(breaks[1], " - ", breaks[2]),
+      gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, " - ", breaks[3]),
+      gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, " - ", breaks[4]),
+      gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, " - ", breaks[5]),
+      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, " - ", max(map_data$current_count, na.rm = TRUE))
+    ),
+    data_category = case_when(
+      is.na(data_category) & all_na & abolished_discretionary_parole == "No" ~ "Missing Data",
+      is.na(data_category) & abolished_discretionary_parole == "Yes" ~ "Abolished Discretionary Parole",
+      TRUE ~ data_category
+    ),
+    gradient_color = case_when(
+      is.na(gradient_color) & data_category == "Missing Data" ~ "#e8e8e8",
+      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ "#ffaf00",
+      TRUE ~ gradient_color
+    ),
+    data_category_num = case_when(
+      is.na(data_category_num) & data_category == "Missing Data" ~ 6,
+      is.na(data_category_num) & data_category == "Abolished Discretionary Parole" ~ 5,
+      TRUE ~ data_category_num
+    )
+  )
 
 # create hex map for counts ##########################################################################################
 map_count <- highchart(height = 600) %>%
@@ -335,12 +414,12 @@ map_count <- highchart(height = 600) %>%
       point = list(valueDescriptionFormat = "{point.state}, {point.currentcountlabel}"))) %>%
 
   hc_colorAxis(dataClassColor="category",
-               dataClasses = list(list(from = 0, to = 0, color="#D5F5F3", name = "10 - 238"),
-                                  list(from = 1, to = 1, color="#6AD0C9", name = "390 - 631"),
-                                  list(from = 2, to = 2, color="#00ABA0", name = "655 - 1,414"),
-                                  list(from = 3, to = 3, color="#006F8A", name = "1,766 - 35,668"),
-                                  list(from = 4, to = 4, color="#ffaf00", name = "Abolished Discretionary Parole"),
-                                  list(from = 5, to = 5, color="#e8e8e8", name = "Missing Data")
+               dataClasses = list(list(from = 1, to = 1, color="#D5F5F3", name = "0 - 422"),
+                                  list(from = 2, to = 2, color="#6AD0C9", name = "423 - 1,322"),
+                                  list(from = 3, to = 3, color="#00ABA0", name = "1,323 - 2,507"),
+                                  list(from = 4, to = 4, color="#006F8A", name = "2,508 - 35,668"),
+                                  list(from = 5, to = 5, color="#ffaf00", name = "Abolished Discretionary Parole"),
+                                  list(from = 6, to = 6, color="#e8e8e8", name = "Missing Data")
                )) %>%
 
   hc_legend(align = "right",
@@ -378,7 +457,7 @@ map_count <- highchart(height = 600) %>%
                  area = list(accessibility = list(description = paste0("TEXT")))
   )
 
-
+map_count
 
 ################################################################################
 
