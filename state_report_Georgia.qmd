@@ -451,16 +451,16 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_fbi_index)) {
 }
 
 # Bar chart of most serious sentenced offense by state - new crime
-if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index_new_crime)) {
-  state_bar_parole_elgibility_fbi_index_new_crime <- 
-    all_bar_parole_elgibility_fbi_index_new_crime[[state_for_report]] %>% 
+if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index)) {
+  state_bar_parole_elgibility_fbi_index <- 
+    all_bar_parole_elgibility_fbi_index[[state_for_report]] %>% 
     hc_size(height = 500) %>% 
     hc_colors(c(yellow)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Criminal Offense", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
-  state_bar_parole_elgibility_fbi_index_new_crime <- no_data_text
+  state_bar_parole_elgibility_fbi_index <- no_data_text
 }
 
 
@@ -639,10 +639,10 @@ if (state_for_report %in% names(all_bar_los_by_offense)) {
 if (state_for_report %in% names(all_groupedbar_disparities_race)) {
   state_groupedbar_disparities_race <-
     all_groupedbar_disparities_race[[state_for_report]] %>%
-    hc_colors(c(neutralBkgndDisabled, teal, orange, yellow)) %>% 
-    hc_title(text = paste0("People in the Community and in Prison, Parole-Eligible Prison Population, and Parole-Eligible People Released at First Opportunity by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_colors(c(neutralBkgndDisabled, orange)) %>% 
+    hc_title(text = paste0("People in the Community vs. in Prison by Race and Ethnicity", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
-           text = paste0("Source: ", ncrp_pop_source, " and ", census_source, "."))
+           text = paste0("Source: ", "BJS Prisoners (2020)", " and ", census_source))
 } else {
   state_groupedbar_disparities_race <- no_data_text
 }
@@ -666,7 +666,7 @@ if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
 if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <-
     all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
-    hc_colors(c(orange, yellow, teal, blue, purple, darkblue)) %>% 
+    hc_colors(c(darkblue, purple, blue, teal, yellow, orange)) %>% 
     hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
     hc_credits(enabled = TRUE, 
@@ -933,7 +933,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Criminal Offenses"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_fbi_index), br(),
-    div(id = "visualization", state_bar_parole_elgibility_fbi_index_new_crime), br()
+    div(id = "visualization", state_bar_parole_elgibility_fbi_index), br()
     )
 ```
 
@@ -945,7 +945,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Missing Data"), br(),
-    div(id = "regular-text", "This section will have information about missing parole eligibility data for the state.")
+    div(id = "regular-text", "This section will have information about missing parole eligibility data for the state once new NCRP data is released.")
 )
 ```
 
@@ -1007,6 +1007,7 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Demographics"), br()
     )
 ```
+
 ::: {.panel-tabset}
 ### Race and Ethnicity
 ```{r}
@@ -1055,7 +1056,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Time Served by Offense Type"), br(),
-    div(id = "regular-text", "Sentence time served offense type."), br(),
+    div(id = "regular-text", "Sentence about time served offense type."), br(),
     div(id = "visualization", state_bar_los_by_offense), br()
     )
 ```
@@ -1091,7 +1092,14 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Race and Ethnicity"), br(),
+    div(id = "big-section-title", "Race and Ethnicity"), br()
+)
+```
+
+::: {.panel-tabset}
+### In Prison
+```{r}
+div(id = "body-section", br(),
     div(id = "regular-text", "Option 1:"), br(),
     div(id = "bold-text", "For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.")
 )
@@ -1112,9 +1120,13 @@ div(id = "body-section", br(),
 fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 ```
 
+### In Prison but Parole-Eligible
 
+### Released on Parole Eligibility Year
+
+:::
 ```{r}
-div(id = "body-section", br(), br(),
+div(id = "body-section", br(), 
     div(id = "visualization", state_groupedbar_disparities_race), br(), br(), br(),
     div(id = "visualization", state_groupedcolumn_disparities_release_race), br(), 
     div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br()
@@ -1135,7 +1147,19 @@ div(id = "body-section",
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Gender"), br(),
-    div(id = "regular-text", "TBD: Same visualizations as above."), br()
+    div(id = "regular-text", "TBD: Same visualizations as above?"), br()
+)
+```
+
+```{r}
+########################################
+
+# Age
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Age"), br(),
+    div(id = "regular-text", "Just one visualization on time served by age category?"), br()
 )
 ```
 

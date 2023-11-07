@@ -670,7 +670,7 @@ fnc_generate_rri_highlight <- function(df, scenario){
       ethnic disparities by comparing rates between groups, often using White individuals as the reference.
       The RRI provides insight into the degree of overrepresentation or underrepresentation,
       with an RRI greater than 1 indicating that a particular racial or ethnic group is
-      disproportionately represented.")
+      disproportionately represented. Source: Census (2020) and BJS Prisoners (2020)")
   )
 }
 

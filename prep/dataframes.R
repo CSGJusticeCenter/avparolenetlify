@@ -73,7 +73,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibil
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibility_sentlgth.rds"))
 
 # Offenses
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_elgibility_fbi_index_new_crime.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_elgibility_fbi_index.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_elgibility_fbi_index.rds"))
 
 
