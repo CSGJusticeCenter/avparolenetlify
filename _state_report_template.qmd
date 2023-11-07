@@ -125,7 +125,7 @@ if (state_for_report %in% names(all_yearendpop_by_year)) {
     hc_size(height = 400) %>%
     hc_colors(c(yellow)) %>%
     hc_title(text = paste0("Year-End Prison Population from 2010 to ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_credits(enabled = TRUE, text = paste0("Source: ", bjs_source))
 } else {
   state_yearendpop_by_year <- no_data_text
 }
@@ -137,7 +137,7 @@ if (state_for_report %in% names(all_releases_by_year)) {
     hc_size(height = 400) %>%
     hc_colors(c(yellow)) %>%
     hc_title(text = paste0("Prison Releases from 2010 to ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_rel_source))
+    hc_credits(enabled = TRUE, text = paste0("Source: ", bjs_source))
 } else {
   state_releases_by_year <- no_data_text
 }
@@ -149,7 +149,7 @@ if (state_for_report %in% names(all_admissions_by_year)) {
     hc_size(height = 400) %>%
     hc_colors(c(yellow)) %>%
     hc_title(text = paste0("Prison Admissions from 2010 to ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_adm_source))
+    hc_credits(enabled = TRUE, text = paste0("Source: ", bjs_source))
 } else {
   state_admissions_by_year <- no_data_text
 }
