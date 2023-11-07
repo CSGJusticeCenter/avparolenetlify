@@ -1110,6 +1110,17 @@ div(id = "body-section", br(),
 </div>
 
 ```{r}
+div(id = "body-section", br(),
+    div(id = "bold-text", "For every White person in prison, there are 3.1 Hispanic people in prison.")
+)
+```
+
+<div id="body-section">
+![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png){ width=200px }
+</div>
+
+
+```{r}
 state_rri_in_prison_data <- rri_in_prison_data %>% 
   filter(state == state_for_report)
   
