@@ -945,7 +945,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Missing Data"), br(),
-    div(id = "regular-text", "This section will have information about missing parole eligibility data for the state.")
+    div(id = "regular-text", "This section will have information about missing parole eligibility data for the state once new NCRP data is released.")
 )
 ```
 
@@ -1007,6 +1007,7 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Demographics"), br()
     )
 ```
+
 ::: {.panel-tabset}
 ### Race and Ethnicity
 ```{r}
@@ -1055,7 +1056,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Time Served by Offense Type"), br(),
-    div(id = "regular-text", "Sentence time served offense type."), br(),
+    div(id = "regular-text", "Sentence about time served offense type."), br(),
     div(id = "visualization", state_bar_los_by_offense), br()
     )
 ```
