@@ -129,7 +129,7 @@ div(id = "body-section", br(),
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Parole Eligibility Data by State"), br(),
+    div(id = "big-section-title", "Parole Eligibility Data by State (will remove)"), br(),
     div(id = "regular-text", "
 The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole or lack of data in certain states."),
 br())

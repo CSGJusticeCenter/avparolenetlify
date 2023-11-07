@@ -74,18 +74,13 @@ body {
   margin: 0 auto; /* center the content horizontally */
 }
 
-#infographic-section{ /* DONT NEED? */
-  max-width: 700px;
-  text-align: left;
-}
-
 #visualization{
   margin-top: 0em;
   margin-bottom: 0;
   padding: 0px;
 }
 
-/* center table on page */
+/* center reatable table on page */
 .table-container {
   min-width: 700px;
   display: flex;
@@ -113,16 +108,6 @@ body {
   color: black;
 }
 
-
-/* title of website tabs
-#section-title {
-  font-size: 1em;
-  font-family: Graphik;
-  font-weight: bold;
-  text-align: center;
-  color: black;
-}*/
-
 /* title of section under tabs */
 #big-section-title {
   font-size: 1.8em;
@@ -135,16 +120,6 @@ body {
   margin-bottom: 10px;
 }
 
-/*
-#medium-section-title {
-  font-size: 1em;
-  font-family: Graphik;
-  font-weight: bold;
-  text-align: center;
-  color: black;
-}*/
-
-
 #graph-title {
   font-size: 1em;
   font-family: Graphik;
@@ -152,15 +127,6 @@ body {
   text-align: center;
   color: black;
 }
-
-
-/* text underneath state and national trends highlighting findings
-#important-text {
-  font-size: 1em;
-  font-family: Graphik;
-  text-align: center;
-  color: black;
-} */
 
 /* highlighted text underneath state name*/
 #highlight-text {
@@ -170,16 +136,6 @@ body {
   color: #00aba0;
   text-align: center;
 }
-
-
-/*
-#highlight-text2 {
-  font-size: 2.5em;
-  font-family: Graphik;
-  font-weight: bold;
-  color: #c376fb;
-  text-align: center;
-}*/
 
 /* regular app text */
 #regular-text {
@@ -365,7 +321,6 @@ color: #fff;
   padding-bottom: 0.1em;
   border: 1px solid #637070;
 }
-
 
 
 
