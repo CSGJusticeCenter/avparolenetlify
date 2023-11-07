@@ -116,6 +116,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedcolumn_disparities_release_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_race.rds"))
 
+load(file = paste0(sp_data_path, "/data/analysis/app/rri_in_prison_data.rds"))
 
 
 

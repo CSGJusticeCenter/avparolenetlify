@@ -543,3 +543,137 @@ fnc_barchart <- function(df, filter_column, accessibility_text) {
 
   return(highcharts)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# fnc_generate_rri_highlight <- function(df, scenario){
+#
+#   rri_black <- pull(df %>% filter(race == "Black, non-Hispanic") %>% select(rri))
+#   rri_hispanic <- pull(df %>% filter(race == "Hispanic, any race") %>% select(rri))
+#   rri_other <- pull(df %>% filter(race == "Other race(s), non-Hispanic") %>% select(rri))
+#
+#   use_percent <- any(c(rri_black, rri_hispanic, rri_other) < 1)
+#
+#   if(use_percent) {
+#     rri_black <- round(rri_black * 100)
+#     rri_hispanic <- round(rri_hispanic * 100)
+#     rri_other <- round(rri_other * 100)
+#   }
+#
+#   text_black    <- case_when(rri_black < 100  ~ "less likely",
+#                              rri_black > 100  ~ "more likely",
+#                              TRUE             ~ "equally as likely")
+#   text_hispanic <- case_when(rri_hispanic < 100  ~ "less likely",
+#                              rri_hispanic > 100  ~ "more likely",
+#                              TRUE                ~ "equally as likely")
+#   text_other    <- case_when(rri_other < 100  ~ "less likely",
+#                              rri_other > 100  ~ "more likely",
+#                              TRUE             ~ "equally as likely")
+#
+#   unit_text <- ifelse(use_percent, "%", "times")
+#
+#   rri_black_display    <- ifelse(use_percent, paste0(rri_black, "%"), rri_black)
+#   rri_hispanic_display <- ifelse(use_percent, paste0(rri_hispanic, "%"), rri_hispanic)
+#   rri_other_display    <- ifelse(use_percent, paste0(rri_other, "%"), rri_other)
+#
+#   div(id = "body-section",
+#       div(
+#         id = "grid-container",
+#         style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; column-gap: 30px;",
+#         div(id = "bold-text", HTML("Black, non-Hispanic")),
+#         div(id = "bold-text", HTML("Hispanic, any race")),
+#         div(id = "bold-text", HTML("Other race(s), non-Hispanic")),
+#         div(id = "highlight-text", format(as.numeric(rri_black), big.mark = ","), ifelse(use_percent, "%", "")),
+#         div(id = "highlight-text", format(as.numeric(rri_hispanic), big.mark = ","), ifelse(use_percent, "%", "")),
+#         div(id = "highlight-text", format(as.numeric(rri_other), big.mark = ","), ifelse(use_percent, "%", "")),
+#         div(id = "regular-text", HTML(text_black,    " to be ", scenario, " compared to White people")),
+#         div(id = "regular-text", HTML(text_hispanic, " to be ", scenario, " compared to White people")),
+#         div(id = "regular-text", HTML(text_other,    " to be ", scenario, " compared to White people"))
+#       ), br(),
+#       div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and
+#       ethnic disparities by comparing rates between groups, often using White individuals as the reference.
+#       The RRI provides insight into the degree of overrepresentation or underrepresentation,
+#       with an RRI greater than 1 indicating that a particular racial or ethnic group is
+#       disproportionately represented.")
+#   )
+# }
+fnc_generate_rri_highlight <- function(df, scenario){
+
+  rri_black <- pull(df %>% filter(race == "Black, non-Hispanic") %>% select(rri))
+  rri_hispanic <- pull(df %>% filter(race == "Hispanic, any race") %>% select(rri))
+  rri_other <- pull(df %>% filter(race == "Other race(s), non-Hispanic") %>% select(rri))
+
+  use_percent <- any(c(rri_black, rri_hispanic, rri_other) >= 1)
+
+  if(use_percent) {
+    rri_black <- round(rri_black * 100)
+    rri_hispanic <- round(rri_hispanic * 100)
+    rri_other <- round(rri_other * 100)
+  }
+
+  text_black    <- case_when(rri_black < 100  ~ "less likely",
+                             rri_black >= 100  ~ "more likely",
+                             TRUE             ~ "equally as likely")
+  text_hispanic <- case_when(rri_hispanic < 100  ~ "less likely",
+                             rri_hispanic >= 100  ~ "more likely",
+                             TRUE                ~ "equally as likely")
+  text_other    <- case_when(rri_other < 100  ~ "less likely",
+                             rri_other >= 100  ~ "more likely",
+                             TRUE             ~ "equally as likely")
+
+  unit_text <- ifelse(use_percent, "%", "times")
+
+  rri_black_display    <- ifelse(use_percent, paste0(rri_black, unit_text), rri_black)
+  rri_hispanic_display <- ifelse(use_percent, paste0(rri_hispanic, unit_text), rri_hispanic)
+  rri_other_display    <- ifelse(use_percent, paste0(rri_other, unit_text), rri_other)
+
+  div(id = "body-section",
+      div(
+        id = "grid-container",
+        style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; column-gap: 30px;",
+        div(id = "bold-text", "Black, non-Hispanic"),
+        div(id = "bold-text", "Hispanic, any race"),
+        div(id = "bold-text", "Other race(s), non-Hispanic"),
+        div(id = "highlight-text", rri_black_display),
+        div(id = "highlight-text", rri_hispanic_display),
+        div(id = "highlight-text", rri_other_display),
+        div(id = "regular-text", text_black,    " to be ", scenario, " compared to White people"),
+        div(id = "regular-text", text_hispanic, " to be ", scenario, " compared to White people"),
+        div(id = "regular-text", text_other,    " to be ", scenario, " compared to White people")
+      ), br(),
+      div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and
+      ethnic disparities by comparing rates between groups, often using White individuals as the reference.
+      The RRI provides insight into the degree of overrepresentation or underrepresentation,
+      with an RRI greater than 1 indicating that a particular racial or ethnic group is
+      disproportionately represented.")
+  )
+}
+
+
+
+

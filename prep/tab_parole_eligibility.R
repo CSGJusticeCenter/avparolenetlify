@@ -341,7 +341,11 @@ all_sentence_parole_elgibility_sentlgth$Georgia
 
 # Currently parole eligible population but still in prison by fbi_index in select year
 # Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
-current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
+current_ped_fbi_index <-
+  fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) %>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
 
 # Create highcharts showing breakdown of parole-eligible prison population by fbi_index
 states <- unique(current_ped_fbi_index$state)

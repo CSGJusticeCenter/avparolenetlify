@@ -1092,6 +1092,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Race and Ethnicity"), br(),
+    div(id = "regular-text", "Option 1:"), br(),
     div(id = "bold-text", "For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.")
 )
 ```
@@ -1101,8 +1102,19 @@ div(id = "body-section", br(),
 </div>
 
 ```{r}
-div(id = "body-section", 
-    div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented. Source: BJS Prisoners (2020), Census (2020)"), br(), br(), br(),
+state_rri_in_prison_data <- rri_in_prison_data %>% 
+  filter(state == state_for_report)
+  
+div(id = "body-section", br(),
+    div(id = "regular-text", "Option 2:"), br(),
+    div(id = "bold-text", "Disparities in Prison"), br()
+)
+fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
+```
+
+
+```{r}
+div(id = "body-section", br(), br(),
     div(id = "visualization", state_groupedbar_disparities_race), br(), br(), br(),
     div(id = "visualization", state_groupedcolumn_disparities_release_race), br(), 
     div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br()
@@ -1128,7 +1140,7 @@ div(id = "body-section", br(),
 ```
 
 </center>
-<br><br>
+<br>
 
 
 ::::

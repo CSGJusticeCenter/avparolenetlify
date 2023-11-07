@@ -408,7 +408,10 @@ ncrp_yearendpop_fbi_index <- ncrp_yearendpop %>%
   group_by(state) %>%
   fnc_values_labels(fbi_index) %>%
   fnc_tooltip(fbi_index, prop_label,
-              paste0("Criminal Offense: "))
+              paste0("Criminal Offense: ")) %>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
 
 # Highchart
 states <- unique(ncrp_yearendpop_fbi_index$state)

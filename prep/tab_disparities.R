@@ -340,6 +340,7 @@ for (folder in theseFOLDERS){
   save(all_groupedbar_disparities_race,            file = file.path(folder, "all_groupedbar_disparities_race.rds"))
   save(all_groupedcolumn_disparities_release_race, file = file.path(folder, "all_groupedcolumn_disparities_release_race.rds"))
   save(all_stackedcolumn_disparities_release_race, file = file.path(folder, "all_stackedcolumn_disparities_release_race.rds"))
-  # save(all_rri_infographic_race,                   file = file.path(folder, "all_rri_infographic_race.rds"))
+  save(rri_in_prison_data,                         file = file.path(folder, "rri_in_prison_data.rds"))
 
 }
+
