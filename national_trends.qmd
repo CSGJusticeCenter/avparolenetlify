@@ -129,7 +129,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Parole Eligibility Data by State (will remove)"), br(),
     div(id = "regular-text", "
-The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole or lack of data in certain states."), br(),
+The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole release or lack of data in certain states."), br(),
     div(id = "regular-text", "Total Population = total prison population, Total Prison Population (1-25 Year Sentences) = total prison population in prison for a new court commitment and sentence lengths between 1-25 years, currently eligible for parole/eligible for parole in the next 1-5 years/missing parole eligibility data = only for people in prison for a new court commitment and sentence lengths between 1-25 years."),
 br())
 ```
