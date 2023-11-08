@@ -168,10 +168,16 @@ table2 <-
 
 Data: NCRP year-end population  
 
+This table includes people in prison for a new court commitment or parole return/revocation and with sentence lengths between 1-24.9 years.  
+
 ```{r}
 table1
 ```
 <br><br>
+
+Data: NCRP year-end population  
+
+This table includes people in prison for a new court commitment or parole return/revocation and with any sentence length.  
 
 ```{r}
 table2
