@@ -451,16 +451,16 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_fbi_index)) {
 }
 
 # Bar chart of most serious sentenced offense by state - new crime
-if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index_new_crime)) {
-  state_bar_parole_elgibility_fbi_index_new_crime <- 
-    all_bar_parole_elgibility_fbi_index_new_crime[[state_for_report]] %>% 
+if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index)) {
+  state_bar_parole_elgibility_fbi_index <- 
+    all_bar_parole_elgibility_fbi_index[[state_for_report]] %>% 
     hc_size(height = 500) %>% 
     hc_colors(c(yellow)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Criminal Offense", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
-  state_bar_parole_elgibility_fbi_index_new_crime <- no_data_text
+  state_bar_parole_elgibility_fbi_index <- no_data_text
 }
 
 
@@ -639,10 +639,10 @@ if (state_for_report %in% names(all_bar_los_by_offense)) {
 if (state_for_report %in% names(all_groupedbar_disparities_race)) {
   state_groupedbar_disparities_race <-
     all_groupedbar_disparities_race[[state_for_report]] %>%
-    hc_colors(c(neutralBkgndDisabled, teal, orange, yellow)) %>% 
-    hc_title(text = paste0("People in the Community and in Prison, Parole-Eligible Prison Population, and Parole-Eligible People Released at First Opportunity by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_colors(c(neutralBkgndDisabled, orange)) %>% 
+    hc_title(text = paste0("People in the Community vs. in Prison by Race and Ethnicity", " in ", select_year)) %>% 
     hc_credits(enabled = TRUE, 
-           text = paste0("Source: ", ncrp_pop_source, " and ", census_source, "."))
+           text = paste0("Source: ", "BJS Prisoners (2020)", " and ", census_source))
 } else {
   state_groupedbar_disparities_race <- no_data_text
 }
@@ -666,7 +666,7 @@ if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
 if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <-
     all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
-    hc_colors(c(orange, yellow, teal, blue, purple, darkblue)) %>% 
+    hc_colors(c(darkblue, purple, blue, teal, yellow, orange)) %>% 
     hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
     hc_credits(enabled = TRUE, 
@@ -933,7 +933,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Criminal Offenses"), br(),
     div(id = "regular-text", state_sentence_parole_elgibility_fbi_index), br(),
-    div(id = "visualization", state_bar_parole_elgibility_fbi_index_new_crime), br()
+    div(id = "visualization", state_bar_parole_elgibility_fbi_index), br()
     )
 ```
 
@@ -945,7 +945,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Missing Data"), br(),
-    div(id = "regular-text", "This section will have information about missing parole eligibility data for the state.")
+    div(id = "regular-text", "This section will have information about missing parole eligibility data for the state once new NCRP data is released.")
 )
 ```
 
@@ -1007,6 +1007,7 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Demographics"), br()
     )
 ```
+
 ::: {.panel-tabset}
 ### Race and Ethnicity
 ```{r}
@@ -1055,7 +1056,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Time Served by Offense Type"), br(),
-    div(id = "regular-text", "Sentence time served offense type."), br(),
+    div(id = "regular-text", "Sentence about time served offense type."), br(),
     div(id = "visualization", state_bar_los_by_offense), br()
     )
 ```
@@ -1091,7 +1092,15 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Race and Ethnicity"), br(),
+    div(id = "big-section-title", "Race and Ethnicity"), br()
+)
+```
+
+::: {.panel-tabset}
+### In Prison
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "Option 1:"), br(),
     div(id = "bold-text", "For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.")
 )
 ```
@@ -1101,8 +1110,38 @@ div(id = "body-section", br(),
 </div>
 
 ```{r}
-div(id = "body-section", 
-    div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented. Source: BJS Prisoners (2020), Census (2020)"), br(), br(), br(),
+div(id = "body-section", br(),
+    div(id = "bold-text", "For every White person in prison, there are 3.1 Hispanic people in prison.")
+)
+```
+
+<div id="body-section">
+![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png){ width=200px }
+</div>
+
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "Option 2:"), br(),
+    div(id = "bold-text", "Disparities in Prison"), br()
+)
+
+# Sentence
+if (state_for_report %in% names(rri_in_prison_data)) {
+  state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
+  fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
+} else {
+  ""
+}
+```
+
+### In Prison but Parole-Eligible
+
+### Released on Parole Eligibility Year
+
+:::
+```{r}
+div(id = "body-section", br(), 
     div(id = "visualization", state_groupedbar_disparities_race), br(), br(), br(),
     div(id = "visualization", state_groupedcolumn_disparities_release_race), br(), 
     div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br()
@@ -1123,7 +1162,19 @@ div(id = "body-section",
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Gender"), br(),
-    div(id = "regular-text", "TBD: Same visualizations as above."), br()
+    div(id = "regular-text", "TBD: Same visualizations as above?"), br()
+)
+```
+
+```{r}
+########################################
+
+# Age
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Age"), br(),
+    div(id = "regular-text", "Just one visualization on time served by age category?"), br()
 )
 ```
 
@@ -1134,19 +1185,17 @@ div(id = "body-section", br(),
 ::::
 
 ::: citation-section
-
 **Citations:** 
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 
-Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).    
+Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).         
+Robina Institute of Criminal Law and Criminal Justice. "Prison-Release Discretion and Prison Population Size State Reports." Accessed November 8, 2023. [https://robinainstitute.umn.edu/prison-release-discretion-and-prison-population-size-state-reports](https://robinainstitute.umn.edu/prison-release-discretion-and-prison-population-size-state-reports).
 
-United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research [distributor], 2021-10-28. [https://doi.org/10.3886/ICPSR38058.v1](https://doi.org/10.3886/ICPSR38058.v1). 
-  
-United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
+United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1). 
 :::
 
-<br>
+<br><br>
 
 ---
 title: "`r state_for_report`"

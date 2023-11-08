@@ -1121,13 +1121,12 @@ div(id = "body-section", br(),
 
 
 ```{r}
-state_rri_in_prison_data <- rri_in_prison_data %>% 
-  filter(state == state_for_report)
-  
 div(id = "body-section", br(),
     div(id = "regular-text", "Option 2:"), br(),
     div(id = "bold-text", "Disparities in Prison"), br()
 )
+
+state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
 fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 ```
 
@@ -1181,19 +1180,17 @@ div(id = "body-section", br(),
 ::::
 
 ::: citation-section
-
 **Citations:** 
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 
-Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).    
+Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).         
+Robina Institute of Criminal Law and Criminal Justice. "Prison-Release Discretion and Prison Population Size State Reports." Accessed November 8, 2023. [https://robinainstitute.umn.edu/prison-release-discretion-and-prison-population-size-state-reports](https://robinainstitute.umn.edu/prison-release-discretion-and-prison-population-size-state-reports).
 
-United States. Bureau of Justice Statistics. Annual Parole Survey, 2018. Inter-university Consortium for Political and Social Research [distributor], 2021-10-28. [https://doi.org/10.3886/ICPSR38058.v1](https://doi.org/10.3886/ICPSR38058.v1). 
-  
-United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1).     
+United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1). 
 :::
 
-<br>
+<br><br>
 
 ---
 title: "`r state_for_report`"
