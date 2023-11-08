@@ -25,7 +25,7 @@ source("prep/dataframes.R")
 ```
 
 ```{r}
-page_summary <- "With the support of Arnold Ventures, the Council of State Governments (CSG) Justice Center analyzed data from the National Corrections Reporting Program (NCRP), Bureau of Justice Statistics (BJS) Prisoner Series, and Robina Institute of Criminal Law and Criminal Justice to gain deeper insights into the relationship between parole practices and prison populations. The study specifically focused on understanding the dynamics of parole eligibility and lengths of stay, with a specific emphasis on examining racial, ethnic, and gender disparities."
+page_summary <- "Although 16 states have abolished parole release -- except for people whose crimes preceded abolition -- most states rely on a paroling authority’s discretion to determine the actual timing of release for each person from prison, which then determines the overall prison population. The analysis shows that this discretion, cumulated across 34 states, accounts for at least 88,000 people currently in prison; over 35,000 people are in Texas alone. Nationally another 123,000 people will become eligible over the next one to five years. This analysis relies on support from Arnold Ventures, the NCRP and BJS data sources, and descriptions of parole release discretion in two series of publications from the Robina Institute."
   
 num_people_current   <- sum(parole_eligibility_table_select_year$current_count, na.rm = TRUE)
 num_people_1_5_years <- sum(parole_eligibility_table_select_year$future_1_5_years_count, na.rm = TRUE)
@@ -48,7 +48,7 @@ htmltools::div(
       formattable::comma(num_people_current, digits = 0)
     ),
     div(
-      HTML("Currently Eligible for Parole<br>but in Prison"),
+      HTML("Currently in Prison and<br>Eligible for Parole"),
       id = "bold-text"
     )
   ),
@@ -59,7 +59,7 @@ htmltools::div(
       formattable::comma(num_people_1_5_years, digits = 0)
     ),
     div(
-      HTML("Eligible for Parole in the Next 1-5 Years<br>but in Prison"),
+      HTML("Currently in Prison and<br>Eligible for Parole in 1-5 Years"),
       id = "bold-text"
     )
   )
@@ -71,8 +71,8 @@ htmltools::div(
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People in Prison Currently Eligible for Parole"), br(),
-    div(id = "regular-text", "These maps show the percentage and number of individuals in prison in each state during 2020 who, although eligible for parole, remained incarcerated. Toggle between viewing data based on the percentage of these individuals or the actual number of eligible people still in prison. The stark variations across states emphasize the diversity of parole policies and practices in the U.S."), br()
+    div(id = "big-section-title", "Map Explorer"), br(),
+    div(id = "regular-text", "These maps show the percentage and number of individuals in prison and eligible for parole release in each state during 2020. Toggle between viewing data based on the percentage of these individuals of the overall prison population or the actual number of eligible people in prison."), br()
     )
 ```
 
@@ -106,7 +106,7 @@ map_count %>%
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "note-text", "Notes: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and people incarcerated for a new crime."), br()
+    div(id = "note-text", "Note: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and who are people incarcerated for a new crime (i.e., not including those who have been released and then revoked back to prison). States missing 100 percent of the NCRP data are depicted as “missing data” but many other states are missing a substantial portion of parole eligibility data."), br()
     )
 ```
 
@@ -127,130 +127,130 @@ div(id = "body-section", br(),
 <br>
 
 ```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Parole Eligibility Data by State (will remove)"), br(),
-    div(id = "regular-text", "
-The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole or lack of data in certain states."), br(), 
-    div(id = "regular-text", "Total Population = total prison population, Total Prison Population (1-25 Year Sentences) = total prison population in prison for a new court commitment and sentence lengths between 1-25 years, currently eligible for parole/eligible for parole in the next 1-5 years/missing parole eligibility data = only for people in prison for a new court commitment and sentence lengths between 1-25 years."),
-br())
+# div(id = "body-section", br(),
+#     div(id = "big-section-title", "Parole Eligibility Data by State (will remove)"), br(),
+#     div(id = "regular-text", "
+# The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole or lack of data in certain states."), br(), 
+#     div(id = "regular-text", "Total Population = total prison population, Total Prison Population (1-25 Year Sentences) = total prison population in prison for a new court commitment and sentence lengths between 1-25 years, currently eligible for parole/eligible for parole in the next 1-5 years/missing parole eligibility data = only for people in prison for a new court commitment and sentence lengths between 1-25 years."),
+# br())
 ```
 
 ::: table-container
 ```{r}
-# Get parole eligibility information
-parole_info_by_state_clean <- parole_info_by_state %>%
-  select(state, abolished_discretionary_parole)
-
-# Prepare the table data
-table_data <- parole_eligibility_table_select_year %>%
-  left_join(parole_info_by_state_clean, by = "state") %>%
-  select(
-    state,
-    abolished_discretionary_parole,
-    yearendpop,
-    yearendpop_125years_new_crime,
-    current_count,
-    current_perc,
-    future_1_5_years_count,
-    future_1_5_years_perc,
-    missing_count,
-    missing_perc
-  )
-
-# Define common column styles
-common_col_style <- list(
-  position = "sticky",
-  borderRight = "1px solid #d3d3d3"
-)
-
-# Create reactable
-reactable(
-  table_data,
-  style = reactable_style,
-  theme = reactable_theme,
-
-  # Default Column Definitions
-  defaultColDef = colDef(
-    format = colFormat(separators = TRUE),
-    align = "right",
-    minWidth = 90
-  ),
-
-  # Table options
-  compact = TRUE,
-  fullWidth = FALSE,
-  defaultPageSize = 50,
-
-  # Column Grouping
-  columnGroups = list(
-    colGroup(
-      name = "Currently Eligible for Parole",
-      columns = c("current_perc", "current_count")
-    ),
-    colGroup(
-      name = "Eligible for Parole in the Next 1-5 Years",
-      columns = c("future_1_5_years_perc", "future_1_5_years_count")
-    ),
-    colGroup(
-      name = "Missing Parole Eligibility Data",
-      columns = c("missing_perc", "missing_count")
-    )
-  ),
-
-  # Individual Column Definitions
-  columns = list(
-    state = colDef(
-      name = "State",
-      minWidth = 120,
-      align = "left",
-      style = list(fontWeight = "bold")
-    ),
-    abolished_discretionary_parole = colDef(
-      name = "Abolished Parole Release",
-      minWidth = 100
-    ),
-    yearendpop = colDef(
-      name = "Total Prison Population",
-      minWidth = 120,
-      headerStyle = list(fontWeight = "bold")
-    ),
-    yearendpop_125years_new_crime = colDef(
-      name = "Total Prison Population (1-25 Year Sentences)",
-      minWidth = 140,
-      style = common_col_style,
-      headerStyle = list(fontWeight = "bold")
-    ),
-    current_perc = colDef(
-      name = "Percent of Prison Population",
-      format = colFormat(percent = TRUE, digits = 1),
-      style = common_col_style,
-      headerStyle = list(fontWeight = "normal")
-    ),
-    future_1_5_years_perc = colDef(
-      name = "Percent of Prison Population",
-      format = colFormat(percent = TRUE, digits = 1),
-      style = common_col_style,
-      headerStyle = list(fontWeight = "normal")
-    ),
-    missing_perc = colDef(
-      name = "Percent of Prison Population",
-      format = colFormat(percent = TRUE, digits = 1),
-      headerStyle = list(fontWeight = "normal")
-    ),
-    current_count = colDef(
-      name = "Number of People",
-      headerStyle = list(fontWeight = "normal")
-    ),
-    future_1_5_years_count = colDef(
-      name = "Number of People",
-      headerStyle = list(fontWeight = "normal")
-    ),
-    missing_count = colDef(
-      name = "Number of People",
-      headerStyle = list(fontWeight = "normal")
-    )
-  )
-)
+# # Get parole eligibility information
+# parole_info_by_state_clean <- parole_info_by_state %>%
+#   select(state, abolished_discretionary_parole)
+# 
+# # Prepare the table data
+# table_data <- parole_eligibility_table_select_year %>%
+#   left_join(parole_info_by_state_clean, by = "state") %>%
+#   select(
+#     state,
+#     abolished_discretionary_parole,
+#     yearendpop,
+#     yearendpop_125years_new_crime,
+#     current_count,
+#     current_perc,
+#     future_1_5_years_count,
+#     future_1_5_years_perc,
+#     missing_count,
+#     missing_perc
+#   )
+# 
+# # Define common column styles
+# common_col_style <- list(
+#   position = "sticky",
+#   borderRight = "1px solid #d3d3d3"
+# )
+# 
+# # Create reactable
+# reactable(
+#   table_data,
+#   style = reactable_style,
+#   theme = reactable_theme,
+# 
+#   # Default Column Definitions
+#   defaultColDef = colDef(
+#     format = colFormat(separators = TRUE),
+#     align = "right",
+#     minWidth = 90
+#   ),
+# 
+#   # Table options
+#   compact = TRUE,
+#   fullWidth = FALSE,
+#   defaultPageSize = 50,
+# 
+#   # Column Grouping
+#   columnGroups = list(
+#     colGroup(
+#       name = "Currently Eligible for Parole",
+#       columns = c("current_perc", "current_count")
+#     ),
+#     colGroup(
+#       name = "Eligible for Parole in the Next 1-5 Years",
+#       columns = c("future_1_5_years_perc", "future_1_5_years_count")
+#     ),
+#     colGroup(
+#       name = "Missing Parole Eligibility Data",
+#       columns = c("missing_perc", "missing_count")
+#     )
+#   ),
+# 
+#   # Individual Column Definitions
+#   columns = list(
+#     state = colDef(
+#       name = "State",
+#       minWidth = 120,
+#       align = "left",
+#       style = list(fontWeight = "bold")
+#     ),
+#     abolished_discretionary_parole = colDef(
+#       name = "Abolished Parole Release",
+#       minWidth = 100
+#     ),
+#     yearendpop = colDef(
+#       name = "Total Prison Population",
+#       minWidth = 120,
+#       headerStyle = list(fontWeight = "bold")
+#     ),
+#     yearendpop_125years_new_crime = colDef(
+#       name = "Total Prison Population (1-25 Year Sentences)",
+#       minWidth = 140,
+#       style = common_col_style,
+#       headerStyle = list(fontWeight = "bold")
+#     ),
+#     current_perc = colDef(
+#       name = "Percent of Prison Population",
+#       format = colFormat(percent = TRUE, digits = 1),
+#       style = common_col_style,
+#       headerStyle = list(fontWeight = "normal")
+#     ),
+#     future_1_5_years_perc = colDef(
+#       name = "Percent of Prison Population",
+#       format = colFormat(percent = TRUE, digits = 1),
+#       style = common_col_style,
+#       headerStyle = list(fontWeight = "normal")
+#     ),
+#     missing_perc = colDef(
+#       name = "Percent of Prison Population",
+#       format = colFormat(percent = TRUE, digits = 1),
+#       headerStyle = list(fontWeight = "normal")
+#     ),
+#     current_count = colDef(
+#       name = "Number of People",
+#       headerStyle = list(fontWeight = "normal")
+#     ),
+#     future_1_5_years_count = colDef(
+#       name = "Number of People",
+#       headerStyle = list(fontWeight = "normal")
+#     ),
+#     missing_count = colDef(
+#       name = "Number of People",
+#       headerStyle = list(fontWeight = "normal")
+#     )
+#   )
+# )
 ```
 
 :::
