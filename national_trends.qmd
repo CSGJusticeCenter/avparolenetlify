@@ -110,7 +110,7 @@ map_count %>%
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "note-text", "Note: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and who are people incarcerated for a new crime (i.e., not including those who have been released and then revoked back to prison). States missing 100 percent of the NCRP data are depicted as “missing data” but many other states are missing a substantial portion of parole eligibility data."), br()
+    div(id = "note-text", "Note: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1-25 years and who were incarcerated for a new crime (i.e., not including those who have been released and then revoked back to prison). States missing 100 percent of the NCRP data are depicted as “missing data” but many other states are missing a substantial portion of parole eligibility data."), br()
     )
 ```
 
