@@ -125,7 +125,7 @@ if (state_for_report %in% names(all_yearendpop_by_year)) {
     hc_size(height = 400) %>%
     hc_colors(c(yellow)) %>%
     hc_title(text = paste0("Year-End Prison Population from 2010 to ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", bjs_source))
+    hc_caption(text = paste0("Source: ", bjs_source))
 } else {
   state_yearendpop_by_year <- no_data_text
 }
@@ -137,7 +137,7 @@ if (state_for_report %in% names(all_releases_by_year)) {
     hc_size(height = 400) %>%
     hc_colors(c(yellow)) %>%
     hc_title(text = paste0("Prison Releases from 2010 to ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", bjs_source))
+    hc_caption(text = paste0("Source: ", bjs_source))
 } else {
   state_releases_by_year <- no_data_text
 }
@@ -149,7 +149,7 @@ if (state_for_report %in% names(all_admissions_by_year)) {
     hc_size(height = 400) %>%
     hc_colors(c(yellow)) %>%
     hc_title(text = paste0("Prison Admissions from 2010 to ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", bjs_source))
+    hc_caption(text = paste0("Source: ", bjs_source))
 } else {
   state_admissions_by_year <- no_data_text
 }
@@ -162,7 +162,7 @@ if (state_for_report %in% names(all_stackedbar_admtype)) {
     hc_colors(c(teal, yellow)) %>%
     hc_title(text = paste0("Distribution of the Prison Population by Admission Type", " in ", select_year)) %>% 
     hc_chart(marginBottom = 10) %>%
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_stackedbar_admtype <- no_data_text
 }
@@ -186,7 +186,7 @@ if (state_for_report %in% names(all_stackedbar_prison_race)) {
     hc_colors(c(neutralBkgndMedium, "darkgray", yellow, purple, teal)) %>% 
     hc_title(text = paste0("Prison Population by Race and Ethnicity", " in ", select_year)) %>% 
     hc_size(height = 400) %>%
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_stackedbar_prison_race <- no_data_text
 }
@@ -205,7 +205,7 @@ if (state_for_report %in% names(all_stackedbar_prison_gender)) {
     all_stackedbar_prison_gender[[state_for_report]] %>%
     hc_title(text = paste0("Prison Population by Gender", " in ", select_year)) %>% 
     hc_size(height = 400) %>%
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_stackedbar_prison_gender <- no_data_text
 }
@@ -224,7 +224,7 @@ if (state_for_report %in% names(all_stackedbar_prison_ageyrend)) {
     all_stackedbar_prison_ageyrend[[state_for_report]] %>%
     hc_title(text = paste0("Prison Population by Age", " in ", select_year)) %>% 
     hc_size(height = 400) %>%
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_stackedbar_prison_ageyrend <- no_data_text
 }
@@ -246,7 +246,7 @@ if (state_for_report %in% names(all_groupedbar_prison_sentlgth)) {
   state_groupedbar_prison_sentlgth <- 
     all_groupedbar_prison_sentlgth[[state_for_report]] %>% 
     hc_title(text = paste0("Option 1: Prison Population by Sentence Length and Admission Type", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_groupedbar_prison_sentlgth <- no_data_text
 }
@@ -256,7 +256,7 @@ if (state_for_report %in% names(all_bar_prison_sentlgth)) {
   state_bar_prison_sentlgth <- 
     all_bar_prison_sentlgth[[state_for_report]] %>% 
     hc_title(text = paste0("Prison Population by Sentence Length", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_bar_prison_sentlgth <- no_data_text
 }
@@ -270,7 +270,7 @@ if (state_for_report %in% names(all_groupedbar_prison_fbi_index)) {
   state_groupedbar_prison_fbi_index <- 
     all_groupedbar_prison_fbi_index[[state_for_report]] %>% 
     hc_title(text = paste0("Option 1: Prison Population by Criminal Offense and Admission Type", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_groupedbar_prison_fbi_index <- no_data_text
 }
@@ -281,7 +281,7 @@ if (state_for_report %in% names(all_bar_prison_fbi_index)) {
     all_bar_prison_fbi_index[[state_for_report]] %>% 
     hc_colors(c(yellow)) %>% 
     hc_title(text = paste0("Prison Population by Criminal Offense", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, text = paste0("Source: ", ncrp_pop_source))
+    hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_bar_prison_fbi_index <- no_data_text
 }
@@ -306,7 +306,7 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
     hc_size(height = 300) %>% 
     hc_title(text = paste0("Prison Population by Parole Eligibility Status", " in ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note,
                              "The 'Other' population includes people in prison who are eligible for parole, 
                              in prison for less than 1 year or more than 25 years, and in prison for a parole return."))
@@ -355,7 +355,7 @@ if (state_for_report %in% names(all_bar_parole_elgibility_race)) {
     hc_size(height = 350) %>% 
     hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Race and Ethnicity", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
   state_bar_parole_elgibility_race <- no_data_text
@@ -380,7 +380,7 @@ if (state_for_report %in% names(all_bar_parole_elgibility_gender)) {
     hc_size(height = 350) %>% 
     hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Gender", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
   state_bar_parole_elgibility_gender <- no_data_text
@@ -405,7 +405,7 @@ if (state_for_report %in% names(all_bar_parole_elgibility_ageyrend)) {
     hc_size(height = 350) %>% 
     hc_colors(c(teal)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Age", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
   state_bar_parole_elgibility_ageyrend <- no_data_text
@@ -431,7 +431,7 @@ if (state_for_report %in% names(all_bar_parole_elgibility_sentlgth)) {
     hc_size(height = 350) %>% 
     hc_colors(c(orange)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Sentence Length", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
   state_bar_parole_elgibility_sentlgth <- no_data_text
@@ -457,7 +457,7 @@ if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index)) {
     hc_size(height = 500) %>% 
     hc_colors(c(yellow)) %>% 
     hc_title(text = paste0("Parole-Eligible Prison Population by Criminal Offense", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note))
 } else {
   state_bar_parole_elgibility_fbi_index <- no_data_text
@@ -487,7 +487,7 @@ if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
     hc_size(height = 400) %>% 
     hc_title(text = paste0("Proportion of Parole-Eligible Population Released", " from 2010 to ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_stackedbar_parole_eligibility_release <- no_data_text
@@ -500,7 +500,7 @@ if (state_for_report %in% names(all_groupedbar_release_timing_reltype)) {
     hc_size(height = 375) %>% 
     hc_colors(c(neutralBkgndMedium, darkblue, yellow, teal, purple)) %>% 
     hc_title(text = paste0("Timing of Prison Releases Relative to Parole Eligibility Year by Release Type", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
                text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_groupedbar_release_timing_reltype <- no_data_text
@@ -519,7 +519,7 @@ if (state_for_report %in% names(all_bar_release_race)) {
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
     hc_title(text = paste0("Prison Releases by Race and Ethnicity", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_bar_release_race <- no_data_text
@@ -533,7 +533,7 @@ if (state_for_report %in% names(all_bar_release_gender)) {
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
     hc_title(text = paste0("Prison Releases by Gender", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_bar_release_gender <- no_data_text
@@ -547,7 +547,7 @@ if (state_for_report %in% names(all_bar_release_agerlse)) {
             height = 350) %>% 
     hc_colors(c(purple)) %>% 
     hc_title(text = paste0("Prison Releases by Age", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_bar_release_agerlse <- no_data_text
@@ -566,7 +566,7 @@ if (state_for_report %in% names(all_pie_release_type)) {
     hc_size(height = 275) %>%
     hc_colors(c(teal, purple)) %>%
     hc_title(text = paste0("Distribution of Prison Releases by Release Type", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_pie_release_type <- no_data_text
@@ -582,7 +582,7 @@ if (state_for_report %in% names(all_groupedbar_release_timing_fbi_index)) {
     all_groupedbar_release_timing_fbi_index[[state_for_report]] %>%
     hc_colors(c(neutralBkgndMedium, darkblue, yellow, teal, purple)) %>% 
     hc_title(text = paste0("Release Timing by Offense Type", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_groupedbar_release_timing_fbi_index <- no_data_text
@@ -596,7 +596,7 @@ if (state_for_report %in% names(all_groupedbar_release_timing_fbi_index)) {
 #   state_groupedbar_los_by_offense <-
 #     all_groupedbar_los_by_offense[[state_for_report]] %>%
 #     hc_title(text = paste0("Average and Median Length of Stay by Offense Type", " in ", select_year)) %>% 
-#     hc_credits(enabled = TRUE, 
+#     hc_caption(
 #            text = paste0("Source: ", ncrp_rel_source))
 # } else {
 #   state_groupedbar_los_by_offense <- no_data_text
@@ -606,7 +606,7 @@ if (state_for_report %in% names(all_bar_los_by_offense)) {
   state_bar_los_by_offense <-
     all_bar_los_by_offense[[state_for_report]] %>%
     hc_title(text = paste0("Average Time Served by Offense Type", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
 } else {
   state_bar_los_by_offense <- no_data_text
@@ -641,7 +641,7 @@ if (state_for_report %in% names(all_groupedbar_disparities_race)) {
     all_groupedbar_disparities_race[[state_for_report]] %>%
     hc_colors(c(neutralBkgndDisabled, orange)) %>% 
     hc_title(text = paste0("People in the Community vs. in Prison by Race and Ethnicity", " in ", select_year)) %>% 
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", "BJS Prisoners (2020)", " and ", census_source))
 } else {
   state_groupedbar_disparities_race <- no_data_text
@@ -656,7 +656,7 @@ if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
     hc_colors(c("#FFAF00","#CCAE20", "#99AD40","#66AD60","#33AC80", "#00ABA0")) %>% 
     hc_title(text = paste0("Option 1: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_groupedcolumn_disparities_release_race <- no_data_text
@@ -669,7 +669,7 @@ if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
     hc_colors(c(darkblue, purple, blue, teal, yellow, orange)) %>% 
     hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     hc_chart(marginBottom = 50) %>%
-    hc_credits(enabled = TRUE, 
+    hc_caption(
            text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_stackedcolumn_disparities_release_race <- no_data_text
@@ -1126,13 +1126,8 @@ div(id = "body-section", br(),
     div(id = "bold-text", "Disparities in Prison"), br()
 )
 
-# Sentence
-if (state_for_report %in% names(rri_in_prison_data)) {
-  state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
-  fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
-} else {
-  ""
-}
+# state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
+# fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 ```
 
 ### In Prison but Parole-Eligible
