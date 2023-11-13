@@ -1182,10 +1182,11 @@ div(id = "body-section", br(),
 ::: citation-section
 **Citations:** 
 
-Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
+Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [https://robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](https://robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 
-Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).         
-Robina Institute of Criminal Law and Criminal Justice. "Prison-Release Discretion and Prison Population Size State Reports." Accessed November 8, 2023. [https://robinainstitute.umn.edu/prison-release-discretion-and-prison-population-size-state-reports](https://robinainstitute.umn.edu/prison-release-discretion-and-prison-population-size-state-reports).
+Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).       
+
+Robina Institute of Criminal Law and Criminal Justice. "Prison-Release Discretion and Prison Population Size State Reports." Accessed November 8, 2023. [https://robinainstitute.umn.edu/publications/prison-release-discretion-and-prison-population-size-state-reports](https://robinainstitute.umn.edu/publications/prison-release-discretion-and-prison-population-size-state-reports).
 
 United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1). 
 :::
