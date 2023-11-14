@@ -219,6 +219,7 @@ map_data_breaks <- map_data %>%
     data_category_num = case_when(
       is.na(data_category_num) & data_category == "Missing Data" ~ 6,
       is.na(data_category_num) & data_category == "Abolished Discretionary Parole" ~ 5,
+      abolished_discretionary_parole == "Yes" ~ 5,
       TRUE ~ data_category_num
     )
   )
@@ -385,6 +386,7 @@ map_data_breaks <- map_data %>%
     data_category_num = case_when(
       is.na(data_category_num) & data_category == "Missing Data" ~ 6,
       is.na(data_category_num) & data_category == "Abolished Discretionary Parole" ~ 5,
+      abolished_discretionary_parole == "Yes" ~ 5,
       TRUE ~ data_category_num
     )
   )

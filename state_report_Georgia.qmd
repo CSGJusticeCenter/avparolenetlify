@@ -739,8 +739,11 @@ div(
 # Prison Population Trends
 
 ########################################
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Prison Population Trends"), br()
+tab_prison_population_intro <- paste0("This tab provides a comprehensive look at the dynamics of ", state_for_report, "'s prison admissions, releases, and population, highlighting key aspects such as admission types, demographic breakdowns, criminal offenses, and sentence lengths.") 
+
+div(id = "body-section", br(), 
+    div(id = "big-section-title", "Prison Population Trends"), br(),
+    div(id = "regular-text", tab_prison_population_intro), br(), br()
     )
 ```
 
@@ -872,7 +875,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Parole-Eligible Prison Population"),           br(),
+    div(id = "big-section-title", "Currently Parole-Eligible Prison Population"), br(),
     div(id = "regular-text",       state_sentence_parole_elgibility_population),  br(), 
     div(id = "bar-chart",          state_stackedbar_pe_type),                     br(), br()
 )
@@ -883,7 +886,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "People who are Eligible for Parole"), br()
+    div(id = "big-section-title", "People who are Currently Eligible for Parole"), br()
     )
 ```
 ::: {.panel-tabset}
@@ -1127,8 +1130,8 @@ div(id = "body-section", br(),
     div(id = "bold-text", "Disparities in Prison"), br()
 )
 
-state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
-fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
+# state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
+# fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 ```
 
 ### In Prison but Parole-Eligible

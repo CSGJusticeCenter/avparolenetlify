@@ -53,7 +53,7 @@ htmltools::div(
       formattable::comma(num_people_current, digits = 0)
     ),
     div(
-      HTML("Currently in Prison and<br>Eligible for Parole"),
+      HTML("In Prison and Currently<br>Eligible for Parole"),
       id = "bold-text"
     )
   ),
@@ -64,7 +64,7 @@ htmltools::div(
       formattable::comma(num_people_1_5_years, digits = 0)
     ),
     div(
-      HTML("Currently in Prison and<br>Eligible for Parole in 1-5 Years"),
+      HTML("In Prison and Eligible<br>for Parole in 1-5 Years"),
       id = "bold-text"
     )
   )
@@ -87,7 +87,7 @@ div(id = "body-section", br(),
 ```{r}
 map_percent %>% 
   hc_size(height = 550) %>% 
-  hc_title(text = paste0("The Percentage of People who were in Prison and Eligible for Parole Release in ", select_year)) %>% 
+  hc_title(text = paste0("The Percentage of People who were in Prison and<br>Currently Eligible for Parole Release in ", select_year)) %>% 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
@@ -99,7 +99,7 @@ map_percent %>%
 ```{r}
 map_count %>% 
   hc_size(height = 550) %>% 
-    hc_title(text = paste0("The Number of People who were in Prison and Eligible for Parole in Release ", select_year)) %>% 
+    hc_title(text = paste0("The Number of People who were in Prison and<br>Currently Eligible for Parole in Release ", select_year)) %>% 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
