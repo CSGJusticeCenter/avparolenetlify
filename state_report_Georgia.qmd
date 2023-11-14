@@ -51,7 +51,7 @@ bjs_source <- paste0("BJS Prisoners (2010-", select_year, ")")
 aps_source <- "Annual Parole Survey (2010-2018)"
 
 # NCRP note about parole-eligible populations
-ncrp_pe_note <- "Parole-eligible populations only include people in prison for a new crime and with original sentence lengths of 1 to 25 years."
+ncrp_pe_note <- "Parole-eligible populations only include people in prison for a new court commitment and with original sentence lengths of 1 to 25 years."
 
 # no data text
 no_data_text <- paste0("No Data. ", state_for_report, " did not submit data to the National Corrections Reporting Program in ", select_year, ".")
@@ -308,7 +308,7 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
     hc_chart(marginBottom = 50) %>%
     hc_caption(
                text = paste0("Source: ", ncrp_pop_source, ". Note: ", ncrp_pe_note,
-                             "The 'Other' population includes people in prison who are eligible for parole, 
+                             " The 'Other' population includes people in prison who are eligible for parole, 
                              in prison for less than 1 year or more than 25 years, and in prison for a parole return."))
 } else {
   state_stackedbar_pe_type <- no_data_text
@@ -450,7 +450,7 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_fbi_index)) {
   state_sentence_parole_elgibility_fbi_index <- ""
 }
 
-# Bar chart of most serious sentenced offense by state - new crime
+# Bar chart of most serious sentenced offense by state - new court commitment
 if (state_for_report %in% names(all_bar_parole_elgibility_fbi_index)) {
   state_bar_parole_elgibility_fbi_index <- 
     all_bar_parole_elgibility_fbi_index[[state_for_report]] %>% 
@@ -778,7 +778,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Admission Types"), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns/revocations, those who return to prison for failing to meet the conditions of their parole.", state_sentence_admtype), br(),
+    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole.", state_sentence_admtype), br(),
     div(id = "visualization", state_stackedbar_admtype), br()
     )
 ```

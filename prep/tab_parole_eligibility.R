@@ -105,8 +105,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
     filter(state == x)
     hc_accessibility_text <-
       paste0("This graph shows the proportion of the prison population by parole eligibility status in ",
-      select_year, " in the state of ", x, ". Parole eligibility statuses include the new crime popultion currently eligible,
-      new crime population eligible in 1 to 5 years, new crime population eligible in 6 or more years, other population currently or
+      select_year, " in the state of ", x, ". Parole eligibility statuses include the new court commitment popultion currently eligible,
+      new court commitment population eligible in 1 to 5 years, new court commitment population eligible in 6 or more years, other population currently or
       eligible in the future, and population with missing parole eligibility data.")
     highcharts <-
       fnc_single_grouped_columnchart(df1, "prop", "type", "state", hc_accessibility_text)
@@ -131,7 +131,7 @@ all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) 
            type == "Currently Eligible")
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people were eligible for parole but still in prison for new crimes and with original sentence lengths ranging from 1 to 25 years. This group made up ",
+                      " people were eligible for parole but still in prison for new court commitments and with original sentence lengths ranging from 1 to 25 years. This group made up ",
                       df1$prop_label, " of the prison population.")
   return(sentences)
 })
@@ -160,7 +160,7 @@ all_sentence_parole_elgibility_population$Georgia
 ##########
 
 # Currently parole eligible population but still in prison by race in select year
-# Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 25 years)
 current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
 
 # Create highcharts showing breakdown of parole-eligible prison population by race
@@ -187,7 +187,7 @@ all_sentence_parole_elgibility_race <- map(.x = states,  .f = function(x) {
     slice(1)
   sentences <- paste0("In ", select_year, ", ", df1$race,
                       " people made up the largest proportion of those eligible for parole yet still incarcerated, comprising ",
-                      df1$prop_label, " of the parole-eligible population serving time for new crimes and with an original sentence length between 1-25 years.")
+                      df1$prop_label, " of the parole-eligible population serving time for new court commitments and with an original sentence length between 1 to 25 years.")
   return(sentences)
 })
 
@@ -200,7 +200,7 @@ all_sentence_parole_elgibility_race$Georgia
 ##########
 
 # Currently parole eligible population but still in prison by ageyrend in select year
-# Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 25 years)
 current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
 # Create highcharts showing breakdown of parole-eligible prison population by ageyrend
@@ -226,7 +226,7 @@ all_sentence_parole_elgibility_ageyrend <- map(.x = states,  .f = function(x) {
     slice(1)
   sentences <- paste0("In ", select_year, ", people who were between the ages of ", df1$ageyrend,
                       " made up the largest proportion of those eligible for parole yet still incarcerated, comprising ",
-                      df1$prop_label, " of the parole-eligible population serving time for new crimes and with an original sentence length between 1-25 years.")
+                      df1$prop_label, " of the parole-eligible population serving time for new court commitments and with an original sentence length between 1 to 25 years.")
   return(sentences)
 })
 
@@ -239,7 +239,7 @@ all_sentence_parole_elgibility_ageyrend$Georgia
 ##########
 
 # Currently parole eligible population but still in prison by gender in select year
-# Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 25 years)
 current_ped_gender <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 
 # Create highcharts showing breakdown of parole-eligible prison population by gender
@@ -266,7 +266,7 @@ all_sentence_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
     slice(1)
   sentences <- paste0("In ", select_year, ", ", tolower(df1$sex),
                       " people made up the largest proportion of those eligible for parole yet still incarcerated, comprising ",
-                      df1$prop_label, " of the parole-eligible population serving time for new crimes and with an original sentence length between 1-25 years.")
+                      df1$prop_label, " of the parole-eligible population serving time for new court commitments and with an original sentence length between 1 to 25 years.")
   return(sentences)
 })
 
@@ -288,7 +288,7 @@ all_sentence_parole_elgibility_gender$Georgia
 ################################################################################
 
 # Currently parole eligible population but still in prison by sentlgth in select year
-# Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 25 years)
 current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)
 
 # Create highcharts showing breakdown of parole-eligible prison population by sentlgth
@@ -313,7 +313,8 @@ all_sentence_parole_elgibility_sentlgth <- map(.x = states,  .f = function(x) {
     filter(state == x) %>%
     arrange(-prop) %>%
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", "the majority of the parole-eligible prison population serving sentences for new crimes with sentence lengths ranging from 1 to 25 years were incarcerated with an original sentence length of ",
+  df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
+  sentences <- paste0("In ", select_year, ", ", "the majority of the parole-eligible prison population serving sentences for new court commitments with sentence lengths ranging from 1 to 25 years were incarcerated with an original sentence length of ",
                       df1$sentlgth, ", accounting for ", df1$prop_label, " of this group.")
   return(sentences)
 })
@@ -340,7 +341,7 @@ all_sentence_parole_elgibility_sentlgth$Georgia
 ################################################################################
 
 # Currently parole eligible population but still in prison by fbi_index in select year
-# Only for people in prison most recently for a new crime, sentence lengths (1-25 years)
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 25 years)
 current_ped_fbi_index <-
   fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) %>%
   mutate(prop_label = paste0(
@@ -369,8 +370,8 @@ all_sentence_parole_elgibility_fbi_index <- map(.x = states,  .f = function(x) {
     filter(state == x) %>%
     arrange(-prop) %>%
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", "the majority of the parole-eligible prison population serving sentences for new crimes with sentence lengths ranging from 1 to 25 years were incarcerated for offenses related to ",
-                      tolower(df1$fbi_index), ", accounting for ", df1$prop_label, " of this group.")
+  sentences <- paste0("In ", select_year, ", ", "the majority of the parole-eligible prison population serving sentences for new court commitments with sentence lengths ranging from 1 to 25 years were incarcerated for offenses related to ",
+                      tolower(df1$fbi_index), ", accounting for ", round(df1$prop*100, 0), "% of this group.")
   return(sentences)
 })
 
