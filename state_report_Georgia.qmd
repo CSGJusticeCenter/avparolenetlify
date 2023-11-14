@@ -1138,8 +1138,8 @@ div(id = "body-section", br(),
     div(id = "bold-text", "Disparities in Prison"), br()
 )
 
-# state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
-# fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
+state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
+fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 ```
 
 ### In Prison but Parole-Eligible
