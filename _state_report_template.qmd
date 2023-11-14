@@ -739,7 +739,7 @@ div(
 # Prison Population Trends
 
 ########################################
-tab_prison_population_intro <- paste0("This tab provides a comprehensive look at the dynamics of ", state_for_report, "'s prison admissions, releases, and population, highlighting key aspects such as admission types, demographic breakdowns, criminal offenses, and sentence lengths.") 
+tab_prison_population_intro <- paste0("This section provides a comprehensive look at the dynamics of ", state_for_report, "'s prison admissions, releases, and population, highlighting key aspects such as admission types, demographic breakdowns, criminal offenses, and sentence lengths.") 
 
 div(id = "body-section", br(), 
     div(id = "big-section-title", "Prison Population Trends"), br(),
@@ -751,7 +751,7 @@ div(id = "body-section", br(),
 ### Number of Admissions
 ```{r}
 div(id = "body-section", br(),
-    div(id = "regular-text", "Sentence about change in admissions from 2010 to 2020."), br(),
+    div(id = "finding-text", "Sentence about change in admissions from 2010 to 2020."), br(),
     div(id = "visualization", state_admissions_by_year), br()
     )
 ```
@@ -759,7 +759,7 @@ div(id = "body-section", br(),
 ### Number of Releases
 ```{r}
 div(id = "body-section", br(),
-    div(id = "regular-text", "Sentence about change in releases from 2010 to 2020."), br(),
+    div(id = "finding-text", "Sentence about change in releases from 2010 to 2020."), br(),
     div(id = "visualization", state_releases_by_year), br()
     )
 ```
@@ -767,7 +767,7 @@ div(id = "body-section", br(),
 ### Year-End Population
 ```{r}
 div(id = "body-section", br(),
-    div(id = "regular-text", "Sentence about change in year-end population from 2010 to 2020."), br(),
+    div(id = "finding-text", "Sentence about change in year-end population from 2010 to 2020."), br(),
     div(id = "visualization", state_yearendpop_by_year), br()
     )
 ```
@@ -782,7 +782,8 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Admission Types"), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole.", state_sentence_admtype), br(),
+    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
+    div(id = "finding-text", state_sentence_admtype), br(),
     div(id = "visualization", state_stackedbar_admtype), br()
     )
 ```

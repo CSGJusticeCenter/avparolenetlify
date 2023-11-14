@@ -145,6 +145,15 @@ body {
   color: black
 }
 
+/* finding app text */
+#finding-text {
+  font-size: 0.9em;
+  font-family: Graphik;
+  text-align: left;
+  color: black
+}
+
+
 /* bold app text */
 #bold-text {
   font-size: 0.9em;

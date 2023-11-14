@@ -118,7 +118,7 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Other National Visualization Ideas"), br(),
-    div(id = "regular-text", "People Infographics: National disparities for race, ethnicity, and gender"), br(),
+    div(id = "regular-text", "Disparity Infographics: National disparities for race, ethnicity, and gender"), br(),
     div(id = "regular-text", "Highlighted Finding: Average length of time people are incarcerated after their parole eligibility date."), br(),
     div(id = "regular-text", "Stacked Bar Chart: Parole eligibility by offense type. Bars representing different crime categories (e.g., violent crimes, property crimes) and their corresponding parole-eligible numbers."), br(),
     div(id = "regular-text", "List: 'Top States' in any of the findings above."), br(),
