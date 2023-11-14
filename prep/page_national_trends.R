@@ -128,44 +128,50 @@ map_data <- parole_eligibility_table_select_year %>%
 
          state_abb = state.abb[match(state, state.name)],
 
+         # create the abolished_label for use in tooltips
          all_na = rowSums(is.na(select(.,
-                                       yearendpop_125years_new_crime,
                                        current_count,
                                        future_1_5_years_count,
-                                       future_6_years_count,
                                        missing_count))) ==
-           length(select(.,
-                         yearendpop_125years_new_crime,
-                         current_count,
-                         future_1_5_years_count,
-                         future_6_years_count,
-                         missing_count)),
+          length(select(.,
+                        current_count,
+                        future_1_5_years_count,
+                        missing_count)),
 
-         tooltip = ifelse(all_na & abolished_discretionary_parole == "No",
-                          paste0("<b>", state, "</b><br><br>",
-                                 "Parole eligibility data is not available.<br><br>",
-                                 "Total Prison Population:<br><b>",
-                                 formattable::comma(yearendpop, digits = 0), "</b>"),
+         tooltip = case_when(all_na == TRUE & abolished_discretionary_parole == "No" ~
+                              paste0("<b>", state, "</b><br><br>",
+                                     "Parole eligibility data is not available.<br><br>",
+                                     "Total Prison Population:<br><b>",
+                                     formattable::comma(yearendpop, digits = 0), "</b>"),
 
-                          ifelse(abolished_discretionary_parole == "Yes",
-                                 paste0("<b>", state, "</b><br><br>",
-                                        state, " abolished discretionary parole.<br><br>",
+                             all_na == TRUE & abolished_discretionary_parole == "Yes" ~
+                              paste0("<b>", state, "</b><br><br>",
+                                     state, " abolished discretionary parole.<br><br>",
+                                     "Total Prison Population:<br><b>",
+                                     formattable::comma(yearendpop, digits = 0), "</b>"),
 
-                                        "Total Prison Population:<br><b>",
-                                        formattable::comma(yearendpop, digits = 0), "</b>"),
+                             all_na == FALSE & abolished_discretionary_parole == "Yes" ~
+                              paste0("<b>", state, "</b><br><br>",
+                                     state, " abolished discretionary parole.<br><br>",
+                                     "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
+                                     paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+                                     "Number of People in Prison<br> Eligible for Release in the Next 1-5 Years:<br><b>",
+                                     paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
+                                     "Number of People in Prison<br> with Missing Release Eligibility Data:<br><b>",
+                                     paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
+                                     "Total Prison Population:<br><b>",
+                                     formattable::comma(yearendpop, digits = 0), "</b>"),
 
-                                 paste0("<b>", state, "</b><br><br>",
-                                        "Percent of Prison Population<br> Currently Eligible for Release:<br><b>",
-                                        paste(round(current_perc, 0), "%</b>", sep = ""), "<br><br>",
-
-                                        "Percent of Prison Population<br> Eligible for Release in the Next 1-5 Years:<br><b>",
-                                        paste(round(future_1_5_years_perc, 0), "%</b>", sep = ""), "<br><br>",
-
-                                        "Percent of Prison Population<br> with Missing Parole Eligibility Data:<br><b>",
-                                        paste(round(missing_perc, 0), "%</b>", sep = ""), "<br><br>",
-
-                                        "Total Prison Population:<br><b>",
-                                        formattable::comma(yearendpop, digits = 0), "</b>"))),
+                             all_na == FALSE & abolished_discretionary_parole == "No" ~
+                              paste0("<b>", state, "</b><br><br>",
+                                     "Number of People in Prison<br> Currently Eligible for Parole Release:<br><b>",
+                                     paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+                                     "Number of People in Prison<br> Eligible for Parole Release in the Next 1-5 Years:<br><b>",
+                                     paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
+                                     "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
+                                     paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
+                                     "Total Prison Population:<br><b>",
+                                     formattable::comma(yearendpop, digits = 0), "</b>")),
 
          tooltip = str_replace_all(tooltip, "NA%", "No Data"),
          tooltip = str_replace_all(tooltip, "NA", "No Data")) %>%
@@ -314,27 +320,41 @@ map_data <- parole_eligibility_table_select_year %>%
                          future_1_5_years_count,
                          missing_count)),
 
-         tooltip = ifelse(all_na & abolished_discretionary_parole == "No",
-                          paste0("<b>", state, "</b><br><br>",
-                                 "Parole eligibility data is not available.<br><br>",
-                                 "Total Prison Population:<br><b>",
-                                 formattable::comma(yearendpop, digits = 0), "</b>"),
+         tooltip = case_when(all_na == TRUE & abolished_discretionary_parole == "No" ~
+                                        paste0("<b>", state, "</b><br><br>",
+                                                "Parole eligibility data is not available.<br><br>",
+                                                "Total Prison Population:<br><b>",
+                                                 formattable::comma(yearendpop, digits = 0), "</b>"),
 
-                          ifelse(abolished_discretionary_parole == "Yes",
-                                 paste0("<b>", state, "</b><br><br>",
-                                        state, " abolished discretionary parole.<br><br>",
-                                        "Total Prison Population:<br><b>",
-                                        formattable::comma(yearendpop, digits = 0), "</b>"),
+                             all_na == TRUE & abolished_discretionary_parole == "Yes" ~
+                                        paste0("<b>", state, "</b><br><br>",
+                                                state, " abolished discretionary parole.<br><br>",
+                                               "Total Prison Population:<br><b>",
+                                                formattable::comma(yearendpop, digits = 0), "</b>"),
 
-                                 paste0("<b>", state, "</b><br><br>",
-                                        "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
-                                        paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
-                                        "Number of People in Prison<br> Eligible for Release in the Next 1-5 Years:<br><b>",
-                                        paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
-                                        "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
-                                        paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
-                                        "Total Prison Population:<br><b>",
-                                        formattable::comma(yearendpop, digits = 0), "</b>"))),
+                             all_na == FALSE & abolished_discretionary_parole == "Yes" ~
+                               paste0("<b>", state, "</b><br><br>",
+                                      state, " abolished discretionary parole.<br><br>",
+                                      "Number of People in Prison<br> Currently Eligible for Release:<br><b>",
+                                      paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+                                      "Number of People in Prison<br> Eligible for Release in the Next 1-5 Years:<br><b>",
+                                      paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
+                                      "Number of People in Prison<br> with Missing Release Eligibility Data:<br><b>",
+                                      paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
+                                      "Total Prison Population:<br><b>",
+                                      formattable::comma(yearendpop, digits = 0), "</b>"),
+
+                             all_na == FALSE & abolished_discretionary_parole == "No" ~
+                               paste0("<b>", state, "</b><br><br>",
+                                      "Number of People in Prison<br> Currently Eligible for Parole Release:<br><b>",
+                                      paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+                                      "Number of People in Prison<br> Eligible for Parole Release in the Next 1-5 Years:<br><b>",
+                                      paste(formattable::comma(future_1_5_years_count, 0), "</b>", sep = ""), "<br><br>",
+                                      "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
+                                      paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
+                                      "Total Prison Population:<br><b>",
+                                      formattable::comma(yearendpop, digits = 0), "</b>")
+                             ),
 
          tooltip = str_replace_all(tooltip, "NA", "No Data")) %>%
 
