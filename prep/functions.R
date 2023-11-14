@@ -258,7 +258,7 @@ reactable_style <- list(
 
 # base Highcharts theme
 base_hc_theme <- hc_theme(
-  colors = c(orange, yellow, purple, darkblue, teal, blue),
+  colors = c(teal, yellow, blue, orange, darkblue, purple),
   chart = list(
     style = list(fontFamily = "Graphik",
                  fontSize = "12px",
@@ -491,13 +491,16 @@ fnc_stackedbar_admtype_chart <- function(df, group_by_col, accessibility_text) {
     hc_add_theme(hc_theme) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_exporting(enabled = TRUE) %>%
+    hc_chart(marginLeft = 130) %>%
     hc_plotOptions(
       series = list(
         stacking = "normal",
         animation = FALSE,
         cursor = "pointer",
         borderWidth = 3,
-        minPointLength = 4),
+        minPointLength = 4,
+        pointPadding = 0.1,
+        groupPadding = 0.2),
       accessibility = list(enabled = TRUE,
                            keyboardNavigation = list(enabled = TRUE),
                            linkedDescription = accessibility_text,
@@ -531,10 +534,13 @@ fnc_barchart <- function(df, filter_column, accessibility_text) {
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
     hc_exporting(enabled = TRUE) %>%
+    hc_chart(marginLeft = 130) %>%
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
-                                 minPointLength = 4),
+                                 minPointLength = 4,
+                                 pointPadding = 0.1,
+                                 groupPadding = 0.2),
                    accessibility = list(enabled = TRUE,
                                         keyboardNavigation = list(enabled = TRUE),
                                         linkedDescription = accessibility_text,
@@ -581,8 +587,82 @@ fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, a
   return(highchart)
 }
 
+# Create grouped, stacked bar chart
+fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibility_text) {
 
+  highcharts <-
+    hchart(df, "bar",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1
+    ) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        stacking = "normal",
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
 
+  return(highcharts)
+
+}
+
+# Create pie chart
+fnc_piechart <- function(df, x_column, accessibility_text){
+
+  highcharts <- hchart(df,
+                       "pie",
+                       hcaes(x = !!sym(x_column), y = prop),
+                       dataLabels = list(
+                         style = list(fontSize = "1em",
+                                      fontWeight = "regular",
+                                      alignTo = "connectors",
+                                      color = "black"),
+                         enabled = TRUE,
+                         formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
+                       )
+  ) %>%
+    hc_chart(plotBackgroundColor = "none",
+             plotBorderWidth = 0,
+             plotShadow = FALSE,
+             margin = c(30, 0, 10, 0)) %>%
+    hc_yAxis(maxPadding = 0) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+}
 
 
 

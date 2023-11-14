@@ -168,19 +168,19 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
   mutate(time_between_admisson_release = relyr - admityr,
          time_between_ped_release = relyr - parelig_year,
          time_between_ped_release_category = case_when(
-           time_between_ped_release < 0     ~ "Released Before Parole Eligibility Year",
-            time_between_ped_release == 0   ~ "Released at Parole Eligibility Year",
+           time_between_ped_release < 0     ~ "Released before Parole Eligibility Year",
+            time_between_ped_release == 0   ~ "Released on Parole Eligibility Year",
            time_between_ped_release <= 5 &
-             time_between_ped_release > 0   ~ "Released 1-5 Years After Parole Eligibility Year",
-           time_between_ped_release > 5     ~ "Released 5 Years After Parole Eligibility Year",
+             time_between_ped_release > 0   ~ "Released 1 to 5 Years After Parole Eligibility Year",
+           time_between_ped_release > 5     ~ "Released more than 5 Years After Parole Eligibility Year",
            is.na(time_between_ped_release)  ~ "Missing Parole Eligibility Year"
          )) %>%
   mutate(time_between_ped_release_category =
            factor(time_between_ped_release_category,
-                       levels = c("Released Before Parole Eligibility Year",
-                                  "Released at Parole Eligibility Year",
-                                  "Released 1-5 Years After Parole Eligibility Year",
-                                  "Released 5 Years After Parole Eligibility Year",
+                       levels = c("Released before Parole Eligibility Year",
+                                  "Released on Parole Eligibility Year",
+                                  "Released 1 to 5 Years After Parole Eligibility Year",
+                                  "Released more than 5 Years After Parole Eligibility Year",
                                   "Missing Parole Eligibility Year"))) %>%
 
   # change NAs to "Unknown"

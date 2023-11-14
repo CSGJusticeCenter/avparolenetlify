@@ -117,10 +117,10 @@ ncrp_release_by_reltype <- ncrp_releases %>%
   mutate(time_between_ped_release_category =
            factor(time_between_ped_release_category,
                   levels = c("Missing Parole Eligibility Year",
-                             "Released 5 Years After Parole Eligibility Year",
-                             "Released 1-5 Years After Parole Eligibility Year",
-                             "Released at Parole Eligibility Year",
-                             "Released Before Parole Eligibility Year")))
+                             "Released more than 5 Years After Parole Eligibility Year",
+                             "Released 1 to 5 Years After Parole Eligibility Year",
+                             "Released on Parole Eligibility Year",
+                             "Released before Parole Eligibility Year")))
 
 # Highchart stacked bar chart showing release timing by reltype type
 states <- unique(ncrp_release_by_reltype$state)
@@ -293,10 +293,10 @@ ncrp_release_by_offense <- ncrp_releases %>%
   mutate(time_between_ped_release_category =
            factor(time_between_ped_release_category,
                   levels = c("Missing Parole Eligibility Year",
-                             "Released 5 Years After Parole Eligibility Year",
-                             "Released 1-5 Years After Parole Eligibility Year",
-                             "Released at Parole Eligibility Year",
-                             "Released Before Parole Eligibility Year")))
+                             "Released more than 5 Years After Parole Eligibility Year",
+                             "Released 1 to 5 Years After Parole Eligibility Year",
+                             "Released on Parole Eligibility Year",
+                             "Released before Parole Eligibility Year")))
 
 
 # Highchart stacked bar chart showing release timing by offense type
