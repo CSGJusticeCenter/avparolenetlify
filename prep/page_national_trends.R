@@ -415,9 +415,9 @@ map_count <- highchart(height = 600) %>%
   hc_colorAxis(dataClassColor="category",
                dataClasses = list(list(from = 1, to = 1, color="#D5F5F3", name = "0 - 422"),
                                   list(from = 2, to = 2, color="#6AD0C9", name = "423 - 1,322"),
-                                  list(from = 3, to = 3, color="#00ABA0", name = "1,323 - 2,507"),
+                                  list(from = 3, to = 3, color="#00aba0", name = "1,323 - 2,507"),
                                   list(from = 4, to = 4, color="#006F8A", name = "2,508 - 35,668"),
-                                  list(from = 5, to = 5, color="#ffaf00", name = "Abolished Discretionary Parole"),
+                                  list(from = 5, to = 5, color="#f8ac00", name = "Abolished Discretionary Parole"),
                                   list(from = 6, to = 6, color="#e8e8e8", name = "Missing Data")
                )) %>%
 
