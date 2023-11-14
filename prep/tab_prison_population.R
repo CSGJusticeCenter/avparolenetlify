@@ -451,7 +451,10 @@ ncrp_yearendpop_sentlgth <- ncrp_yearendpop %>%
   group_by(state) %>%
   fnc_values_labels(sentlgth) %>%
   fnc_tooltip(sentlgth, prop_label,
-              paste0("Sentence Length: "))
+              paste0("Sentence Length: "))%>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
 
 # Highchart
 states <- unique(ncrp_yearendpop_sentlgth$state)

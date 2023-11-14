@@ -160,7 +160,10 @@ ncrp_releases_race <- ncrp_releases %>%
   group_by(state) %>%
   fnc_values_labels(race) %>%
   fnc_tooltip(race, prop_label,
-              paste0("Race and Ethnicity: "))
+              paste0("Race and Ethnicity: "))%>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
 
 # Create highcharts showing breakdown of releases by race and ethnicity
 states <- unique(ncrp_releases_race$state)
@@ -185,7 +188,10 @@ ncrp_releases_gender <- ncrp_releases %>%
   group_by(state) %>%
   fnc_values_labels(sex) %>%
   fnc_tooltip(sex, prop_label,
-              paste0("Gender: "))
+              paste0("Gender: "))%>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
 
 
 # Create highcharts showing breakdown of releases by gender
@@ -211,7 +217,10 @@ ncrp_releases_agerlse <- ncrp_releases %>%
   group_by(state) %>%
   fnc_values_labels(agerlse) %>%
   fnc_tooltip(agerlse, prop_label,
-              paste0("Age: "))
+              paste0("Age: "))%>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
 
 # Create highcharts showing breakdown of releases by age
 states <- unique(ncrp_releases_agerlse$state)

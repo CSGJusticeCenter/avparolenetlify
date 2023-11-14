@@ -572,7 +572,7 @@ if (state_for_report %in% names(all_pie_release_type)) {
 if (state_for_report %in% names(all_groupedbar_release_timing_fbi_index)) {
   state_groupedbar_release_timing_fbi_index <-
     all_groupedbar_release_timing_fbi_index[[state_for_report]] %>%
-    hc_colors(c(neutralBkgndMedium, blue, yellow, teal, darkblue)) %>% 
+    hc_colors(c(neutralBkgndMedium, darkblue, yellow, teal, blue)) %>% 
     hc_title(text = paste0("Release Timing by Offense Type", " in ", select_year)) %>% 
     hc_caption(
            text = paste0("Source: ", ncrp_rel_source))
