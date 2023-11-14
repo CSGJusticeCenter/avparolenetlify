@@ -544,6 +544,42 @@ fnc_barchart <- function(df, filter_column, accessibility_text) {
   return(highcharts)
 }
 
+# Create single horizontal bar chart that is grouped
+fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
+
+  highchart <- hchart(df, "bar",
+                      hcaes(x = !!sym(x_axis),
+                            y = !!sym(value),
+                            group = !!sym(group_by_column)),
+                      dataLabels = list(enabled = TRUE,
+                                        format = "{point.prop_label}",
+                                        style = list(fontWeight = "bold",
+                                                     fontSize = "12px",
+                                                     fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(format = "{value}%",
+                           enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_plotOptions(
+      series = list(stacking = "normal",
+                    animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3,
+                    minPointLength = 4),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+  return(highchart)
+}
 
 
 
