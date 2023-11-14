@@ -83,10 +83,22 @@ neutralBlackText     <- "#3E4B4B"
 
 # https://community.holistics.io/t/launched-more-accessible-and-modern-color-palettes/746
 # contrasting palette 1
-blue     <- "#0061e4"
-teal     <- "#00aba0"
-darkblue <- "#003474"
-purple   <- "#c376fb"
-red      <- "#c60040"
-yellow   <- "#ffaf00"
-orange   <- "#ff6400"
+# blue     <- "#0061e4"
+# teal     <- "#00aba0"
+# darkblue <- "#003474"
+# purple   <- "#c376fb"
+# red      <- "#c60040"
+# yellow   <- "#ffaf00"
+# orange   <- "#ff6400"
+
+blue        <- "#001e36"
+darkblue    <- "#0f5a9e"
+#teal        <- "#2eebc1"
+teal        <- "#00aba0"
+yellow      <- "#f8ac00"
+red         <- "#7b3014"
+orange      <- "#D25E2D"
+purple      <- "#6f4e7b"
+
+
+
