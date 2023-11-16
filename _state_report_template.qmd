@@ -1082,25 +1082,24 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "In Prison"), br(),
-    div(id = "regular-text", "Option 1:"), br(),
-    div(id = "bold-text", "For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.")
+    div(id = "regular-text", "Option 1:"), br()
 )
 ```
 
 <div id="body-section">
+<div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px; justify-items: center; align-items: center;">
+
 ![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png){ width=200px }
+<div id="bold-text">
+For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.
 </div>
 
-```{r}
-div(id = "body-section", br(),
-    div(id = "bold-text", "For every White person in prison, there are 3.1 Hispanic people in prison.")
-)
-```
-
-<div id="body-section">
 ![](C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/analysis/app/ggplots/rri_infograph_Georgia.png){ width=200px }
+<div id="bold-text">
+For every White person in prison, there are 3.1 Hispanic people in prison.
 </div>
-
+</div>
+</div>
 
 ```{r}
 div(id = "body-section", br(),
@@ -1119,7 +1118,9 @@ div(id = "body-section", br(),
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "In Prison and Currently Eligible for Parole"), br()
+    div(id = "big-section-title", "In Prison and Currently Eligible for Parole"), br(),
+    div(id = "regular text", "Infographics like Option 1 or 2 in the 'In Prison' section above?"), br()
+
 )
 ```
 
