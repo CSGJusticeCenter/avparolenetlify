@@ -77,7 +77,7 @@ htmltools::div(
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Map Explorer"), br(),
-    div(id = "regular-text", "These maps show the percentage and number of individuals in prison and eligible for parole release in each state during 2020. Toggle between viewing data based on the percentage of these individuals of the overall prison population or the actual number of eligible people in prison."), br()
+    div(id = "regular-text", "These maps show the percentage and number of individuals in prison and currently eligible for parole release in each state during 2020. Toggle between viewing data based on the percentage of these individuals of the overall prison population or the actual number of currently eligible people in prison."), br()
     )
 ```
 
@@ -120,8 +120,7 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Other National Visualization Ideas"), br(),
     div(id = "regular-text", "Disparity Infographics: National disparities for race, ethnicity, and gender"), br(),
     div(id = "regular-text", "Highlighted Finding: Average length of time people are incarcerated after their parole eligibility date."), br(),
-    div(id = "regular-text", "Stacked Bar Chart: Parole eligibility by offense type. Bars representing different crime categories (e.g., violent crimes, property crimes) and their corresponding parole-eligible numbers."), br(),
-    div(id = "regular-text", "List: 'Top States' in any of the findings above."), br(),
+    div(id = "regular-text", "List: Top States"), br(),
     div(id = "regular-text", "Map: Robina Institute's prison sentencing system rating."), br(),
     div(id = "regular-text", "Table: Simple table showing parole-eligible prison populations by state"), br()
     )

@@ -34,7 +34,7 @@ source("prep/library.R")
 source("prep/functions.R")
 source("prep/dataframes.R")
 
-state_for_report <- "change_me"
+state_for_report <- "Georgia"
 
 # NCRP source
 ncrp_pop_source <- paste0("NCRP Year End Population (", select_year, ")")
@@ -707,26 +707,13 @@ div(
 )
 ```
 :::
+
 <br><br>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 :::: {.panel-tabset .nav-pills}
 
 ## Prison Population
 <center>
-
 ```{r}
 ########################################
 
@@ -740,23 +727,6 @@ div(id = "body-section", br(),
     # div(id = "regular-text", tab_prison_population_intro), br(),
     div(id = "finding-text", "Sentence about change in year-end population from 2010 to 2020."), br(),
     div(id = "visualization", state_yearendpop_by_year), br()
-    )
-```
-
-
-```{r}
-########################################
-
-# Prison Admissions 
-
-########################################
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Prison Admissions"), br(),
-    div(id = "finding-text", "Sentence about change in admissions from 2010 to 2020."), br(),
-    div(id = "visualization", state_admissions_by_year), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
-    div(id = "finding-text", state_sentence_admtype), br(),
-    div(id = "visualization", state_stackedbar_admtype), br()
     )
 ```
 
@@ -838,13 +808,40 @@ div(id = "body-section", br(),
 
 
 
-
-
-## Parole Eligibility
-
+## Prison Admissions
 <center>
 ```{r}
+########################################
 
+# Prison Admissions 
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Prison Admissions"), br(),
+    div(id = "finding-text", "Sentence about change in admissions from 2010 to 2020."), br(),
+    div(id = "visualization", state_admissions_by_year), br(),
+    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
+    div(id = "finding-text", state_sentence_admtype), br(),
+    div(id = "visualization", state_stackedbar_admtype), br()
+    )
+```
+</center>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+## Parole Eligibility 
+<center>
+
+```{r}
 ########################################
 
 # How is Parole Eligibility Determined?
@@ -955,7 +952,6 @@ div(id = "body-section", br(),
 )
 ```
 
-
 </center>
 <br>
 
@@ -967,13 +963,9 @@ div(id = "body-section", br(),
 
 
 
-
-
-
-
-
-## Releases
+## Prison Releases
 <center>
+
 ```{r}
 ########################################
 
@@ -1079,17 +1071,14 @@ div(id = "body-section", br(),
 
 
 
-
-
-
-
-
-
-
-
 ## Disparities
 
 <center>
+<br>
+
+::: {.panel-tabset}
+
+### Race and Ethnicity
 
 ```{r}
 div(id = "body-section", br(),
@@ -1143,7 +1132,36 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Timing of Release"), br(),
     div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by race and ethnicity, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
     div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
-    div(id = "visualization", state_stackedcolumn_disparities_release_race), br()
+    div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br(),
+    div(id = "graph-title", "Timing of release by offense type and race and ethnicity in 2020"), br()
+)
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Time Served"), br(),
+    div(id = "graph-title", "Average time served by race and ethnicity in 2020"), br(),
+    div(id = "graph-title", "Average time served by race and ethnicity and offense type in 2020"), br() 
+)
+```
+
+### Gender
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "In Prison"), br()
+)
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "In Prison and Currently Eligible for Parole"), br()
+)
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Timing of Release"), br()
 )
 ```
 
@@ -1153,8 +1171,53 @@ div(id = "body-section", br(),
 )
 ```
 
+### Age
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Timing of Release"), br(),
+    div(id = "graph-title", "Release Timing after Parole Eligibility by Age Category"), br(),
+    div(id = "graph-title", "Timing of Release by Offense Type and Age Category"), br()
+)
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Time Served"), br(),
+    div(id = "graph-title", "Average time served by race and ethnicity in 2020"), br(),
+    div(id = "graph-title", "Average time served by race and ethnicity and offense type in 2020"), br() 
+)
+```
+
+:::
+
 </center>
-<br><br>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1166,7 +1229,7 @@ div(id = "body-section", br(),
 
 The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented.
 
-**Citations:** 
+**Citations** 
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [https://robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](https://robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
 

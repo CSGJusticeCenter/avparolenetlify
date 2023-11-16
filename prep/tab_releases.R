@@ -492,7 +492,6 @@ for (folder in theseFOLDERS){
   save(all_bar_release_gender,                    file = file.path(folder, "all_bar_release_gender.rds"))
   save(all_bar_release_race,                      file = file.path(folder, "all_bar_release_race.rds"))
 
-
   save(all_pie_release_type,                      file = file.path(folder, "all_pie_release_type.rds"))
   save(all_groupedbar_release_timing_fbi_index,   file = file.path(folder, "all_groupedbar_release_timing_fbi_index.rds"))
 
