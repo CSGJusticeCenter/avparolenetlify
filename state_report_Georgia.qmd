@@ -649,7 +649,7 @@ if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
 if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <-
     all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
-    hc_colors(c(darkblue, purple, blue, teal, yellow, orange)) %>% 
+    hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
     hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     # hc_chart(marginBottom = 50) %>%
     hc_caption(
@@ -718,52 +718,30 @@ div(
 ```{r}
 ########################################
 
-# Prison Population Trends
+# Prison Population
 
 ########################################
-tab_prison_population_intro <- paste0("This section provides a comprehensive look at the dynamics of ", state_for_report, "'s prison admissions, releases, and population, highlighting key aspects such as admission types, demographic breakdowns, criminal offenses, and sentence lengths.") 
+tab_prison_population_intro <- paste0("This section provides a comprehensive look at the dynamics of ", state_for_report, "'s prison admissions and population, highlighting key aspects such as admission types, demographic breakdowns, criminal offenses, and sentence lengths.") 
 
 div(id = "body-section", br(), 
-    div(id = "big-section-title", "Prison Population Trends"), br(),
-    div(id = "regular-text", tab_prison_population_intro), br(), br()
-    )
-```
-
-::: {.panel-tabset}
-### Number of Admissions
-```{r}
-div(id = "body-section", br(),
-    div(id = "finding-text", "Sentence about change in admissions from 2010 to 2020."), br(),
-    div(id = "visualization", state_admissions_by_year), br()
-    )
-```
-
-### Number of Releases
-```{r}
-div(id = "body-section", br(),
-    div(id = "finding-text", "Sentence about change in releases from 2010 to 2020."), br(),
-    div(id = "visualization", state_releases_by_year), br()
-    )
-```
-
-### Year-End Population
-```{r}
-div(id = "body-section", br(),
+    div(id = "big-section-title", "Prison Population"), br(),
+    # div(id = "regular-text", tab_prison_population_intro), br(),
     div(id = "finding-text", "Sentence about change in year-end population from 2010 to 2020."), br(),
     div(id = "visualization", state_yearendpop_by_year), br()
     )
 ```
 
-:::
 
 ```{r}
 ########################################
 
-# Prison Population by Admission Type
+# Prison Admissions 
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Admission Types"), br(),
+    div(id = "big-section-title", "Prison Admissions"), br(),
+    div(id = "finding-text", "Sentence about change in admissions from 2010 to 2020."), br(),
+    div(id = "visualization", state_admissions_by_year), br(),
     div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
     div(id = "finding-text", state_sentence_admtype), br(),
     div(id = "visualization", state_stackedbar_admtype), br()
@@ -780,7 +758,9 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Demographics"), br(),
     )
 ```
+
 ::: {.panel-tabset}
+
 ### Race and Ethinicity
 ```{r}
 div(id = "body-section", br(),
@@ -804,9 +784,15 @@ div(id = "body-section", br(),
     div(id = "visualization", state_stackedbar_prison_ageyrend)
     )
 ```
+
 :::
 
 ```{r}
+########################################
+
+# Criminal Offense
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Criminal Offense"), br(),
     div(id = "regular-text", "Sentence about most common offense."), br(),
@@ -815,6 +801,11 @@ div(id = "body-section", br(),
 ```
 
 ```{r}
+########################################
+
+# Sentence Length
+
+########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Sentence Length"), br(),
     div(id = "regular-text", "Sentence about most common sentence length."), br(),
@@ -917,19 +908,6 @@ div(id = "body-section", br(),
 ```{r}
 ########################################
 
-# Sentence Lengths
-
-########################################
-div(id = "body-section", br(),
-    div(id = "medium-section-title", "Sentence Lengths"), br(),
-    div(id = "regular-text", state_sentence_parole_elgibility_sentlgth), br(),
-    div(id = "visualization", state_bar_parole_elgibility_sentlgth), br(), br()
-    )
-```
-
-```{r}
-########################################
-
 # Criminal Offenses
 
 ########################################
@@ -943,11 +921,24 @@ div(id = "body-section", br(),
 ```{r}
 ########################################
 
+# Sentence Lengths
+
+########################################
+div(id = "body-section", br(),
+    div(id = "medium-section-title", "Sentence Lengths"), br(),
+    div(id = "regular-text", state_sentence_parole_elgibility_sentlgth), br(),
+    div(id = "visualization", state_bar_parole_elgibility_sentlgth), br(), br()
+    )
+```
+
+```{r}
+########################################
+
 # Missing Data
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "medium-section-title", "Missing Data"), br(),
+    div(id = "big-section-title", "Missing Data"), br(),
     div(id = "regular-text", "This section will have information about missing parole eligibility data for the state once new NCRP data is released.")
 )
 ```
@@ -979,15 +970,11 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Trends"), br(),
+    div(id = "finding-text", "Sentence about change in releases from 2010 to 2020."), br(),
+    div(id = "visualization", state_releases_by_year), br(),
     div(id = "regular-text", "The chart below shows an annual breakdown from 2010 to 2020 on the proportion of the parole-eligible population that was released each year compared to those who remained incarcerated despite their parole eligibility."), br(),
-    div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), br(),
-    div(id = "regular-text", "Sentence about timing of release."), br(),
-    div(id = "visualization", state_groupedbar_release_timing_reltype), br(), br()
-    )
-```
-
-
-```{r}
+    div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), br()
+)
 ########################################
 
 # Type of Release
@@ -997,7 +984,7 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Type of Release"), br(),
     div(id = "regular-text", "Sentence about conditional and unconditional releases."), br(),
     div(id = "visualization", state_pie_release_type), br(), br(), br()
-    )
+)
 ```
 
 ```{r}
@@ -1045,9 +1032,11 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Release Timing by Offense Type"), br(),
+    div(id = "big-section-title", "Timing of Release"), br(),
+    div(id = "regular-text", "Sentence about timing of release."), br(),
+    div(id = "visualization", state_groupedbar_release_timing_reltype), br(), 
     div(id = "regular-text", "Sentence release timing by offense type."), br(),
-    div(id = "visualization", state_groupedbar_release_timing_fbi_index), br(), br(), br()
+    div(id = "visualization", state_groupedbar_release_timing_fbi_index), br(), br()
     )
 ```
 
@@ -1085,24 +1074,14 @@ div(id = "body-section", br(),
 
 
 
+
 ## Disparities
+
 <center>
 
 ```{r}
-########################################
-
-# Race and Ethnicity
-
-########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Race and Ethnicity"), br()
-)
-```
-
-::: {.panel-tabset}
-### In Prison
-```{r}
-div(id = "body-section", br(),
+    div(id = "big-section-title", "In Prison"), br(),
     div(id = "regular-text", "Option 1:"), br(),
     div(id = "bold-text", "For every White person in prison, there are 3.1 Black, non-Hispanic people in prison.")
 )
@@ -1125,59 +1104,42 @@ div(id = "body-section", br(),
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "regular-text", "Option 2:"), br(),
-    div(id = "bold-text", "Disparities in Prison"), br()
+    div(id = "regular-text", "Option 2:"), br()
 )
 
 state_rri_in_prison_data <- rri_in_prison_data %>% filter(state == state_for_report)
 fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 ```
 
-### In Prison but Parole-Eligible
-
-### Released on Parole Eligibility Year
-
-:::
 ```{r}
-div(id = "body-section", br(), 
-    div(id = "visualization", state_groupedbar_disparities_race), br(), br(), br(),
-    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(), 
-    div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br()
-)
-```
-
-```{r}
-div(id = "body-section", 
-    div(id = "graph-title", "TBD Visualization: Time Served by Race and Ethnicity in 2020"), br()
-)
-```
-
-```{r}
-########################################
-
-# Gender
-
-########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Gender"), br(),
-    div(id = "regular-text", "TBD: Same visualizations as above?"), br()
+    div(id = "visualization", state_groupedbar_disparities_race), br()
 )
 ```
 
 ```{r}
-########################################
-
-# Age
-
-########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Age"), br(),
-    div(id = "regular-text", "Just one visualization on time served by age category?"), br()
+    div(id = "big-section-title", "In Prison and Currently Eligible for Parole"), br()
+)
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Timing of Release"), br(),
+    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
+    div(id = "visualization", state_stackedcolumn_disparities_release_race), br()
+)
+```
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Time Served"), br()
 )
 ```
 
 </center>
 <br>
+
 
 
 ::::

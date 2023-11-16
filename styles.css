@@ -126,6 +126,7 @@ body {
   font-weight: bold;
   text-align: center;
   color: black;
+  /*width: 75%;*/
   border-bottom: 1px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
