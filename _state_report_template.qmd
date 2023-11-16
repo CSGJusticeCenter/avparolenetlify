@@ -182,7 +182,7 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_fbi_index)) {
 if (state_for_report %in% names(all_stackedbar_prison_race)) {
   state_stackedbar_prison_race <-
     all_stackedbar_prison_race[[state_for_report]] %>%
-    hc_colors(c(neutralBkgndMedium, "darkgray", yellow, blue, teal)) %>% 
+    hc_colors(c(neutralBkgndMedium, orange, yellow, blue, teal)) %>% 
     hc_title(text = paste0("Prison Population by Race and Ethnicity", " in ", select_year)) %>% 
     hc_size(height = 400) %>%
     hc_caption(text = paste0("Source: ", ncrp_pop_source))
@@ -983,8 +983,8 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Release Trends"), br(),
     div(id = "finding-text", "Sentence about change in releases from 2010 to 2020."), br(),
-    div(id = "visualization", state_releases_by_year), br(),
-    div(id = "regular-text", "The chart below shows an annual breakdown from 2010 to 2020 on the proportion of the parole-eligible population that was released each year compared to those who remained incarcerated despite their parole eligibility."), br(),
+    div(id = "visualization", state_releases_by_year), br(), br(),
+    div(id = "regular-text", "This chart  shows an annual breakdown from 2010 to 2020 on the proportion of the parole-eligible population that was released each year compared to those who remained incarcerated despite their parole eligibility."), br(),
     div(id = "visualization", state_stackedbar_parole_eligibility_release), br(), br()
 )
 ########################################
@@ -1045,9 +1045,9 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Timing of Release"), br(),
-    div(id = "regular-text", "Sentence about timing of release."), br(),
-    div(id = "visualization", state_groupedbar_release_timing_reltype), br(), 
-    div(id = "regular-text", "Sentence release timing by offense type."), br(),
+    div(id = "regular-text", "This chart illustrates the timing of releases in relation to parole eligibility year by release type in 2020, comparing conditional and unconditional releases. It shows the proportion of individuals released before their parole eligibility year, during the year they were eligible, within one to five years after eligibility, more than five years after, and those with missing parole eligibility data."), br(),
+    div(id = "visualization", state_groupedbar_release_timing_reltype), br(), br(),
+    div(id = "regular-text", "This graphic depicts the distribution of release timings for different types of offenses in 2020. It shows the percentages of individuals released at various intervals relative to their parole eligibility year, ranging from those released before their parole eligibility year to those who remained incarcerated more than five years after becoming eligible for parole."), br(),
     div(id = "visualization", state_groupedbar_release_timing_fbi_index), br(), br()
     )
 ```
@@ -1060,7 +1060,7 @@ div(id = "body-section", br(),
 ########################################
 div(id = "body-section", br(),
     div(id = "big-section-title", "Time Served by Offense Type"), br(),
-    div(id = "regular-text", "Sentence about time served offense type."), br(),
+    div(id = "regular-text", "Sentence about the longest time served by offense type."), br(),
     div(id = "visualization", state_bar_los_by_offense), br()
     )
 ```
@@ -1124,6 +1124,7 @@ fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 
 ```{r}
 div(id = "body-section", br(),
+    div(id = "regular-text", "This graph compares the racial and ethnic composition of the general community with those in prison."), br(), 
     div(id = "visualization", state_groupedbar_disparities_inprison_race), br()
 )
 ```
@@ -1131,7 +1132,8 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "In Prison and Currently Eligible for Parole"), br(),
-    div(id = "regular text", "Infographics like Option 1 or 2 in the 'In Prison' section above?"), br(),
+    div(id = "regular-text", "Infographics like Option 1 or 2 in the 'In Prison' section above?"), br(),  br(),  br(),
+    div(id = "regular-text", "This graph compares the racial and ethnic composition of the general community with those in prison who are currently eligible for parole."), br(), 
     div(id = "visualization", state_groupedbar_disparities_inprisonpe_race), br()
 )
 ```
@@ -1139,6 +1141,7 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Timing of Release"), br(),
+    div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by race and ethnicity, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
     div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
     div(id = "visualization", state_stackedcolumn_disparities_release_race), br()
 )
@@ -1151,7 +1154,7 @@ div(id = "body-section", br(),
 ```
 
 </center>
-<br>
+<br><br>
 
 
 
@@ -1162,8 +1165,6 @@ div(id = "body-section", br(),
 **Notes**
 
 The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented.
-
-<br>
 
 **Citations:** 
 
