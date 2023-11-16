@@ -697,7 +697,7 @@ div(
               font-weight: bold; 
               text-align: center;",
       prison_sentencing_system),
-  div(id = "bold-text", HTML("Currently Eligible<br>for Parole")),
+  div(id = "bold-text", HTML("In Prison and Currently<br>Eligiblefor Parole")),
   div(id = "bold-text", HTML("Eligible for Parole<br>in the next 1 to 5 years")),
   div(id = "bold-text", tippy(prison_sentencing_system_info,
                             placement = "bottom",
