@@ -111,7 +111,8 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_los_by_offense.rds"
 # Disparities
 load(file = paste0(sp_data_path, "/data/analysis/app/all_rri_infographic_race.rds"))
 
-load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_inprison_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_inprisonpe_race.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedcolumn_disparities_release_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_race.rds"))

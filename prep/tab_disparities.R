@@ -75,7 +75,7 @@ ncrp_parole_eligible_population <- ncrp_yearendpop %>%
   group_by(state) %>%
   fnc_values_tooltip(race) %>%
   select(-tooltip) %>%
-  mutate(population_type = "In Prison but Parole-Eligible")
+  mutate(population_type = "In Prison and Currently Eligible for Parole")
 
 # Calculate proportion of people paroled at first opportunity by race and ethnicity
 ncrp_released_at_parole_eligibility_year <- ncrp_releases %>%
@@ -117,7 +117,7 @@ merged_population_data <- merged_population_data %>%
                        levels = c("In the Community",
                                   "Released on Parole Eligibility Year",
                                   "In Prison",
-                                  "In Prison but Parole-Eligible"))) %>%
+                                  "In Prison and Currently Eligible for Parole"))) %>%
   arrange(state, population_type, desc(race)) %>%
   mutate(tooltip = paste0("<b>", state, "</b><br><br>",
                           "<b>", race, "</b><br><br>",
@@ -125,9 +125,9 @@ merged_population_data <- merged_population_data %>%
                           "Percentage of People: <b>", prop_label, "</b>", sep = "")
          )
 
-# Highchart showing race population in the community and in prison but parole-eligible
+# Highchart showing race population in the community and In Prison and Currently Eligible for Parole
 states <- unique(merged_population_data$state)
-all_groupedbar_disparities_race <- map(.x = states,  .f = function(x) {
+all_groupedbar_disparities_inprison_race <- map(.x = states,  .f = function(x) {
   df1 <- merged_population_data %>%
     ungroup() %>%
     filter(state == x) %>%
@@ -139,10 +139,23 @@ all_groupedbar_disparities_race <- map(.x = states,  .f = function(x) {
               reversed = FALSE)
   return(highcharts)
 })
-all_groupedbar_disparities_race <- setNames(all_groupedbar_disparities_race, states)
-all_groupedbar_disparities_race$Georgia
+all_groupedbar_disparities_inprison_race <- setNames(all_groupedbar_disparities_inprison_race, states)
+all_groupedbar_disparities_inprison_race$Georgia
 
-
+all_groupedbar_disparities_inprisonpe_race <- map(.x = states,  .f = function(x) {
+  df1 <- merged_population_data %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    filter(population_type == "In Prison and Currently Eligible for Parole" |
+             population_type == "In the Community") %>%
+    distinct()
+  highcharts <- fnc_grouped_barchart(df1, "race", "population_type", "TBD accessibility text") %>%
+    hc_legend(enabled = TRUE,
+              reversed = FALSE)
+  return(highcharts)
+})
+all_groupedbar_disparities_inprisonpe_race <- setNames(all_groupedbar_disparities_inprisonpe_race, states)
+all_groupedbar_disparities_inprisonpe_race$Georgia
 
 
 
@@ -292,7 +305,9 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
-  save(all_groupedbar_disparities_race,            file = file.path(folder, "all_groupedbar_disparities_race.rds"))
+  save(all_groupedbar_disparities_inprison_race,   file = file.path(folder, "all_groupedbar_disparities_inprison_race.rds"))
+  save(all_groupedbar_disparities_inprisonpe_race, file = file.path(folder, "all_groupedbar_disparities_inprisonpe_race.rds"))
+
   save(all_groupedcolumn_disparities_release_race, file = file.path(folder, "all_groupedcolumn_disparities_release_race.rds"))
   save(all_stackedcolumn_disparities_release_race, file = file.path(folder, "all_stackedcolumn_disparities_release_race.rds"))
   save(rri_in_prison_data,                         file = file.path(folder, "rri_in_prison_data.rds"))

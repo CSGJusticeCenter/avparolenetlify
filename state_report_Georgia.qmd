@@ -617,18 +617,30 @@ if (state_for_report %in% names(all_bar_los_by_offense)) {
 # Race and Ethnicity
 ###################
 
-# Grouped bar chart showing percentage of population in community, in prison but parole eligible,
-# and people released at parole eligibility 
-if (state_for_report %in% names(all_groupedbar_disparities_race)) {
-  state_groupedbar_disparities_race <-
-    all_groupedbar_disparities_race[[state_for_report]] %>%
+# Grouped bar chart showing percentage of population in community, in prison 
+if (state_for_report %in% names(all_groupedbar_disparities_inprison_race)) {
+  state_groupedbar_disparities_inprison_race <-
+    all_groupedbar_disparities_inprison_race[[state_for_report]] %>%
     hc_colors(c(neutralBkgndDisabled, orange)) %>% 
     hc_title(text = paste0("People in the Community vs. in Prison by Race and Ethnicity", " in ", select_year)) %>% 
     hc_caption(
            text = paste0("Source: ", "BJS Prisoners (2020)", " and ", census_source))
 } else {
-  state_groupedbar_disparities_race <- no_data_text
+  state_groupedbar_disparities_inprison_race <- no_data_text
 }
+
+# Grouped bar chart showing percentage of population in community, in prison and currently eligible for parole
+if (state_for_report %in% names(all_groupedbar_disparities_inprisonpe_race)) {
+  state_groupedbar_disparities_inprisonpe_race <-
+    all_groupedbar_disparities_inprisonpe_race[[state_for_report]] %>%
+    hc_colors(c(neutralBkgndDisabled, orange)) %>% 
+    hc_title(text = paste0("People in the Community vs. in Prison and Currently Eligible for Parole by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_caption(
+           text = paste0("Source: ", "BJS Prisoners (2020)", " and ", census_source))
+} else {
+  state_groupedbar_disparities_inprisonpe_race <- no_data_text
+}
+
 
 
 # Grouped column chart showing percentage of population in community and in prison but parole eligible
@@ -1112,15 +1124,15 @@ fnc_generate_rri_highlight(state_rri_in_prison_data, "in prison")
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "visualization", state_groupedbar_disparities_race), br()
+    div(id = "visualization", state_groupedbar_disparities_inprison_race), br()
 )
 ```
 
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "In Prison and Currently Eligible for Parole"), br(),
-    div(id = "regular text", "Infographics like Option 1 or 2 in the 'In Prison' section above."), br()
-
+    div(id = "regular text", "Infographics like Option 1 or 2 in the 'In Prison' section above?"), br(),
+    div(id = "visualization", state_groupedbar_disparities_inprisonpe_race), br()
 )
 ```
 
@@ -1146,6 +1158,13 @@ div(id = "body-section", br(),
 ::::
 
 ::: citation-section
+
+**Notes**
+
+The Relative Rate Index (RRI) measures racial and ethnic disparities by comparing rates between groups, often using White individuals as the reference. The RRI provides insight into the degree of overrepresentation or underrepresentation, with an RRI greater than 1 indicating that a particular racial or ethnic group is disproportionately represented.
+
+<br>
+
 **Citations:** 
 
 Alper, Mariel E., et al. "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States." *Robina Institute of Criminal Law and Criminal Justice*, 13 May 2022, [https://robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](https://robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states).     
@@ -1155,6 +1174,7 @@ Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Sta
 Robina Institute of Criminal Law and Criminal Justice. "Prison-Release Discretion and Prison Population Size State Reports." Accessed November 8, 2023. [https://robinainstitute.umn.edu/publications/prison-release-discretion-and-prison-population-size-state-reports](https://robinainstitute.umn.edu/publications/prison-release-discretion-and-prison-population-size-state-reports).
 
 United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1). 
+
 :::
 
 <br><br>
