@@ -776,7 +776,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Criminal Offense"), br(),
+    div(id = "big-section-title", "Criminal Offenses"), br(),
     div(id = "regular-text", "Sentence about most common offense."), br(),
     div(id = "visualization", state_bar_prison_fbi_index), br()
     )
@@ -789,7 +789,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Sentence Length"), br(),
+    div(id = "big-section-title", "Sentence Lengths"), br(),
     div(id = "regular-text", "Sentence about most common sentence length."), br(),
     div(id = "visualization", state_bar_prison_sentlgth), br(), br()
     )

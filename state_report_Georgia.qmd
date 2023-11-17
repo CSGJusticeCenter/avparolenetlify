@@ -662,7 +662,7 @@ if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <-
     all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
     hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
-    hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     # hc_chart(marginBottom = 50) %>%
     hc_caption(
            text = paste0("Source: ", ncrp_pop_source))
@@ -776,7 +776,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Criminal Offense"), br(),
+    div(id = "big-section-title", "Criminal Offenses"), br(),
     div(id = "regular-text", "Sentence about most common offense."), br(),
     div(id = "visualization", state_bar_prison_fbi_index), br()
     )
@@ -789,7 +789,7 @@ div(id = "body-section", br(),
 
 ########################################
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Sentence Length"), br(),
+    div(id = "big-section-title", "Sentence Lengths"), br(),
     div(id = "regular-text", "Sentence about most common sentence length."), br(),
     div(id = "visualization", state_bar_prison_sentlgth), br(), br()
     )
@@ -1131,7 +1131,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Timing of Release"), br(),
     div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by race and ethnicity, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
-    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
+    # div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
     div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br(),
     div(id = "graph-title", "Timing of release by offense type and race and ethnicity in 2020"), br()
 )
