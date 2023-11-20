@@ -3,7 +3,6 @@
   justify-content: center;
   background-color: #fff;
   text-align:center;
-  font-size: 1em;
   font-family: Graphik;
 }
 
@@ -56,11 +55,18 @@
 
 
 /* Specific style for .tab1 tabs */
+.tab1 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
 .tab1 .nav-link.active, .tab1 .show>.nav-link {
     color: #fff;
     background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
 }
-
 /* Specific height for tabs in .tab1 */
 .tab1 .tab-content .tab-pane {
     height: 500px;
@@ -71,13 +77,21 @@
 
 
 /* Specific style for .tab2 tabs */
-  .tab2 .nav-link.active, .tab2 .show>.nav-link {
+.tab2 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+.tab2 .nav-link.active, .tab2 .show>.nav-link {
     color: #fff;
     background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
 }
 
 /* Specific height for tabs in .tab2 */
-  .tab2 .tab-content .tab-pane {
+.tab2 .tab-content .tab-pane {
     height: 450px;
 }
 
@@ -87,13 +101,21 @@
 
 
 /* Specific style for .tab3 tabs */
-  .tab3 .nav-link.active, .tab3 .show>.nav-link {
+.tab3 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+.tab3 .nav-link.active, .tab3 .show>.nav-link {
     color: #fff;
     background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
 }
 
 /* Specific height for tabs in .tab3 */
-  .tab3 .tab-content .tab-pane {
+.tab3 .tab-content .tab-pane {
     height: 500px;
 }
 
@@ -102,54 +124,86 @@
 
 
 /* Specific style for tab4 tabs */
-  .tab4 .nav-link.active, .tab4 .show>.nav-link {
+.tab4 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+.tab4 .nav-link.active, .tab4 .show>.nav-link {
     color: #fff;
-      background-color: gray;
-  }
+    background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
 
 /* Specific height for tabs in tab4 */
-  .tab4 .tab-content .tab-pane {
+.tab4 .tab-content .tab-pane {
     height: 1150px;
-  }
+}
 
 
 
 
 /* Specific style for tab5 tabs */
-  .tab5 .nav-link.active, .tab5 .show>.nav-link {
+.tab5 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+.tab5 .nav-link.active, .tab5 .show>.nav-link {
     color: #fff;
-      background-color: gray;
-  }
+    background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
 
 /* Specific height for tabs in tab5 */
-  .tab5 .tab-content .tab-pane {
+.tab5 .tab-content .tab-pane {
     height: 800px;
-  }
+}
 
 
 
 /* Specific style for tab6 tabs */
-  .tab6 .nav-link.active, .tab6 .show>.nav-link {
+.tab6 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+.tab6 .nav-link.active, .tab6 .show>.nav-link {
     color: #fff;
-      background-color: gray;
-  }
+    background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
 
 /* Specific height for tabs in tab6 */
-  .tab6 .tab-content .tab-pane {
+.tab6 .tab-content .tab-pane {
     height: 900px;
-  }
+}
 
 
 /* Specific style for tab7 tabs */
-  .tab7 .nav-link.active, .tab7 .show>.nav-link {
+.tab7 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+.tab7 .nav-link.active, .tab7 .show>.nav-link {
     color: #fff;
-      background-color: gray;
-  }
+    background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
 
 /* Specific height for tabs in tab7 */
-  .tab7 .tab-content .tab-pane {
+.tab7 .tab-content .tab-pane {
     height: 450px;
-  }
+}
 
 
 /******************************************************************************/
