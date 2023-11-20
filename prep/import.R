@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: November 6, 2023 (MAR)
+# Date last updated: November 20, 2023 (MAR)
 # Description:
 #    Import NCRP data (admissions, population, year end population)
 #    Import BJS Prisoners data
@@ -131,7 +131,9 @@ ncrp_admissions <- da38492.0002 %>% clean_names() %>%
     sentlgth     = str_sub(sentlgth, 5, -1),
     ageadmit     = str_sub(ageadmit, 5, -1)) %>%
 
-  mutate(offdetail = trimws(offdetail))
+  mutate(offdetail = trimws(offdetail)) %>%
+
+  fnc_create_admtype()
 
 
 

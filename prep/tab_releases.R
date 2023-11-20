@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Date last updated: October 31, 2023 (MAR)
+# Date last updated: November 20, 2023 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -203,7 +203,11 @@ all_bar_release_gender <- map(.x = states,  .f = function(x) {
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   released by gender in ",
                                   select_year, " in the state of ", x, ".")
-  highcharts <- fnc_barchart(df1, "sex", hc_accessibility_text)
+  highcharts <- fnc_barchart(df1, "sex", hc_accessibility_text) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1.15
+    )
   return(highcharts)
 })
 all_bar_release_gender <- setNames(all_bar_release_gender, states)

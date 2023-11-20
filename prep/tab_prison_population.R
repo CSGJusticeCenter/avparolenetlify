@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_prison_population.R
 # Authors: Mari Roberts
-# Date last updated: November 6, 2023 (MAR)
+# Date last updated: November 20, 2023 (MAR)
 # Description:
 #    Prison population and graphics for shiny app
 #    All figures and tables are for select year
@@ -103,22 +103,22 @@ all_releases_by_year$Georgia
 # Get number/prop of people by admission type and state
 # Remove "other" admissions and NA's
 # Use custom function to calculate n, prop and create prop_label and tooltip
-ncrp_yearendpop_admtype <- ncrp_yearendpop %>%
+ncrp_admissions_admtype <- ncrp_admissions %>%
   filter(admtype == "New court commitment" |
          admtype == "Parole return/revocation") %>%
   filter(rptyear == select_year) %>%
   group_by(state) %>%
   fnc_values_labels(admtype) %>%
   fnc_tooltip(admtype, prop_label,
-              paste0("Year-End Population in ", select_year))
+              paste0("Prison Admissions in ", select_year))
 
 # Highchart showing prison pop by admission type
-states <- unique(ncrp_yearendpop_admtype$state)
+states <- unique(ncrp_admissions_admtype$state)
 all_stackedbar_admtype <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_yearendpop_admtype %>%
+  df1 <- ncrp_admissions_admtype %>%
     ungroup() %>%
     filter(state == x)
-  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by admission type (parole returns and revocations vs. new court commitments) in ",
+  hc_accessibility_text <- paste0("This graph shows the proportion of prison admissions by admission type (parole returns and revocations vs. new court commitments) in ",
                                select_year, " in the state of ", x, ".")
   highchart <-
     fnc_single_grouped_columnchart(df1, "prop", "admtype", "state", hc_accessibility_text)
@@ -149,7 +149,7 @@ all_sentence_admtype <- map(.x = states,  .f = function(x) {
 
   sentences <- paste0("In ", x, " in ", select_year,
                       ", people in prison for new court commitments accounted for ",
-                      prop_new_court_commitment, " of the prison population, while parole returns and revocations accounted for ",
+                      prop_new_court_commitment, " of prison admissions, while parole returns and revocations accounted for ",
                       prop_parole_return, ".")
   return(sentences)
 })

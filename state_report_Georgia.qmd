@@ -160,7 +160,7 @@ if (state_for_report %in% names(all_stackedbar_admtype)) {
     all_stackedbar_admtype[[state_for_report]] %>%
     hc_size(height = 250) %>%
     hc_colors(c(teal, yellow)) %>%
-    hc_title(text = paste0("Proportion of the Prison Population by Admission Type", " in ", select_year)) %>% 
+    hc_title(text = paste0("Proportion of Prison Admissions by Admission Type", " in ", select_year)) %>% 
     hc_caption(text = paste0("Source: ", ncrp_pop_source))
 } else {
   state_stackedbar_admtype <- no_data_text
@@ -662,7 +662,7 @@ if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <-
     all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
     hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
-    hc_title(text = paste0("Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
+    hc_title(text = paste0("Option 2: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
     # hc_chart(marginBottom = 50) %>%
     hc_caption(
            text = paste0("Source: ", ncrp_pop_source))
@@ -820,7 +820,7 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Prison Admissions"), br(),
     div(id = "finding-text", "Sentence about change in admissions from 2010 to 2020."), br(),
     div(id = "visualization", state_admissions_by_year), br(),
-    div(id = "regular-text", "Prison populations are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
+    div(id = "regular-text", "Prison admissions are shaped by two primary groups: new court commitments, or individuals newly incarcerated for a criminal offense, and parole returns and revocations, those who return to prison for failing to meet the conditions of their parole."), br(),
     div(id = "finding-text", state_sentence_admtype), br(),
     div(id = "visualization", state_stackedbar_admtype), br()
     )
@@ -1131,7 +1131,7 @@ div(id = "body-section", br(),
 div(id = "body-section", br(),
     div(id = "big-section-title", "Timing of Release"), br(),
     div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by race and ethnicity, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
-    # div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
+    div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
     div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br(),
     div(id = "graph-title", "Timing of release by offense type and race and ethnicity in 2020"), br()
 )
