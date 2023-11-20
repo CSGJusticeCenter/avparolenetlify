@@ -148,7 +148,7 @@ all_sentence_admtype <- map(.x = states,  .f = function(x) {
   prop_parole_return <- df1$prop_label[df1$admtype == "Parole return/revocation"]
 
   sentences <- paste0("In ", x, " in ", select_year,
-                      ", people in prison for new court commitments accounted for ",
+                      ", new court commitments accounted for ",
                       prop_new_court_commitment, " of prison admissions, while parole returns and revocations accounted for ",
                       prop_parole_return, ".")
   return(sentences)

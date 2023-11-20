@@ -310,7 +310,11 @@ all_bar_parole_elgibility_gender <- map(.x = states,  .f = function(x) {
                                   who are currently eligible for parole but not yet released by
                                   gender in ",
                                   select_year, " in the state of ", x, ".")
-  highcharts <- fnc_barchart(df1, "sex", hc_accessibility_text)
+  highcharts <- fnc_barchart(df1, "sex", hc_accessibility_text) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1.2
+    )
   return(highcharts)
 })
 all_bar_parole_elgibility_gender <- setNames(all_bar_parole_elgibility_gender, states)
