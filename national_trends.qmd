@@ -81,7 +81,7 @@ div(id = "body-section", br(),
     )
 ```
 
-::: {.panel-tabset}
+::: {.panel-tabset .tabmap}
 
 ## Percentage of People
 ```{r}

@@ -59,6 +59,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab1 .nav-link.active, .tab1 .show>.nav-link {
     color: #fff;
@@ -81,6 +82,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab2 .nav-link.active, .tab2 .show>.nav-link {
     color: #fff;
@@ -105,6 +107,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab3 .nav-link.active, .tab3 .show>.nav-link {
     color: #fff;
@@ -128,6 +131,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab4 .nav-link.active, .tab4 .show>.nav-link {
     color: #fff;
@@ -150,6 +154,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab5 .nav-link.active, .tab5 .show>.nav-link {
     color: #fff;
@@ -171,6 +176,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab6 .nav-link.active, .tab6 .show>.nav-link {
     color: #fff;
@@ -191,6 +197,7 @@
     font-size: .9em;
     border: 1px solid gray;
     padding-bottom: 0.1em;
+    color: black;
 }
 .tab7 .nav-link.active, .tab7 .show>.nav-link {
     color: #fff;
@@ -205,6 +212,26 @@
     height: 450px;
 }
 
+
+/* Specific style for tabmap tabs */
+.tabmap .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+    color: black;
+  }
+.tabmap .nav-link.active, .tabmap .show>.nav-link {
+    color: #fff;
+    background-color: gray;
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+}
+
+/* Specific height for tabs in tabmap */
+.tabmap .tab-content .tab-pane {
+    height: 500px;
+}
 
 /******************************************************************************/
 /* Overview */
@@ -307,7 +334,7 @@ body {
   font-weight: bold;
   text-align: center;
   color: black;
-  border-bottom: 1px solid black;
+  border-bottom: 5px solid gray;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
@@ -319,7 +346,7 @@ body {
   text-align: center;
   color: black;
   /*width: 75%;*/
-  border-bottom: 1px solid #ccc;
+  border-bottom: 2px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
