@@ -34,7 +34,7 @@ source("prep/library.R")
 source("prep/functions.R")
 source("prep/dataframes.R")
 
-state_for_report <- "Georgia"
+state_for_report <- "Alaska"
 
 # NCRP source
 ncrp_pop_source <- paste0("NCRP Year End Population (", select_year, ")")
@@ -1375,7 +1375,7 @@ United States. Bureau of Justice Statistics. National Corrections Reporting Prog
 :::
 
 </center>
-<br>
+<br><br>
 
 ::::
 
