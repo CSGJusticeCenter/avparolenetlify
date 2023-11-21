@@ -86,7 +86,6 @@ parole_eligibility_table_select_year <-
          missing_perc)
 
 # Create long form based on perc variables (type and prop columns)
-# parole_eligibility_table_select_year created in page_national_trends.R
 ncrp_pe_type_prop <- parole_eligibility_table_select_year %>%
   select(state,
          rptyear,
@@ -111,7 +110,7 @@ ncrp_pe_type_prop <- parole_eligibility_table_select_year %>%
     type == "missing_perc"          ~ "Missing Parole Eligibility Data"
   ))
 
-# Create long form based on count variables (type and n columns)
+# create long form based on count variables (type and n columns)
 ncrp_pe_type_count <- parole_eligibility_table_select_year %>%
   filter(rptyear == select_year) %>%
   select(state,
@@ -133,7 +132,7 @@ ncrp_pe_type_count <- parole_eligibility_table_select_year %>%
     type == "missing_count"          ~ "Missing Parole Eligibility Data"
   ))
 
-# Join the two long forms together
+# join the two long forms together
 ncrp_pe_type <- ncrp_pe_type_prop %>%
   left_join(ncrp_pe_type_count, by = c("state", "rptyear", "type")) %>%
    mutate(type = factor(type,
@@ -148,7 +147,7 @@ ncrp_pe_type <- ncrp_pe_type_prop %>%
                     paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
           prop_label = paste0(round(prop*100, 0), "%"))
 
-# Horizontal stacked bar chart showing prison population by parole eligibility status
+# horizontal stacked bar chart showing prison population by parole eligibility status
 states <- unique(ncrp_pe_type$state)
 all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_pe_type %>%
