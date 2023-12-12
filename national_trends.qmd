@@ -53,7 +53,7 @@ htmltools::div(
       formattable::comma(num_people_current, digits = 0)
     ),
     div(
-      HTML("In Prison and Currently<br>Eligible for Parole"),
+      HTML("In Prison Past Their<br>Parole Eligibility Date"),
       id = "bold-text"
     )
   ),
@@ -64,7 +64,7 @@ htmltools::div(
       formattable::comma(num_people_1_5_years, digits = 0)
     ),
     div(
-      HTML("In Prison and Eligible<br>for Parole in 1-5 Years"),
+      HTML("Eligible for Parole<br>in 1-5 Years"),
       id = "bold-text"
     )
   )
@@ -77,7 +77,7 @@ htmltools::div(
 ```{r}
 div(id = "body-section", br(),
     div(id = "big-section-title", "Map Explorer"), br(),
-    div(id = "regular-text", "These maps show the percentage and number of individuals in prison and currently eligible for parole release in each state during 2020. Toggle between viewing data based on the percentage of these individuals of the overall prison population or the actual number of currently eligible people in prison."), br()
+    div(id = "regular-text", "These maps show the percentage and number of individuals in prison past their parole eligibility date in each state during 2020. Toggle between viewing data based on the percentage of these individuals of the overall prison population or the actual number of people in priso past their parole eligibility date."), br()
     )
 ```
 
@@ -87,7 +87,7 @@ div(id = "body-section", br(),
 ```{r}
 map_percent %>% 
   hc_size(height = 550) %>% 
-  hc_title(text = paste0("The Percentage of People who were in Prison and<br>Currently Eligible for Parole Release in ", select_year)) %>% 
+  hc_title(text = paste0("The Percentage of People in Prison Past<br>Their Parole Eligibility Date in", select_year)) %>% 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
@@ -99,7 +99,7 @@ map_percent %>%
 ```{r}
 map_count %>% 
   hc_size(height = 550) %>% 
-    hc_title(text = paste0("The Number of People who were in Prison and<br>Currently Eligible for Parole in Release ", select_year)) %>% 
+    hc_title(text = paste0("The Number of People who were in Prison Past<br>Their Parole Eligibility Date in ", select_year)) %>% 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
@@ -111,7 +111,7 @@ map_count %>%
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "note-text", "Note: NCRP Data is from 2020. The parole-eligible prison population only includes people with sentence lengths ranging between 1 to 24.99 years and who were incarcerated for a new court commitment (i.e., not including those who have been released and then revoked back to prison). States missing 100 percent of the NCRP data are depicted as “missing data” but many other states are missing a substantial portion of parole eligibility data."), br()
+    div(id = "note-text", "Note: NCRP Data is from 2020. The people in prison past their parole eligibility date only includes people with sentence lengths ranging between 1 to 24.99 years and who were incarcerated for a new court commitment (i.e., not including those who have been released and then revoked back to prison). States missing 100 percent of the NCRP data are depicted as “missing data” but many other states are missing a substantial portion of parole eligibility data."), br()
     )
 ```
 
