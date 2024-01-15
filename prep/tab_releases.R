@@ -11,14 +11,43 @@
 
 # Section: Release Trends
 
-# (1) # and % of parole-eligible people released each year,
-# (2) out of all releases: % of people released each year at parole eligibility year,
+# (1) Prison releases by year
+# (2) # and % of parole-eligible people released each year,
+# (3) out of all releases: % of people released each year at parole eligibility year,
 #                          % 1-5 years after parole eligibility,
 #                          % of people released more than 5 years after parole eligibility
 
 ################################################################################
 
-# 1) # and % of parole-eligible people released each year
+# Prison releases by year
+ncrp_releases_by_year <- ncrp_releases %>%
+  filter(rptyear >= 2010) %>%
+  group_by(state, rptyear) %>%
+  summarise(total = n())
+
+# Highchart by state since 2010
+states <- unique(ncrp_releases_by_year$state)
+all_releases_by_year <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_releases_by_year %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    distinct()
+
+  # Determine the maximum value for the y-axis in the visualization
+  # Adds a small margin space at the top
+  max_value <- max(df1$total)*1.1
+
+  hc_accessibility_text <- paste0("This graph shows the number of releases in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_columnchart(df1, "rptyear", "Number of Releases", hc_accessibility_text) %>%
+    hc_yAxis(min = 0, max = max_value)
+  return(highcharts)
+})
+all_releases_by_year <- setNames(all_releases_by_year, states)
+all_releases_by_year$Georgia
+
+
+# 2) # and % of parole-eligible people released each year
 
 # We have the year-end population of those who were parole-eligible but were not released,
 #   and we have the number of parole-eligible individuals who were released but
@@ -98,7 +127,7 @@ all_stackedbar_parole_eligibility_release$Georgia
 
 
 
-# 2) Out of all releases: % of people released each year at parole eligibility year,
+# 3) Out of all releases: % of people released each year at parole eligibility year,
 #                         % 1-5 years after parole eligibility,
 #                         % of people released more than 5 years after parole eligibility
 

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_disparities.R
 # Authors: Mari Roberts
-# Date last updated: October 5, 2023 (MAR)
+# Date last updated: January 15, 2024 (MAR)
 # Description:
 #    Disparities tables and graphics for app
 #######################################
@@ -21,9 +21,11 @@
 
 # (1) bar charts including community, prison pop, parole-eligible pop, paroled at first opportunity pop
 
+# First, get census information
 # Population by race and ethnicity
 # Weighted estimate of percentage of race from select_year census
 # Pulled estimated counts and construct percent estimate
+
 # These are the ids of race variables that we want to pull
 race_vars <- c(estimate_white              = "P3_003N",
                estimate_black              = "P3_004N",
@@ -48,7 +50,9 @@ census_state_population$state <- rep(states, each = nrow(census_state_population
 census_state_population <- census_state_population %>%
   rename(total_state_population = summary_value) %>%
   group_by(state, total_state_population,
-           race = ifelse(race %in% c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race"),
+           race = ifelse(race %in% c("White, non-Hispanic",
+                                     "Black, non-Hispanic",
+                                     "Hispanic, any race"),
                          race, "Other race(s), non-Hispanic")) %>%
   summarise(n = sum(value)) %>%
   ungroup() %>%
@@ -125,7 +129,7 @@ merged_population_data <- merged_population_data %>%
                           "Percentage of People: <b>", prop_label, "</b>", sep = "")
          )
 
-# Highchart showing race population in the community and In Prison and Currently Eligible for Parole
+# Highchart showing race population in the community and In Prison
 states <- unique(merged_population_data$state)
 all_groupedbar_disparities_inprison_race <- map(.x = states,  .f = function(x) {
   df1 <- merged_population_data %>%
@@ -142,6 +146,7 @@ all_groupedbar_disparities_inprison_race <- map(.x = states,  .f = function(x) {
 all_groupedbar_disparities_inprison_race <- setNames(all_groupedbar_disparities_inprison_race, states)
 all_groupedbar_disparities_inprison_race$Georgia
 
+# Highchart showing race population in the community and Currently Eligible for Parole
 all_groupedbar_disparities_inprisonpe_race <- map(.x = states,  .f = function(x) {
   df1 <- merged_population_data %>%
     ungroup() %>%
@@ -237,30 +242,6 @@ ncrp_time_between_ped_release <- ncrp_releases %>%
                                   "Black, non-Hispanic")))
 
 states <- unique(ncrp_time_between_ped_release$state)
-all_groupedcolumn_disparities_release_race <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_time_between_ped_release %>%
-    ungroup() %>%
-    filter(state == x) %>%
-    arrange(desc(race))
-  max_y_value <- (max(df1$prop*100) + 5)/100
-  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race
-                                  released in their first year, second year, third year, fourth year,
-                                  fifth year, and more than fifth year in ",
-                                  select_year, " in the state of ", x, ".")
-  highcharts <- fnc_grouped_columnchart(df1, "race", "time_between_ped_release_category2",
-                                        hc_accessibility_text) %>%
-    hc_legend(enabled = TRUE,
-              reversed = FALSE) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = max_y_value
-    ) %>%
-  return(highcharts)
-})
-all_groupedcolumn_disparities_release_race <- setNames(all_groupedcolumn_disparities_release_race, states)
-all_groupedcolumn_disparities_release_race$Georgia
-
-
 all_stackedcolumn_disparities_release_race <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_time_between_ped_release %>%
     ungroup() %>%

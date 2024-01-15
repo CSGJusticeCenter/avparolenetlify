@@ -99,6 +99,12 @@ parole_eligibility_table_select_year <-
 
 # Maps
 
+# 1) Percent of the Prison Population who are Parole-Eligible but still in Prison
+#    Includes a gradient (teals) and categorical variable (Abolished Parole Release = yellow)
+
+# 2) Number of People who are Parole-Eligible but still in Prison
+#    Includes a gradient (teals) and categorical variable (Abolished Parole Release = yellow)
+
 ################################################################################
 
 # create a vector of all state names
@@ -112,7 +118,7 @@ parole_info_by_state_clean <- parole_info_by_state %>%
 # Map (Percent)
 ####################
 
-# parole_info_by_state (which states abolished parole release) was imported in import.R
+# Prepare data for national maps
 map_data <- parole_eligibility_table_select_year %>%
 
   # add missing states
@@ -230,7 +236,8 @@ map_data_breaks <- map_data %>%
     )
   )
 
-# create hex map
+# create hex map for percent of prison population in prison past their parole eligibility date,
+# in other words, currently eligible for parole and in prison
 map_percent <- highchart(height = 600) %>%
 
 hc_chart(marginTop = 60,

@@ -2,10 +2,30 @@
 # Project: AV Parole
 # File: functions.R
 # Authors: Mari Roberts
-# Date last updated: October 23, 2023 (MAR)
+# Date last updated: January 15, 2024 (MAR)
 # Description:
 #    Custom functions
 #######################################
+
+
+##########
+# Data cleaning functions
+# in the import.R file
+##########
+
+# Re-categorize admission type
+fnc_create_admtype <- function(df){
+  df <- df %>%
+    mutate(admtype = case_when(
+      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)"
+      ~ "Other or Unknown",
+      is.na(admtype) ~ "Other or Unknown",
+      TRUE ~ admtype)) %>%
+    mutate(admtype = factor(admtype,
+                            levels = c("New court commitment",
+                                       "Parole return/revocation",
+                                       "Other or Unknown")))
+}
 
 # Create parole eligibility status
 # if year of parole eligibility is less than year reported to NCRP, then "currently eligible for parole"
@@ -55,93 +75,6 @@ fnc_create_fbi_index <- function(df){
                                          "Other or Unknown")))
 }
 
-# Re-categorize admission type
-fnc_create_admtype <- function(df){
-  df <- df %>%
-    mutate(admtype = case_when(
-      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other or Unknown",
-      is.na(admtype) ~ "Other or Unknown",
-      TRUE ~ admtype)) %>%
-    mutate(admtype = factor(admtype,
-                            levels = c("New court commitment",
-                                       "Parole return/revocation",
-                                       "Other or Unknown")))
-}
-
-# Filter by
-fnc_parameters <- function(df){
-  df <- df %>%
-    filter(admtype == "New court commitment") %>%
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years")
-
-}
-
-# Prepare Annual Parole Survey data for analysis (after 2008)
-fnc_aps_prepare <- function(df){
-
-  df <- df %>%
-    mutate(rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-# Prepare Annual Parole Survey data for analysis (before 2008)
-# There is no enreltsr variable so make NA
-fnc_aps_prepare_pre2008 <- function(df){
-
-  df <- df %>%
-    mutate(enreltsr = NA,
-           rptyear = as.numeric(rptyear)) %>%
-    select(state,
-           rptyear,
-           endisrel,
-           enmanrel,
-           enreltsr,
-           incarcerated_from_parole = exincrev) %>%
-    mutate(released_to_parole =
-             rowSums(.[c("endisrel", "enmanrel")],
-                     na.rm = TRUE),
-           released_to_parole =
-             ifelse(released_to_parole == 0, NA, released_to_parole))
-
-  return(df)
-}
-
-# Prepare APS data depending on the year
-fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
-  data <- data %>%
-    clean_names() %>%
-    mutate(rptyear = year)
-
-  if (pre_2008) {
-    data <- data %>%
-      select(-stateid) %>%
-      rename(stateid = state) %>%
-      mutate(stateid = str_trim(stateid)) %>%
-      left_join(state_names_abb, by = "stateid") %>%
-      fnc_aps_prepare_pre2008()
-  } else {
-    data <- data %>%
-      mutate(state = str_sub(stateid, 6, -1)) %>%
-      fnc_aps_prepare()
-  }
-  return(data)
-}
-
 # Prepare BJS data
 fnc_clean_bjs_data <- function(df){
   df <- df %>%
@@ -159,54 +92,68 @@ fnc_clean_bjs_data <- function(df){
     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
 }
 
-
-# Prepare data for a simple bar graph
-fnc_prepare_pe_data <- function(df, count_column){
-  df1 <- df %>%
-    filter(rptyear == select_year &
-             parelig_status == "Current") %>%
-    fnc_parameters() %>%
-    group_by(state) %>%
-    count({{ count_column }}) %>%
-    mutate(
-      prop = n/sum(n),
-      yearendpop_ped = sum(n),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0)
-    ) %>%
-    ungroup() %>%
-    mutate(tooltip = paste0("<b>", state, " - ",
-                            {{ count_column }}, "</b><br>",
-                            prop_label, "<br>"))
-}
-
-# Retrieve and process census data for a given state
-fnc_get_census_data <- function(state) {
-  df <-
-    tidycensus::get_decennial(
-      geography = "state",
-      state = state,
-      variables = race_vars,
-      summary_var = "P3_001N",
-      year = select_year,
-      geometry = FALSE) %>%
+# Prepare APS data depending on the year
+fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
+  data <- data %>%
     clean_names() %>%
-    select(-geoid) %>%
-    mutate(
-      race = case_when(
-        variable %in% c("estimate_american_indian",
-                        "estimate_asian",
-                        "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
-        variable == "estimate_black" ~ "Black, non-Hispanic",
-        variable == "estimate_hispanic" ~ "Hispanic, any race",
-        variable == "estimate_white" ~ "White, non-Hispanic",
-        TRUE ~ "NA"
-      )
-    )
-  return(df)
+    mutate(rptyear = year)
+
+  if (pre_2008) {
+    data <- data %>%
+      select(-stateid) %>%
+      rename(stateid = state) %>%
+      mutate(stateid = str_trim(stateid)) %>%
+      left_join(state_names_abb, by = "stateid") %>%
+      mutate(enreltsr = NA,
+             rptyear = as.numeric(rptyear)) %>%
+      select(state,
+             rptyear,
+             endisrel,
+             enmanrel,
+             enreltsr,
+             incarcerated_from_parole = exincrev) %>%
+      mutate(released_to_parole =
+               rowSums(.[c("endisrel", "enmanrel")],
+                       na.rm = TRUE),
+             released_to_parole =
+               ifelse(released_to_parole == 0, NA, released_to_parole))
+  } else {
+    data <- data %>%
+      mutate(state = str_sub(stateid, 6, -1)) %>%
+      mutate(rptyear = as.numeric(rptyear)) %>%
+      select(state,
+             rptyear,
+             endisrel,
+             enmanrel,
+             enreltsr,
+             incarcerated_from_parole = exincrev) %>%
+      mutate(released_to_parole =
+               rowSums(.[c("endisrel", "enmanrel", "enreltsr")],
+                       na.rm = TRUE),
+             released_to_parole =
+               ifelse(released_to_parole == 0, NA, released_to_parole))
+  }
+  return(data)
 }
 
 
+
+
+##########
+# Functions for calculations and visualizations
+# in tab_disparities, tab_parole_eligibility, tab_prison_population, tab_releases
+##########
+
+# Filter by
+fnc_parameters <- function(df){
+  df <- df %>%
+    filter(admtype == "New court commitment") %>%
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years")
+
+}
 
 # Create tooltip
 fnc_tooltip <- function(df, xaxis_column, count_column, count_column_name) {
@@ -216,21 +163,6 @@ fnc_tooltip <- function(df, xaxis_column, count_column, count_column_name) {
                     {{ count_column_name }}, "<br>",
                     {{ xaxis_column }}, "<br><br>",
                     "<b>", {{ count_column }}, "</b><br><br>"))
-}
-
-# Calculate n, prop, and create labels and tooltips when there are two columns of interest
-fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
-  df %>%
-    count({{count_column1}}) %>%
-    mutate(
-      prop = (n / sum(n)),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0),
-      tooltip = paste0("<b>", state, "</b><br><br>",
-                       "<b>", {{ count_column2 }}, "</b><br><br>",
-                       "<b>", {{ count_column1 }}, "</b><br><br>",
-                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
-    )
 }
 
 # Calculate n, prop, and create labels
@@ -243,26 +175,6 @@ fnc_values_labels <- function(df, count_column) {
       n_label = formattable::comma(n, 0)
     )
 }
-
-###################
-# Reactable
-###################
-
-# Reactable table themes
-reactable_theme <-
-  reactableTheme(borderColor = neutralBkgndLight,
-                 stripedColor = neutralBkgndLight,
-                 cellStyle = list(display = "flex",
-                                  flexDirection = "column",
-                                  justifyContent = "center"))
-
-reactable_style <- list(
-  fontFamily = "Graphik, sans-serif",
-  fontSize = "0.9rem",
-  color = "black"
-)
-
-
 
 
 
@@ -450,7 +362,7 @@ hc_theme_map <- hc_theme_merge(
   )
 )
 
-# Column chart (vertical bars)
+# Basic column chart (vertical bars)
 fnc_columnchart <- function(df, filter_column, yAxis_text, accessibility_text) {
 
   xaxis_order <- df[[filter_column]]
@@ -480,51 +392,7 @@ fnc_columnchart <- function(df, filter_column, yAxis_text, accessibility_text) {
   return(highcharts)
 }
 
-# Number of people by category by admission type
-fnc_stackedbar_admtype_chart <- function(df, group_by_col, accessibility_text) {
-  highchart <- hchart(df, "bar",
-                      hcaes(x = admtype,
-                            y = prop,
-                            group = !!sym(group_by_col)
-                      ),
-                      dataLabels = list(enabled = TRUE,
-                                        format = "{point.prop_label}",
-                                        style = list(fontWeight = "bold",
-                                                     fontSize = "12px",
-                                                     fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1
-    ) %>%
-    hc_xAxis(categories = c("New court commitment",
-                            "Parole return/revocation",
-                            "Other or Unknown"),
-             title = list(text = ""),
-             labels = list(enabled = TRUE)) %>%
-    hc_legend(enabled = TRUE,
-              reversed = TRUE) %>%
-    hc_add_theme(hc_theme) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_chart(marginLeft = 130) %>%
-    hc_plotOptions(
-      series = list(
-        stacking = "normal",
-        animation = FALSE,
-        cursor = "pointer",
-        borderWidth = 3,
-        minPointLength = 4,
-        pointPadding = 0.1,
-        groupPadding = 0.2),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-  return(highchart)
-}
-
-# Create basic horizontal bar chart that isn't grouped
+# Basic bar chart (horizontal bars)
 fnc_barchart <- function(df, filter_column, accessibility_text) {
 
   xaxis_order <- df[[filter_column]]
@@ -565,44 +433,7 @@ fnc_barchart <- function(df, filter_column, accessibility_text) {
   return(highcharts)
 }
 
-# Create single horizontal bar chart that is grouped
-fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
-
-  highchart <- hchart(df, "bar",
-                      hcaes(x = !!sym(x_axis),
-                            y = !!sym(value),
-                            group = !!sym(group_by_column)),
-                      dataLabels = list(enabled = TRUE,
-                                        format = "{point.prop_label}",
-                                        style = list(fontWeight = "bold",
-                                                     fontSize = "12px",
-                                                     fontFamily = "Graphik"))) %>%
-    hc_yAxis(labels = list(format = "{value}%",
-                           enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) %>%
-    hc_add_theme(hc_theme) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_legend(enabled = TRUE,
-              reversed = TRUE) %>%
-    hc_plotOptions(
-      series = list(stacking = "normal",
-                    animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-  return(highchart)
-}
-
-# Create grouped, stacked bar chart
+# Create grouped, stacked bar chart (horizontal bars)
 fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibility_text) {
 
   highcharts <-
@@ -644,40 +475,6 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
 
 }
 
-# Create pie chart
-fnc_piechart <- function(df, x_column, accessibility_text){
-
-  highcharts <- hchart(df,
-                       "pie",
-                       hcaes(x = !!sym(x_column), y = prop),
-                       dataLabels = list(
-                         style = list(fontSize = "1em",
-                                      fontWeight = "regular",
-                                      alignTo = "connectors",
-                                      color = "black"),
-                         enabled = TRUE,
-                         formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
-                       )
-  ) %>%
-    hc_chart(plotBackgroundColor = "none",
-             plotBorderWidth = 0,
-             plotShadow = FALSE,
-             margin = c(30, 0, 10, 0)) %>%
-    hc_yAxis(maxPadding = 0) %>%
-    hc_add_theme(hc_theme) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_exporting(enabled = TRUE) %>%
-    hc_plotOptions(
-      series = list(animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-
-}
 
 
 
@@ -702,13 +499,403 @@ fnc_piechart <- function(df, x_column, accessibility_text){
 
 
 
+
+
+
+
+
+
+
+
+#
+#
+#
+#
+#
+# # Prepare data for a simple bar graph
+# fnc_prepare_pe_data <- function(df, count_column){
+#   df1 <- df %>%
+#     filter(rptyear == select_year &
+#              parelig_status == "Current") %>%
+#     fnc_parameters() %>%
+#     group_by(state) %>%
+#     count({{ count_column }}) %>%
+#     mutate(
+#       prop = n/sum(n),
+#       yearendpop_ped = sum(n),
+#       prop_label = paste0(round(prop*100, 0), "%"),
+#       n_label = formattable::comma(n, 0)
+#     ) %>%
+#     ungroup() %>%
+#     mutate(tooltip = paste0("<b>", state, " - ",
+#                             {{ count_column }}, "</b><br>",
+#                             prop_label, "<br>"))
+# }
+#
+# # Retrieve and process census data for a given state
+# fnc_get_census_data <- function(state) {
+#   df <-
+#     tidycensus::get_decennial(
+#       geography = "state",
+#       state = state,
+#       variables = race_vars,
+#       summary_var = "P3_001N",
+#       year = select_year,
+#       geometry = FALSE) %>%
+#     clean_names() %>%
+#     select(-geoid) %>%
+#     mutate(
+#       race = case_when(
+#         variable %in% c("estimate_american_indian",
+#                         "estimate_asian",
+#                         "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
+#         variable == "estimate_black" ~ "Black, non-Hispanic",
+#         variable == "estimate_hispanic" ~ "Hispanic, any race",
+#         variable == "estimate_white" ~ "White, non-Hispanic",
+#         TRUE ~ "NA"
+#       )
+#     )
+#   return(df)
+# }
+#
+# # Calculate n, prop, and create labels and tooltips
+# fnc_values_tooltip <- function(df, count_column) {
+#   df %>%
+#     count({{ count_column }}) %>%
+#     mutate(
+#       prop = (n / sum(n)),
+#       prop_label = paste0(round(prop*100, 0), "%"),
+#       n_label = formattable::comma(n, 0),
+#       tooltip = paste0("<b>", state, "</b><br><br>",
+#                        "<b>", {{ count_column }}, "</b><br><br>",
+#                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
+#     )
+# }
+#
+
+#
+# # Calculate n, prop, and create labels and tooltips when there are two columns of interest
+# fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
+#   df %>%
+#     count({{count_column1}}) %>%
+#     mutate(
+#       prop = (n / sum(n)),
+#       prop_label = paste0(round(prop*100, 0), "%"),
+#       n_label = formattable::comma(n, 0),
+#       tooltip = paste0("<b>", state, "</b><br><br>",
+#                        "<b>", {{ count_column2 }}, "</b><br><br>",
+#                        "<b>", {{ count_column1 }}, "</b><br><br>",
+#                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
+#     )
+# }
+#
+
+#
+# ###################
+# # Reactable
+# ###################
+#
+# # Reactable table themes
+# reactable_theme <-
+#   reactableTheme(borderColor = neutralBkgndLight,
+#                  stripedColor = neutralBkgndLight,
+#                  cellStyle = list(display = "flex",
+#                                   flexDirection = "column",
+#                                   justifyContent = "center"))
+#
+# reactable_style <- list(
+#   fontFamily = "Graphik, sans-serif",
+#   fontSize = "0.9rem",
+#   color = "black"
+# )
+#
+#
+#
+#
+#
+
+
+# # Number of people by category by admission type
+# fnc_stackedbar_admtype_chart <- function(df, group_by_col, accessibility_text) {
+#   highchart <- hchart(df, "bar",
+#                       hcaes(x = admtype,
+#                             y = prop,
+#                             group = !!sym(group_by_col)
+#                       ),
+#                       dataLabels = list(enabled = TRUE,
+#                                         format = "{point.prop_label}",
+#                                         style = list(fontWeight = "bold",
+#                                                      fontSize = "12px",
+#                                                      fontFamily = "Graphik"))) %>%
+#     hc_yAxis(labels = list(enabled = FALSE),
+#              title = list(text = ""),
+#              min = 0, max = 1
+#     ) %>%
+#     hc_xAxis(categories = c("New court commitment",
+#                             "Parole return/revocation",
+#                             "Other or Unknown"),
+#              title = list(text = ""),
+#              labels = list(enabled = TRUE)) %>%
+#     hc_legend(enabled = TRUE,
+#               reversed = TRUE) %>%
+#     hc_add_theme(hc_theme) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_chart(marginLeft = 130) %>%
+#     hc_plotOptions(
+#       series = list(
+#         stacking = "normal",
+#         animation = FALSE,
+#         cursor = "pointer",
+#         borderWidth = 3,
+#         minPointLength = 4,
+#         pointPadding = 0.1,
+#         groupPadding = 0.2),
+#       accessibility = list(enabled = TRUE,
+#                            keyboardNavigation = list(enabled = TRUE),
+#                            linkedDescription = accessibility_text,
+#                            landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+#   return(highchart)
+# }
+#
+
+#
+# # Create single horizontal bar chart that is grouped
+# fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
+#
+#   highchart <- hchart(df, "bar",
+#                       hcaes(x = !!sym(x_axis),
+#                             y = !!sym(value),
+#                             group = !!sym(group_by_column)),
+#                       dataLabels = list(enabled = TRUE,
+#                                         format = "{point.prop_label}",
+#                                         style = list(fontWeight = "bold",
+#                                                      fontSize = "12px",
+#                                                      fontFamily = "Graphik"))) %>%
+#     hc_yAxis(labels = list(format = "{value}%",
+#                            enabled = FALSE),
+#              title = list(text = ""),
+#              min = 0, max = 1) %>%
+#     hc_xAxis(title = list(text = ""),
+#              labels = list(enabled = FALSE)) %>%
+#     hc_add_theme(hc_theme) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_legend(enabled = TRUE,
+#               reversed = TRUE) %>%
+#     hc_plotOptions(
+#       series = list(stacking = "normal",
+#                     animation = FALSE,
+#                     cursor = "pointer",
+#                     borderWidth = 3,
+#                     minPointLength = 4),
+#       accessibility = list(enabled = TRUE,
+#                            keyboardNavigation = list(enabled = TRUE),
+#                            linkedDescription = accessibility_text,
+#                            landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+#   return(highchart)
+# }
+#
+
+# # Create grouped, not stacked bar chart
+# fnc_grouped_columnchart <- function(df, x_column, group_by_col, accessibility_text) {
+#
+#   highcharts <-
+#     hchart(df, "column",
+#            hcaes(x = !!sym(x_column),
+#                  y = prop,
+#                  group = !!sym(group_by_col)
+#            ),
+#            dataLabels = list(enabled = TRUE,
+#                              format = "{point.prop_label}",
+#                              style = list(fontWeight = "regular",
+#                                           fontSize = "12px",
+#                                           fontFamily = "Graphik"))) %>%
+#     hc_yAxis(labels = list(enabled = FALSE),
+#              title = list(text = ""),
+#              min = 0, max = 1
+#     ) %>%
+#     hc_xAxis(title = list(text = ""),
+#              labels = list(enabled = TRUE)) %>%
+#     hc_legend(enabled = TRUE,
+#               reversed = TRUE) %>%
+#     hc_add_theme(hc_theme) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_plotOptions(
+#       series = list(
+#         animation = FALSE,
+#         cursor = "pointer",
+#         borderWidth = 3,
+#         minPointLength = 4),
+#       accessibility = list(
+#         enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+#         linkedDescription = accessibility_text,
+#         landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+#
+#   return(highcharts)
+#
+# }
+#
+# # Create pie chart
+# fnc_piechart <- function(df, x_column, accessibility_text){
+#
+#   highcharts <- hchart(df,
+#                        "pie",
+#                        hcaes(x = !!sym(x_column), y = prop),
+#                        dataLabels = list(
+#                          style = list(fontSize = "1em",
+#                                       fontWeight = "regular",
+#                                       alignTo = "connectors",
+#                                       color = "black"),
+#                          enabled = TRUE,
+#                          formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
+#                        )
+#   ) %>%
+#     hc_chart(plotBackgroundColor = "none",
+#              plotBorderWidth = 0,
+#              plotShadow = FALSE,
+#              margin = c(30, 0, 10, 0)) %>%
+#     hc_yAxis(maxPadding = 0) %>%
+#     hc_add_theme(hc_theme) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_plotOptions(
+#       series = list(animation = FALSE,
+#                     cursor = "pointer",
+#                     borderWidth = 3),
+#       accessibility = list(enabled = TRUE,
+#                            keyboardNavigation = list(enabled = TRUE),
+#                            linkedDescription = accessibility_text,
+#                            landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+#
+# }
+#
+# # Create grouped, not stacked bar chart
+# fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text) {
+#
+#   highcharts <-
+#     hchart(df, "bar",
+#            hcaes(x = !!sym(x_column),
+#                  y = prop,
+#                  group = !!sym(group_by_col)
+#            ),
+#            dataLabels = list(enabled = TRUE,
+#                              format = "{point.prop_label}",
+#                              style = list(fontWeight = "regular",
+#                                           fontSize = "12px",
+#                                           fontFamily = "Graphik"))) %>%
+#     hc_yAxis(labels = list(enabled = FALSE),
+#              title = list(text = ""),
+#              min = 0, max = 1
+#     ) %>%
+#     hc_xAxis(title = list(text = ""),
+#              labels = list(enabled = TRUE)) %>%
+#     hc_legend(enabled = TRUE,
+#               reversed = TRUE) %>%
+#     hc_add_theme(hc_theme) %>%
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+#     hc_exporting(enabled = TRUE) %>%
+#     hc_plotOptions(
+#       series = list(
+#         animation = FALSE,
+#         cursor = "pointer",
+#         borderWidth = 3,
+#         minPointLength = 4),
+#       accessibility = list(
+#         enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+#         linkedDescription = accessibility_text,
+#         landmarkVerbosity = "one"),
+#       area = list(accessibility = list(description = accessibility_text)))
+#
+#   return(highcharts)
+#
+# }
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# # fnc_generate_rri_highlight <- function(df, scenario){
+# #
+# #   rri_black <- pull(df %>% filter(race == "Black, non-Hispanic") %>% select(rri))
+# #   rri_hispanic <- pull(df %>% filter(race == "Hispanic, any race") %>% select(rri))
+# #   rri_other <- pull(df %>% filter(race == "Other race(s), non-Hispanic") %>% select(rri))
+# #
+# #   use_percent <- any(c(rri_black, rri_hispanic, rri_other) < 1)
+# #
+# #   if(use_percent) {
+# #     rri_black <- round(rri_black * 100)
+# #     rri_hispanic <- round(rri_hispanic * 100)
+# #     rri_other <- round(rri_other * 100)
+# #   }
+# #
+# #   text_black    <- case_when(rri_black < 100  ~ "less likely",
+# #                              rri_black > 100  ~ "more likely",
+# #                              TRUE             ~ "equally as likely")
+# #   text_hispanic <- case_when(rri_hispanic < 100  ~ "less likely",
+# #                              rri_hispanic > 100  ~ "more likely",
+# #                              TRUE                ~ "equally as likely")
+# #   text_other    <- case_when(rri_other < 100  ~ "less likely",
+# #                              rri_other > 100  ~ "more likely",
+# #                              TRUE             ~ "equally as likely")
+# #
+# #   unit_text <- ifelse(use_percent, "%", "times")
+# #
+# #   rri_black_display    <- ifelse(use_percent, paste0(rri_black, "%"), rri_black)
+# #   rri_hispanic_display <- ifelse(use_percent, paste0(rri_hispanic, "%"), rri_hispanic)
+# #   rri_other_display    <- ifelse(use_percent, paste0(rri_other, "%"), rri_other)
+# #
+# #   div(id = "body-section",
+# #       div(
+# #         id = "grid-container",
+# #         style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; column-gap: 30px;",
+# #         div(id = "bold-text", HTML("Black, non-Hispanic")),
+# #         div(id = "bold-text", HTML("Hispanic, any race")),
+# #         div(id = "bold-text", HTML("Other race(s), non-Hispanic")),
+# #         div(id = "highlight-text", format(as.numeric(rri_black), big.mark = ","), ifelse(use_percent, "%", "")),
+# #         div(id = "highlight-text", format(as.numeric(rri_hispanic), big.mark = ","), ifelse(use_percent, "%", "")),
+# #         div(id = "highlight-text", format(as.numeric(rri_other), big.mark = ","), ifelse(use_percent, "%", "")),
+# #         div(id = "regular-text", HTML(text_black,    " to be ", scenario, " compared to White people")),
+# #         div(id = "regular-text", HTML(text_hispanic, " to be ", scenario, " compared to White people")),
+# #         div(id = "regular-text", HTML(text_other,    " to be ", scenario, " compared to White people"))
+# #       ), br(),
+# #       div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and
+# #       ethnic disparities by comparing rates between groups, often using White individuals as the reference.
+# #       The RRI provides insight into the degree of overrepresentation or underrepresentation,
+# #       with an RRI greater than 1 indicating that a particular racial or ethnic group is
+# #       disproportionately represented.")
+# #   )
+# # }
 # fnc_generate_rri_highlight <- function(df, scenario){
 #
 #   rri_black <- pull(df %>% filter(race == "Black, non-Hispanic") %>% select(rri))
 #   rri_hispanic <- pull(df %>% filter(race == "Hispanic, any race") %>% select(rri))
 #   rri_other <- pull(df %>% filter(race == "Other race(s), non-Hispanic") %>% select(rri))
 #
-#   use_percent <- any(c(rri_black, rri_hispanic, rri_other) < 1)
+#   use_percent <- any(c(rri_black, rri_hispanic, rri_other) >= 1)
 #
 #   if(use_percent) {
 #     rri_black <- round(rri_black * 100)
@@ -717,89 +904,38 @@ fnc_piechart <- function(df, x_column, accessibility_text){
 #   }
 #
 #   text_black    <- case_when(rri_black < 100  ~ "less likely",
-#                              rri_black > 100  ~ "more likely",
+#                              rri_black >= 100  ~ "more likely",
 #                              TRUE             ~ "equally as likely")
 #   text_hispanic <- case_when(rri_hispanic < 100  ~ "less likely",
-#                              rri_hispanic > 100  ~ "more likely",
+#                              rri_hispanic >= 100  ~ "more likely",
 #                              TRUE                ~ "equally as likely")
 #   text_other    <- case_when(rri_other < 100  ~ "less likely",
-#                              rri_other > 100  ~ "more likely",
+#                              rri_other >= 100  ~ "more likely",
 #                              TRUE             ~ "equally as likely")
 #
 #   unit_text <- ifelse(use_percent, "%", "times")
 #
-#   rri_black_display    <- ifelse(use_percent, paste0(rri_black, "%"), rri_black)
-#   rri_hispanic_display <- ifelse(use_percent, paste0(rri_hispanic, "%"), rri_hispanic)
-#   rri_other_display    <- ifelse(use_percent, paste0(rri_other, "%"), rri_other)
+#   rri_black_display    <- ifelse(use_percent, paste0(rri_black, unit_text), rri_black)
+#   rri_hispanic_display <- ifelse(use_percent, paste0(rri_hispanic, unit_text), rri_hispanic)
+#   rri_other_display    <- ifelse(use_percent, paste0(rri_other, unit_text), rri_other)
 #
 #   div(id = "body-section",
 #       div(
 #         id = "grid-container",
 #         style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; column-gap: 30px;",
-#         div(id = "bold-text", HTML("Black, non-Hispanic")),
-#         div(id = "bold-text", HTML("Hispanic, any race")),
-#         div(id = "bold-text", HTML("Other race(s), non-Hispanic")),
-#         div(id = "highlight-text", format(as.numeric(rri_black), big.mark = ","), ifelse(use_percent, "%", "")),
-#         div(id = "highlight-text", format(as.numeric(rri_hispanic), big.mark = ","), ifelse(use_percent, "%", "")),
-#         div(id = "highlight-text", format(as.numeric(rri_other), big.mark = ","), ifelse(use_percent, "%", "")),
-#         div(id = "regular-text", HTML(text_black,    " to be ", scenario, " compared to White people")),
-#         div(id = "regular-text", HTML(text_hispanic, " to be ", scenario, " compared to White people")),
-#         div(id = "regular-text", HTML(text_other,    " to be ", scenario, " compared to White people"))
-#       ), br(),
-#       div(id = "note-text", "Note: The Relative Rate Index (RRI) measures racial and
-#       ethnic disparities by comparing rates between groups, often using White individuals as the reference.
-#       The RRI provides insight into the degree of overrepresentation or underrepresentation,
-#       with an RRI greater than 1 indicating that a particular racial or ethnic group is
-#       disproportionately represented.")
+#         div(id = "bold-text", "Black, non-Hispanic"),
+#         div(id = "bold-text", "Hispanic, any race"),
+#         div(id = "bold-text", "Other race(s), non-Hispanic"),
+#         div(id = "highlight-text", rri_black_display),
+#         div(id = "highlight-text", rri_hispanic_display),
+#         div(id = "highlight-text", rri_other_display),
+#         div(id = "regular-text", text_black,    " to be ", scenario, " compared to White people"),
+#         div(id = "regular-text", text_hispanic, " to be ", scenario, " compared to White people"),
+#         div(id = "regular-text", text_other,    " to be ", scenario, " compared to White people")
+#       ), br()
 #   )
 # }
-fnc_generate_rri_highlight <- function(df, scenario){
-
-  rri_black <- pull(df %>% filter(race == "Black, non-Hispanic") %>% select(rri))
-  rri_hispanic <- pull(df %>% filter(race == "Hispanic, any race") %>% select(rri))
-  rri_other <- pull(df %>% filter(race == "Other race(s), non-Hispanic") %>% select(rri))
-
-  use_percent <- any(c(rri_black, rri_hispanic, rri_other) >= 1)
-
-  if(use_percent) {
-    rri_black <- round(rri_black * 100)
-    rri_hispanic <- round(rri_hispanic * 100)
-    rri_other <- round(rri_other * 100)
-  }
-
-  text_black    <- case_when(rri_black < 100  ~ "less likely",
-                             rri_black >= 100  ~ "more likely",
-                             TRUE             ~ "equally as likely")
-  text_hispanic <- case_when(rri_hispanic < 100  ~ "less likely",
-                             rri_hispanic >= 100  ~ "more likely",
-                             TRUE                ~ "equally as likely")
-  text_other    <- case_when(rri_other < 100  ~ "less likely",
-                             rri_other >= 100  ~ "more likely",
-                             TRUE             ~ "equally as likely")
-
-  unit_text <- ifelse(use_percent, "%", "times")
-
-  rri_black_display    <- ifelse(use_percent, paste0(rri_black, unit_text), rri_black)
-  rri_hispanic_display <- ifelse(use_percent, paste0(rri_hispanic, unit_text), rri_hispanic)
-  rri_other_display    <- ifelse(use_percent, paste0(rri_other, unit_text), rri_other)
-
-  div(id = "body-section",
-      div(
-        id = "grid-container",
-        style = "display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; column-gap: 30px;",
-        div(id = "bold-text", "Black, non-Hispanic"),
-        div(id = "bold-text", "Hispanic, any race"),
-        div(id = "bold-text", "Other race(s), non-Hispanic"),
-        div(id = "highlight-text", rri_black_display),
-        div(id = "highlight-text", rri_hispanic_display),
-        div(id = "highlight-text", rri_other_display),
-        div(id = "regular-text", text_black,    " to be ", scenario, " compared to White people"),
-        div(id = "regular-text", text_hispanic, " to be ", scenario, " compared to White people"),
-        div(id = "regular-text", text_other,    " to be ", scenario, " compared to White people")
-      ), br()
-  )
-}
-
-
-
+#
+#
+#
 

@@ -120,8 +120,6 @@ div(id = "body-section", br(),
     div(id = "big-section-title", "Other National Visualization Ideas"), br(),
     div(id = "regular-text", "Disparity Infographics: National disparities for race, ethnicity, and gender"), br(),
     div(id = "regular-text", "Highlighted Finding: Average length of time people are incarcerated after their parole eligibility date."), br(),
-    div(id = "regular-text", "List: Top States"), br(),
-    div(id = "regular-text", "Map: Robina Institute's prison sentencing system rating."), br(),
     div(id = "regular-text", "Table: Simple table showing parole-eligible prison populations by state"), br()
     )
 ```
@@ -131,7 +129,7 @@ div(id = "body-section", br(),
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "big-section-title", "Parole Eligibility Data by State (will remove)"), br(),
+    div(id = "big-section-title", "Parole Eligibility Data by State (will simplify)"), br(),
     div(id = "regular-text", "
 The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole release or lack of data in certain states."), br(),
     div(id = "regular-text", "Total Population = total prison population, Total Prison Population (1 to 24.99 Year Sentences) = total prison population in prison for a new court commitment and sentence lengths between 1 to 24.99 years, currently eligible for parole/eligible for parole in the next 1-5 years/missing parole eligibility data = only for people in prison for a new court commitment and sentence lengths between 1 to 24.99 years."),

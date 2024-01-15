@@ -185,8 +185,10 @@ ncrp_releases   <- da38492.0003 %>% clean_names() %>%
                                   "Released more than 5 Years After Parole Eligibility Year",
                                   "Missing Parole Eligibility Year"))) %>%
 
-  # change NAs to "Unknown"
+  # re-categorize admission types
   fnc_create_admtype() %>%
+
+  # change NAs to "Unknown"
   mutate(race     = ifelse(is.na(race), "Unknown", race),
          agerlse  = ifelse(is.na(agerlse), "Unknown", agerlse),
          sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
@@ -239,7 +241,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     ageyrend       = str_sub(ageyrend, 5, -1),
     timesrvd_yrend = str_sub(timesrvd_yrend, 5, -1)) %>%
 
-  # combine other and unknown
+  # combine other and unknown offense types
   mutate(offdetail = trimws(offdetail),
          offgeneral = case_when(
            is.na(offgeneral) ~ "Other or Unknown",
@@ -252,8 +254,10 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
   # determine parole eligibility status
   fnc_create_parelig_status() %>%
 
-  # change NAs to "Unknown"
+  # re-categorize admission types
   fnc_create_admtype() %>%
+
+  # change NAs to "Unknown"
   mutate(race = ifelse(is.na(race), "Unknown", race),
          ageyrend = ifelse(is.na(ageyrend), "Unknown", ageyrend),
          sentlgth = ifelse(is.na(sentlgth), "Unknown", sentlgth)) %>%
@@ -293,8 +297,8 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
 # This file is broken down by race and ethnicity which is needed for the disparities analysis
 ##########
 
-# extract data from messy spreadsheet of unwanted cells and charactrs
-# Warning message regarding NAs generated are for cells that had / or ~ and are now NA
+# extract data from messy spreadsheet of unwanted cells and characters
+# Warning message okay: NAs generated are for cells that had / or ~ and are now NA
 total_pop <- bjs_prison_pop_by_race_state_2020 %>%
   clean_names() %>%
   filter(jurisdiction == "") %>%
@@ -303,6 +307,7 @@ total_pop <- bjs_prison_pop_by_race_state_2020 %>%
   mutate(total = str_replace_all(total, ",", ""),
          total = as.numeric(total))
 
+# calculate number and proportion of prison population by race and ethnicity
 # reshape data
 bjs_prison_pop_by_race <- bjs_prison_pop_by_race_state_2020 %>%
   clean_names() %>%
