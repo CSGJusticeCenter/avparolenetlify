@@ -609,23 +609,7 @@ if (state_for_report %in% names(all_groupedbar_disparities_inprisonpe_race)) {
   state_groupedbar_disparities_inprisonpe_race <- no_data_text
 }
 
-
-
-# Grouped column chart showing percentage of population in community and in prison but parole eligible
-if (state_for_report %in% names(all_groupedcolumn_disparities_release_race)) {
-  state_groupedcolumn_disparities_release_race <-
-    all_groupedcolumn_disparities_release_race[[state_for_report]] %>%
-    # hc_colors(c("#FFAF00","#CC9617", "#997E2E","#666546","#334D5D", "#003474")) %>% 
-    hc_colors(c(yellow,"#CCAE20", "#99AD40","#66AD60","#33AC80", teal)) %>% 
-    hc_title(text = paste0("Option 1: Release Timing after Parole Eligibility by Race and Ethnicity", " in ", select_year)) %>% 
-    # hc_chart(marginBottom = 50) %>%
-    hc_caption(
-           text = paste0("Source: ", ncrp_pop_source))
-} else {
-  state_groupedcolumn_disparities_release_race <- no_data_text
-}
-
-# Stacked column chart showing percentage of population in community and in prison but parole eligible
+# Stacked and grouped column chart showing percentage of people by race and ethnicity and timing of release
 if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <-
     all_stackedcolumn_disparities_release_race[[state_for_report]] %>%
@@ -638,10 +622,73 @@ if (state_for_report %in% names(all_stackedcolumn_disparities_release_race)) {
   state_stackedcolumn_disparities_release_race <- no_data_text
 }
 
+# Stacked and grouped column chart showing percentage of people by gender and timing of release
+if (state_for_report %in% names(all_stackedcolumn_disparities_release_gender)) {
+  state_stackedcolumn_disparities_release_gender <-
+    all_stackedcolumn_disparities_release_gender[[state_for_report]] %>%
+    hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility by Gender", " in ", select_year)) %>% 
+    # hc_chart(marginBottom = 50) %>%
+    hc_caption(
+           text = paste0("Source: ", ncrp_pop_source))
+} else {
+  state_stackedcolumn_disparities_release_gender <- no_data_text
+}
 
+# Stacked and grouped column chart showing percentage of people by agerlse and timing of release
+if (state_for_report %in% names(all_stackedcolumn_disparities_release_agerlse)) {
+  state_stackedcolumn_disparities_release_agerlse <-
+    all_stackedcolumn_disparities_release_agerlse[[state_for_report]] %>%
+    hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility by Age", " in ", select_year)) %>% 
+    # hc_chart(marginBottom = 50) %>%
+    hc_caption(
+           text = paste0("Source: ", ncrp_pop_source))
+} else {
+  state_stackedcolumn_disparities_release_agerlse <- no_data_text
+}
 
+# Stacked and grouped column chart showing percentage of people by race and ethnicity and timing of release
+# For violent offenses
+if (state_for_report %in% names(all_stackedcolumn_disparities_release_race_violent)) {
+  state_stackedcolumn_disparities_release_race_violent <-
+    all_stackedcolumn_disparities_release_race_violent[[state_for_report]] %>%
+    hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility for Violent Offenses by Race and Ethnicity", " in ", select_year)) %>% 
+    # hc_chart(marginBottom = 50) %>%
+    hc_caption(
+      text = paste0("Source: ", ncrp_pop_source))
+} else {
+  state_stackedcolumn_disparities_release_race_violent <- no_data_text
+}
 
+# Stacked and grouped column chart showing percentage of people by gender and timing of release
+# For violent offenses
+if (state_for_report %in% names(all_stackedcolumn_disparities_release_gender_violent)) {
+  state_stackedcolumn_disparities_release_gender_violent <-
+    all_stackedcolumn_disparities_release_gender_violent[[state_for_report]] %>%
+    hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility for Violent Offenses by Gender", " in ", select_year)) %>% 
+    # hc_chart(marginBottom = 50) %>%
+    hc_caption(
+      text = paste0("Source: ", ncrp_pop_source))
+} else {
+  state_stackedcolumn_disparities_release_gender_violent <- no_data_text
+}
 
+# Stacked and grouped column chart showing percentage of people by agerlse and timing of release
+# For violent offenses
+if (state_for_report %in% names(all_stackedcolumn_disparities_release_agerlse_violent)) {
+  state_stackedcolumn_disparities_release_agerlse_violent <-
+    all_stackedcolumn_disparities_release_agerlse_violent[[state_for_report]] %>%
+    hc_colors(c(darkblue, purple, blue, orange, yellow, teal)) %>% 
+    hc_title(text = paste0("Release Timing after Parole Eligibility for Violent Offenses by Age", " in ", select_year)) %>% 
+    # hc_chart(marginBottom = 50) %>%
+    hc_caption(
+      text = paste0("Source: ", ncrp_pop_source))
+} else {
+  state_stackedcolumn_disparities_release_agerlse_violent <- no_data_text
+}
 ```
 
 ::: narrow-section
@@ -1221,16 +1268,81 @@ div(id = "body-section", br(),
 ```{r}
 div(id = "body-section", br(),
     div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by race and ethnicity, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
-    # div(id = "visualization", state_groupedcolumn_disparities_release_race), br(),
-    div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br(),
-    div(id = "graph-title", "Timing of release by offense type and race and ethnicity in 2020"), br()
+    div(id = "visualization", state_stackedcolumn_disparities_release_race), br(), br()
 )
 ```
 
+### Gender
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by gender, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
+    div(id = "visualization", state_stackedcolumn_disparities_release_gender), br(), br()
+)
+```
+
+### Age
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "This chart illustrates the timing of release after becoming eligible for parole in 2020, broken down by age (at release), showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
+    div(id = "visualization", state_stackedcolumn_disparities_release_agerlse), br(), br()
+)
+```
+
+:::
+
+```{r}
+########################################
+
+# Time Served
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Time of Release by Offense Type"), br()
+)
+```
+
+::: {.panel-tabset .tab7}
+
+### Race and Ethnicity
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "This chart illustrates the timing of release for people in prison for particular offenses after becoming eligible for parole in 2020, broken down by race and ethnicity, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
+    div(id = "visualization-header", "Violent Offenses"), br(),
+    div(id = "visualization", state_stackedcolumn_disparities_release_race_violent), br(),
+    div(id = "visualization-header", "Property Offenses"), br(),
+    div(id = "visualization-header", "Public Order Offenses"), br(),
+    div(id = "visualization-header", "Drugs Offenses"), br()
+)
+```
 
 ### Gender
 
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "This chart illustrates the timing of release for people in prison for particular offenses after becoming eligible for parole in 2020, broken down by gender, showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
+    div(id = "visualization-header", "Violent Offenses"), br(),
+    div(id = "visualization", state_stackedcolumn_disparities_release_gender_violent), br(),
+    div(id = "visualization-header", "Property Offenses"), br(),
+    div(id = "visualization-header", "Public Order Offenses"), br(),
+    div(id = "visualization-header", "Drugs Offenses"), br()
+)
+```
+
 ### Age
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "regular-text", "This chart illustrates the timing of release for people in prison for particular offenses after becoming eligible for parole in 2020, broken down by age (at release), showing the percentage of individuals who were released in each subsequent year following their initial eligibility."), br(),
+    div(id = "visualization-header", "Violent Offenses"), br(),
+    div(id = "visualization", state_stackedcolumn_disparities_release_agerlse_violent), br(),
+    div(id = "visualization-header", "Property Offenses"), br(),
+    div(id = "visualization-header", "Public Order Offenses"), br(),
+    div(id = "visualization-header", "Drugs Offenses"), br()
+)
+```
 
 :::
 
@@ -1245,20 +1357,70 @@ div(id = "body-section", br(),
 )
 ```
 
-::: {.panel-tabset .tab7}
+::: {.panel-tabset .tab8}
 
 ### Race and Ethnicity
 
 ```{r}
 div(id = "body-section", br(),
-    div(id = "graph-title", "Average time served by race and ethnicity in 2020"), br(),
-    div(id = "graph-title", "Average time served by race and ethnicity and offense type in 2020"), br() 
+    div(id = "graph-title", "Average time served by race and ethnicity in 2020"), br()
 )
 ```
 
 ### Gender
 
 ### Age
+
+:::
+
+```{r}
+########################################
+
+# Time Served
+
+########################################
+div(id = "body-section", br(),
+    div(id = "big-section-title", "Time Served by Offense Type"), br()
+)
+```
+
+::: {.panel-tabset .tab8}
+
+### Race and Ethnicity
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "graph-title", "Average time served by race and ethnicity and offense type in 2020"), br(),
+    div(id = "visualization-header", "Violent Offenses"), br(),
+    div(id = "visualization-header", "Property Offenses"), br(),
+    div(id = "visualization-header", "Public Order Offenses"), br(),
+    div(id = "visualization-header", "Drugs Offenses"), br()
+)
+```
+
+### Gender
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "graph-title", "Average time served by gender and offense type in 2020"), br(),
+    div(id = "visualization-header", "Violent Offenses"), br(),
+    div(id = "visualization-header", "Property Offenses"), br(),
+    div(id = "visualization-header", "Public Order Offenses"), br(),
+    div(id = "visualization-header", "Drugs Offenses"), br()
+)
+```
+
+### Age
+
+```{r}
+div(id = "body-section", br(),
+    div(id = "graph-title", "Average time served by age and offense type in 2020"), br(),
+    div(id = "visualization-header", "Violent Offenses"), br(),
+    div(id = "visualization-header", "Property Offenses"), br(),
+    div(id = "visualization-header", "Public Order Offenses"), br(),
+    div(id = "visualization-header", "Drugs Offenses"), br()
+)
+```
 
 :::
 

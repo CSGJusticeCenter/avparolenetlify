@@ -176,6 +176,85 @@ fnc_values_labels <- function(df, count_column) {
     )
 }
 
+# Calculate n, prop, and create labels and tooltips
+fnc_values_tooltip <- function(df, count_column) {
+  df %>%
+    count({{ count_column }}) %>%
+    mutate(
+      prop = (n / sum(n)),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column }}, "</b><br><br>",
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
+    )
+}
+
+# Calculate n, prop, and create labels and tooltips when there are two columns of interest
+fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
+  df %>%
+    count({{count_column1}}) %>%
+    mutate(
+      prop = (n / sum(n)),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column2 }}, "</b><br><br>",
+                       "<b>", {{ count_column1 }}, "</b><br><br>",
+                       "Percentage of People: <b>", prop_label, "</b><br>",
+                       "Number of People: <b>", n_label, "</b>", sep = "")
+    )
+}
+
+
+
+# Prepare parole eligibility data for people currently eligible for parole
+fnc_prepare_pe_data <- function(df, count_column){
+  df1 <- df %>%
+    filter(rptyear == select_year &
+             parelig_status == "Current") %>%
+    fnc_parameters() %>%
+    group_by(state) %>%
+    count({{ count_column }}) %>%
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) %>%
+    ungroup() %>%
+    mutate(tooltip = paste0("<b>", state, " - ",
+                            {{ count_column }}, "</b><br>",
+                            prop_label, "<br>"))
+}
+
+# Retrieve and process census data for a given state
+fnc_get_census_data <- function(state) {
+  df <-
+    tidycensus::get_decennial(
+      geography = "state",
+      state = state,
+      variables = race_vars,
+      summary_var = "P3_001N",
+      year = select_year,
+      geometry = FALSE) %>%
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race = case_when(
+        variable %in% c("estimate_american_indian",
+                        "estimate_asian",
+                        "estimate_native_hawaiian_pi",
+                        "estimate_more_than_one_race") ~ "Other race(s), non-Hispanic",
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    )
+  return(df)
+}
+
 
 
 
@@ -475,6 +554,139 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
 
 }
 
+# Create single horizontal bar chart that is grouped
+fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
+
+  highchart <- hchart(df, "bar",
+                      hcaes(x = !!sym(x_axis),
+                            y = !!sym(value),
+                            group = !!sym(group_by_column)),
+                      dataLabels = list(enabled = TRUE,
+                                        format = "{point.prop_label}",
+                                        style = list(fontWeight = "bold",
+                                                     fontSize = "12px",
+                                                     fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(format = "{value}%",
+                           enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = FALSE)) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_plotOptions(
+      series = list(stacking = "normal",
+                    animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3,
+                    minPointLength = 4),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+  return(highchart)
+}
+
+# Create pie chart
+fnc_piechart <- function(df, x_column, accessibility_text){
+
+  highcharts <- hchart(df,
+                       "pie",
+                       hcaes(x = !!sym(x_column), y = prop),
+                       dataLabels = list(
+                         style = list(fontSize = "1em",
+                                      fontWeight = "regular",
+                                      alignTo = "connectors",
+                                      color = "black"),
+                         enabled = TRUE,
+                         formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
+                       )
+  ) %>%
+    hc_chart(plotBackgroundColor = "none",
+             plotBorderWidth = 0,
+             plotShadow = FALSE,
+             margin = c(30, 0, 10, 0)) %>%
+    hc_yAxis(maxPadding = 0) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+}
+
+# Create grouped bar chart
+fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text) {
+
+  highcharts <-
+    hchart(df, "bar",
+           hcaes(x = !!sym(x_column),
+                 y = prop,
+                 group = !!sym(group_by_col)
+           ),
+           dataLabels = list(enabled = TRUE,
+                             format = "{point.prop_label}",
+                             style = list(fontWeight = "regular",
+                                          fontSize = "12px",
+                                          fontFamily = "Graphik"))) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1
+    ) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = TRUE)) %>%
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) %>%
+    hc_add_theme(hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(
+        animation = FALSE,
+        cursor = "pointer",
+        borderWidth = 3,
+        minPointLength = 4),
+      accessibility = list(
+        enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
+        linkedDescription = accessibility_text,
+        landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+}
+
+
+
+
+###################
+# Reactable
+###################
+
+# Reactable table themes
+reactable_theme <-
+  reactableTheme(borderColor = neutralBkgndLight,
+                 stripedColor = neutralBkgndLight,
+                 cellStyle = list(display = "flex",
+                                  flexDirection = "column",
+                                  justifyContent = "center"))
+
+reactable_style <- list(
+  fontFamily = "Graphik, sans-serif",
+  fontSize = "0.9rem",
+  color = "black"
+)
 
 
 
@@ -507,112 +719,7 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
 
 
 
-#
-#
-#
-#
-#
-# # Prepare data for a simple bar graph
-# fnc_prepare_pe_data <- function(df, count_column){
-#   df1 <- df %>%
-#     filter(rptyear == select_year &
-#              parelig_status == "Current") %>%
-#     fnc_parameters() %>%
-#     group_by(state) %>%
-#     count({{ count_column }}) %>%
-#     mutate(
-#       prop = n/sum(n),
-#       yearendpop_ped = sum(n),
-#       prop_label = paste0(round(prop*100, 0), "%"),
-#       n_label = formattable::comma(n, 0)
-#     ) %>%
-#     ungroup() %>%
-#     mutate(tooltip = paste0("<b>", state, " - ",
-#                             {{ count_column }}, "</b><br>",
-#                             prop_label, "<br>"))
-# }
-#
-# # Retrieve and process census data for a given state
-# fnc_get_census_data <- function(state) {
-#   df <-
-#     tidycensus::get_decennial(
-#       geography = "state",
-#       state = state,
-#       variables = race_vars,
-#       summary_var = "P3_001N",
-#       year = select_year,
-#       geometry = FALSE) %>%
-#     clean_names() %>%
-#     select(-geoid) %>%
-#     mutate(
-#       race = case_when(
-#         variable %in% c("estimate_american_indian",
-#                         "estimate_asian",
-#                         "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
-#         variable == "estimate_black" ~ "Black, non-Hispanic",
-#         variable == "estimate_hispanic" ~ "Hispanic, any race",
-#         variable == "estimate_white" ~ "White, non-Hispanic",
-#         TRUE ~ "NA"
-#       )
-#     )
-#   return(df)
-# }
-#
-# # Calculate n, prop, and create labels and tooltips
-# fnc_values_tooltip <- function(df, count_column) {
-#   df %>%
-#     count({{ count_column }}) %>%
-#     mutate(
-#       prop = (n / sum(n)),
-#       prop_label = paste0(round(prop*100, 0), "%"),
-#       n_label = formattable::comma(n, 0),
-#       tooltip = paste0("<b>", state, "</b><br><br>",
-#                        "<b>", {{ count_column }}, "</b><br><br>",
-#                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
-#     )
-# }
-#
 
-#
-# # Calculate n, prop, and create labels and tooltips when there are two columns of interest
-# fnc_values_tooltip2 <- function(df, count_column1, count_column2) {
-#   df %>%
-#     count({{count_column1}}) %>%
-#     mutate(
-#       prop = (n / sum(n)),
-#       prop_label = paste0(round(prop*100, 0), "%"),
-#       n_label = formattable::comma(n, 0),
-#       tooltip = paste0("<b>", state, "</b><br><br>",
-#                        "<b>", {{ count_column2 }}, "</b><br><br>",
-#                        "<b>", {{ count_column1 }}, "</b><br><br>",
-#                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
-#     )
-# }
-#
-
-#
-# ###################
-# # Reactable
-# ###################
-#
-# # Reactable table themes
-# reactable_theme <-
-#   reactableTheme(borderColor = neutralBkgndLight,
-#                  stripedColor = neutralBkgndLight,
-#                  cellStyle = list(display = "flex",
-#                                   flexDirection = "column",
-#                                   justifyContent = "center"))
-#
-# reactable_style <- list(
-#   fontFamily = "Graphik, sans-serif",
-#   fontSize = "0.9rem",
-#   color = "black"
-# )
-#
-#
-#
-#
-#
 
 
 # # Number of people by category by admission type
@@ -661,43 +768,7 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
 #
 
 #
-# # Create single horizontal bar chart that is grouped
-# fnc_single_grouped_columnchart <- function(df, value, group_by_column, x_axis, accessibility_text) {
-#
-#   highchart <- hchart(df, "bar",
-#                       hcaes(x = !!sym(x_axis),
-#                             y = !!sym(value),
-#                             group = !!sym(group_by_column)),
-#                       dataLabels = list(enabled = TRUE,
-#                                         format = "{point.prop_label}",
-#                                         style = list(fontWeight = "bold",
-#                                                      fontSize = "12px",
-#                                                      fontFamily = "Graphik"))) %>%
-#     hc_yAxis(labels = list(format = "{value}%",
-#                            enabled = FALSE),
-#              title = list(text = ""),
-#              min = 0, max = 1) %>%
-#     hc_xAxis(title = list(text = ""),
-#              labels = list(enabled = FALSE)) %>%
-#     hc_add_theme(hc_theme) %>%
-#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-#     hc_exporting(enabled = TRUE) %>%
-#     hc_legend(enabled = TRUE,
-#               reversed = TRUE) %>%
-#     hc_plotOptions(
-#       series = list(stacking = "normal",
-#                     animation = FALSE,
-#                     cursor = "pointer",
-#                     borderWidth = 3,
-#                     minPointLength = 4),
-#       accessibility = list(enabled = TRUE,
-#                            keyboardNavigation = list(enabled = TRUE),
-#                            linkedDescription = accessibility_text,
-#                            landmarkVerbosity = "one"),
-#       area = list(accessibility = list(description = accessibility_text)))
-#   return(highchart)
-# }
-#
+
 
 # # Create grouped, not stacked bar chart
 # fnc_grouped_columnchart <- function(df, x_column, group_by_col, accessibility_text) {
@@ -739,82 +810,9 @@ fnc_grouped_stacked_barchart <- function(df, x_column, group_by_col, accessibili
 #   return(highcharts)
 #
 # }
+
 #
-# # Create pie chart
-# fnc_piechart <- function(df, x_column, accessibility_text){
-#
-#   highcharts <- hchart(df,
-#                        "pie",
-#                        hcaes(x = !!sym(x_column), y = prop),
-#                        dataLabels = list(
-#                          style = list(fontSize = "1em",
-#                                       fontWeight = "regular",
-#                                       alignTo = "connectors",
-#                                       color = "black"),
-#                          enabled = TRUE,
-#                          formatter = JS(paste("function() { return this.point.name + ': <b>' + this.point.prop_label + '</b>';}"))
-#                        )
-#   ) %>%
-#     hc_chart(plotBackgroundColor = "none",
-#              plotBorderWidth = 0,
-#              plotShadow = FALSE,
-#              margin = c(30, 0, 10, 0)) %>%
-#     hc_yAxis(maxPadding = 0) %>%
-#     hc_add_theme(hc_theme) %>%
-#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-#     hc_exporting(enabled = TRUE) %>%
-#     hc_plotOptions(
-#       series = list(animation = FALSE,
-#                     cursor = "pointer",
-#                     borderWidth = 3),
-#       accessibility = list(enabled = TRUE,
-#                            keyboardNavigation = list(enabled = TRUE),
-#                            linkedDescription = accessibility_text,
-#                            landmarkVerbosity = "one"),
-#       area = list(accessibility = list(description = accessibility_text)))
-#
-# }
-#
-# # Create grouped, not stacked bar chart
-# fnc_grouped_barchart <- function(df, x_column, group_by_col, accessibility_text) {
-#
-#   highcharts <-
-#     hchart(df, "bar",
-#            hcaes(x = !!sym(x_column),
-#                  y = prop,
-#                  group = !!sym(group_by_col)
-#            ),
-#            dataLabels = list(enabled = TRUE,
-#                              format = "{point.prop_label}",
-#                              style = list(fontWeight = "regular",
-#                                           fontSize = "12px",
-#                                           fontFamily = "Graphik"))) %>%
-#     hc_yAxis(labels = list(enabled = FALSE),
-#              title = list(text = ""),
-#              min = 0, max = 1
-#     ) %>%
-#     hc_xAxis(title = list(text = ""),
-#              labels = list(enabled = TRUE)) %>%
-#     hc_legend(enabled = TRUE,
-#               reversed = TRUE) %>%
-#     hc_add_theme(hc_theme) %>%
-#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-#     hc_exporting(enabled = TRUE) %>%
-#     hc_plotOptions(
-#       series = list(
-#         animation = FALSE,
-#         cursor = "pointer",
-#         borderWidth = 3,
-#         minPointLength = 4),
-#       accessibility = list(
-#         enabled = TRUE, keyboardNavigation = list(enabled = TRUE),
-#         linkedDescription = accessibility_text,
-#         landmarkVerbosity = "one"),
-#       area = list(accessibility = list(description = accessibility_text)))
-#
-#   return(highcharts)
-#
-# }
+
 #
 #
 #

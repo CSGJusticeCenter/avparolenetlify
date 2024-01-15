@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Date last updated: November 20, 2023 (MAR)
+# Date last updated: January 15, 2024 (MAR)
 # Description:
 #    Releases from prison tables and graphics for app
 #######################################
@@ -12,7 +12,7 @@
 # Section: Release Trends
 
 # (1) Prison releases by year
-# (2) # and % of parole-eligible people released each year,
+# (2) # and % of parole-eligible people out all releases released each year,
 # (3) out of all releases: % of people released each year at parole eligibility year,
 #                          % 1-5 years after parole eligibility,
 #                          % of people released more than 5 years after parole eligibility
@@ -183,7 +183,7 @@ all_groupedbar_release_timing_reltype$Georgia
 
 ################################################################################
 
-# Releases by Race and Ethnicity
+# Releases by race and ethnicity
 ncrp_releases_race <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
   group_by(state) %>%

@@ -143,7 +143,7 @@
 
 /* Specific height for tabs in tab4 */
 .tab4 .tab-content .tab-pane {
-    height: 1150px;
+    height: 950px;
 }
 
 
@@ -188,7 +188,7 @@
 
 /* Specific height for tabs in tab6 */
 .tab6 .tab-content .tab-pane {
-    height: 900px;
+    height: 700px;
 }
 
 
@@ -209,8 +209,29 @@
 
 /* Specific height for tabs in tab7 */
 .tab7 .tab-content .tab-pane {
-    height: 450px;
+    height: 900px;
 }
+
+
+/* Specific style for tab8 tabs */
+  .tab8 .nav-link {
+    font-size: .9em;
+    border: 1px solid gray;
+    padding-bottom: 0.1em;
+    color: black;
+  }
+.tab8 .nav-link.active, .tab8 .show>.nav-link {
+  color: #fff;
+    background-color: gray;
+  font-size: .9em;
+  border: 1px solid gray;
+  padding-bottom: 0.1em;
+}
+
+/* Specific height for tabs in tab8 */
+  .tab8 .tab-content .tab-pane {
+    height: 450px;
+  }
 
 
 /* Specific style for tabmap tabs */
@@ -349,6 +370,14 @@ body {
   border-bottom: 2px solid #ccc;
   padding-bottom: 10px;
   margin-bottom: 10px;
+}
+
+#visualization-header {
+  font-size: 1.2em;
+  font-family: Graphik;
+  font-weight: bold;
+  text-align: center;
+  color: black;
 }
 
 #graph-title {

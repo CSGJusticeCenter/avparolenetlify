@@ -114,9 +114,12 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_rri_infographic_race.rd
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_inprison_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedbar_disparities_inprisonpe_race.rds"))
 
-load(file = paste0(sp_data_path, "/data/analysis/app/all_groupedcolumn_disparities_release_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_race.rds"))
-
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_race_violent.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_gender.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_gender_violent.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_agerlse.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedcolumn_disparities_release_agerlse_violent.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/rri_in_prison_data.rds"))
 
 

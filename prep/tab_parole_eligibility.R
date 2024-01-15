@@ -2,17 +2,19 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: November 14, 2023 (MAR)
+# Date last updated: January 15, 2024 (MAR)
 
 # Description:
-#    Parole eligibility tables and graphics for "Parole Eligibility" tab
+#    Parole eligibility tables and graphics for Parole Eligibility Tab
 #######################################
 
 ################################################################################
 
 # Prison population by parole eligibility status
 # Single, horizontal stacked bar chart
-# Also a pie chart option
+# Showcases that X percent of the prison population are parole-eligible
+# Focuses on the population in prison for new crimes and with sentence lengths
+#   between 1-25 years
 
 # Obtained from NCRP year end population
 
@@ -27,7 +29,7 @@ ncrp_prison_population <- ncrp_yearendpop %>%
 
 # get number of people in prison by parole eligibility status
 # but just for people in prison for a new court commitment and sentence length 1-25 years
-# merge prison population numbers to get percentages
+# merge prison population numbers to get percentages (also only new court commitment and sentence length 1-25 years)
 ncrp_parole_eligible_125years_new_crime <- ncrp_yearendpop %>%
   fnc_parameters() %>%
   group_by(state, rptyear) %>%
@@ -216,7 +218,7 @@ current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) %>%
     "<b>", prop_label, "</b> (", n_label, ")")
   )
 
-# Create highcharts showing breakdown of parole-eligible prison population by race
+# Highcharts showing breakdown of parole-eligible prison population by race
 states <- unique(current_ped_race$state)
 all_bar_parole_elgibility_race <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_race %>%

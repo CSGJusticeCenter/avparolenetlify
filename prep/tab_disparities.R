@@ -4,14 +4,15 @@
 # Authors: Mari Roberts
 # Date last updated: January 15, 2024 (MAR)
 # Description:
-#    Disparities tables and graphics for app
+#    Disparities tables and graphics for app for Disparities Tab
 #######################################
 
 ################################################################################
 
 # Section: Race and Ethnicity
 
-# (1) bar charts including community, prison pop, parole-eligible pop, paroled at first opportunity pop
+# (1) barcharts for 1. in community vs in prison by race abd ethnicity and
+#                   2. in community vs in prison and parole-eligible by race abd ethnicity
 # (2) RRIs for each of those populations,
 # (3) release date compared to first eligibility date (e.g., 50% released first year,
 #                                                            22% year after first eligibility,
@@ -27,27 +28,32 @@
 # Pulled estimated counts and construct percent estimate
 
 # These are the ids of race variables that we want to pull
-race_vars <- c(estimate_white              = "P3_003N",
-               estimate_black              = "P3_004N",
-               estimate_asian              = "P3_006N",
-               estimate_native_hawaiian_pi = "P3_007N",
+race_vars <- c(estimate_white              = "P4_005N",
+               estimate_black              = "P4_006N",
+               estimate_asian              = "P4_008N",
+               estimate_native_hawaiian_pi = "P4_009N",
                estimate_hispanic           = "P4_002N",
-               estimate_american_indian    = "P1_005N")
+               estimate_american_indian    = "P4_007N",
+               estimate_more_than_one_race = "P4_011N")
 
 # Use lapply to retrieve and process data for each state
 # Make race and ethnicity consistent with NCRP dat(Black, White, Hispanic, Other)
 states <- state.name
-census_state_population_list <- lapply(states, fnc_get_census_data)
+census_state_race_population_list <- lapply(states, fnc_get_census_data)
 
 # Convert list into a dataframe
-census_state_population <- bind_rows(census_state_population_list)
+census_state_race_population <- bind_rows(census_state_race_population_list)
 
 # Add "state" column
-census_state_population$state <- rep(states, each = nrow(census_state_population) / length(states))
+census_state_race_population$state <- rep(states, each = nrow(census_state_race_population) / length(states))
+
+##########
+# Community by Race and Ethnicity
+##########
 
 # Calculate proportion of people in community by race and ethnicity
 # Combine some races into other category
-census_state_population <- census_state_population %>%
+census_state_race_population <- census_state_race_population %>%
   rename(total_state_population = summary_value) %>%
   group_by(state, total_state_population,
            race = ifelse(race %in% c("White, non-Hispanic",
@@ -63,10 +69,9 @@ census_state_population <- census_state_population %>%
   select(-total_state_population) %>%
   mutate(population_type = "In the Community")
 
-# Calculate prison population by race and ethnicity
-
-
-
+##########
+# Parole-Eligible Race and Ethnicity
+##########
 
 # Calculate proportion of people parole-eligible in prison by race and ethnicity
 ncrp_parole_eligible_population <- ncrp_yearendpop %>%
@@ -79,7 +84,11 @@ ncrp_parole_eligible_population <- ncrp_yearendpop %>%
   group_by(state) %>%
   fnc_values_tooltip(race) %>%
   select(-tooltip) %>%
-  mutate(population_type = "In Prison and Currently Eligible for Parole")
+  mutate(population_type = "In Prison Past Their Parole Eligibility Date")
+
+##########
+# Paroled at First Opportunity by Race and Ethnicity
+##########
 
 # Calculate proportion of people paroled at first opportunity by race and ethnicity
 ncrp_released_at_parole_eligibility_year <- ncrp_releases %>%
@@ -106,8 +115,12 @@ ncrp_released_at_parole_eligibility_year <- ncrp_releases %>%
   select(population_type = released_at_parole_eligibility, everything())
 
 
+##########
+# Combine All Data Together
+##########
+
 # Add all data together
-merged_population_data <- rbind(census_state_population,
+merged_population_data <- rbind(census_state_race_population,
                                 bjs_prison_pop_by_race,
                                 ncrp_parole_eligible_population,
                                 ncrp_released_at_parole_eligibility_year)
@@ -121,7 +134,7 @@ merged_population_data <- merged_population_data %>%
                        levels = c("In the Community",
                                   "Released on Parole Eligibility Year",
                                   "In Prison",
-                                  "In Prison and Currently Eligible for Parole"))) %>%
+                                  "In Prison Past Their Parole Eligibility Date"))) %>%
   arrange(state, population_type, desc(race)) %>%
   mutate(tooltip = paste0("<b>", state, "</b><br><br>",
                           "<b>", race, "</b><br><br>",
@@ -129,7 +142,7 @@ merged_population_data <- merged_population_data %>%
                           "Percentage of People: <b>", prop_label, "</b>", sep = "")
          )
 
-# Highchart showing race population in the community and In Prison
+# Highchart showing race and ethnicity population in the community and in prison
 states <- unique(merged_population_data$state)
 all_groupedbar_disparities_inprison_race <- map(.x = states,  .f = function(x) {
   df1 <- merged_population_data %>%
@@ -146,12 +159,12 @@ all_groupedbar_disparities_inprison_race <- map(.x = states,  .f = function(x) {
 all_groupedbar_disparities_inprison_race <- setNames(all_groupedbar_disparities_inprison_race, states)
 all_groupedbar_disparities_inprison_race$Georgia
 
-# Highchart showing race population in the community and Currently Eligible for Parole
+# Highchart showing race and ethnicity population in the community and currently eligible for parole
 all_groupedbar_disparities_inprisonpe_race <- map(.x = states,  .f = function(x) {
   df1 <- merged_population_data %>%
     ungroup() %>%
     filter(state == x) %>%
-    filter(population_type == "In Prison and Currently Eligible for Parole" |
+    filter(population_type == "In Prison Past Their Parole Eligibility Date" |
              population_type == "In the Community") %>%
     distinct()
   highcharts <- fnc_grouped_barchart(df1, "race", "population_type", "TBD accessibility text") %>%
@@ -164,15 +177,16 @@ all_groupedbar_disparities_inprisonpe_race$Georgia
 
 
 
+################################################################################
 
+# (2) RRIs for each of those populations 1. in prison and 2. in prison past their parole eligibility date
 
-
-# (2) RRIs for each of those populations
+################################################################################
 
 # Select columns and add data together
 # Combine data
 # Calculate rate and RRIs
-census_race <- census_state_population %>%
+census_race <- census_state_race_population %>%
   select(state, race, n_census = n)
 bjs_race <- bjs_prison_pop_by_race %>%
   select(state, race, n_prison = n)
@@ -193,29 +207,28 @@ rri_in_prison_data <- nonwhite_rate %>%
   left_join(white_rate, by = "state") %>%
   mutate(rri = nonwhite_rate / white_rate)
 
-#states <- unique(rri_in_prison_data$state)
-states <- "Georgia" ############################################################
-
-# create infographics - takes ~10 minutes to run
-map(states, fnc_create_and_save_infograph)
-
-
+# #states <- unique(rri_in_prison_data$state)
+# states <- "Georgia" ############################################################
+#
+# # create infographics - takes ~10 minutes to run
+# map(states, fnc_create_and_save_infograph)
 
 
-
-
-
-
-
-
+################################################################################
 
 # (3) release date compared to first eligibility date (e.g., 50% released first year,
 #                                                            22% year after first eligibility,
 #                                                            15% 2 years after eligible, etc.)
+
+################################################################################
+
+# Determine the timing of release categories: 1st year, 2nd year, etc
+# Remove people with missing parole eligibility data and those released
+# before their parole eligibility year
 ncrp_time_between_ped_release <- ncrp_releases %>%
   filter(rptyear == select_year) %>%
-  filter(time_between_ped_release_category != "Missing" &
-         time_between_ped_release_category != "Released Before Parole Eligibility Year" &
+  filter(time_between_ped_release_category != "Missing Parole Eligibility Year" &
+         time_between_ped_release_category != "Released before Parole Eligibility Year" &
          !is.na(parelig_year) &
          !is.na(relyr)) %>%
   mutate(time_between_ped_release_category2 = case_when(
@@ -232,18 +245,18 @@ ncrp_time_between_ped_release <- ncrp_releases %>%
                                                                 "Third Year",
                                                                 "Fourth Year",
                                                                 "Fifth Year",
-                                                                "More than Fifth Year"))) %>%
-  group_by(state, race) %>%
-  fnc_values_tooltip2(time_between_ped_release_category2, race) %>%
-  mutate(race = factor(race,
-                       levels = c("Other race(s), non-Hispanic",
-                                  "White, non-Hispanic",
-                                  "Hispanic, any race",
-                                  "Black, non-Hispanic")))
+                                                                "More than Fifth Year")))
+
+##########
+# Race and Ethnicity
+##########
 
 states <- unique(ncrp_time_between_ped_release$state)
 all_stackedcolumn_disparities_release_race <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_time_between_ped_release %>%
+    filter(race != "Unknown") %>%
+    group_by(state, race) %>%
+    fnc_values_tooltip2(time_between_ped_release_category2, race) %>%
     ungroup() %>%
     filter(state == x) %>%
     arrange(desc(race)) %>%
@@ -265,14 +278,195 @@ all_stackedcolumn_disparities_release_race <- map(.x = states,  .f = function(x)
 all_stackedcolumn_disparities_release_race <- setNames(all_stackedcolumn_disparities_release_race, states)
 all_stackedcolumn_disparities_release_race$Georgia
 
+all_stackedcolumn_disparities_release_race_violent <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_time_between_ped_release %>%
+    filter(race != "Unknown") %>%
+    filter(offgeneral == "Drugs") %>%
+    group_by(state, race) %>%
+    fnc_values_tooltip2(time_between_ped_release_category2, race) %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    arrange(desc(race)) %>%
+    mutate(time_between_ped_release_category2 =
+             factor(time_between_ped_release_category2,
+                    levels = c("More than Fifth Year",
+                               "Fifth Year",
+                               "Fourth Year",
+                               "Third Year",
+                               "Second Year",
+                               "First Year")))
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "race", "time_between_ped_release_category2", hc_accessibility_text)
+  return(highcharts)
+})
+all_stackedcolumn_disparities_release_race_violent <- setNames(all_stackedcolumn_disparities_release_race_violent, states)
+all_stackedcolumn_disparities_release_race_violent$Georgia
 
+##########
+# Gender
+##########
 
+all_stackedcolumn_disparities_release_gender <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_time_between_ped_release %>%
+    group_by(state, sex) %>%
+    fnc_values_tooltip2(time_between_ped_release_category2, sex) %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    arrange(desc(sex)) %>%
+    mutate(time_between_ped_release_category2 =
+             factor(time_between_ped_release_category2,
+                    levels = c("More than Fifth Year",
+                               "Fifth Year",
+                               "Fourth Year",
+                               "Third Year",
+                               "Second Year",
+                               "First Year")))
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by gender
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "sex", "time_between_ped_release_category2", hc_accessibility_text)
+  return(highcharts)
+})
+all_stackedcolumn_disparities_release_gender <- setNames(all_stackedcolumn_disparities_release_gender, states)
+all_stackedcolumn_disparities_release_gender$Georgia
 
+all_stackedcolumn_disparities_release_gender_violent <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_time_between_ped_release %>%
+    filter(sex != "Unknown") %>%
+    filter(offgeneral == "Drugs") %>%
+    group_by(state, sex) %>%
+    fnc_values_tooltip2(time_between_ped_release_category2, sex) %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    arrange(desc(sex)) %>%
+    mutate(time_between_ped_release_category2 =
+             factor(time_between_ped_release_category2,
+                    levels = c("More than Fifth Year",
+                               "Fifth Year",
+                               "Fourth Year",
+                               "Third Year",
+                               "Second Year",
+                               "First Year")))
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by gender
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "sex", "time_between_ped_release_category2", hc_accessibility_text)
+  return(highcharts)
+})
+all_stackedcolumn_disparities_release_gender_violent <- setNames(all_stackedcolumn_disparities_release_gender_violent, states)
+all_stackedcolumn_disparities_release_gender_violent$Georgia
 
+##########
+# Age Category (age at release)
+##########
 
+all_stackedcolumn_disparities_release_agerlse <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_time_between_ped_release %>%
+    group_by(state, agerlse) %>%
+    fnc_values_tooltip2(time_between_ped_release_category2, agerlse) %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    arrange(desc(agerlse)) %>%
+    mutate(time_between_ped_release_category2 =
+             factor(time_between_ped_release_category2,
+                    levels = c("More than Fifth Year",
+                               "Fifth Year",
+                               "Fourth Year",
+                               "Third Year",
+                               "Second Year",
+                               "First Year")))
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by age
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "agerlse", "time_between_ped_release_category2", hc_accessibility_text)
+  return(highcharts)
+})
+all_stackedcolumn_disparities_release_agerlse <- setNames(all_stackedcolumn_disparities_release_agerlse, states)
+all_stackedcolumn_disparities_release_agerlse$Georgia
 
+all_stackedcolumn_disparities_release_agerlse_violent <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_time_between_ped_release %>%
+    filter(agerlse != "Unknown") %>%
+    filter(offgeneral == "Drugs") %>%
+    group_by(state, agerlse) %>%
+    fnc_values_tooltip2(time_between_ped_release_category2, agerlse) %>%
+    ungroup() %>%
+    filter(state == x) %>%
+    arrange(desc(agerlse)) %>%
+    mutate(time_between_ped_release_category2 =
+             factor(time_between_ped_release_category2,
+                    levels = c("More than Fifth Year",
+                               "Fifth Year",
+                               "Fourth Year",
+                               "Third Year",
+                               "Second Year",
+                               "First Year")))
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by age (at release)
+                                  released in their first year, second year, third year, fourth year,
+                                  fifth year, and more than fifth year in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_grouped_stacked_barchart(df1, "agerlse", "time_between_ped_release_category2", hc_accessibility_text)
+  return(highcharts)
+})
+all_stackedcolumn_disparities_release_agerlse_violent <- setNames(all_stackedcolumn_disparities_release_agerlse_violent, states)
+all_stackedcolumn_disparities_release_agerlse_violent$Georgia
 
-
+# # Custom function to create 4 charts for race and ethnicity, 4 charts for age,
+# #    and 4 charts for gender. Where you filter ncrp_time_between_ped_release
+# #    by fbi_index and the 4 chart types will be when you filter by "Violent",
+# #    "Public order", "Property", "Drugs"
+# create_chart <- function(state, offense_type, group_by_column) {
+#   df <- ncrp_time_between_ped_release %>%
+#     filter(offgeneral == offense_type, state == state) %>%
+#     group_by(state, !!sym(group_by_column)) %>%
+#     fnc_values_tooltip2(time_between_ped_release_category2, !!sym(group_by_column)) %>%
+#     ungroup() %>%
+#     arrange(desc(!!sym(group_by_column))) %>%
+#     mutate(time_between_ped_release_category2 =
+#              factor(time_between_ped_release_category2,
+#                     levels = c("More than Fifth Year", "Fifth Year", "Fourth Year",
+#                                "Third Year", "Second Year", "First Year")))
+#
+#   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by ",
+#                                   group_by_column, " released in their first year, second year, third year,
+#                                   fourth year, fifth year, and more than fifth year in ",
+#                                   select_year, " in the state of ", state, ", for ", offense_type, " offenses.")
+#
+#   highcharts <- fnc_grouped_stacked_barchart(df, group_by_column, "time_between_ped_release_category2", hc_accessibility_text)
+#   return(highcharts)
+# }
+#
+# # Variables
+# offense_types <- c("Violent", "Public order", "Property", "Drugs")
+# group_by_vars <- c("race", "sex", "agerlse")
+# states <- unique(ncrp_time_between_ped_release$state)
+#
+# # Creating the Charts
+# all_charts <- list()
+# for (state in states) {
+#   for (offense_type in offense_types) {
+#     for (group_by in group_by_vars) {
+#       chart_name <- paste("all_stackedcolumn_disparities_release", group_by, offense_type, sep="_")
+#       if (!is.null(all_charts[[chart_name]])) {
+#         all_charts[[chart_name]] <- list()
+#       }
+#       chart_result <- create_chart(state, offense_type, group_by)
+#       if (!is.null(chart_result)) {
+#         all_charts[[chart_name]][[state]] <- chart_result
+#       } else {
+#         message(paste("No data for", state, "with offense type", offense_type, "and group by", group_by))
+#       }
+#     }
+#   }
+# }
+#
+# all_charts$all_stackedcolumn_disparities_release_race_Violent$
 
 
 
@@ -286,12 +480,19 @@ theseFOLDERS <- c("sharepoint" = paste0(sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
-  save(all_groupedbar_disparities_inprison_race,   file = file.path(folder, "all_groupedbar_disparities_inprison_race.rds"))
-  save(all_groupedbar_disparities_inprisonpe_race, file = file.path(folder, "all_groupedbar_disparities_inprisonpe_race.rds"))
+  save(all_groupedbar_disparities_inprison_race,              file = file.path(folder, "all_groupedbar_disparities_inprison_race.rds"))
+  save(all_groupedbar_disparities_inprisonpe_race,            file = file.path(folder, "all_groupedbar_disparities_inprisonpe_race.rds"))
 
-  save(all_groupedcolumn_disparities_release_race, file = file.path(folder, "all_groupedcolumn_disparities_release_race.rds"))
-  save(all_stackedcolumn_disparities_release_race, file = file.path(folder, "all_stackedcolumn_disparities_release_race.rds"))
-  save(rri_in_prison_data,                         file = file.path(folder, "rri_in_prison_data.rds"))
+  save(all_stackedcolumn_disparities_release_race,            file = file.path(folder, "all_stackedcolumn_disparities_release_race.rds"))
+  save(all_stackedcolumn_disparities_release_race_violent,    file = file.path(folder, "all_stackedcolumn_disparities_release_race_violent.rds"))
+
+  save(all_stackedcolumn_disparities_release_gender,          file = file.path(folder, "all_stackedcolumn_disparities_release_gender.rds"))
+  save(all_stackedcolumn_disparities_release_gender_violent,  file = file.path(folder, "all_stackedcolumn_disparities_release_gender_violent.rds"))
+
+  save(all_stackedcolumn_disparities_release_agerlse,         file = file.path(folder, "all_stackedcolumn_disparities_release_agerlse.rds"))
+  save(all_stackedcolumn_disparities_release_agerlse_violent, file = file.path(folder, "all_stackedcolumn_disparities_release_agerlse_violent.rds"))
+
+  save(rri_in_prison_data,                                    file = file.path(folder, "rri_in_prison_data.rds"))
 
 }
 
