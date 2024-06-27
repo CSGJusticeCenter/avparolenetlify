@@ -37,10 +37,7 @@ library(cowplot)
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated individuals. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be released from state prison.
 
-<br>
-
-Map 1 (States with Parole Boards/Discretion) | Map 2 (States that Abolished Parole)
-
+![Combined Map](combined_map_high_res.png)
 <br>
 
 # People in Prison Past Their Parole Eligibility Date

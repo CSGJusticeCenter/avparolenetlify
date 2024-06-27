@@ -96,7 +96,81 @@ map_percent_data <- filtered_parole_elig_table_analysis_year %>%
 
 
 
+library(sf)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(cowplot)
+library(jsonlite)
 
+# Load the shapefile
+hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/us_states_hexgrid.geojson")) %>%
+  select(state_abb = iso3166_2) %>%
+  filter(state_abb != "DC") %>%
+  st_transform(3857)
+
+# Convert to a data frame for manipulation
+hex_gj_df <- st_as_sf(hex_gj) %>%
+  mutate(state = state.name[match(state_abb, state.abb)])
+
+# Convert parole_info_by_state_clean to a data frame
+parole_info_by_state_clean <- as.data.frame(parole_info_by_state_clean)
+
+# Join with hex data
+hex_data <- hex_gj_df %>%
+  left_join(parole_info_by_state_clean, by = "state")
+
+# Define colors
+highlight_colors <- c("No" = colors$red, "Yes" = colors$blue)
+other_color <- "white"
+
+# Base plot with gray tiles
+base_plot <- ggplot() +
+  geom_sf(data = hex_data, aes(geometry = geometry), fill = other_color, color = "black") +
+  theme_void() +
+  theme(
+    legend.position = "none",
+    text = element_text(family = "Graphik")
+  )
+
+# Map for states that have not abolished discretionary parole
+map1 <- base_plot +
+  geom_sf(data = hex_data %>% filter(abolished_discretionary_parole == "No"), aes(fill = abolished_discretionary_parole), color = "black") +
+  # labs(
+  #   title = "32",
+  #   subtitle = "States with Parole\nand Parole Boards"
+  # ) +
+  scale_fill_manual(values = highlight_colors) +
+  theme(
+    plot.title = element_text(size = 32, hjust = 0.5),
+    plot.subtitle = element_text(size = 16, hjust = 0.5)
+  )
+
+# Map for states that have abolished discretionary parole
+map2 <- base_plot +
+  geom_sf(data = hex_data %>% filter(abolished_discretionary_parole == "Yes"), aes(fill = abolished_discretionary_parole), color = "black") +
+  # labs(
+  #   title = "16",
+  #   subtitle = "States that Discretionary\nAbolished Parole"
+  # ) +
+  scale_fill_manual(values = highlight_colors) +
+  theme(
+    plot.title = element_text(size = 32, hjust = 0.5),
+    plot.subtitle = element_text(size = 16, hjust = 0.5)
+  )
+
+# Arrange the two maps side by side
+combined_map <- plot_grid(map1, map2, ncol = 2)
+print(combined_map)
+
+
+
+
+# Define the file path for the high-resolution image
+output_file <- "combined_map_high_res.png"
+
+# Save the combined map
+ggsave(filename = output_file, plot = combined_map, width = 20, height = 10, dpi = 300)
 
 #------ Save Data ------#
 
