@@ -1,5 +1,5 @@
 ---
-title: "National Trends" 
+title: "The Discretionary Power of Parole" 
 format:
   html:
     css: styles.css
@@ -19,254 +19,95 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
-source("prep/library.R")
-source("prep/functions.R")
-source("prep/dataframes.R")
+source("R/config.R")
+
+# Load prepared data
+load(file = paste0(config$sp_data_path, "/data/analysis/app/filtered_parole_elig_table_analysis_year.rds"))
+
+num_people_current <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)
+
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(cowplot)
+
+
 ```
-
-```{r}
-page_summary <- "Although 16 states have abolished parole release -- except for people whose crimes preceded abolition -- most states rely on a paroling authority’s discretion to determine the actual timing of release for each person from prison, which then determines the overall prison population. The analysis shows that this discretion, cumulated across 34 states, accounts for at least 88,000 people currently in prison; over 35,000 people are in Texas alone. Nationally another 123,000 people will become eligible over the next one to five years. This analysis relies on support from Arnold Ventures, the NCRP and BJS data sources, and descriptions of parole release discretion in two series of publications from the Robina Institute."
-  
-num_people_current   <- sum(parole_eligibility_table_select_year$current_count, na.rm = TRUE)
-num_people_1_5_years <- sum(parole_eligibility_table_select_year$future_1_5_years_count, na.rm = TRUE)
-```
-
-::: narrow-section
-
 <br>
 <div id="body-section">
-<div id="regular-text">
-Although 16 states have abolished parole release -- except for people whose crimes preceded abolition<sup>1</sup> -- most states rely on a paroling authority’s discretion to determine the actual timing of release for each person from prison, which then determines the overall prison population. The analysis shows that this discretion, cumulated across 34 states, accounts for at least 88,000 people currently in prison; over 35,000 people are in Texas alone. Nationally another 123,000 people will become eligible over the next one to five years. This analysis relies on support from Arnold Ventures, the NCRP and BJS data sources, and descriptions of parole release discretion in two series of publications from the Robina Institute.<sup>2</sup>
+In the United States, parole boards hold significant power over the lives of incarcerated individuals. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be released from state prison.
+
+<br>
+
+Map 1 (States with Parole Boards/Discretion) | Map 2 (States that Abolished Parole)
+
+<br>
+
+# People in Prison Past Their Parole Eligibility Date
+
+A significant number of individuals remain in prison past their parole eligibility date, highlighting the critical role that parole boards play in determining the timing of release. Nationally, over 88,000 people are in prison despite being eligible for parole, with substantial variations across states.
+
+<br>
+
+# Map Explorer
+
+Explore the map to see the percentage and number of individuals in prison past their parole eligibility date in each state during 2020. Toggle between viewing data based on the percentage of the overall prison population or the actual number of people in prison past their parole eligibility date.
+
+Map 1 (Count) | Map 2 (%)
+
+
+
+<br>
+
+# The Discretionary Power of Parole Boards
+
+Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting over 10,000 people awaiting parole. This concentration of power highlights the need for transparency and consistency in the parole decision-making process.
+
+<br>
+
+An infographic showing a small group of parole board members (e.g., 5-10 figures) contrasted with a large group of incarcerated individuals (e.g., 10,000 figures).
+
+<br>
+
+Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
+
+<br>
+
+
+# Disparities in Parole Decisions
+
+Research indicates significant racial, ethnic, and gender disparities in parole decisions. Black and Hispanic individuals are less likely to be granted parole compared to their white counterparts. Gender disparities also exist, with women facing different challenges and rates of releases to parole compared to men.  
+
+ 
+
+
+<br>
+
+# Impact on Recidivism
+
+Studies indicate that timely parole can reduce recidivism rates. People who are granted parole and receive proper support are less likely to re-offend.
+
+
+
+
+<br>
+
+# Economic Impact of Parole
+
+Effective parole systems can reduce incarceration costs and improve economic outcomes for individuals and communities.  
+<br>
+
+If incarceration costs and marginal costs are available, show them here. Graph with potential cost savings?
+
+<br>
+
+
 </div>
-</div>
 <br>
 
-```{r}
-# combine info in one row and center
-# highlighted national trends numbers
-htmltools::div(
-  style = "display:flex; flex-direction: row; justify-content: center; align-items: center;",
-  div(
-    style = "text-align: center; margin-right: 10em;",
-    div(
-      id = "highlight-text", 
-      formattable::comma(num_people_current, digits = 0)
-    ),
-    div(
-      HTML("In Prison Past Their<br>Parole Eligibility Date"),
-      id = "bold-text"
-    )
-  ),
-  div(
-    style = "text-align: center;",
-    div(
-      id = "highlight-text", 
-      formattable::comma(num_people_1_5_years, digits = 0)
-    ),
-    div(
-      HTML("Eligible for Parole<br>in 1-5 Years"),
-      id = "bold-text"
-    )
-  )
-)
-```
-:::
-
-<br>
-
-```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Map Explorer"), br(),
-    div(id = "regular-text", "These maps show the percentage and number of individuals in prison past their parole eligibility date in each state during 2020. Toggle between viewing data based on the percentage of these individuals of the overall prison population or the actual number of people in priso past their parole eligibility date."), br()
-    )
-```
-
-::: {.panel-tabset .tabmap}
-
-## Percentage of People
-```{r}
-map_percent %>% 
-  hc_size(height = 550) %>% 
-  hc_title(text = paste0("The Percentage of People in Prison Past<br>Their Parole Eligibility Date in", select_year)) %>% 
-    hc_exporting(enabled = TRUE,
-               buttons = list(contextButton = list(align = 'right',
-                                                   verticalAlign = 'top',
-                                                   y = 0,
-                                                   x = -50))) 
-```
-
-## Number of People
-```{r}
-map_count %>% 
-  hc_size(height = 550) %>% 
-    hc_title(text = paste0("The Number of People who were in Prison Past<br>Their Parole Eligibility Date in ", select_year)) %>% 
-    hc_exporting(enabled = TRUE,
-               buttons = list(contextButton = list(align = 'right',
-                                                   verticalAlign = 'top',
-                                                   y = 0,
-                                                   x = 0))) 
-```
-
-:::
-
-```{r}
-div(id = "body-section", br(),
-    div(id = "note-text", "Note: NCRP Data is from 2020. The people in prison past their parole eligibility date only includes people with sentence lengths ranging between 1 to 24.99 years and who were incarcerated for a new court commitment (i.e., not including those who have been released and then revoked back to prison). States missing 100 percent of the NCRP data are depicted as “missing data” but many other states are missing a substantial portion of parole eligibility data."), br()
-    )
-```
-
-```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Other National Visualization Ideas"), br(),
-    div(id = "regular-text", "Disparity Infographics: National disparities for race, ethnicity, and gender"), br(),
-    div(id = "regular-text", "Highlighted Finding: Average length of time people are incarcerated after their parole eligibility date."), br(),
-    div(id = "regular-text", "Table: Simple table showing parole-eligible prison populations by state"), br()
-    )
-```
 
 
-<br>
 
-```{r}
-div(id = "body-section", br(),
-    div(id = "big-section-title", "Parole Eligibility Data by State (will simplify)"), br(),
-    div(id = "regular-text", "
-The table provides a comprehensive overview of state-by-state data on the number of people in prison and their parole eligibility status, including the percentage of individuals currently eligible for parole, those who will be eligible in the next 1-5 years, and the proportion for which parole eligibility data is missing or low, due to the abolition of parole release or lack of data in certain states."), br(),
-    div(id = "regular-text", "Total Population = total prison population, Total Prison Population (1 to 24.99 Year Sentences) = total prison population in prison for a new court commitment and sentence lengths between 1 to 24.99 years, currently eligible for parole/eligible for parole in the next 1-5 years/missing parole eligibility data = only for people in prison for a new court commitment and sentence lengths between 1 to 24.99 years."),
-br())
-```
 
-::: table-container
-```{r}
-# Get parole eligibility information
-parole_info_by_state_clean <- parole_info_by_state %>%
-  select(state, abolished_discretionary_parole)
 
-# Prepare the table data
-table_data <- parole_eligibility_table_select_year %>%
-  left_join(parole_info_by_state_clean, by = "state") %>%
-  select(
-    state,
-    abolished_discretionary_parole,
-    yearendpop,
-    yearendpop_125years_new_crime,
-    current_count,
-    current_perc,
-    future_1_5_years_count,
-    future_1_5_years_perc,
-    missing_count,
-    missing_perc
-  )
 
-# Define common column styles
-common_col_style <- list(
-  position = "sticky",
-  borderRight = "1px solid #d3d3d3"
-)
-
-# Create reactable
-reactable(
-  table_data,
-  style = reactable_style,
-  theme = reactable_theme,
-
-  # Default Column Definitions
-  defaultColDef = colDef(
-    format = colFormat(separators = TRUE),
-    align = "right",
-    minWidth = 90
-  ),
-
-  # Table options
-  compact = TRUE,
-  fullWidth = FALSE,
-  defaultPageSize = 50,
-
-  # Column Grouping
-  columnGroups = list(
-    colGroup(
-      name = "Currently Eligible for Parole",
-      columns = c("current_perc", "current_count")
-    ),
-    colGroup(
-      name = "Eligible for Parole in the Next 1-5 Years",
-      columns = c("future_1_5_years_perc", "future_1_5_years_count")
-    ),
-    colGroup(
-      name = "Missing Parole Eligibility Data",
-      columns = c("missing_perc", "missing_count")
-    )
-  ),
-
-  # Individual Column Definitions
-  columns = list(
-    state = colDef(
-      name = "State",
-      minWidth = 120,
-      align = "left",
-      style = list(fontWeight = "bold")
-    ),
-    abolished_discretionary_parole = colDef(
-      name = "Abolished Parole Release",
-      minWidth = 100
-    ),
-    yearendpop = colDef(
-      name = "Total Prison Population",
-      minWidth = 120,
-      headerStyle = list(fontWeight = "bold")
-    ),
-    yearendpop_125years_new_crime = colDef(
-      name = "Total Prison Population (1 to 24.99 Year Sentences)",
-      minWidth = 140,
-      style = common_col_style,
-      headerStyle = list(fontWeight = "bold")
-    ),
-    current_perc = colDef(
-      name = "Percent of Prison Population",
-      format = colFormat(percent = TRUE, digits = 1),
-      style = common_col_style,
-      headerStyle = list(fontWeight = "normal")
-    ),
-    future_1_5_years_perc = colDef(
-      name = "Percent of Prison Population",
-      format = colFormat(percent = TRUE, digits = 1),
-      style = common_col_style,
-      headerStyle = list(fontWeight = "normal")
-    ),
-    missing_perc = colDef(
-      name = "Percent of Prison Population",
-      format = colFormat(percent = TRUE, digits = 1),
-      headerStyle = list(fontWeight = "normal")
-    ),
-    current_count = colDef(
-      name = "Number of People",
-      headerStyle = list(fontWeight = "normal")
-    ),
-    future_1_5_years_count = colDef(
-      name = "Number of People",
-      headerStyle = list(fontWeight = "normal")
-    ),
-    missing_count = colDef(
-      name = "Number of People",
-      headerStyle = list(fontWeight = "normal")
-    )
-  )
-)
-```
-
-:::
-
-<br><br><br>
-
-::: citation-section
-**Citations:** 
-
-1. We refer to the pre-abolition parole eligible people as “legacy” cases. Some of the parole abolition states continue to reflect this legacy group in their data, e.g., Indiana with 655 people or 2 percent of the prison population; other abolition states likely have such a legacy group but do not reflect it in their data, e.g., Ohio. 
-<br>
-2. Alper, Mariel E., et al. “Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States.” Robina Institute of Criminal Law and Criminal Justice, 13 May 2022, [robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states](robinainstitute.umn.edu/publications/profiles-parole-release-and-revocation-examining-legal-framework-united-states); and 
-Kevin R. Reitz, Allegra Lukac and Edward E. Rhine, “Prison-Release Discretion and Prison Population Size State Reports,” Robina Institute of Criminal Law and Criminal Justice, 2023, [https://robinainstitute.umn.edu/publications/prison-release-discretion-and-prison-population-size-state-reports](https://robinainstitute.umn.edu/publications/prison-release-discretion-and-prison-population-size-state-reports). 
-<br>
-3. Carson, Ann E. "Prisoners in 2020 – Statistical Tables." Bureau of Justice Statistics, 1 Dec. 2020, [bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables](bjs.ojp.gov/library/publications/prisoners-2020-statistical-tables).
-<br>
-4. United States. Bureau of Justice Statistics. National Corrections Reporting Program, 1991-2020: Selected Variables. Inter-university Consortium for Political and Social Research [distributor], 2022-11-28. [https://doi.org/10.3886/ICPSR38492.v1](https://doi.org/10.3886/ICPSR38492.v1). 
-:::

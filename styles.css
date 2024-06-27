@@ -1,3 +1,160 @@
+
+
+/******************************************************************************/
+/* Overview */
+/******************************************************************************/
+
+/* Center align headers */
+h1, h2, h3, h4, h5, h6 {
+  text-align: center;
+}
+
+/* General mobile-friendly adjustments */
+body {
+  max-width: 1200px; /* set the maximum width */
+  margin: 0 auto; /* center the content horizontally */
+  line-height: 1.6;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+table th, table td {
+  padding: 0.5em;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  table, th, td {
+    font-size: 0.9em;
+  }
+}
+
+/* Adjusting code blocks for mobile */
+pre {
+  white-space: pre-wrap;       /* CSS3 */
+  white-space: -moz-pre-wrap;  /* Firefox */
+  white-space: -pre-wrap;      /* Opera <7 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* IE */
+}
+
+/* Navigation adjustments for mobile */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  background-color: #333;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5em 1em;
+}
+
+nav a:hover {
+  background-color: #575757;
+}
+
+/* Footer adjustments for mobile */
+footer {
+  text-align: center;
+  padding: 1em 0;
+  background-color: #333;
+  color: white;
+}
+
+footer a {
+  color: white;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* add fonts*/
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/Graphik.ttf");
+}
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/GraphikBold.ttf");
+  font-weight: bold;
+}
+
+
+/* remove rounded edges everything */
+*{
+  border-radius: 0!important;
+}
+
+/* change font throughout website */
+html,
+body {
+  font-family: 'Graphik', sans-serif;
+  color: black!important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .nav-tabs {
   border-bottom: 1px solid #fff;
   justify-content: center;
@@ -254,38 +411,6 @@
     height: 500px;
 }
 
-/******************************************************************************/
-/* Overview */
-/******************************************************************************/
-
-body {
-  max-width: 1200px; /* set the maximum width */
-  margin: 0 auto; /* center the content horizontally */
-}
-
-/* add fonts*/
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/Graphik.ttf");
-}
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/GraphikBold.ttf");
-  font-weight: bold;
-}
-
-
-/* remove rounded edges everything */
-*{
-  border-radius: 0!important;
-}
-
-/* change font throughout website */
-html,
-body {
-  font-family: 'Graphik', sans-serif;
-  color: black!important;
-}
 
 
 

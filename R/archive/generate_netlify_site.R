@@ -78,7 +78,7 @@ sink()
 #-------------------------------------------------------------------------------
 
 # Add logs to see how the code is run
-sink("logs.txt", append = TRUE, split = TRUE)
+sink("logs.txt")
 
 # Generate the site using saved data and visualizations:
 source("prep/library.R") # ACTION REQUIRED BY NEW USER
