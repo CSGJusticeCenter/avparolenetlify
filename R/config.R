@@ -40,10 +40,10 @@
 #------ Load Packages ------#
 
 required_packages <- c(
-  "csgjcr", "dplyr", "ggplot2", "janitor", "highcharter", "tidyverse",
+  "csgjcr", "dplyr", "ggplot2", "janitor", "tidyverse", "highcharter",
   "reactable", "sysfonts", "extrafont", "showtext", "htmlwidgets",
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
-  "broom.helpers", "sjPlot", "rmarkdown"
+  "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite"
 )
 
 lapply(required_packages, library, character.only = TRUE)

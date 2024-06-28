@@ -1,3 +1,5 @@
+
+
 /******************************************************************************/
 /* Overview */
 /******************************************************************************/
@@ -9,8 +11,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* General mobile-friendly adjustments */
 body {
-  max-width: 900px; /* Adjust the maximum width for the content container */
-  margin: 0 auto; /* Center the content horizontally */
+  max-width: 1200px; /* set the maximum width */
+  margin: 0 auto; /* center the content horizontally */
   line-height: 1.6;
   padding: 0;
   box-sizing: border-box;
@@ -18,9 +20,8 @@ body {
 
 .container {
   width: 100%;
-  max-width: 900px; /* Adjust the maximum width for the content container */
   margin: 0 auto;
-  padding: 0 15px; /* Adjust padding for smaller screens */
+  padding: 0 15px;
 }
 
 /* Responsive images */
@@ -42,7 +43,7 @@ table th, table td {
   text-align: left;
 }
 
-/* Responsive layout adjustments */
+/* Responsive layout */
 @media (max-width: 768px) {
   .container {
     padding: 0 10px;
@@ -85,7 +86,7 @@ nav a:hover {
 /* Footer adjustments for mobile */
 footer {
   text-align: center;
-  padding: 1em 0.5em; /* Add more padding for better spacing */
+  padding: 1em 0;
   background-color: #333;
   color: white;
 }
@@ -122,6 +123,37 @@ body {
   font-family: 'Graphik', sans-serif;
   color: black!important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .nav-tabs {
   border-bottom: 1px solid #fff;
@@ -173,26 +205,6 @@ body {
 .panel-tabset .tab-content .tab-pane {
     height: 1200px;
 }
-
-#narrow-section {
-  max-width: 750px;
-  margin: 0 auto; /* Center the narrow section horizontally */
-  text-align: center; /* Center align text inside the narrow section */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -595,13 +607,24 @@ body {
 /******************************************************************************/
 
 /* highlights at the top of state report */
-.grid-container1 {
+.grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, auto);
   gap: 10px;
 }
 
+.narrow-section {
+  max-width: 750px;
+  min-height: 100px;
+  margin: 0 auto;
+}
+
+.highlight-section {
+  max-width: 400px;
+  max-height: 100px;
+  margin: 0 auto;
+}
 
 .citation-section {
   max-width: 750px;
@@ -613,7 +636,10 @@ body {
   color: black
 }
 
-
+#body-section{
+  max-width: 700px;
+  margin: 0 auto; /* center the content horizontally */
+}
 
 #visualization{
   margin-top: 0em;

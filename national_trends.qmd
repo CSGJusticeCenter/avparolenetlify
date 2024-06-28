@@ -23,15 +23,19 @@ source("R/config.R")
 
 # Load prepared data
 load(file = paste0(config$sp_data_path, "/data/analysis/app/filtered_parole_elig_table_analysis_year.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 
 num_people_current <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)
 
-library(tidyverse)
-library(sf)
-library(ggplot2)
-library(cowplot)
-
-
+# <div id="wide-section">
+# </div>
+# <style>
+# @media (max-width: 768px) {
+#   #wide-section {
+#     display: none; /* Hide wide-section on mobile */
+#   }
+# }
+# </style>
 ```
 <br>
 <div id="body-section">
@@ -44,16 +48,40 @@ In the United States, parole boards hold significant power over the lives of inc
 
 A significant number of individuals remain in prison past their parole eligibility date, highlighting the critical role that parole boards play in determining the timing of release. Nationally, over 88,000 people are in prison despite being eligible for parole, with substantial variations across states.
 
+</div>
+
+<div id="narrow-section">
+
+```{r}
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(2, 1fr);",
+  div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
+  div(id = "highlight-text", "PEOPLE ICONS"),
+  div(id = "bold-text", HTML("People in Prison Past Their<br>Parole Eligibility Date")),
+  div(id = "bold-text", HTML("1 in X People are in Prison Past<br>Their Parole Eligibility Date"))
+)
+```
+</div>
+
 <br>
 
-# Map Explorer
+```{r}
+map_percent %>% 
+  hc_size(height = 700) %>% 
+  hc_title(text = paste0("Proportion of People in Prison Past Their Parole Eligibility Date in ", analysis_year)) %>% 
+    hc_exporting(enabled = TRUE,
+               buttons = list(contextButton = list(align = 'right',
+                                                   verticalAlign = 'top',
+                                                   y = 0,
+                                                   x = -10))) 
 
-Explore the map to see the percentage and number of individuals in prison past their parole eligibility date in each state during 2020. Toggle between viewing data based on the percentage of the overall prison population or the actual number of people in prison past their parole eligibility date.
-
-Map 1 (Count) | Map 2 (%)
+```
 
 
 
+
+<div id="body-section">
 <br>
 
 # The Discretionary Power of Parole Boards
