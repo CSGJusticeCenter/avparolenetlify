@@ -78,19 +78,17 @@ map_percent %>%
 </div>
 
 <div id="body-section">
-<br>
 
-# The Discretionary Power of Parole Boards
+# The Power of Parole Boards
 
-Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting over 10,000 people awaiting parole. This concentration of power highlights the need for transparency and consistency in the parole decision-making process.
+<div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+  <p><br>
+    Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting over XX,XXX people awaiting parole.<br><br>This concentration of power highlights the need for transparency and consistency in the parole decision-making process.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
+  </p><br>
+  ![](square_dot_parole_graphic.png)
+</div>
 
-<br>
 
-An infographic showing a small group of parole board members (e.g., 5-10 figures) contrasted with a large group of incarcerated individuals (e.g., 10,000 figures).
-
-<br>
-
-Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
 
 <br>
 
