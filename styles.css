@@ -180,7 +180,11 @@ body {
   text-align: center; /* Center align text inside the narrow section */
 }
 
-
+#map-section {
+  max-width: 1200px;
+  margin: 0 auto; /* Center the narrow section horizontally */
+  text-align: center; /* Center align text inside the narrow section */
+}
 
 
 

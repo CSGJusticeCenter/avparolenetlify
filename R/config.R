@@ -83,12 +83,27 @@ options(highcharter.lang = hcoptslang)
 
 #------ Colors ------#
 
+# Michael colors
+# colors <- list(
+#   lightgray = "#d7d7d7",
+#   darkgray  = "#969696",
+#   purple    = "#938ebf", # primary color
+#   red       = "#d46c55", # primary color
+#   blue      = "#55b4e5", # primary color
+#   yellow    = "#decf64", # primary color
+#   green1    = "#b1d4d5",
+#   green2    = "#49a7a1",
+#   green3    = "#176f6d", # primary color
+#   green4    = "#104040",
+#   brown     = "#9e6c10"  # primary color
+# )
+
 colors <- list(
   lightgray = "#d7d7d7",
   darkgray  = "#969696",
   purple    = "#938ebf", # primary color
-  red       = "#d46c55", # primary color
-  blue      = "#55b4e5", # primary color
+  red       = "#F05039", # primary color
+  blue      = "#1F449C", # primary color
   yellow    = "#decf64", # primary color
   green1    = "#b1d4d5",
   green2    = "#49a7a1",
@@ -96,6 +111,7 @@ colors <- list(
   green4    = "#104040",
   brown     = "#9e6c10"  # primary color
 )
+
 
 # Usage Example:
 # ggplot(data, aes(x, y)) +

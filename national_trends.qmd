@@ -39,47 +39,43 @@ num_people_current <- sum(filtered_parole_elig_table_analysis_year$current_count
 ```
 <br>
 <div id="body-section">
-In the United States, parole boards hold significant power over the lives of incarcerated individuals. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be released from state prison.
+In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
-![Combined Map](combined_map_high_res.png)
-<br>
-
+```{r}
+#![Combined Map](combined_map_high_res.png)
 # People in Prison Past Their Parole Eligibility Date
+```
 
-A significant number of individuals remain in prison past their parole eligibility date, highlighting the critical role that parole boards play in determining the timing of release. Nationally, over 88,000 people are in prison despite being eligible for parole, with substantial variations across states.
+Nationally, over 88,000 people are in prison past their parole eligibility date, highlighting the critical role that parole boards play in determining the timing of release. 
 
 </div>
-
 <div id="narrow-section">
-
 ```{r}
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(2, 1fr);",
+  div(id = "highlight-text", "XX%"),
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
-  div(id = "highlight-text", "PEOPLE ICONS"),
-  div(id = "bold-text", HTML("People in Prison Past Their<br>Parole Eligibility Date")),
-  div(id = "bold-text", HTML("1 in X People are in Prison Past<br>Their Parole Eligibility Date"))
+  div(id = "bold-text", HTML("Proportion of People in Prison<br>Past Their Parole Eligibility Date")),
+  div(id = "bold-text", HTML("People in Prison<br>Past Their Parole Eligibility Date"))
 )
 ```
 </div>
-
 <br>
 
+<div id="map-section">
 ```{r}
 map_percent %>% 
-  hc_size(height = 700) %>% 
+  hc_size(height = 720) %>% 
   hc_title(text = paste0("Proportion of People in Prison Past Their Parole Eligibility Date in ", analysis_year)) %>% 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
                                                    y = 0,
-                                                   x = -10))) 
+                                                   x = -5))) 
 
 ```
-
-
-
+</div>
 
 <div id="body-section">
 <br>

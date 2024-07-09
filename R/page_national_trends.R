@@ -94,35 +94,28 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
          # create tooltips
          tooltip = case_when(all_na == TRUE & abolished_discretionary_parole == "No" ~
-                               paste0("<b>", state, "</b><br><br>",
-                                      "Parole eligibility data is not available.<br><br>",
-                                      "Total Prison Population:<br><b>",
-                                      formattable::comma(total_pop, digits = 0),
-                                      "<br><br><i>Click on the state to view the state report.</i></b>"),
+                               paste0("<b>", state, "<br><br>",
+                                      "Parole eligibility data is not available.</b><br><br>",
+                                      "<br>Click on the state to view the state report."),
 
                              all_na == TRUE & abolished_discretionary_parole == "Yes" ~
-                               paste0("<b>", state, "</b><br><br>",
-                                      state, " abolished discretionary parole.<br><br>",
-                                      "Total Prison Population:<br><b>",
-                                      formattable::comma(total_pop, digits = 0),
-                                      "<br><br><i>Click on the state to view the state report.</i></b>"),
+                               paste0("<b>", state, "<br><br>",
+                                      state, " abolished discretionary parole.</b><br><br>",
+                                      "<br>Click on the state to view the state report."),
 
                              all_na == FALSE & abolished_discretionary_parole == "Yes" ~
-                               paste0("<b>", state, "</b><br><br>",
-                                      state, " abolished discretionary parole.<br><br>",
-                                      "Total Prison Population:<br><b>",
-                                      formattable::comma(total_pop, digits = 0),
-                                      "<br><br><i>Click on the state to view the state report.</i></b>"),
+                               paste0("<b>", state, "<br><br>",
+                                      state, " abolished discretionary parole.</b><br><br>",
+                                      "<br>Click on the state to view the state report."),
 
                              all_na == FALSE & abolished_discretionary_parole == "No" ~
                                paste0("<b>", state, "</b><br><br>",
-                                      "Number of People in Prison<br> Currently Eligible for Parole Release:<br><b>",
+                                      "<b>People in Prison Past Their Parole Eligibility Date<br><br></b>",
+                                      "- Proportion of the Prison Population: <b>",
+                                      paste0(round(current_perc, 0), "%</b><br><br>"),
+                                      "- Number of People in Prison: <b>",
                                       paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
-                                      "Number of People in Prison<br> with Missing Parole Eligibility Data:<br><b>",
-                                      paste(formattable::comma(missing_count, 0), "</b>", sep = ""), "<br><br>",
-                                      "Total Prison Population:<br><b>",
-                                      formattable::comma(total_pop, digits = 0),
-                                      "<br><br><i>Click on the state to view the state report.</i></b>")
+                                      "<br>Click on the state to view the state report.")
          ),
 
          tooltip = str_replace_all(tooltip, "NA%", "No Data"),
@@ -186,8 +179,7 @@ map_data_breaks <- map_data |>
 map_data_breaks$url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", map_data_breaks$state)))
 
 
-map_percent <- highchart(#height = 600
-) |>
+map_percent <- highchart() |>
 
   hc_chart(marginTop = 60,
            marginBottom = 50,
@@ -204,13 +196,16 @@ map_percent <- highchart(#height = 600
                             '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
                             '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
     nullColor = colors$lightgray,
+    borderColor = "#FFFFFF",  # Set the outline color to white
+    borderWidth = 2,  # Set the outline width
     accessibility = list(
       enabled = TRUE,
       keyboardNavigation = list(enabled = TRUE),
       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}")),
     point = list(events = list(
       click = JS("function() { window.location.assign(this.url); }")
-    ))
+    )
+    )
   ) |>
 
   hc_colorAxis(dataClassColor="category",
@@ -242,9 +237,9 @@ map_percent <- highchart(#height = 600
     useHTML = TRUE,
     formatter = JS("function() {
           return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
-          '<div style=\"text-align:center;\">' +
+          '<div style=\"text-align:left;\">' +
           '<span style=\"font-weight:bold; font-size: 16px;\">' + this.point.state_abb + '</span><br>' +
-          '<span style=\"font-weight:normal; font-size: 12px;\">' + this.point.tooltip + '</span>' +
+          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
           '</div></div>';
     }")
   ) |>
@@ -273,6 +268,171 @@ map_percent <- highchart(#height = 600
   area = list(accessibility = list(description = paste0("TEXT")))
   )
 
+map_percent
+
+
+#------ Second Map ------#
+# gradient_colors <- c("#fee6ca", "#F05039")
+# gradient_colors <- c( "#49a7a1",  "#b1d4d5","#f7f7f7", "#938ebf", "#7b3294")
+# gradient_colors <- c("#d73027", "#fc8d59",  "#fee090","#e0f3f8", "#91bfdb", "#4575b4")
+
+# Prepare data for national maps
+map_data <- filtered_parole_elig_table_analysis_year |>
+
+  # add missing states
+  complete(state = all_states) |>
+
+  # add info about whether state abolished parole release
+  left_join(parole_info_by_state_clean, by = "state") |>
+
+  # Format data and create tooltip
+  mutate(
+    current_perc           = current_perc * 100,
+    future_1_5_years_perc  = future_1_5_years_perc * 100,
+    missing_perc           = missing_perc * 100,
+
+    state_abb = state.abb[match(state, state.name)],
+
+    all_na = ifelse(is.na(current_count) & is.na(future_1_5_years_count) & is.na(missing_count), TRUE, FALSE),
+
+    # Create tooltips
+    tooltip = case_when(
+      all_na == TRUE & abolished_discretionary_parole == "No" ~
+        paste0("<b>", state, "<br><br>",
+               "Parole eligibility data is not available.</b><br><br>",
+               "Click on the state to view the state report."),
+
+      all_na == TRUE & abolished_discretionary_parole == "Yes" ~
+        paste0("<b>", state, "<br><br>",
+               state, " abolished discretionary parole.</b><br><br>",
+               "Click on the state to view the state report."),
+
+      all_na == FALSE & abolished_discretionary_parole == "Yes" ~
+        paste0("<b>", state, "<br><br>",
+               state, " abolished discretionary parole.</b><br><br>",
+               "Click on the state to view the state report."),
+
+      all_na == FALSE & abolished_discretionary_parole == "No" ~
+        paste0("<b>", state, "</b><br><br>",
+               "<table style='border-collapse: collapse;'>",
+               "<tr style='border-bottom: 1px solid lightgray;'><td>In Prison Past Their Parole Eligibility Date</td></tr><br>",
+               "<tr style='border-bottom: 1px solid lightgray;'><td>Number of People</td><td>", format(current_count, big.mark = ","), "</td></tr>",
+               "<tr style='border-bottom: 1px solid lightgray;'><td>Proportion of People in Prison</td><td>", round(current_perc, 0), "%</td></tr>",
+               "</table><br>",
+               "Click on the state to view the state report.")
+    ),
+
+    tooltip = str_replace_all(tooltip, "NA%", "No Data"),
+    tooltip = str_replace_all(tooltip, "NA", "No Data")
+  ) |>
+
+  # create data labels
+  mutate(change_label = paste0(round(current_perc, 0), "%"),
+         change_label = str_replace_all(change_label, "NA%", "-"),
+
+         currentperclabel = paste0(round(current_perc, 0), "%"),
+         currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
+
+# Define the gradient colors for categories
+gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)  # Adjusted colors to match the example gradient
+
+# Calculate the breaks for the percent of people eligible for parole
+num_breaks <- length(gradient_colors) - 1
+breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+breaks[1] <- 0  # Set the first break to 0
+breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
+breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
+
+# Process map_data to include gradient color and data category
+map_data_breaks <- map_data |>
+  mutate(
+    all_na = ifelse(is.na(current_count) &
+                      is.na(future_1_5_years_count) & is.na(missing_count), TRUE, FALSE),
+    gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+    gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
+    current_perc = round(current_perc, 0)
+  )
+
+map_data_breaks$url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", map_data_breaks$state)))
+
+map_percent <- highchart() |>
+
+  hc_add_series_map(
+    map = hex_gj,
+    df = map_data_breaks,
+    joinBy = "state_abb",
+    value = "current_perc",
+    dataLabels = list(enabled = TRUE,
+                      useHTML = TRUE,
+                      formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+                            '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
+                            '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
+    nullColor = colors$lightgray,
+    borderColor = "#FFFFFF",  # Set the outline color to white
+    borderWidth = 2,  # Set the outline width
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}")),
+    point = list(events = list(
+      click = JS("function() { window.location.assign(this.url); }")
+    )
+    )
+  ) |>
+  hc_colorAxis(min = 0, max = max(map_data_breaks$current_perc)*1.2,
+               stops = color_stops(n = 5, colors = gradient_colors),
+               labels = list(
+                 formatter = JS("function() { return this.value + '%'; }")
+               )) |>
+
+  hc_legend(align = "center",
+            verticalAlign = "top",
+            layout = "horizontal",
+            symbolWidth = 250
+  ) |>
+
+  hc_xAxis(title = "") |>
+  hc_yAxis(title = "") |>
+
+  hc_tooltip(
+    borderWidth = 1,
+    borderRadius = 0,
+    backgroundColor = '#FFFFFF', # Fully opaque white background
+    outside = TRUE, # Ensure tooltip is rendered outside
+    useHTML = TRUE,
+    formatter = JS("function() {
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+          '<div style=\"text-align:left;\">' +
+          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+          '</div></div>';
+    }")
+  ) |>
+
+  hc_add_theme(hc_theme_map) |>
+
+  hc_plotOptions(series = list(
+    animation = FALSE,
+    cursor = "pointer",
+    borderWidth = 3,
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      pointDescriptionFormatter = JS("function(point) {
+        return 'State: ' + point.state_abb + ', Percentage: ' + point.currentperclabel;
+      }")
+    )
+  ),
+  accessibility = list(
+    enabled = TRUE,
+    keyboardNavigation = list(enabled = TRUE),
+    linkedDescription =
+      paste0("This map shows the proportion of people in prison who are past their parole eligibility date."),
+    landmarkVerbosity = "one"
+  ),
+  area = list(accessibility = list(description = paste0("TEXT")))
+  )
+
+map_percent <- map_percent|> hc_chart(marginTop = 0, marginBottom = 0)
 map_percent
 
 #------ Save Data ------#
@@ -305,6 +465,9 @@ parole_info_by_state_clean <- as.data.frame(parole_info_by_state_clean)
 hex_data <- hex_gj_df |>
   left_join(parole_info_by_state_clean, by = "state")
 
+# Calculate centroids for labeling
+centroids <- st_centroid(hex_data)
+
 # Define colors
 highlight_colors <- c("Yes" = colors$yellow, "No" = colors$green2)
 other_color <- "white"
@@ -325,9 +488,17 @@ map1 <- base_plot +
           aes(fill = abolished_discretionary_parole), color = "black") +
   scale_fill_manual(values = highlight_colors) +
   theme(
-    plot.title = element_text(size = 32, hjust = 0.5),
-    plot.subtitle = element_text(size = 16, hjust = 0.5)
-  )
+    plot.title = element_text(size = 72, hjust = 0.5),
+    plot.subtitle = element_text(size = 28, hjust = 0.5)
+  ) +
+  labs(
+    title = "32",
+    subtitle = "States Have Discretionary Parole"
+  ) +
+  geom_text(data = centroids |>
+              filter(abolished_discretionary_parole == "No"),
+            aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
+            size = 3, color = "black", fontface = "bold")
 
 # Map for states that have abolished discretionary parole
 map2 <- base_plot +
@@ -336,9 +507,18 @@ map2 <- base_plot +
           aes(fill = abolished_discretionary_parole), color = "black") +
   scale_fill_manual(values = highlight_colors) +
   theme(
-    plot.title = element_text(size = 32, hjust = 0.5),
-    plot.subtitle = element_text(size = 16, hjust = 0.5)
-  )
+    plot.title = element_text(size = 72, hjust = 0.5),
+    plot.subtitle = element_text(size = 28, hjust = 0.5)
+  ) +
+  labs(
+    title = "16",
+    subtitle = "States Abolished Discretionary Parole"
+  ) +
+  geom_text(data = centroids |>
+              filter(abolished_discretionary_parole == "Yes"),
+            aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
+            size = 3, color = "black", fontface = "bold")
+
 
 # Arrange the two maps side by side
 combined_map <- cowplot::plot_grid(map1, map2, ncol = 2)
