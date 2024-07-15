@@ -62,12 +62,11 @@ div(
 ```
 </div>
 <br>
-
+<div class="divider"></div>
 <div id="map-section">
 ```{r}
 map_percent %>% 
-  hc_size(height = 720) %>% 
-  hc_title(text = paste0("Proportion of People in Prison Past Their Parole Eligibility Date in ", analysis_year)) %>% 
+  hc_size(height = 730) %>% 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
@@ -78,12 +77,12 @@ map_percent %>%
 </div>
 
 <div id="body-section">
-
+<div class="divider"></div>
 # The Power of Parole Boards
 
-<div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+<div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
   <p><br>
-    Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting over XX,XXX people awaiting parole.<br><br>This concentration of power highlights the need for transparency and consistency in the parole decision-making process.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
+    Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>This concentration of power highlights the need for transparency and consistency in the parole decision-making process.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
   </p><br>
   ![](square_dot_parole_graphic.png)
 </div>
@@ -91,8 +90,7 @@ map_percent %>%
 
 
 <br>
-
-
+<div class="divider"></div>
 # Disparities in Parole Decisions
 
 Research indicates significant racial, ethnic, and gender disparities in parole decisions. Black and Hispanic individuals are less likely to be granted parole compared to their white counterparts. Gender disparities also exist, with women facing different challenges and rates of releases to parole compared to men.  
@@ -101,7 +99,7 @@ Research indicates significant racial, ethnic, and gender disparities in parole 
 
 
 <br>
-
+<div class="divider"></div>
 # Impact on Recidivism
 
 Studies indicate that timely parole can reduce recidivism rates. People who are granted parole and receive proper support are less likely to re-offend.
@@ -110,7 +108,7 @@ Studies indicate that timely parole can reduce recidivism rates. People who are 
 
 
 <br>
-
+<div class="divider"></div>
 # Economic Impact of Parole
 
 Effective parole systems can reduce incarceration costs and improve economic outcomes for individuals and communities.  

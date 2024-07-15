@@ -20,12 +20,12 @@
 # # Plot the graphic
 # ggplot(data, aes(x, y, color = color, size = size, alpha = alpha)) +
 #   geom_point() +
-#   scale_color_identity() +  # Use the color column directly
-#   scale_size_identity() +   # Use the size column directly
-#   scale_alpha_identity() +  # Use the alpha column directly
-#   theme_void() +  # Remove axis and background
-#   theme(aspect.ratio = 1) +  # Ensure the plot is square
-#   coord_fixed() + # Ensure the aspect ratio is fixed
+#   scale_color_identity() +
+#   scale_size_identity() +
+#   scale_alpha_identity() +
+#   theme_void() +
+#   theme(aspect.ratio = 1) +
+#   coord_fixed() +
 #   ggtitle("1 parole board member\nper XXX people in prison\neligible for parole") +
 #   theme(
 #     plot.title = element_text(hjust = 0.5, vjust = 5, face = "bold", size = 16),
@@ -37,7 +37,7 @@
 library(ggtext)
 
 # Set the number of surrounding dots
-n <- 5000
+n <- 500
 
 # Calculate the number of rows and columns for the grid
 grid_size <- ceiling(sqrt(n))
@@ -72,17 +72,17 @@ square_dot_parole_graphic <- ggplot(data, aes(x, y, color = color, size = size, 
   theme_void() +  # Remove axis and background
   theme(aspect.ratio = 1) +  # Ensure the plot is square
   coord_fixed() + # Ensure the aspect ratio is fixed
-  labs(title = "<span style='color:#F05039;'><b>1 parole board member</span></b><br>per 5,000 people in prison<br>eligible for parole") +
+  labs(title = "<span style='color:#F05039;'><b>1 parole board member</span></b><br>per 500 people in prison<br>eligible for parole") +
   theme(
     # plot.title = element_markdown(hjust = 0.5, vjust = -20, size = 16),
     plot.title = element_markdown(hjust = 0.5, margin = margin(b = 10), size = 16),
-    plot.margin = margin(t = 0, r = 0, b = 0, l = 0)
+    plot.margin = margin(t = 50, r = 0, b = 50, l = 0)
   )
 square_dot_parole_graphic
 
 # Save the combined map
 ggsave(filename =  "square_dot_parole_graphic.png", plot = square_dot_parole_graphic,
-       width  = 5, height = 5, dpi = 300)
+       width  = 5, height = 5, dpi = 600)
 
 
 # # SQUARE

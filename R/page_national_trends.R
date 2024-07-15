@@ -64,7 +64,7 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
 
 
 
-#------ Parole Eligibility Maps (%) ------#
+#------ Parole Eligibility Maps Data ------#
 
 # Create a vector of all state names
 all_states <- state.name
@@ -128,6 +128,8 @@ map_data <- filtered_parole_elig_table_analysis_year |>
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
+#------ Parole Eligibility Maps (%) ------#
+
 # Define the gradient colors for categories
 gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)
 
@@ -177,7 +179,6 @@ map_data_breaks <- map_data |>
 
 
 map_data_breaks$url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", map_data_breaks$state)))
-
 
 map_percent <- highchart() |>
 
@@ -313,13 +314,21 @@ map_data <- filtered_parole_elig_table_analysis_year |>
                "Click on the state to view the state report."),
 
       all_na == FALSE & abolished_discretionary_parole == "No" ~
-        paste0("<b>", state, "</b><br><br>",
-               "<table style='border-collapse: collapse;'>",
-               "<tr style='border-bottom: 1px solid lightgray;'><td>In Prison Past Their Parole Eligibility Date</td></tr><br>",
-               "<tr style='border-bottom: 1px solid lightgray;'><td>Number of People</td><td>", format(current_count, big.mark = ","), "</td></tr>",
-               "<tr style='border-bottom: 1px solid lightgray;'><td>Proportion of People in Prison</td><td>", round(current_perc, 0), "%</td></tr>",
-               "</table><br>",
-               "Click on the state to view the state report.")
+        # paste0("<b>", state, "</b><br><br>",
+        #        "<b>People in Prison Past Their Parole Eligibility Date<br><br></b>",
+        #        "- Proportion of the Prison Population: <b>",
+        #        paste0(round(current_perc, 0), "%</b><br><br>"),
+        #        "- Number of People in Prison: <b>",
+        #        paste(formattable::comma(current_count, 0), "</b>", sep = ""), "<br><br>",
+        #        "<br>Click on the state to view the state report.")
+        paste0("<b>", state, "</b><br>",
+               "<b>People in Prison Past Their Parole Eligibility Date</b><br>",
+               "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
+               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Proportion of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+               paste0(round(current_perc, 0), "%</b></td></tr>",
+                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>- Number of People in Prison:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+                      paste(formattable::comma(current_count, 0), "</b></td></tr></table>",
+                            "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>")))
     ),
 
     tooltip = str_replace_all(tooltip, "NA%", "No Data"),
@@ -379,16 +388,20 @@ map_percent <- highchart() |>
     )
     )
   ) |>
+
   hc_colorAxis(min = 0, max = max(map_data_breaks$current_perc)*1.2,
                stops = color_stops(n = 5, colors = gradient_colors),
                labels = list(
                  formatter = JS("function() { return this.value + '%'; }")
                )) |>
 
-  hc_legend(align = "center",
+  hc_legend(align = "left",
             verticalAlign = "top",
             layout = "horizontal",
-            symbolWidth = 250
+            symbolWidth = 250,
+            x = -7,
+            title = list(text = "Pct. of People in Prison Past Their Parole Eligibility Date",
+                         style = list(fontWeight = "bold", fontSize = "12px"))
   ) |>
 
   hc_xAxis(title = "") |>
@@ -430,7 +443,9 @@ map_percent <- highchart() |>
     landmarkVerbosity = "one"
   ),
   area = list(accessibility = list(description = paste0("TEXT")))
-  )
+  ) |>
+  hc_title(text = paste0("People in Prison Past Their Parole Eligibility Date in ", analysis_year),
+           align = "left")
 
 map_percent <- map_percent|> hc_chart(marginTop = 0, marginBottom = 0)
 map_percent
@@ -448,83 +463,83 @@ for (folder in theseFOLDERS){
 
 
 
-# Load the shapefile
-hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/us_states_hexgrid.geojson")) |>
-  select(state_abb = iso3166_2) |>
-  filter(state_abb != "DC") |>
-  st_transform(3857)
-
-# Convert to a data frame for manipulation
-hex_gj_df <- st_as_sf(hex_gj) |>
-  mutate(state = state.name[match(state_abb, state.abb)])
-
-# Convert parole_info_by_state_clean to a data frame
-parole_info_by_state_clean <- as.data.frame(parole_info_by_state_clean)
-
-# Join with hex data
-hex_data <- hex_gj_df |>
-  left_join(parole_info_by_state_clean, by = "state")
-
-# Calculate centroids for labeling
-centroids <- st_centroid(hex_data)
-
-# Define colors
-highlight_colors <- c("Yes" = colors$yellow, "No" = colors$green2)
-other_color <- "white"
-
-# Base plot with gray tiles
-base_plot <- ggplot() +
-  geom_sf(data = hex_data, aes(geometry = geometry), fill = other_color, color = "black") +
-  theme_void() +
-  theme(
-    legend.position = "none",
-    text = element_text(family = "Graphik")
-  )
-
-# Map for states that have not abolished discretionary parole
-map1 <- base_plot +
-  geom_sf(data = hex_data |>
-            filter(abolished_discretionary_parole == "No"),
-          aes(fill = abolished_discretionary_parole), color = "black") +
-  scale_fill_manual(values = highlight_colors) +
-  theme(
-    plot.title = element_text(size = 72, hjust = 0.5),
-    plot.subtitle = element_text(size = 28, hjust = 0.5)
-  ) +
-  labs(
-    title = "32",
-    subtitle = "States Have Discretionary Parole"
-  ) +
-  geom_text(data = centroids |>
-              filter(abolished_discretionary_parole == "No"),
-            aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
-            size = 3, color = "black", fontface = "bold")
-
-# Map for states that have abolished discretionary parole
-map2 <- base_plot +
-  geom_sf(data = hex_data |>
-            filter(abolished_discretionary_parole == "Yes"),
-          aes(fill = abolished_discretionary_parole), color = "black") +
-  scale_fill_manual(values = highlight_colors) +
-  theme(
-    plot.title = element_text(size = 72, hjust = 0.5),
-    plot.subtitle = element_text(size = 28, hjust = 0.5)
-  ) +
-  labs(
-    title = "16",
-    subtitle = "States Abolished Discretionary Parole"
-  ) +
-  geom_text(data = centroids |>
-              filter(abolished_discretionary_parole == "Yes"),
-            aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
-            size = 3, color = "black", fontface = "bold")
-
-
-# Arrange the two maps side by side
-combined_map <- cowplot::plot_grid(map1, map2, ncol = 2)
-
-# Save the combined map
-ggsave(filename =  "combined_map_high_res.png", plot = combined_map, width = 20, height = 10, dpi = 300)
+# # Load the shapefile
+# hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/us_states_hexgrid.geojson")) |>
+#   select(state_abb = iso3166_2) |>
+#   filter(state_abb != "DC") |>
+#   st_transform(3857)
+#
+# # Convert to a data frame for manipulation
+# hex_gj_df <- st_as_sf(hex_gj) |>
+#   mutate(state = state.name[match(state_abb, state.abb)])
+#
+# # Convert parole_info_by_state_clean to a data frame
+# parole_info_by_state_clean <- as.data.frame(parole_info_by_state_clean)
+#
+# # Join with hex data
+# hex_data <- hex_gj_df |>
+#   left_join(parole_info_by_state_clean, by = "state")
+#
+# # Calculate centroids for labeling
+# centroids <- st_centroid(hex_data)
+#
+# # Define colors
+# highlight_colors <- c("Yes" = colors$yellow, "No" = colors$green2)
+# other_color <- "white"
+#
+# # Base plot with gray tiles
+# base_plot <- ggplot() +
+#   geom_sf(data = hex_data, aes(geometry = geometry), fill = other_color, color = "black") +
+#   theme_void() +
+#   theme(
+#     legend.position = "none",
+#     text = element_text(family = "Graphik")
+#   )
+#
+# # Map for states that have not abolished discretionary parole
+# map1 <- base_plot +
+#   geom_sf(data = hex_data |>
+#             filter(abolished_discretionary_parole == "No"),
+#           aes(fill = abolished_discretionary_parole), color = "black") +
+#   scale_fill_manual(values = highlight_colors) +
+#   theme(
+#     plot.title = element_text(size = 72, hjust = 0.5),
+#     plot.subtitle = element_text(size = 28, hjust = 0.5)
+#   ) +
+#   labs(
+#     title = "32",
+#     subtitle = "States Have Discretionary Parole"
+#   ) +
+#   geom_text(data = centroids |>
+#               filter(abolished_discretionary_parole == "No"),
+#             aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
+#             size = 3, color = "black", fontface = "bold")
+#
+# # Map for states that have abolished discretionary parole
+# map2 <- base_plot +
+#   geom_sf(data = hex_data |>
+#             filter(abolished_discretionary_parole == "Yes"),
+#           aes(fill = abolished_discretionary_parole), color = "black") +
+#   scale_fill_manual(values = highlight_colors) +
+#   theme(
+#     plot.title = element_text(size = 72, hjust = 0.5),
+#     plot.subtitle = element_text(size = 28, hjust = 0.5)
+#   ) +
+#   labs(
+#     title = "16",
+#     subtitle = "States Abolished Discretionary Parole"
+#   ) +
+#   geom_text(data = centroids |>
+#               filter(abolished_discretionary_parole == "Yes"),
+#             aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
+#             size = 3, color = "black", fontface = "bold")
+#
+#
+# # Arrange the two maps side by side
+# combined_map <- cowplot::plot_grid(map1, map2, ncol = 2)
+#
+# # Save the combined map
+# ggsave(filename =  "combined_map_high_res.png", plot = combined_map, width = 20, height = 10, dpi = 300)
 
 
 
