@@ -41,9 +41,10 @@
 
 required_packages <- c(
   "csgjcr", "dplyr", "ggplot2", "janitor", "tidyverse", "highcharter",
-  "reactable", "sysfonts", "extrafont", "showtext", "htmlwidgets",
+  "reactable", "reactablefmtr", "sysfonts", "extrafont", "showtext", "htmlwidgets",
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
-  "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite"
+  "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
+  "ggtext", "scales"
 )
 
 lapply(required_packages, library, character.only = TRUE)

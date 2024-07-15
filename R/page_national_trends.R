@@ -64,14 +64,100 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
 
 
 
-#------ Parole Eligibility Maps Data ------#
-
-# Create a vector of all state names
-all_states <- state.name
+#------ Parole Board Members by State ------#
 
 # Get parole status information by state
 parole_info_by_state_clean <- parole_info_by_state |>
   select(state, abolished_discretionary_parole)
+
+# Get number of parole board members
+parole_board_members_select_states <- parole_info_by_state |>
+  filter(abolished_discretionary_parole == "No") |>
+  select(state, parole_board_members)
+
+# Average number of parole board members
+avg_parole_board_members_select_states <- mean(parole_board_members_select_states$parole_board_members)
+parole_board_member_per_person <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)/sum(parole_board_members_select_states$parole_board_members)
+
+# Set the number of surrounding dots
+n <- round(parole_board_member_per_person, 0)
+
+# Calculate the number of rows and columns for the grid
+grid_size <- ceiling(sqrt(n))
+
+# Generate data for the surrounding dots using a grid pattern
+x <- rep(seq(-grid_size, grid_size, length.out = grid_size), grid_size)
+y <- rep(seq(-grid_size, grid_size, length.out = grid_size), each = grid_size)
+
+# Select the first n points
+x <- x[1:n]
+y <- y[1:n]
+
+# Normalize the coordinates to fit within a unit circle
+max_r <- max(sqrt(x^2 + y^2))
+x <- x / max_r
+y <- y / max_r
+
+# Create a data frame with the coordinates
+data <- data.frame(x = c(0, x), y = c(0, y), size = c(2, rep(1, n)),
+                   color = c(colors$red, rep(colors$darkgray, n)),
+                   alpha = c(1, rep(0.5, n)))
+
+# Adjust the alpha column to apply transparency only to gray circles
+data$alpha[data$color == colors$red] <- 1
+
+# Plot the graphic
+square_dot_parole_graphic <- ggplot(data, aes(x, y, color = color, size = size, alpha = alpha)) +
+  geom_point() +
+  scale_color_identity() +  # Use the color column directly
+  scale_size_identity() +   # Use the size column directly
+  scale_alpha_identity() +  # Use the alpha column directly
+  theme_void() +  # Remove axis and background
+  theme(aspect.ratio = 1) +  # Ensure the plot is square
+  coord_fixed() + # Ensure the aspect ratio is fixed
+  labs(title = "<span style='color:#F05039;'><b>1 parole board member</span></b><br>per 362 people in prison<br>eligible for parole") +
+  theme(
+    # plot.title = element_markdown(hjust = 0.5, vjust = -20, size = 16),
+    plot.title = element_markdown(hjust = 0.5, margin = margin(b = 10), size = 16),
+    plot.margin = margin(t = 50, r = 0, b = 50, l = 0)
+  )
+square_dot_parole_graphic
+
+# Save the combined map
+ggsave(filename =  "square_dot_parole_graphic.png", plot = square_dot_parole_graphic,
+       width  = 5, height = 5, dpi = 600)
+
+
+
+
+
+
+
+
+#------ Parole Eligibility Table ------#
+
+parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
+  left_join(parole_info_by_state_clean, by = "state") |>
+  left_join(parole_board_members, by = "state") |>
+  mutate(ratio = paste0("1:", round(current_count/parole_board_members, 0))) |>
+  mutate(ratio = ifelse(ratio == "1:NA", NA, ratio)) |>
+  select(state, current_perc, current_count, filtered_total_pop, abolished_discretionary_parole, parole_board_members, ratio)
+
+
+
+
+
+
+
+
+
+
+
+
+#------ Parole Eligibility Maps Data ------#
+
+# Create a vector of all state names
+all_states <- state.name
 
 # Define the gradient colors for categories
 gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)
@@ -246,4 +332,5 @@ theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app
 
 for (folder in theseFOLDERS){
   save(map_percent, file = file.path(folder, "map_percent.rds"))
+  save(parole_eligibility_table, file = file.path(folder, "parole_eligibility_table.rds"))
 }
