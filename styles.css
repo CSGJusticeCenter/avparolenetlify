@@ -189,6 +189,7 @@ body {
   max-width: 1200px;
   margin: 0 auto; /* Center the narrow section horizontally */
   text-align: left; /* Center align text inside the narrow section */
+    margin-left: -10px; /* Move section slightly to the left so it aligns with other text */
 }
 
 /* highlights at the top of state report */
@@ -243,20 +244,18 @@ body {
 
 
 
-
-
 /* Specific style for .tab1 tabs */
 .tab1 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab1 .nav-link.active, .tab1 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 /* Specific height for tabs in .tab1 */
@@ -271,15 +270,15 @@ body {
 /* Specific style for .tab2 tabs */
 .tab2 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab2 .nav-link.active, .tab2 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 
@@ -296,15 +295,15 @@ body {
 /* Specific style for .tab3 tabs */
 .tab3 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab3 .nav-link.active, .tab3 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 
@@ -320,15 +319,15 @@ body {
 /* Specific style for tab4 tabs */
 .tab4 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab4 .nav-link.active, .tab4 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 
@@ -343,15 +342,15 @@ body {
 /* Specific style for tab5 tabs */
 .tab5 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab5 .nav-link.active, .tab5 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 
@@ -365,15 +364,15 @@ body {
 /* Specific style for tab6 tabs */
 .tab6 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab6 .nav-link.active, .tab6 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 
@@ -386,15 +385,15 @@ body {
 /* Specific style for tab7 tabs */
 .tab7 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
 }
 .tab7 .nav-link.active, .tab7 .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 
@@ -407,15 +406,15 @@ body {
 /* Specific style for tab8 tabs */
   .tab8 .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
   }
 .tab8 .nav-link.active, .tab8 .show>.nav-link {
   color: #fff;
-    background-color: gray;
+    background-color: #969696;
   font-size: .9em;
-  border: 1px solid gray;
+  border: 1px solid #969696;
   padding-bottom: 0.1em;
 }
 
@@ -428,15 +427,15 @@ body {
 /* Specific style for tabmap tabs */
 .tabmap .nav-link {
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
     color: black;
   }
 .tabmap .nav-link.active, .tabmap .show>.nav-link {
     color: #fff;
-    background-color: gray;
+    background-color: #969696;
     font-size: .9em;
-    border: 1px solid gray;
+    border: 1px solid #969696;
     padding-bottom: 0.1em;
 }
 

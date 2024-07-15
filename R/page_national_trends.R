@@ -181,6 +181,8 @@ map_percent <- highchart() |>
     )
   ) |>
 
+  hc_add_theme(hc_theme_map) |>
+
   hc_colorAxis(min = 0, max = max(map_data_breaks$current_perc)*1.2,
                stops = color_stops(n = 5, colors = gradient_colors),
                labels = list(
@@ -193,7 +195,8 @@ map_percent <- highchart() |>
             symbolWidth = 250,
             x = -7,
             title = list(text = "Pct. of People in Prison Past Their Parole Eligibility Date",
-                         style = list(fontWeight = "bold", fontSize = "12px"))
+                         style = list(fontWeight = "regular",
+                           fontSize = "12px"))
   ) |>
 
   hc_xAxis(title = "") |>
@@ -212,8 +215,6 @@ map_percent <- highchart() |>
           '</div></div>';
     }")
   ) |>
-
-  hc_add_theme(hc_theme_map) |>
 
   hc_plotOptions(series = list(
     animation = FALSE,
@@ -239,95 +240,10 @@ map_percent <- highchart() |>
   hc_title(text = paste0("People in Prison Past Their Parole Eligibility Date in ", analysis_year),
            align = "left")
 
-map_percent <- map_percent|> hc_chart(marginTop = 0, marginBottom = 0)
-map_percent
-
 #------ Save Data ------#
 
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-
   save(map_percent, file = file.path(folder, "map_percent.rds"))
 }
-
-
-
-# Load the shapefile
-hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/us_states_hexgrid.geojson")) |>
-  select(state_abb = iso3166_2) |>
-  filter(state_abb != "DC") |>
-  st_transform(3857)
-
-# Convert to a data frame for manipulation
-hex_gj_df <- st_as_sf(hex_gj) |>
-  mutate(state = state.name[match(state_abb, state.abb)])
-
-# Convert parole_info_by_state_clean to a data frame
-parole_info_by_state_clean <- as.data.frame(parole_info_by_state_clean)
-
-# Join with hex data
-hex_data <- hex_gj_df |>
-  left_join(parole_info_by_state_clean, by = "state")
-
-# Calculate centroids for labeling
-centroids <- st_centroid(hex_data)
-
-# Define colors
-highlight_colors <- c("Yes" = colors$yellow, "No" = colors$green2)
-other_color <- "white"
-
-# Base plot with gray tiles
-base_plot <- ggplot() +
-  geom_sf(data = hex_data, aes(geometry = geometry), fill = other_color, color = "black") +
-  theme_void() +
-  theme(
-    legend.position = "none",
-    text = element_text(family = "Graphik")
-  )
-
-# Map for states that have not abolished discretionary parole
-map1 <- base_plot +
-  geom_sf(data = hex_data |>
-            filter(abolished_discretionary_parole == "No"),
-          aes(fill = abolished_discretionary_parole), color = "black") +
-  scale_fill_manual(values = highlight_colors) +
-  theme(
-    plot.title = element_text(size = 72, hjust = 0.5),
-    plot.subtitle = element_text(size = 28, hjust = 0.5)
-  ) +
-  # labs(
-  #   title = "32",
-  #   subtitle = "States Have Discretionary Parole"
-  # ) +
-  geom_text(data = centroids |>
-              filter(abolished_discretionary_parole == "No"),
-            aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
-            size = 6, color = "black", fontface = "bold")
-
-# Map for states that have abolished discretionary parole
-map2 <- base_plot +
-  geom_sf(data = hex_data |>
-            filter(abolished_discretionary_parole == "Yes"),
-          aes(fill = abolished_discretionary_parole), color = "black") +
-  scale_fill_manual(values = highlight_colors) +
-  theme(
-    plot.title = element_text(size = 72, hjust = 0.5),
-    plot.subtitle = element_text(size = 28, hjust = 0.5)
-  ) +
-  # labs(
-  #   title = "16",
-  #   subtitle = "States Abolished Discretionary Parole"
-  # ) +
-  geom_text(data = centroids |>
-              filter(abolished_discretionary_parole == "Yes"),
-            aes(x = st_coordinates(geometry)[, 1], y = st_coordinates(geometry)[, 2], label = state_abb),
-            size = 6, color = "black", fontface = "bold")
-
-
-# Arrange the two maps side by side
-combined_map <- cowplot::plot_grid(map1, map2, ncol = 2)
-
-# Save the combined map
-ggsave(filename =  "combined_map_high_res.png", plot = combined_map, width = 20, height = 10, dpi = 600)
-

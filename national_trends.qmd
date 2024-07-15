@@ -77,19 +77,22 @@ div(
 <div class="divider"></div>
 <div id="map-section">
 ```{r}
-map_percent %>% 
-  hc_size(height = 730) %>% 
+map_percent |> 
+    hc_size(height = 690) |> 
     hc_exporting(enabled = TRUE,
                buttons = list(contextButton = list(align = 'right',
                                                    verticalAlign = 'top',
                                                    y = 0,
-                                                   x = -5))) 
-
+                                                   x = -5))) |> 
+    hc_chart(marginTop = 0, marginBottom = -50, height = 740)
 ```
 </div>
 
+<a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About this data</a>
+
 <div id="body-section">
 <div class="divider"></div>
+
 # The Power of Parole Boards
 
 <div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
