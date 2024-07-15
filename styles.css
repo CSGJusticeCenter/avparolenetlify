@@ -191,6 +191,43 @@ body {
   text-align: left; /* Center align text inside the narrow section */
 }
 
+/* highlights at the top of state report */
+.grid-container1 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 15px;
+}
+
+/* highlighted text underneath state name*/
+#highlight-text {
+  font-size: 2.5em;
+  font-family: Graphik;
+  font-weight: bold;
+  color: #49a7a1;
+  text-align: center;
+}
+
+/* highlighted text on national trend page*/
+#national-highlight {
+  font-size: 1.5em;
+  font-family: Graphik;
+  font-weight: bold;
+  color: #49a7a1;
+  text-align: left;
+}
+
+/* bold app text */
+#bold-text {
+  font-size: 0.9em;
+  font-family: Graphik;
+  font-weight: bold;
+  text-align: center;
+  color: black
+}
+
+
+
 
 
 
@@ -445,7 +482,7 @@ body {
 }
 
 .navbar-nav li a:hover {
-  background-color: #00aba0;
+  background-color: #49a7a1;
   color: #fff;
 }
 
@@ -508,15 +545,6 @@ body {
   font-weight: bold;
   text-align: center;
   color: black;
-}
-
-/* highlighted text underneath state name*/
-#highlight-text {
-  font-size: 2.5em;
-  font-family: Graphik;
-  font-weight: bold;
-  color: #00aba0;
-  text-align: center;
 }
 
 /* regular app text */
@@ -603,13 +631,7 @@ body {
 /* Section sizes and settings
 /******************************************************************************/
 
-/* highlights at the top of state report */
-.grid-container1 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, auto);
-  gap: 10px;
-}
+
 
 
 .citation-section {
