@@ -248,7 +248,7 @@ common_title_style <- list(
 #' This theme serves as the base for other themes.
 #' @export
 base_hc_theme <- hc_theme(
-  colors = c(colors$blue, colors$red, colors$green2, colors$yellow, colors$purple, colors$brown),
+  colors = c(colors$green2, colors$yellow, colors$red, colors$purple, colors$blue),
   chart = list(style = common_chart_style),
   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
@@ -339,3 +339,52 @@ hc_theme_map <- hc_theme_merge(
     )
   )
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Create single horizontal bar
+fnc_hc_single_horz_bar <- function(df, x_var, y_var, group_var, accessibility_text) {
+
+  highchart <- hchart(df, "bar",
+                      hcaes(x = !!sym(x_var),
+                            y = !!sym(y_var),
+                            group = !!sym(group_var)),
+                      dataLabels = list(enabled = TRUE,
+                                        format = "{point.prop_label}",
+                                        style = list(fontWeight = "bold",
+                                                     fontSize = "12px",
+                                                     fontFamily = "Graphik"))) %>%
+    hc_yAxis(title = list(text = ""),
+             min = 0, max = 1) %>%
+    hc_xAxis(title = list(text = ""),
+             labels = list(enabled = FALSE)) %>%
+    hc_add_theme(base_hc_theme) %>%
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_exporting(enabled = TRUE) %>%
+    hc_legend(enabled = TRUE) %>%
+    hc_plotOptions(
+      series = list(stacking = "normal",
+                    animation = FALSE,
+                    cursor = "pointer",
+                    borderWidth = 3,
+                    minPointLength = 4),
+      accessibility = list(enabled = TRUE,
+                           keyboardNavigation = list(enabled = TRUE),
+                           linkedDescription = accessibility_text,
+                           landmarkVerbosity = "one"),
+      area = list(accessibility = list(description = accessibility_text)))
+  return(highchart)
+}

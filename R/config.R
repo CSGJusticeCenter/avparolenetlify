@@ -103,7 +103,7 @@ colors <- list(
   lightgray = "#d7d7d7",
   darkgray  = "#969696",
   purple    = "#938ebf", # primary color
-  red       = "#F05039", # primary color
+  red       = "#d97d68", # primary color
   blue      = "#1F449C", # primary color
   yellow    = "#decf64", # primary color
   green1    = "#b1d4d5",

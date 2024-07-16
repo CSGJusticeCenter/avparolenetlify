@@ -83,7 +83,7 @@ avg_parole_board_members_select_states <- mean(parole_board_members_select_state
 parole_board_member_per_person <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)/sum(parole_board_members_select_states$parole_board_members)
 
 # Set the number of surrounding dots
-n <- round(parole_board_member_per_person, 0)
+n <- 500#round(parole_board_member_per_person, 0)
 
 # Calculate the number of rows and columns for the grid
 grid_size <- ceiling(sqrt(n))
@@ -116,14 +116,13 @@ square_dot_parole_graphic <- ggplot(data, aes(x, y, color = color, size = size, 
   scale_size_identity() +   # Use the size column directly
   scale_alpha_identity() +  # Use the alpha column directly
   theme_void() +  # Remove axis and background
-  theme(aspect.ratio = 1) +  # Ensure the plot is square
-  coord_fixed() + # Ensure the aspect ratio is fixed
-  labs(title = "<span style='color:#F05039;'><b>1 parole board member</span></b><br>per 362 people in prison<br>eligible for parole") +
   theme(
-    # plot.title = element_markdown(hjust = 0.5, vjust = -20, size = 16),
-    plot.title = element_markdown(hjust = 0.5, margin = margin(b = 10), size = 16),
-    plot.margin = margin(t = 50, r = 0, b = 50, l = 0)
-  )
+    aspect.ratio = 1,  # Ensure the plot is square
+    plot.title = element_markdown(size = 16, face = "bold", hjust = 0.5)  # Center and format the title with ggtext
+  ) +
+  coord_fixed() +
+  labs(title = "<span style='color:#d97d68;'>1 parole board member</span> per<br>500 people in prison<br>and eligible for parole")
+
 square_dot_parole_graphic
 
 # Save the combined map
@@ -331,11 +330,13 @@ map_percent <- highchart() |>
            align = "left")
 map_percent
 
+
+
 #------ Save Data ------#
 
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(map_percent, file = file.path(folder, "map_percent.rds"))
+  save(map_percent,              file = file.path(folder, "map_percent.rds"))
   save(parole_eligibility_table, file = file.path(folder, "parole_eligibility_table.rds"))
 }

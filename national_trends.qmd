@@ -21,21 +21,13 @@ knitr::opts_chunk$set(
 
 source("R/config.R")
 
+parole_elig_txt <- "Parole eligibility is a critical milestone in the criminal justice system, marking the point at which incarcerated individuals become eligible for conditional release. This eligibility is determined by several factors including the nature of the crime, the length of the sentence, behavior while incarcerated, and state-specific guidelines.<br>"
+
 # Load prepared data
 load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
 num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
-
-# <div id="wide-section">
-# </div>
-# <style>
-# @media (max-width: 768px) {
-#   #wide-section {
-#     display: none; /* Hide wide-section on mobile */
-#   }
-# }
-# </style>
 ```
 <br>
 <div id="body-section">
@@ -47,15 +39,14 @@ In 2020, over 88,000 people nationally were in prison past their parole eligibil
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr);",
-  div(id = "national-highlight", style = "text-align: left;", "32"),
-  div(id = "national-highlight", style = "text-align: left;", "XX%"),
-  div(id = "national-highlight", style = "text-align: left;", formattable::comma(num_people_current, digits = 0)),
+  div(id = "national-highlight", style = "text-align: left; color: #d97d68;", "32"),
+  div(id = "national-highlight", style = "text-align: left; color: #d97d68;", "XX%"),
+  div(id = "national-highlight", style = "text-align: left; color: #d97d68;", formattable::comma(num_people_current, digits = 0)),
   div(id = "bold-text", style = "text-align: left;", HTML("States With Parole Systems")),
-  div(id = "bold-text", style = "text-align: left;", HTML("Proportion of People in Prison<br>Past Their Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date")),
   div(id = "bold-text", style = "text-align: left;", HTML("People in Prison<br>Past Their Parole Eligibility Date"))
 )
 ```
-
 
 </div>
 
@@ -97,14 +88,13 @@ map_percent |>
 
 <div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
   <p><br>
-    Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>This concentration of power highlights the need for transparency and consistency in the parole decision-making process.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
-  </p><br>
+    Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
+  </p>
   ![](square_dot_parole_graphic.png)
 </div>
 
 
 
-<br>
 <div class="divider"></div>
 # Parole Eligibility by State
 
@@ -152,18 +142,6 @@ reactable(
         url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
         tags$a(href = url, target = "_blank", style = "color:black;", value)
       }),
-    # current_perc = colDef(
-    #   name = "Pct. of People in Prison",
-    #   align = "left",
-    #   width = 150,
-    #   cell = data_bars(
-    #     data = parole_eligibility_table,
-    #      text_position = "outside-end",
-    #     number_fmt = scales::percent,
-    #     fill_color = colors$green2,
-    #     background = "transparent"
-    #   )
-    # ),
     current_perc = colDef(
       name = "Pct. of People in Prison",
       align = "left",

@@ -1,0 +1,198 @@
+---
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+
+
+source("R/config.R")
+
+# Load prepared data
+load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/robinaparoleeligibility.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state.rds"))
+
+# Visualizations (Parole Eligibility Tab)
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
+
+
+state_for_report <- "Georgia"
+
+source("R/pull_state_findings.R")
+```
+
+<br>
+<div id="state-body-section">
+
+```{r}
+
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr);",
+  div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
+  div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
+  div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
+  div(id = "bold-text", style = "text-align: left;", HTML("Parole Board Members")),
+  div(id = "bold-text", style = "text-align: left;", HTML("In Prison Past Their<br>Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date"))
+)
+br()
+```
+
+::: {.panel-tabset .nav-pills}
+
+# Parole Eligibility
+
+## How Parole Eligibility is Determined
+
+`r paste(parole_eligibility_criteria, collapse = ", ")`
+<div class="divider"></div>
+
+## In Prison Past Their Parole Eligibility Date
+
+Many people remain incarcerated past their parole eligibility date due to various reasons such as delays in the parole hearing process or unmet parole conditions. 
+
+```{r}
+div(id = "visualization", state_stackedbar_pe_type)
+```
+
+### Demographics
+
+### Criminal Offense
+
+### Sentence Length
+
+<br>
+<div class="divider"></div>
+
+## Missing Data
+
+This section will have information about missing parole eligibility data for the state once new NCRP data is released.
+
+
+
+
+
+# Prison Population
+
+The size and composition of the prison population have significant implications for state resources and public safety. 
+
+Sentence about change in year-end population from 2010 to 2020.  
+Trend graph
+
+<br>
+<div class="divider"></div>
+
+## Demographics
+
+An examination of the demographic composition of Georgia's prison population, including age, gender, race, and other relevant factors.  
+
+<br>
+<div class="divider"></div>
+
+## Criminal Offenses
+
+An overview of the types of criminal offenses that lead to incarceration, providing insight into the most common crimes and their prevalence.  
+
+<br>
+<div class="divider"></div>
+
+## Sentence Lengths
+
+Analysis of the distribution of sentence lengths within the prison population.  
+
+
+# Prison Releases
+
+Understanding trends in prison releases is crucial for assessing the effectiveness of parole and reentry programs.  
+
+Sentence about change in releases from 2010 to 2020.
+Trend graph
+
+## Prison Release Types
+
+<br>
+<div class="divider"></div>
+
+## Demographics
+
+A demographic analysis of individuals released from prison, highlighting trends and patterns in reentry.  
+
+<br>
+<div class="divider"></div>
+
+## Timing of Release
+
+An exploration of the timing of prison releases, including how long individuals serve before being released.  
+
+<br>
+<div class="divider"></div>
+
+## Time Served by Offense Type
+
+Detailed analysis of the average time served by individuals based on their offense type, providing insights into sentencing practices and their outcomes.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Disparities
+
+Examining disparities within the prison system is essential for addressing issues of equity and justice. This section focuses on disparities in incarceration and release practices.  
+
+In prison.
+
+## In Prison Past Their Parole Eligibility Date
+
+<br>
+<div class="divider"></div>
+
+## Timing of Release
+
+<br>
+<div class="divider"></div>
+
+## Timing of Release by Offense Type
+
+<br>
+<div class="divider"></div>
+
+## Time Served 
+
+<br>
+<div class="divider"></div>
+
+
+
+
+
+
+:::
+
+</div>
+
+---
+title: "`r state_for_report`"
+---
