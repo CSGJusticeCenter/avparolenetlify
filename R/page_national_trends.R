@@ -75,6 +75,9 @@ parole_board_members_select_states <- parole_info_by_state |>
   filter(abolished_discretionary_parole == "No") |>
   select(state, parole_board_members)
 
+parole_board_members <- parole_info_by_state |>
+  select(state, parole_board_members)
+
 # Average number of parole board members
 avg_parole_board_members_select_states <- mean(parole_board_members_select_states$parole_board_members)
 parole_board_member_per_person <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)/sum(parole_board_members_select_states$parole_board_members)
@@ -238,7 +241,8 @@ map_data_breaks <- map_data |>
     gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
     current_perc = round(current_perc, 0)
-  )
+  )|>
+  mutate(color = case_when(abolished_discretionary_parole == "Yes" ~ colors$yellow))
 
 map_data_breaks$url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", map_data_breaks$state)))
 
@@ -325,6 +329,7 @@ map_percent <- highchart() |>
   ) |>
   hc_title(text = paste0("People in Prison Past Their Parole Eligibility Date in ", analysis_year),
            align = "left")
+map_percent
 
 #------ Save Data ------#
 
