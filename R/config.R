@@ -127,6 +127,8 @@ green2 <- "#49a7a1"
 green3 <- "#176f6d"
 purple <- "#938ebf"
 blue <- "#2a5a99"
+darkgray <- "#969696"
+lightgray <- "#d7d7d7"
 
 # Custom SVG icon with color placeholder
 iconSVG <- "

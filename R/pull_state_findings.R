@@ -86,5 +86,11 @@ if (state_for_report %in% names(all_waffle_parole_elgibility_ageyrend)) {
   state_waffle_parole_elgibility_ageyrend <- no_data_text
 }
 
-
+# TITLE: Years Spent in Prison After Parole Eligibility
+if (state_for_report %in% names(all_scatter_race_ped_release)) {
+  state_scatter_race_ped_release <-
+    all_scatter_race_ped_release[[state_for_report]]
+} else {
+  state_scatter_race_ped_release <- no_data_text
+}
 

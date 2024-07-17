@@ -347,7 +347,7 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
 
   highcharts <- highchart() %>%
     hc_add_series(df,
-                  type = "bar",
+                  type = "column",
                   hcaes(x = !!sym(x_var),
                         y = !!sym(y_var)),
                   dataLabels = list(enabled = TRUE,
@@ -381,7 +381,7 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
 
 # Prepare data for a simple bar graph
 fnc_prepare_pe_data <- function(df, count_column){
-  df1 <- ncrp_yearendpop |>
+  df1 <- df |>
     filter(rptyear == select_year &
              parelig_status == "Current") |>
     filter(admtype == "New court commitment") |>

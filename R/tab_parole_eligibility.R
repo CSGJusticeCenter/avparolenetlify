@@ -392,6 +392,35 @@ all_waffle_parole_elgibility_ageyrend$Georgia
 
 
 
+
+
+
+
+
+
+
+# Currently parole eligible population but still in prison by sentlgth in select year
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
+current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)|>
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #------ Save Data ------#
 
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))

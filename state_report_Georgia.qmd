@@ -31,6 +31,10 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_el
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_ageyrend.rds"))
 
+# Disparities Tab
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
+
+
 state_for_report <- "Georgia"
 
 source("R/pull_state_findings.R")
@@ -72,6 +76,8 @@ div(id = "visualization", state_stackedbar_pe_type)
 
 ### Demographics
 
+The charts below provide further details on the demographics of this population, illustrating the percentage of people in prison past their parole eligibility date by race and ethnicity, gender, and current age.  
+
 ```{r}
 div(
   id = "grid-container",
@@ -85,7 +91,10 @@ div(
 
 ### Criminal Offense
 
+Here, the charts present data on the types of criminal offenses committed by people in prison past their parole eligibility date.  
+
 ### Sentence Length
+
 
 <br>
 <div class="divider"></div>
@@ -94,7 +103,7 @@ div(
 
 This section will have information about missing parole eligibility data for the state once new NCRP data is released.
 
-
+<br>
 
 
 
@@ -182,7 +191,11 @@ In prison.
 <br>
 <div class="divider"></div>
 
-## Timing of Release
+## Years Spent in Prison After Parole Eligibility
+
+```{r}
+div(id = "visualization", state_scatter_race_ped_release)
+```
 
 <br>
 <div class="divider"></div>
