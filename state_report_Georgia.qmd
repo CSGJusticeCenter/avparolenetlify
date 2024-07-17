@@ -28,7 +28,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_elgibility_population.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_race.rds"))
-
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_ageyrend.rds"))
 
 state_for_report <- "Georgia"
 
@@ -76,8 +77,8 @@ div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
   div(id = "small-visualization", state_waffle_parole_elgibility_race),
-  div(id = "small-visualization", ""),
-  div(id = "small-visualization", ""),
+  div(id = "small-visualization", state_waffle_parole_elgibility_sex),
+  div(id = "small-visualization", state_waffle_parole_elgibility_ageyrend),
 )
 ```
 

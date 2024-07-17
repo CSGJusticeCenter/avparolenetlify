@@ -44,7 +44,7 @@ required_packages <- c(
   "reactable", "reactablefmtr", "sysfonts", "extrafont", "showtext", "htmlwidgets",
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
-  "ggtext", "scales"
+  "ggtext", "scales", "base64enc"
 )
 
 lapply(required_packages, library, character.only = TRUE)

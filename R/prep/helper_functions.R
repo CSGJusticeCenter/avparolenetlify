@@ -381,7 +381,7 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
 
 # Prepare data for a simple bar graph
 fnc_prepare_pe_data <- function(df, count_column){
-  df1 <- df |>
+  df1 <- ncrp_yearendpop |>
     filter(rptyear == select_year &
              parelig_status == "Current") |>
     filter(admtype == "New court commitment") |>
@@ -401,6 +401,7 @@ fnc_prepare_pe_data <- function(df, count_column){
     mutate(tooltip = paste0("<b>", state, " - ",
                             {{ count_column }}, "</b><br>",
                             prop_label, "<br>"))
+  return(df1)
 }
 
 # Function to encode SVG icon with color

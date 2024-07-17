@@ -187,33 +187,45 @@ all_sentence_parole_elgibility_population$Georgia
 
 ####################
 
-# Currently parole eligible population but still in prison by race in select year
-# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
-current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
-  mutate(prop_label = paste0(
-    "<b>", prop_label, "</b> (", n_label, ")"),
-    prop = prop*100
-  )
 
-# Highcharts showing breakdown of parole-eligible prison population by race
+# Define the function to encode the SVG icon
+encode_icon <- function(color) {
+  iconSVG <- sprintf(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
+      <path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' fill='%s'/>
+    </svg>",
+    color
+  )
+  base64encode(charToRaw(iconSVG))
+}
+
+# Prepare the parole eligibility data by race
+current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
+  mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
+         prop = prop * 100)
+
+# Get unique states
 states <- unique(current_ped_race$state)
-# Colors for the groups
+
+# Define colors for the groups
 colors_list <- c(red, yellow, purple, green2)
 
-all_waffle_parole_elgibility_race <- map(.x = states,  .f = function(x) {
+# Create Highcharts visualizations for each state
+all_waffle_parole_elgibility_race <- map(.x = states, .f = function(x) {
 
   data <- current_ped_race |>
     filter(state == x) |>
     arrange(desc(n)) |>
-    mutate(prop = round(prop, 1))
+    mutate(prop = round(prop, 0))
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
-                                  race and ethnicity in ",
-                                  select_year, " in the state of ", x, ".")   #### ADD THIS TO CHART
+                                  race and ethnicity in ", select_year, " in the state of ", x, ".")
 
   highcharts <- highchart() |>
-    hc_chart(type = "item") |>
+    hc_chart(type = "item",
+             marginTop = 140
+    ) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_xAxis(categories = data$race) |>
     hc_yAxis(title = list(text = "Percentage"), max = 100) |>
@@ -230,24 +242,152 @@ all_waffle_parole_elgibility_race <- map(.x = states,  .f = function(x) {
         }),
         type = "item",
         size = '100%',
-        itemMargin = 10
-        # rows = 10, # Set number of rows to 10
-        # cols = 10  # Set number of columns to 10
+        itemMargin = 10,
+        rows = 10
       )
     ) |>
     hc_tooltip(
       formatter = JS("function() {
-      return '<b>' + this.point.name + ':</b> ' + this.y + '%';
-    }")
+        return '<b>' + this.point.name + ':</b> ' + this.y + '%';
+      }")
     ) |>
     hc_add_theme(base_hc_theme)
 
   return(highcharts)
 })
+
+# Name the list of charts by state
 all_waffle_parole_elgibility_race <- setNames(all_waffle_parole_elgibility_race, states)
+
+# Display the chart for Georgia as an example
 all_waffle_parole_elgibility_race$Georgia
 
+# Prepare the parole eligibility data by sex
+current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex) |>
+  mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
+         prop = prop * 100)
 
+# Get unique states
+states <- unique(current_ped_sex$state)
+
+# Define colors for the groups
+colors_list <- c(purple, green2)
+
+# Create Highcharts visualizations for each state
+all_waffle_parole_elgibility_sex <- map(.x = states, .f = function(x) {
+
+  data <- current_ped_sex |>
+    filter(state == x) |>
+    arrange(desc(n)) |>
+    mutate(prop = round(prop, 0))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  gender in ", select_year, " in the state of ", x, ".")
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item",
+             marginTop = 140
+    ) |>
+    hc_title(text = "Gender") |>
+    hc_xAxis(categories = data$sex) |>
+    hc_yAxis(title = list(text = "Percentage"), max = 100) |>
+    hc_series(
+      list(
+        name = "Percentage",
+        data = lapply(1:nrow(data), function(i) {
+          list(
+            y = data$prop[i],
+            name = data$sex[i],
+            color = colors_list[i],
+            marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors_list[i])))
+          )
+        }),
+        type = "item",
+        size = '100%',
+        itemMargin = 10,
+        rows = 10
+      )
+    ) |>
+    hc_tooltip(
+      formatter = JS("function() {
+        return '<b>' + this.point.name + ':</b> ' + this.y + '%';
+      }")
+    ) |>
+    hc_add_theme(base_hc_theme)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_waffle_parole_elgibility_sex <- setNames(all_waffle_parole_elgibility_sex, states)
+
+# Display the chart for Georgia as an example
+all_waffle_parole_elgibility_sex$Georgia
+
+
+# Prepare the parole eligibility data by ageyrend
+current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend) |>
+  mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
+         prop = prop * 100)
+
+# Get unique states
+states <- unique(current_ped_ageyrend$state)
+
+# Define colors for the groups
+colors_list <- c(red, yellow, green2, purple, blue)
+
+# Create Highcharts visualizations for each state
+all_waffle_parole_elgibility_ageyrend <- map(.x = states, .f = function(x) {
+
+  data <- current_ped_ageyrend |>
+    filter(state == x) |>
+    arrange(desc(n)) |>
+    mutate(prop = round(prop, 0))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  ageyrend in ", select_year, " in the state of ", x, ".")
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item",
+             marginTop = 140
+    ) |>
+    hc_title(text = "Current Age") |>
+    hc_xAxis(categories = data$ageyrend) |>
+    hc_yAxis(title = list(text = "Percentage"), max = 100) |>
+    hc_series(
+      list(
+        name = "Percentage",
+        data = lapply(1:nrow(data), function(i) {
+          list(
+            y = data$prop[i],
+            name = data$ageyrend[i],
+            color = colors_list[i],
+            marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors_list[i])))
+          )
+        }),
+        type = "item",
+        size = '100%',
+        itemMargin = 10,
+        rows = 10
+      )
+    ) |>
+    hc_tooltip(
+      formatter = JS("function() {
+        return '<b>' + this.point.name + ':</b> ' + this.y + '%';
+      }")
+    ) |>
+    hc_add_theme(base_hc_theme)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_waffle_parole_elgibility_ageyrend <- setNames(all_waffle_parole_elgibility_ageyrend, states)
+
+# Display the chart for Georgia as an example
+all_waffle_parole_elgibility_ageyrend$Georgia
 
 
 
@@ -260,5 +400,7 @@ for (folder in theseFOLDERS){
   save(all_stackedbar_pe_type,                    file = file.path(folder, "all_stackedbar_pe_type.rds"))
   save(all_sentence_parole_elgibility_population, file = file.path(folder, "all_sentence_parole_elgibility_population.rds"))
   save(all_waffle_parole_elgibility_race,         file = file.path(folder, "all_waffle_parole_elgibility_race.rds"))
+  save(all_waffle_parole_elgibility_sex,          file = file.path(folder, "all_waffle_parole_elgibility_sex.rds"))
+  save(all_waffle_parole_elgibility_ageyrend,     file = file.path(folder, "all_waffle_parole_elgibility_ageyrend.rds"))
 
 }

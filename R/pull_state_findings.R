@@ -63,9 +63,28 @@ if (state_for_report %in% names(all_waffle_parole_elgibility_race)) {
     hc_size(height = 350) %>%
     hc_title(text = paste0("Race and Ethnicity"))
 } else {
-  state_bar_parole_elgibility_race <- no_data_text
+  state_waffle_parole_elgibility_race <- no_data_text
 }
 
+# TITLE: Gender
+if (state_for_report %in% names(all_waffle_parole_elgibility_sex)) {
+  state_waffle_parole_elgibility_sex <-
+    all_waffle_parole_elgibility_sex[[state_for_report]] %>%
+    hc_size(height = 350) %>%
+    hc_title(text = paste0("Gender"))
+} else {
+  state_waffle_parole_elgibility_sex <- no_data_text
+}
+
+# TITLE: Age
+if (state_for_report %in% names(all_waffle_parole_elgibility_ageyrend)) {
+  state_waffle_parole_elgibility_ageyrend <-
+    all_waffle_parole_elgibility_ageyrend[[state_for_report]] %>%
+    hc_size(height = 350) %>%
+    hc_title(text = paste0("Age"))
+} else {
+  state_waffle_parole_elgibility_ageyrend <- no_data_text
+}
 
 
 
