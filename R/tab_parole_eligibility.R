@@ -11,6 +11,12 @@
 # pop = population
 # ncrp = NCRP data
 
+####################
+
+# TITLE: Pct of Prison Population by Parole Eligibility Status
+
+####################
+
 # Total prison population by state and year
 ncrp_pop <- ncrp_yearendpop |>
   filter(admtype == "New court commitment") |>
@@ -47,7 +53,7 @@ ncrp_pes_subset <- ncrp_yearendpop|>
 states <- unique(ncrp_pes_subset$state)
 all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 
-  df1 <- ncrp_pes_subset %>%
+  df1 <- ncrp_pes_subset |>
     filter(state == x) |>
     filter(rptyear == select_year)
 
@@ -82,7 +88,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  // Adjust this threshold as needed
+                    if (this.y > 0.05) {  //
                       return this.point.label;
                     }
                     return null;
@@ -96,7 +102,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  // Adjust this threshold as needed
+                    if (this.y > 0.05) {  //
                       return this.point.label;
                     }
                     return null;
@@ -110,7 +116,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  // Adjust this threshold as needed
+                    if (this.y > 0.05) {  //
                       return this.point.label;
                     }
                     return null;
@@ -124,7 +130,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  // Adjust this threshold as needed
+                    if (this.y > 0.05) {  //
                       return this.point.label;
                     }
                     return null;
@@ -145,6 +151,105 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
 all_stackedbar_pe_type$Georgia
 
+##########
+# SENTENCE: In X year, there were X people who were in prison past their parole
+#           eligibility date. This group made up X% of the people in prison for
+#           new crimes and sentence lengths between 1-25 years.
+##########
+
+# get list of states
+states <- unique(ncrp_pes_subset$state)
+
+# generate sentence about most serious sentenced offense in select year by state
+all_sentence_parole_elgibility_population <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_pes_subset |>
+    filter(state == x &
+             parelig_status == "Current"&
+             rptyear == select_year)
+
+  sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
+                      " people were in prison past their parole eligibility date. This group made up ",
+                      df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
+  return(sentences)
+})
+
+all_sentence_parole_elgibility_population <- setNames(all_sentence_parole_elgibility_population, states)
+all_sentence_parole_elgibility_population$Georgia
+
+
+
+
+
+####################
+
+# TITLE: Race and Ethnicity: Pct of Prison Population by Parole Eligibility Status
+
+####################
+
+# Currently parole eligible population but still in prison by race in select year
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
+current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")"),
+    prop = prop*100
+  )
+
+# Highcharts showing breakdown of parole-eligible prison population by race
+states <- unique(current_ped_race$state)
+# Colors for the groups
+colors_list <- c(red, yellow, purple, green2)
+
+all_waffle_parole_elgibility_race <- map(.x = states,  .f = function(x) {
+
+  data <- current_ped_race |>
+    filter(state == x) |>
+    arrange(desc(n)) |>
+    mutate(prop = round(prop, 1))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  race and ethnicity in ",
+                                  select_year, " in the state of ", x, ".")   #### ADD THIS TO CHART
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item") |>
+    hc_title(text = "Race and Ethnicity") |>
+    hc_xAxis(categories = data$race) |>
+    hc_yAxis(title = list(text = "Percentage"), max = 100) |>
+    hc_series(
+      list(
+        name = "Percentage",
+        data = lapply(1:nrow(data), function(i) {
+          list(
+            y = data$prop[i],
+            name = data$race[i],
+            color = colors_list[i],
+            marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors_list[i])))
+          )
+        }),
+        type = "item",
+        size = '100%',
+        itemMargin = 10
+        # rows = 10, # Set number of rows to 10
+        # cols = 10  # Set number of columns to 10
+      )
+    ) |>
+    hc_tooltip(
+      formatter = JS("function() {
+      return '<b>' + this.point.name + ':</b> ' + this.y + '%';
+    }")
+    ) |>
+    hc_add_theme(base_hc_theme)
+
+  return(highcharts)
+})
+all_waffle_parole_elgibility_race <- setNames(all_waffle_parole_elgibility_race, states)
+all_waffle_parole_elgibility_race$Georgia
+
+
+
+
 
 
 #------ Save Data ------#
@@ -152,5 +257,8 @@ all_stackedbar_pe_type$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(all_stackedbar_pe_type, file = file.path(folder, "all_stackedbar_pe_type.rds"))
+  save(all_stackedbar_pe_type,                    file = file.path(folder, "all_stackedbar_pe_type.rds"))
+  save(all_sentence_parole_elgibility_population, file = file.path(folder, "all_sentence_parole_elgibility_population.rds"))
+  save(all_waffle_parole_elgibility_race,         file = file.path(folder, "all_waffle_parole_elgibility_race.rds"))
+
 }

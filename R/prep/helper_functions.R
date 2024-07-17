@@ -340,51 +340,76 @@ hc_theme_map <- hc_theme_merge(
   )
 )
 
+# Create basic horizontal bar chart that isn't grouped
+fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
 
+  xaxis_order <- df[[x_var]]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Create single horizontal bar
-fnc_hc_single_horz_bar <- function(df, x_var, y_var, group_var, accessibility_text) {
-
-  highchart <- hchart(df, "bar",
-                      hcaes(x = !!sym(x_var),
-                            y = !!sym(y_var),
-                            group = !!sym(group_var)),
-                      dataLabels = list(enabled = TRUE,
-                                        format = "{point.prop_label}",
-                                        style = list(fontWeight = "bold",
-                                                     fontSize = "12px",
-                                                     fontFamily = "Graphik"))) %>%
-    hc_yAxis(title = list(text = ""),
-             min = 0, max = 1) %>%
-    hc_xAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) %>%
+  highcharts <- highchart() %>%
+    hc_add_series(df,
+                  type = "bar",
+                  hcaes(x = !!sym(x_var),
+                        y = !!sym(y_var)),
+                  dataLabels = list(enabled = TRUE,
+                                    format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) %>%
+    hc_xAxis(categories = xaxis_order) %>%
+    hc_yAxis(labels = list(enabled = FALSE),
+             title = list(text = ""),
+             min = 0, max = 1.1
+    ) %>%
     hc_add_theme(base_hc_theme) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
+    hc_legend(enabled = FALSE) %>%
     hc_exporting(enabled = TRUE) %>%
-    hc_legend(enabled = TRUE) %>%
-    hc_plotOptions(
-      series = list(stacking = "normal",
-                    animation = FALSE,
-                    cursor = "pointer",
-                    borderWidth = 3,
-                    minPointLength = 4),
-      accessibility = list(enabled = TRUE,
-                           keyboardNavigation = list(enabled = TRUE),
-                           linkedDescription = accessibility_text,
-                           landmarkVerbosity = "one"),
-      area = list(accessibility = list(description = accessibility_text)))
-  return(highchart)
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
 }
+
+
+# Prepare data for a simple bar graph
+fnc_prepare_pe_data <- function(df, count_column){
+  df1 <- df |>
+    filter(rptyear == select_year &
+             parelig_status == "Current") |>
+    filter(admtype == "New court commitment") |>
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years") |>
+    group_by(state) |>
+    count({{ count_column }}) |>
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) |>
+    ungroup() |>
+    mutate(tooltip = paste0("<b>", state, " - ",
+                            {{ count_column }}, "</b><br>",
+                            prop_label, "<br>"))
+}
+
+# Function to encode SVG icon with color
+encode_icon <- function(color) {
+  base64encode(charToRaw(sprintf(iconSVG, color)))
+}
+
+
+
+
+
+

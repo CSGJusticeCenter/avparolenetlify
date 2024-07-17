@@ -172,13 +172,16 @@ body {
 
 
 
-
-
-
 #visualization {
   margin: 0 auto; /* Center the narrow section horizontally */
   text-align: left; /* Center align text inside the narrow section */
   margin-left: -10px; /* Move section slightly to the left so it aligns with other text */
+}
+
+
+#small-visualization {
+  text-align: left; /* Center align text inside the narrow section */
+  margin-left: -12px; /* Move section slightly to the left so it aligns with other text */
 }
 
 #narrow-section {

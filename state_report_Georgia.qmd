@@ -26,6 +26,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state
 
 # Visualizations (Parole Eligibility Tab)
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_elgibility_population.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_race.rds"))
 
 
 state_for_report <- "Georgia"
@@ -35,21 +37,6 @@ source("R/pull_state_findings.R")
 
 <br>
 <div id="state-body-section">
-
-```{r}
-
-div(
-  id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(3, 1fr);",
-  div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
-  div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
-  div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
-  div(id = "bold-text", style = "text-align: left;", HTML("Parole Board Members")),
-  div(id = "bold-text", style = "text-align: left;", HTML("In Prison Past Their<br>Parole Eligibility Date")),
-  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date"))
-)
-br()
-```
 
 ::: {.panel-tabset .nav-pills}
 
@@ -62,13 +49,38 @@ br()
 
 ## In Prison Past Their Parole Eligibility Date
 
-Many people remain incarcerated past their parole eligibility date due to various reasons such as delays in the parole hearing process or unmet parole conditions. 
+`r paste(state_sentence_parole_elgibility_population, collapse = ", ")`
+
+```{r}
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
+  div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
+  div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
+  div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
+  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: left;", HTML("In Prison Past Their<br>Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: left;", HTML("Parole Board Members"))
+)
+br()
+```
 
 ```{r}
 div(id = "visualization", state_stackedbar_pe_type)
 ```
 
 ### Demographics
+
+```{r}
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
+  div(id = "small-visualization", state_waffle_parole_elgibility_race),
+  div(id = "small-visualization", ""),
+  div(id = "small-visualization", ""),
+)
+```
+
 
 ### Criminal Offense
 

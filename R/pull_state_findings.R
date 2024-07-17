@@ -31,10 +31,7 @@ num_parole_board_mem <- state_data |> filter(state == state_for_report) |> pull(
 
 ####################
 
-###################
-# Parole-Eligible Prison Population
-###################
-
+# TITLE: Pct. of Prison Population by Parole Eligibility Status
 # Stacked bar chart showing the  proportion of parole eligibility types
 if (state_for_report %in% names(all_stackedbar_pe_type)) {
   state_stackedbar_pe_type <-
@@ -47,3 +44,28 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
 # Get parole eligibility information by state
 parole_eligibility_criteria <- subset(robinaparoleeligibility,
                                       state == state_for_report)$general_rules_of_release_eligibility
+
+
+# SENTENCE: In X year, there were X people who were in prison past their parole
+#           eligibility date. This group made up X% of the people in prison for
+#           new crimes and sentence lengths between 1-25 years.
+if (state_for_report %in% names(all_sentence_parole_elgibility_population)) {
+  state_sentence_parole_elgibility_population <-
+    all_sentence_parole_elgibility_population[[state_for_report]]
+} else {
+  state_sentence_parole_elgibility_population <- ""
+}
+
+# TITLE: Race and Ethnicity
+if (state_for_report %in% names(all_waffle_parole_elgibility_race)) {
+  state_waffle_parole_elgibility_race <-
+    all_waffle_parole_elgibility_race[[state_for_report]] %>%
+    hc_size(height = 350) %>%
+    hc_title(text = paste0("Race and Ethnicity"))
+} else {
+  state_bar_parole_elgibility_race <- no_data_text
+}
+
+
+
+
