@@ -55,7 +55,7 @@ source("R/pull_state_findings.R")
 ```{r}
 div(
   id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),

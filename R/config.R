@@ -84,12 +84,12 @@ options(highcharter.lang = hcoptslang)
 
 #------ Colors ------#
 
-# Michael colors
+# # Michael colors
 # colors <- list(
 #   lightgray = "#d7d7d7",
 #   darkgray  = "#969696",
 #   purple    = "#938ebf", # primary color
-#   red       = "#d46c55", # primary color
+#   red       = "#d97d68", # primary color
 #   blue      = "#55b4e5", # primary color
 #   yellow    = "#decf64", # primary color
 #   green1    = "#b1d4d5",
@@ -98,13 +98,20 @@ options(highcharter.lang = hcoptslang)
 #   green4    = "#104040",
 #   brown     = "#9e6c10"  # primary color
 # )
+#
+# # Colors for the groups
+# red <- "#d97d68"
+# yellow <-  "#decf64"
+# green2 <- "#49a7a1"
+# purple <- "#938ebf"
+# blue <- "#55b4e5"
 
 colors <- list(
   lightgray = "#d7d7d7",
   darkgray  = "#969696",
   purple    = "#938ebf", # primary color
-  red       = "#d97d68", # primary color
-  blue      = "#1F449C", # primary color
+  red       = "#ac532f", # primary color
+  blue      = "#55b4e5", # primary color
   yellow    = "#decf64", # primary color
   green1    = "#b1d4d5",
   green2    = "#49a7a1",
@@ -114,11 +121,12 @@ colors <- list(
 )
 
 # Colors for the groups
-red <- "#d97d68"
+red <- "#ac532f"
 yellow <-  "#decf64"
 green2 <- "#49a7a1"
+green3 <- "#176f6d"
 purple <- "#938ebf"
-blue <- "#1F449C"
+blue <- "#2a5a99"
 
 # Custom SVG icon with color placeholder
 iconSVG <- "

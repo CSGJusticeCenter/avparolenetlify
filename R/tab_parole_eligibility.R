@@ -98,7 +98,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
     hc_add_series(name = "Future 6+ Years",
                   data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
                   stack = "a",
-                  color = colors$green3,
+                  color = colors$green2,
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
@@ -112,7 +112,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
     hc_add_series(name = "Future 1-5 Years",
                   data = list(list(y = df1$prop[2], tooltip = df1$tooltip[2], label = df1$prop_label[2])),
                   stack = "a",
-                  color = colors$green2,
+                  color = colors$green3,
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
@@ -208,7 +208,7 @@ current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
 states <- unique(current_ped_race$state)
 
 # Define colors for the groups
-colors_list <- c(red, yellow, purple, green2)
+colors_list <- c(red, purple, green2, blue)
 
 # Create Highcharts visualizations for each state
 all_waffle_parole_elgibility_race <- map(.x = states, .f = function(x) {
@@ -271,7 +271,7 @@ current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex) |>
 states <- unique(current_ped_sex$state)
 
 # Define colors for the groups
-colors_list <- c(purple, green2)
+colors_list <- c(red, purple)
 
 # Create Highcharts visualizations for each state
 all_waffle_parole_elgibility_sex <- map(.x = states, .f = function(x) {
@@ -335,7 +335,7 @@ current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend) |>
 states <- unique(current_ped_ageyrend$state)
 
 # Define colors for the groups
-colors_list <- c(red, yellow, green2, purple, blue)
+colors_list <- c(red, purple, green2, yellow, blue)
 
 # Create Highcharts visualizations for each state
 all_waffle_parole_elgibility_ageyrend <- map(.x = states, .f = function(x) {
@@ -404,3 +404,4 @@ for (folder in theseFOLDERS){
   save(all_waffle_parole_elgibility_ageyrend,     file = file.path(folder, "all_waffle_parole_elgibility_ageyrend.rds"))
 
 }
+
