@@ -30,6 +30,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_ageyrend.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_fbi_index.rds"))
+
 
 # Disparities Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
@@ -42,19 +44,6 @@ source("R/pull_state_findings.R")
 
 <br>
 <div id="state-body-section">
-
-::: {.panel-tabset .nav-pills}
-
-# Parole Eligibility
-
-## How Parole Eligibility is Determined
-
-`r paste(parole_eligibility_criteria, collapse = ", ")`
-<div class="divider"></div>
-
-## In Prison Past Their Parole Eligibility Date
-
-`r paste(state_sentence_parole_elgibility_population, collapse = ", ")`
 
 ```{r}
 div(
@@ -69,6 +58,19 @@ div(
 )
 br()
 ```
+
+::: {.panel-tabset .nav-pills}
+
+# Parole Eligibility
+
+## How Parole Eligibility is Determined
+
+`r paste(parole_eligibility_criteria, collapse = ", ")`
+<div class="divider"></div>
+
+## In Prison Past Their Parole Eligibility Date
+
+`r paste(state_sentence_parole_elgibility_population, collapse = ", ")`
 
 ```{r}
 div(id = "visualization", state_stackedbar_pe_type)
@@ -92,6 +94,11 @@ div(
 ### Criminal Offense
 
 Here, the charts present data on the types of criminal offenses committed by people in prison past their parole eligibility date.  
+
+```{r}
+div(id = "visualization", state_bubble_ped_fbi_index)
+```
+
 
 ### Sentence Length
 
@@ -192,6 +199,8 @@ In prison.
 <div class="divider"></div>
 
 ## Years Spent in Prison After Parole Eligibility
+
+This graph depicts the years individuals spend in prison after becoming eligible for parole by race and ethnicity. It highlights disparities in parole release timings among various racial and ethnic groups.  
 
 ```{r}
 div(id = "visualization", state_scatter_race_ped_release)

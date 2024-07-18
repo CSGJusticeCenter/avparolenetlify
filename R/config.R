@@ -123,10 +123,11 @@ colors <- list(
 # Colors for the groups
 red <- "#ac532f"
 yellow <-  "#decf64"
+green1 <- "#b1d4d5"
 green2 <- "#49a7a1"
 green3 <- "#176f6d"
 purple <- "#938ebf"
-blue <- "#2a5a99"
+blue <- "#55b4e5"
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
 

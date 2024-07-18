@@ -59,8 +59,8 @@ if (state_for_report %in% names(all_sentence_parole_elgibility_population)) {
 # TITLE: Race and Ethnicity
 if (state_for_report %in% names(all_waffle_parole_elgibility_race)) {
   state_waffle_parole_elgibility_race <-
-    all_waffle_parole_elgibility_race[[state_for_report]] %>%
-    hc_size(height = 350) %>%
+    all_waffle_parole_elgibility_race[[state_for_report]]|>
+    hc_size(height = 350)|>
     hc_title(text = paste0("Race and Ethnicity"))
 } else {
   state_waffle_parole_elgibility_race <- no_data_text
@@ -69,8 +69,8 @@ if (state_for_report %in% names(all_waffle_parole_elgibility_race)) {
 # TITLE: Gender
 if (state_for_report %in% names(all_waffle_parole_elgibility_sex)) {
   state_waffle_parole_elgibility_sex <-
-    all_waffle_parole_elgibility_sex[[state_for_report]] %>%
-    hc_size(height = 350) %>%
+    all_waffle_parole_elgibility_sex[[state_for_report]]|>
+    hc_size(height = 350)|>
     hc_title(text = paste0("Gender"))
 } else {
   state_waffle_parole_elgibility_sex <- no_data_text
@@ -79,8 +79,8 @@ if (state_for_report %in% names(all_waffle_parole_elgibility_sex)) {
 # TITLE: Age
 if (state_for_report %in% names(all_waffle_parole_elgibility_ageyrend)) {
   state_waffle_parole_elgibility_ageyrend <-
-    all_waffle_parole_elgibility_ageyrend[[state_for_report]] %>%
-    hc_size(height = 350) %>%
+    all_waffle_parole_elgibility_ageyrend[[state_for_report]]|>
+    hc_size(height = 350)|>
     hc_title(text = paste0("Age"))
 } else {
   state_waffle_parole_elgibility_ageyrend <- no_data_text
@@ -89,8 +89,17 @@ if (state_for_report %in% names(all_waffle_parole_elgibility_ageyrend)) {
 # TITLE: Years Spent in Prison After Parole Eligibility
 if (state_for_report %in% names(all_scatter_race_ped_release)) {
   state_scatter_race_ped_release <-
-    all_scatter_race_ped_release[[state_for_report]]
+    all_scatter_race_ped_release[[state_for_report]] |>
+    hc_size(height = 400)
 } else {
   state_scatter_race_ped_release <- no_data_text
 }
 
+# TITLE: Offense Breakdown for People in Prison Past Their Parole Eligibility Date
+if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
+  state_bubble_ped_fbi_index <-
+    all_bubble_ped_fbi_index[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_bubble_ped_fbi_index <- no_data_text
+}

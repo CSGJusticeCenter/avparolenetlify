@@ -37,7 +37,7 @@ all_scatter_race_ped_release <- map(.x = states, .f = function(x) {
                        hcaes(x = race, y = time_between_ped_release, group = race)) |>
       hc_chart(type = "scatter") |>
       hc_colors(colors) |>
-      hc_title(text = "Years Spent in Prison After Parole Eligibility") |>
+      hc_title(text = "Years Spent in Prison After Parole Eligibility by Race and Ethnicity") |>
       hc_xAxis(title = list(text = "")) |>
       hc_yAxis(title = list(text = ""), tickInterval = 1) |>
       hc_plotOptions(
@@ -51,13 +51,14 @@ all_scatter_race_ped_release <- map(.x = states, .f = function(x) {
             symbol = 'circle'
           ),
           tooltip = list(
-            pointFormat = 'Time Between Parole Eligibility Year and Release Year: {point.y:.0f}'
+            pointFormat = 'Time Between Parole Eligibility Year<br>and Release Year: {point.y:.0f}'
           ),
           showInLegend = FALSE
         )
       ) |>
       hc_colors(c(green2, yellow, purple, red)) |>
-      hc_add_theme(hc_theme_with_line)
+      hc_add_theme(hc_theme_with_line) |>
+    hc_exporting(enabled = TRUE)
     return(highcharts)
 })
 
