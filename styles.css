@@ -9,10 +9,14 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
 
+/* Increase the font size for h1 elements */
 h1 {
   font-size: 3em; /* Adjust the size as needed */
-  font-weight: bold; /* Make the title bold */
-  text-align: center; /* Center the title */
+}
+
+/* Increase the font size for h1 elements */
+h2 {
+  font-size: 1.75em; /* Adjust the size as needed */
 }
 
 .divider {
@@ -77,13 +81,24 @@ pre {
   word-wrap: break-word;       /* IE */
 }
 
-/* Import Source Sans Pro from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');
+/* Import Graphik from Google Fonts */
+/*@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');*/
+
+/* add fonts*/
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/Graphik.ttf");
+}
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/GraphikBold.ttf");
+  font-weight: bold;
+}
 
 /* Change font throughout website */
 html,
 body {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Graphik', sans-serif;
   color: black!important;
  /* background-color: lightblue; */
 }
@@ -128,7 +143,7 @@ body {
   border-bottom: 1px solid white; /* Add bottom border to the tabs container */
   justify-content: space-between; /* Distribute tabs equally across the container */
   text-align: center; /* Center align text within each tab */
-  font-family: 'Source Sans Pro', sans-serif; /* Set font family for the tabs */
+  font-family: 'Graphik', sans-serif; /* Set font family for the tabs */
   width: 100%; /* Ensure the container stretches to full width */
 }
 
@@ -175,7 +190,7 @@ body {
 /* highlighted text underneath state name */
 #highlight-text {
   font-size: 2em;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Graphik', sans-serif;
   font-weight: bold;
   color: #00bdb2;
   text-align: center;
@@ -184,7 +199,7 @@ body {
 /* highlighted text on national trend page */
 #national-highlight {
   font-size: 1.5em;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Graphik', sans-serif;
   font-weight: bold;
   color: #00bdb2;
   text-align: center;
@@ -193,7 +208,7 @@ body {
 /* bold app text */
 #bold-text {
   font-size: 0.9em;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Graphik', sans-serif;
   font-weight: bold;
   text-align: center;
   color: black,

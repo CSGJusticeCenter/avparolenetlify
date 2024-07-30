@@ -29,7 +29,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_t
 
 num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 ```
-<br>
+
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
@@ -84,7 +84,7 @@ map_percent |>
 <div id="body-section">
 <div class="divider"></div>
 
-# The Power of Parole Boards
+## The Power of Parole Boards
 
 <div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
   <p><br>
@@ -96,7 +96,7 @@ map_percent |>
 
 
 <div class="divider"></div>
-# Parole Eligibility by State
+## Parole Eligibility by State
 
 This table provides a comprehensive look at parole eligibility across states for people incarcerated for new crimes, with sentence lengths between 1 and 25 years. It details the percentage and number of eligible individuals, the total prison population, the status of discretionary parole, and the number of parole board members, providing insights into state-level parole practices.  
 
@@ -176,7 +176,7 @@ reactable(
 
 <br>
 <div class="divider"></div>
-# Disparities in Parole Decisions
+## Disparities in Parole Decisions
 
 Research indicates significant racial, ethnic, and gender disparities in parole decisions. Black and Hispanic individuals are less likely to be granted parole compared to their white counterparts. Gender disparities also exist, with women facing different challenges and rates of releases to parole compared to men.  
 
@@ -185,7 +185,7 @@ Research indicates significant racial, ethnic, and gender disparities in parole 
 
 <br>
 <div class="divider"></div>
-# Impact on Recidivism
+## Impact on Recidivism
 
 Studies indicate that timely parole can reduce recidivism rates. People who are granted parole and receive proper support are less likely to re-offend.
 
@@ -194,7 +194,7 @@ Studies indicate that timely parole can reduce recidivism rates. People who are 
 
 <br>
 <div class="divider"></div>
-# Economic Impact of Parole
+## Economic Impact of Parole
 
 Effective parole systems can reduce incarceration costs and improve economic outcomes for individuals and communities.  
 <br>
