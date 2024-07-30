@@ -20,7 +20,7 @@ parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
 
 #------ Shapefile for Map ------#
 
-hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/us_states_hexgrid.geojson")) |>
+hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
   select(state_abb = iso3166_2) |>
   filter(state_abb != "DC") |>
   st_transform(3857) |>
@@ -31,11 +31,11 @@ hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/us_states_hexgrid.geojs
 
 #------ Robina Institute ------#
 
-robinainfo <- read.xlsx(paste0(config$sp_data_path, "/data/raw/robinainfo.xlsx"),
+robinainfo <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
                         sheet = "classifications")
-robinadefinitions <- read.xlsx(paste0(config$sp_data_path, "/data/raw/robinainfo.xlsx"),
+robinadefinitions <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
                                sheet = "definitions")
-robinaparoleeligibility <- read.xlsx(paste0(config$sp_data_path, "/data/raw/robinainfo.xlsx"),
+robinaparoleeligibility <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
                                      sheet = "eligibility")
 
 
@@ -175,7 +175,7 @@ ncrp_yearendpop <- ncrp_data$yearendpop |>
 #------ Import and Prepare BJS Race, Ethnicity, Gender Data ------#
 
 bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
-                                                     "/data/raw/p20st/p20stat02.csv"), skip = 10)
+                                                     "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
 
 # Define the list of filenames and corresponding column indices
 file_info <- list(
@@ -198,7 +198,7 @@ cleaned_data_list <- list()
 
 # Loop through the file information to read, process, and store the data
 for (year in names(file_info)) {
-  file_path <- paste0(config$sp_data_path, "/data/raw/", file_info[[year]]$file)
+  file_path <- paste0(config$sp_data_path, "/data/raw/BJS Prison Pop/", file_info[[year]]$file)
   col_name <- file_info[[year]]$col
 
   # Read and process the data
@@ -249,7 +249,7 @@ aps_files <- list(
 )
 
 aps_data_list <- lapply(aps_files, function(f) {
-  load(paste0(config$sp_data_path, "/data/raw/", f$file))
+  load(paste0(config$sp_data_path, "/data/raw/Annual Parole Survey/", f$file))
   get(ls()[1])
 })
 names(aps_data_list) <- paste0("aps_", sapply(aps_files, function(f) f$year))

@@ -19,7 +19,7 @@
 #' @return The loaded data object.
 #' @export
 fnc_load_ncrp_data <- function(file_id) {
-  file_path <- paste0(config$sp_data_path, "/data/raw/ICPSR_38492-V1/ICPSR_38492/", file_id, "/38492-", file_id, "-Data.rda")
+  file_path <- paste0(config$sp_data_path, "/data/raw/NCRP/ICPSR_38492-V1/ICPSR_38492/", file_id, "/38492-", file_id, "-Data.rda")
   if (file.exists(file_path)) {
     load(file_path)
     return(get(ls()[ls() != "file_path"]))  # Return the loaded data object
@@ -40,7 +40,7 @@ fnc_load_ncrp_data <- function(file_id) {
 #' @return A data frame with the loaded data, or NULL if the file does not exist.
 #' @export
 fnc_load_bjs_prison_data <- function(year, subfolder, file_name) {
-  file_path <- file.path(config$sp_data_path, "data/raw", subfolder, file_name)
+  file_path <- file.path(config$sp_data_path, "data/BJS Prison Pop/raw", subfolder, file_name)
   if (file.exists(file_path)) {
     return(read.csv(file_path))
   } else {
@@ -59,7 +59,7 @@ fnc_load_bjs_prison_data <- function(year, subfolder, file_name) {
 #' @return The loaded data as a data frame.
 #' @export
 fnc_load_aps_data <- function(year, icpsr_code) {
-  file_path <- file.path(config$sp_data_path, "data/raw/ICPSR_", icpsr_code, "-V1/ICPSR_", icpsr_code, "/DS0001/", paste0(icpsr_code, "-0001-Data.rda"))
+  file_path <- file.path(config$sp_data_path, "data/raw/Annual Parole Survey/ICPSR_", icpsr_code, "-V1/ICPSR_", icpsr_code, "/DS0001/", paste0(icpsr_code, "-0001-Data.rda"))
   if (file.exists(file_path)) {
     loaded_object_name <- load(file_path)
     get(loaded_object_name)
