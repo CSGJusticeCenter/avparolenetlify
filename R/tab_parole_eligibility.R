@@ -423,7 +423,7 @@ fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
   charts <- map(.x = states, .f = function(x) {
     state_data <- data |>
       filter(state == x) |>
-      # arrange(desc(n)) |>
+      arrange(desc(n)) |>
       mutate(prop = round(prop, 0))
 
     hc_accessibility_text <- sprintf(accessibility_text, category, select_year, x)

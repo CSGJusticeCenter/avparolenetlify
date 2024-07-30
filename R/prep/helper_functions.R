@@ -215,7 +215,7 @@ fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
 #' @return A list of common style elements.
 #' @export
 common_style <- list(
-  fontFamily = "Graphik",
+  fontFamily = "Source Sans Pro",
   color = "black",
   fontSize = "12px",
   fontWeight = "regular"
@@ -227,7 +227,7 @@ common_style <- list(
 #' @return A list of common chart style elements.
 #' @export
 common_chart_style <- list(
-  fontFamily = "Graphik",
+  fontFamily = "Source Sans Pro",
   fontSize = "12px",
   color = "black"
 )
@@ -238,7 +238,7 @@ common_chart_style <- list(
 #' @return A list of common title style elements.
 #' @export
 common_title_style <- list(
-  fontFamily = "Graphik",
+  fontFamily = "Source Sans Pro",
   fontWeight = "bold",
   color = "black"
 )
@@ -354,7 +354,7 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
                                     format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
                                                  fontSize = "1em",
-                                                 fontFamily = "Graphik",
+                                                 fontFamily = "Source Sans Pro",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
     hc_yAxis(labels = list(enabled = FALSE),

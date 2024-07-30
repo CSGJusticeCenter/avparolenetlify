@@ -42,7 +42,6 @@ state_for_report <- "Georgia"
 source("R/pull_state_findings.R")
 ```
 
-<br>
 <div id="state-body-section">
 
 ```{r}
@@ -52,9 +51,9 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date")),
-  div(id = "bold-text", style = "text-align: left;", HTML("In Prison Past Their<br>Parole Eligibility Date")),
-  div(id = "bold-text", style = "text-align: left;", HTML("Parole Board Members"))
+  div(id = "bold-text", style = "text-align: center;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Parole Board Members"))
 )
 br()
 ```

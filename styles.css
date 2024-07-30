@@ -6,6 +6,13 @@
 h1, h2, h3, h4, h5, h6 {
   text-align: center;
   border-bottom: 1px solid white;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 3em; /* Adjust the size as needed */
+  font-weight: bold; /* Make the title bold */
+  text-align: center; /* Center the title */
 }
 
 .divider {
@@ -70,27 +77,13 @@ pre {
   word-wrap: break-word;       /* IE */
 }
 
-/* add fonts*/
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/Graphik.ttf");
-}
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/GraphikBold.ttf");
-  font-weight: bold;
-}
+/* Import Source Sans Pro from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');
 
-
-/* remove rounded edges everything */
-*{
-  border-radius: 0!important;
-}
-
-/* change font throughout website */
+/* Change font throughout website */
 html,
 body {
-  font-family: 'Graphik', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   color: black!important;
  /* background-color: lightblue; */
 }
@@ -100,10 +93,6 @@ body {
   background-color: white;
   margin: 0 auto; /* center the content horizontally */
 }
-
-
-
-
 
 
 /* TAB SETTINGS */
@@ -139,7 +128,7 @@ body {
   border-bottom: 1px solid white; /* Add bottom border to the tabs container */
   justify-content: space-between; /* Distribute tabs equally across the container */
   text-align: center; /* Center align text within each tab */
-  font-family: Graphik; /* Set font family for the tabs */
+  font-family: 'Source Sans Pro', sans-serif; /* Set font family for the tabs */
   width: 100%; /* Ensure the container stretches to full width */
 }
 
@@ -157,18 +146,6 @@ body {
   border: 1px solid white; /* Add white border around each tab */
   box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 #visualization {
   margin: 0 auto; /* Center the narrow section horizontally */
@@ -192,45 +169,37 @@ body {
   max-width: 1200px;
   margin: 0 auto; /* Center the narrow section horizontally */
   text-align: left; /* Center align text inside the narrow section */
-    margin-left: -10px; /* Move section slightly to the left so it aligns with other text */
+  margin-left: -10px; /* Move section slightly to the left so it aligns with other text */
 }
 
-/* highlighted text underneath state name*/
+/* highlighted text underneath state name */
 #highlight-text {
   font-size: 2em;
-  font-family: Graphik;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
   color: #00bdb2;
-  text-align: left;
+  text-align: center;
 }
 
-/* highlighted text on national trend page*/
+/* highlighted text on national trend page */
 #national-highlight {
   font-size: 1.5em;
-  font-family: Graphik;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
   color: #00bdb2;
-  text-align: left;
+  text-align: center;
 }
 
 /* bold app text */
 #bold-text {
   font-size: 0.9em;
-  font-family: Graphik;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
   text-align: center;
   color: black,
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+/* remove rounded edges everything */
+* {
+  border-radius: 0!important;
+}
