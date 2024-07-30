@@ -119,7 +119,7 @@ body {
 /* Active state for tabs - changes the color and background of the active tab */
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     color: white; /* Set active text color to white */
-    background-color: #49a7a1; /* Set active background color */
+    background-color: #00bdb2; /* Set active background color */
 }
 
 /* Set height for tab content in the first .panel-tabset */
@@ -200,7 +200,7 @@ body {
   font-size: 2em;
   font-family: Graphik;
   font-weight: bold;
-  color: #ac532f;
+  color: #00bdb2;
   text-align: left;
 }
 
@@ -209,7 +209,7 @@ body {
   font-size: 1.5em;
   font-family: Graphik;
   font-weight: bold;
-  color: #176f6d;
+  color: #00bdb2;
   text-align: left;
 }
 

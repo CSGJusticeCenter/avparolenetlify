@@ -26,10 +26,10 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state
 
 # Visualizations (Parole Eligibility Tab)
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_elgibility_population.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_elgibility_ageyrend.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_population.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_ageyrend.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_fbi_index.rds"))
 
 
@@ -70,7 +70,7 @@ br()
 
 ## In Prison Past Their Parole Eligibility Date
 
-`r paste(state_sentence_parole_elgibility_population, collapse = ", ")`
+`r paste(state_sentence_parole_eligibility_population, collapse = ", ")`
 
 ```{r}
 div(id = "visualization", state_stackedbar_pe_type)
@@ -84,9 +84,9 @@ The charts below provide further details on the demographics of this population,
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
-  div(id = "small-visualization", state_waffle_parole_elgibility_race),
-  div(id = "small-visualization", state_waffle_parole_elgibility_sex),
-  div(id = "small-visualization", state_waffle_parole_elgibility_ageyrend),
+  div(id = "small-visualization", state_waffle_parole_eligibility_race),
+  div(id = "small-visualization", state_waffle_parole_eligibility_sex),
+  div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
 )
 ```
 

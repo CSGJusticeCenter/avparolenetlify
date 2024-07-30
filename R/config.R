@@ -67,7 +67,7 @@ config <- list(
 
 # Most recent year of NCRP data
 analysis_year <- 2020
-
+select_year <- 2020
 
 #------ Fonts ------#
 
@@ -124,12 +124,32 @@ colors <- list(
 red <- "#ac532f"
 yellow <-  "#decf64"
 green1 <- "#b1d4d5"
-green2 <- "#49a7a1"
+green <- "#49a7a1"
 green3 <- "#176f6d"
 purple <- "#938ebf"
 blue <- "#55b4e5"
+brown     = "#9e6c10"
+
+
+blue <- "#3f8bca"
+teal <- "#00bdb2"
+lightteal <- "#a1e1da"
+yellow <- "#f4b811"
+red <- "#de663e"
+orange <- "#ff912b"
+beige <- "#fbf0e3"
+lightorange <- "#fce2c5"
+
+color1 <- teal
+color2 <- blue
+color3 <- yellow
+color4 <- red
+color5 <- lightteal
+color6 <- lightorange
+color6 <- orange
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
+
 
 # Custom SVG icon with color placeholder
 iconSVG <- "
