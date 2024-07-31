@@ -31,6 +31,10 @@ num_parole_board_mem <- state_data |> filter(state == state_for_report) |> pull(
 
 ####################
 
+# TITLE: How is Parole Eligibility Determined?
+parole_eligibility_criteria <- subset(carl_state_notes,
+                                      state == state_for_report)$parole_eligibility_criteria
+
 # TITLE: Pct. of Prison Population by Parole Eligibility Status
 # Stacked bar chart showing the  proportion of parole eligibility types
 if (state_for_report %in% names(all_stackedbar_pe_type)) {
@@ -40,11 +44,6 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
 } else {
   state_stackedbar_pe_type <- no_data_text
 }
-
-# Get parole eligibility information by state
-parole_eligibility_criteria <- subset(robinaparoleeligibility,
-                                      state == state_for_report)$general_rules_of_release_eligibility
-
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
 #           eligibility date. This group made up X% of the people in prison for

@@ -31,12 +31,13 @@ hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_he
 
 #------ Robina Institute ------#
 
-robinainfo <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
-                        sheet = "classifications")
-robinadefinitions <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
-                               sheet = "definitions")
-robinaparoleeligibility <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
-                                     sheet = "eligibility")
+# robinainfo <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
+#                         sheet = "classifications")
+# robinadefinitions <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Robina Institute/robinainfo.xlsx"),
+#                                sheet = "definitions")
+
+carl_state_notes <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
+  clean_names()
 
 
 
@@ -332,7 +333,7 @@ for (folder in theseFOLDERS){
   save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))
   save(robinadefinitions,                  file = file.path(folder, "robinadefinitions.rds"))
   save(robinainfo,                         file = file.path(folder, "robinainfo.rds"))
-  save(robinaparoleeligibility,            file = file.path(folder, "robinaparoleeligibility.rds"))
+  save(carl_state_notes,                   file = file.path(folder, "carl_state_notes.rds"))
   save(parole_info_by_state,               file = file.path(folder, "parole_info_by_state.rds"))
 
 }

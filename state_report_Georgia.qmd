@@ -21,7 +21,7 @@ source("R/config.R")
 # Load prepared data
 load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/robinaparoleeligibility.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/carl_state_notes.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state.rds"))
 
 # Parole Eligibility Tab
