@@ -24,20 +24,24 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_t
 load(file = paste0(config$sp_data_path, "/data/analysis/app/robinaparoleeligibility.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state.rds"))
 
-# Visualizations (Parole Eligibility Tab)
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
+# Parole Eligibility Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_population.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
+
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_ageyrend.rds"))
+
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_fbi_index.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
 
 
 # Disparities Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
 
-
-state_for_report <- "Georgia"
+state_for_report <- "change_me"
 
 source("R/pull_state_findings.R")
 ```
@@ -101,6 +105,11 @@ div(id = "visualization", state_bubble_ped_fbi_index)
 
 ### Sentence Length
 
+`r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
+
+```{r}
+div(id = "visualization", state_bar_parole_eligibility_sentlgth)
+```
 
 <br>
 <div class="divider"></div>

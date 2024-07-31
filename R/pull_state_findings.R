@@ -103,3 +103,22 @@ if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
 } else {
   state_bubble_ped_fbi_index <- no_data_text
 }
+
+# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Date
+if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
+  state_bar_parole_eligibility_sentlgth <-
+    all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_bar_parole_eligibility_sentlgth <- no_data_text
+}
+
+# SENTENCE: In YEAR, among the prison population eligible for parole but not yet
+#           released, people with sentences between X years constituted
+#           the majority, representing X percent.
+if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
+  state_sentence_parole_eligibility_sentlgth <-
+    all_sentence_parole_eligibility_sentlgth[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_sentlgth <- ""
+}

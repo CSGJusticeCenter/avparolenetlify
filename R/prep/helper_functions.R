@@ -248,7 +248,7 @@ common_title_style <- list(
 #' This theme serves as the base for other themes.
 #' @export
 base_hc_theme <- hc_theme(
-  colors = c(colors$green2, colors$yellow, colors$red, colors$purple, colors$blue),
+  colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
@@ -295,7 +295,7 @@ base_hc_theme <- hc_theme(
 #' This theme includes additional settings for line charts.
 #' @export
 hc_theme_with_line <- hc_theme(
-  colors = c(colors$blue, colors$red, colors$green2, colors$yellow, colors$purple, colors$brown),
+  colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
@@ -357,11 +357,10 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) %>%
     hc_xAxis(categories = xaxis_order) %>%
-    hc_yAxis(labels = list(enabled = FALSE),
-             title = list(text = ""),
-             min = 0, max = 1.1
+    hc_yAxis(labels = list(enabled = TRUE),
+             title = list(text = "")
     ) %>%
-    hc_add_theme(base_hc_theme) %>%
+    hc_add_theme(hc_theme_with_line) %>%
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
     hc_legend(enabled = FALSE) %>%
     hc_exporting(enabled = TRUE) %>%

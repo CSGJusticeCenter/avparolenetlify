@@ -639,6 +639,53 @@ all_bubble_ped_fbi_index$Georgia
 
 
 
+# Currently parole eligible population but still in prison by sentlgth in select year
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
+current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)%>%
+  mutate(prop_label = paste0(
+    "<b>", prop_label, "</b> (", n_label, ")")
+  )
+
+# Create highcharts showing breakdown of parole-eligible prison population by sentlgth
+states <- unique(current_ped_sentlgth$state)
+all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- current_ped_sentlgth %>%
+    filter(state == x) |>
+    mutate(prop = prop*100)
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  their original sentence length in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_hc_barchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Date")
+  return(highcharts)
+})
+all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
+all_bar_parole_eligibility_sentlgth$Georgia
+
+
+
+# Create sentences describing breakdown of parole-eligible prison population by sentlgth
+states <- unique(current_ped_sentlgth$state)
+all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- current_ped_sentlgth %>%
+    filter(state == x) %>%
+    arrange(-prop) %>%
+    slice(1)
+  df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
+  sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between ",
+                      df1$sentlgth, " constituted the majority, representing ", round(df1$prop*100, 0), " percent.")
+  return(sentences)
+})
+
+all_sentence_parole_eligibility_sentlgth <- setNames(all_sentence_parole_eligibility_sentlgth, states)
+all_sentence_parole_eligibility_sentlgth$Georgia
 
 
 
@@ -667,6 +714,7 @@ for (folder in theseFOLDERS){
   save(all_waffle_parole_eligibility_sex,          file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
   save(all_waffle_parole_eligibility_ageyrend,     file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
   save(all_bubble_ped_fbi_index,                   file = file.path(folder, "all_bubble_ped_fbi_index.rds"))
-
+  save(all_bar_parole_eligibility_sentlgth,        file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
+  save(all_sentence_parole_eligibility_sentlgth,   file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))
 }
 
