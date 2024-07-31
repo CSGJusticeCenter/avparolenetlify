@@ -169,7 +169,7 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
              rptyear == select_year)
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people were in prison past their parole eligibility date. This group made up ",
+                      " people in prison past their parole eligibility date. This group made up ",
                       df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
   return(sentences)
 })
@@ -181,287 +181,11 @@ all_sentence_parole_eligibility_population$Georgia
 
 
 
-# ####################
+####################
 #
-# # TITLE: Race and Ethnicity: Pct of Prison Population by Parole Eligibility Status
+# TITLE: Demographics
 #
-# ####################
-#
-#
-# # # Define the function to encode the SVG icon
-# # encode_icon <- function(color) {
-# #   iconSVG <- sprintf(
-# #     "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
-# #       <path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' fill='%s'/>
-# #     </svg>",
-# #     color
-# #   )
-# #   base64encode(charToRaw(iconSVG))
-# # }
-#
-# # Define the function to encode the SVG icon as a square
-# encode_icon <- function(color) {
-#   iconSVG <- sprintf(
-#     "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
-#       <rect width='24' height='24' fill='%s'/>
-#     </svg>",
-#     color
-#   )
-#   base64encode(charToRaw(iconSVG))
-# }
-#
-# # Prepare the parole eligibility data by race
-# current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
-#   mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
-#          prop = prop * 100)
-#
-# # Get unique states
-# states <- unique(current_ped_race$state)
-#
-# # Define colors for the groups
-# colors_list <- c(red, purple, green2, blue)
-#
-# # Create Highcharts visualizations for each state
-# all_waffle_parole_eligibility_race <- map(.x = states, .f = function(x) {
-#
-#   data <- current_ped_race |>
-#     filter(state == x) |>
-#     arrange(desc(n)) |>
-#     mutate(prop = round(prop, 0))
-#
-#   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
-#                                   who are currently eligible for parole but not yet released by
-#                                   race and ethnicity in ", select_year, " in the state of ", x, ".")
-#
-#   highcharts <- highchart() |>
-#     hc_chart(type = "item",
-#              marginTop = 140
-#     ) |>
-#     hc_title(text = "Race and Ethnicity") |>
-#     hc_xAxis(categories = data$race) |>
-#     hc_yAxis(title = list(text = "Percentage"), max = 100) |>
-#     hc_series(
-#       list(
-#         name = "Percentage",
-#         data = lapply(1:nrow(data), function(i) {
-#           list(
-#             y = data$prop[i],
-#             name = data$race[i],
-#             color = colors_list[i],
-#             marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors_list[i])))
-#           )
-#         }),
-#         type = "item",
-#         size = '100%',
-#         itemMargin = 10,
-#         rows = 10
-#       )
-#     ) |>
-#     hc_tooltip(
-#       formatter = JS("function() {
-#         return '<b>' + this.point.name + ':</b> ' + this.y + '%';
-#       }")
-#     ) |>
-#     hc_add_theme(base_hc_theme)
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_waffle_parole_eligibility_race <- setNames(all_waffle_parole_eligibility_race, states)
-#
-# # Display the chart for Georgia as an example
-# all_waffle_parole_eligibility_race$Georgia
-#
-# # Prepare the parole eligibility data by sex
-# current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex) |>
-#   mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
-#          prop = prop * 100)
-#
-# # Get unique states
-# states <- unique(current_ped_sex$state)
-#
-# # Define colors for the groups
-# colors_list <- c(red, purple)
-#
-# # Create Highcharts visualizations for each state
-# all_waffle_parole_eligibility_sex <- map(.x = states, .f = function(x) {
-#
-#   data <- current_ped_sex |>
-#     filter(state == x) |>
-#     arrange(desc(n)) |>
-#     mutate(prop = round(prop, 0))
-#
-#   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
-#                                   who are currently eligible for parole but not yet released by
-#                                   gender in ", select_year, " in the state of ", x, ".")
-#
-#   highcharts <- highchart() |>
-#     hc_chart(type = "item",
-#              marginTop = 140
-#     ) |>
-#     hc_title(text = "Gender") |>
-#     hc_xAxis(categories = data$sex) |>
-#     hc_yAxis(title = list(text = "Percentage"), max = 100) |>
-#     hc_series(
-#       list(
-#         name = "Percentage",
-#         data = lapply(1:nrow(data), function(i) {
-#           list(
-#             y = data$prop[i],
-#             name = data$sex[i],
-#             color = colors_list[i],
-#             marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors_list[i])))
-#           )
-#         }),
-#         type = "item",
-#         size = '100%',
-#         itemMargin = 10,
-#         rows = 10
-#       )
-#     ) |>
-#     hc_tooltip(
-#       formatter = JS("function() {
-#         return '<b>' + this.point.name + ':</b> ' + this.y + '%';
-#       }")
-#     ) |>
-#     hc_add_theme(base_hc_theme)
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_waffle_parole_eligibility_sex <- setNames(all_waffle_parole_eligibility_sex, states)
-#
-# # Display the chart for Georgia as an example
-# all_waffle_parole_eligibility_sex$Georgia
-#
-#
-# # Prepare the parole eligibility data by ageyrend
-# current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend) |>
-#   mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
-#          prop = prop * 100)
-#
-# # Get unique states
-# states <- unique(current_ped_ageyrend$state)
-#
-# # Define colors for the groups
-# colors_list <- c(red, purple, green2, yellow, blue)
-#
-# # Create Highcharts visualizations for each state
-# all_waffle_parole_eligibility_ageyrend <- map(.x = states, .f = function(x) {
-#
-#   data <- current_ped_ageyrend |>
-#     filter(state == x) |>
-#     arrange(desc(n)) |>
-#     mutate(prop = round(prop, 0))
-#
-#   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
-#                                   who are currently eligible for parole but not yet released by
-#                                   ageyrend in ", select_year, " in the state of ", x, ".")
-#
-#   highcharts <- highchart() |>
-#     hc_chart(type = "item",
-#              marginTop = 140
-#     ) |>
-#     hc_title(text = "Current Age") |>
-#     hc_xAxis(categories = data$ageyrend) |>
-#     hc_yAxis(title = list(text = "Percentage"), max = 100) |>
-#     hc_series(
-#       list(
-#         name = "Percentage",
-#         data = lapply(1:nrow(data), function(i) {
-#           list(
-#             y = data$prop[i],
-#             name = data$ageyrend[i],
-#             color = colors_list[i],
-#             marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors_list[i])))
-#           )
-#         }),
-#         type = "item",
-#         size = '100%',
-#         itemMargin = 10,
-#         rows = 10
-#       )
-#     ) |>
-#     hc_tooltip(
-#       formatter = JS("function() {
-#         return '<b>' + this.point.name + ':</b> ' + this.y + '%';
-#       }")
-#     ) |>
-#     hc_add_theme(base_hc_theme)
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_waffle_parole_eligibility_ageyrend <- setNames(all_waffle_parole_eligibility_ageyrend, states)
-#
-# # Display the chart for Georgia as an example
-# all_waffle_parole_eligibility_ageyrend$Georgia
-
-
-# Define the function to encode the SVG icon as a square
-encode_icon <- function(color) {
-  iconSVG <- sprintf(
-    "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
-      <rect width='24' height='24' fill='%s'/>
-    </svg>",
-    color
-  )
-  base64encode(charToRaw(iconSVG))
-}
-
-# Define the main function to create Highcharts visualizations
-fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
-  data <- data |>
-    mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
-           prop = prop * 100)
-
-  states <- unique(data$state)
-
-  charts <- map(.x = states, .f = function(x) {
-    state_data <- data |>
-      filter(state == x) |>
-      arrange(desc(n)) |>
-      mutate(prop = round(prop, 0))
-
-    hc_accessibility_text <- sprintf(accessibility_text, category, select_year, x)
-
-    highcharts <- highchart() |>
-      hc_chart(type = "item", marginTop = 140) |>
-      hc_title(text = title) |>
-      hc_xAxis(categories = state_data[[category]]) |>
-      hc_yAxis(title = list(text = "Percentage"), max = 100) |>
-      hc_series(
-        list(
-          name = "Percentage",
-          data = lapply(1:nrow(state_data), function(i) {
-            list(
-              y = state_data$prop[i],
-              name = state_data[[category]][i],
-              color = colors[i],
-              marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors[i])))
-            )
-          }),
-          type = "item",
-          size = '100%',
-          itemMargin = 10,
-          rows = 10
-        )
-      ) |>
-      hc_tooltip(
-        formatter = JS("function() {
-          return '<b>' + this.point.name + ':</b> ' + this.y + '%';
-        }")
-      ) |>
-      hc_add_theme(base_hc_theme)
-
-    return(highcharts)
-  })
-
-  setNames(charts, states)
-}
+####################
 
 # Prepare the data for race
 current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
@@ -517,23 +241,16 @@ all_waffle_parole_eligibility_ageyrend$Georgia
 
 
 
-
-
-# # Currently parole eligible population but still in prison by sentlgth in select year
-# # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
-# current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)|>
-#   mutate(prop_label = paste0(
-#     "<b>", prop_label, "</b> (", n_label, ")")
-#   )
-
-
-
-
+####################
+#
+# TITLE: Offense Types
+#
+####################
 
 # Currently parole eligible population but still in prison by fbi_index in select year
 # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
 current_ped_fbi_index <-
-  fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) %>%
+  fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) |>
   mutate(prop_label = paste0(
     "<b>", prop_label, "</b> (", n_label, ")")
   ) |>
@@ -639,9 +356,135 @@ all_bubble_ped_fbi_index$Georgia
 
 
 
+
+
+
+
+
+
+
+# Get unique states
+states <- unique(current_ped_fbi_index$state)
+
+# Create Highcharts visualizations for each state
+all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
+
+  # # Manual adjustments to group names
+  # df1$group <- as.character(df1$group)
+  # df1$group[df1$group == "Murder and Non-negligent Manslaughter"] <- "Murder and Non-negligent<br>Manslaughter"
+  # df1$group[df1$group == "Rape or Sexual Assault"] <- "Rape or<br>Sexual Assault"
+  # df1$group[df1$group == "Aggravated or Simple Assault"] <- "Aggravated or<br>Simple Assault"
+  # df1$group[df1$group == "Other Violent Offenses"] <- "Other Violent"
+  # df1$group[df1$group == "Other or Unknown"] <- "Other or<br>Unknown"
+
+  df1 <- current_ped_fbi_index |>
+    filter(state == x) |>
+    select(fbi_index, n, prop, group) |>
+    mutate(y = 1,
+           prop = round(prop*100,0),
+           prop_label = paste0(prop, "%"),
+           color = case_when(
+             group == "Violent" ~ color3,
+             group == "Non-Violent" ~ color2,
+             group == "Other or Unknown" ~ darkgray
+           ))
+
+  # Create bubble chart
+  highcharts <- highchart() |>
+    hc_chart(type = "bubble") |>
+    hc_add_series(
+      data = df1,
+      type = "bubble",
+      hcaes(x = fbi_index, y = y, size = n, color = color),
+      name = "Proportion"
+    ) |>
+    hc_add_series(
+      data = df1,
+      type = "scatter",
+      hcaes(x = fbi_index, y = y),
+      name = "Labels",
+      marker = list(enabled = FALSE),
+      dataLabels = list(
+        enabled = TRUE,
+        useHTML = TRUE,
+        format = '{point.prop_label}',
+        style = list(
+          color = "black",
+          textOutline = "none",
+          fontWeight = "bold",
+          fontSize = "1em",
+          textAlign = "center"
+        ),
+        align = "center",
+        verticalAlign = "bottom",
+        allowOverlap = TRUE,
+        y = 100 # Adjust y position to place label above the x-axis
+      )
+    ) |>
+    hc_title(text = "Bubble Chart Example") |>
+    hc_yAxis(title = list(text = "Y-axis"), visible = FALSE) |>
+    hc_xAxis(
+      # categories = df1$fbi_index,
+      categories = c(
+        "Murder and<br>Non-negligent<br>Manslaughter",
+        "Rape or<br>Sexual<br>Assault",
+        "Robbery",
+        "Aggravated<br>or Simple<br>Assault",
+        "Other<br>Violent<br>Offenses",
+        "Property",
+        "Public<br>Order",
+        "Drugs",
+        "Other or<br>Unknown"
+      ),
+      title = list(text = ""),
+      labels = list(
+        enabled = TRUE,
+        rotation = 0,
+        overflow = "allow",
+        allowOverlap = TRUE
+      )
+    ) |>
+    hc_tooltip(pointFormat = '<b>{point.fbi_index}</b><br>Count: {point.n:,.0f}<br>Proportion: {point.prop}%') |>
+    hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
+    hc_add_theme(base_hc_theme) |>
+    hc_plotOptions(bubble = list(
+      minSize = 10,
+      maxSize = 50,
+      sizeBy = "area"
+    )) |>
+    hc_legend(enabled = FALSE) |>
+    hc_exporting(enabled = FALSE)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_bubble_ped_fbi_index <- setNames(all_bubble_ped_fbi_index, states)
+
+# Display the chart for Georgia as an example
+all_bubble_ped_fbi_index$Georgia
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################
+#
+# TITLE: Sentence Lengths
+#
+####################
+
 # Currently parole eligible population but still in prison by sentlgth in select year
 # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
-current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)%>%
+current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth) |>
   mutate(prop_label = paste0(
     "<b>", prop_label, "</b> (", n_label, ")")
   )
@@ -649,7 +492,7 @@ current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)%>%
 # Create highcharts showing breakdown of parole-eligible prison population by sentlgth
 states <- unique(current_ped_sentlgth$state)
 all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_sentlgth %>%
+  df1 <- current_ped_sentlgth |>
     filter(state == x) |>
     mutate(prop = prop*100)
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
@@ -674,9 +517,9 @@ all_bar_parole_eligibility_sentlgth$Georgia
 # Create sentences describing breakdown of parole-eligible prison population by sentlgth
 states <- unique(current_ped_sentlgth$state)
 all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
-  df1 <- current_ped_sentlgth %>%
-    filter(state == x) %>%
-    arrange(-prop) %>%
+  df1 <- current_ped_sentlgth |>
+    filter(state == x) |>
+    arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
   sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between ",

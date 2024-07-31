@@ -403,12 +403,72 @@ fnc_prepare_pe_data <- function(df, count_column){
   return(df1)
 }
 
-# Function to encode SVG icon with color
+# # Function to encode SVG icon with color
+# encode_icon <- function(color) {
+#   base64encode(charToRaw(sprintf(iconSVG, color)))
+# }
+
+# Define the function to encode the SVG icon as a square
 encode_icon <- function(color) {
-  base64encode(charToRaw(sprintf(iconSVG, color)))
+  iconSVG <- sprintf(
+    "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
+      <rect width='24' height='24' fill='%s'/>
+    </svg>",
+    color
+  )
+  base64encode(charToRaw(iconSVG))
 }
 
+# Define the main function to create Highcharts visualizations
+fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
+  data <- data |>
+    mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
+           prop = prop * 100)
 
+  states <- unique(data$state)
+
+  charts <- map(.x = states, .f = function(x) {
+    state_data <- data |>
+      filter(state == x) |>
+      arrange(desc(n)) |>
+      mutate(prop = round(prop, 0))
+
+    hc_accessibility_text <- sprintf(accessibility_text, category, select_year, x)
+
+    highcharts <- highchart() |>
+      hc_chart(type = "item", marginTop = 140) |>
+      hc_title(text = title) |>
+      hc_xAxis(categories = state_data[[category]]) |>
+      hc_yAxis(title = list(text = "Percentage"), max = 100) |>
+      hc_series(
+        list(
+          name = "Percentage",
+          data = lapply(1:nrow(state_data), function(i) {
+            list(
+              y = state_data$prop[i],
+              name = state_data[[category]][i],
+              color = colors[i],
+              marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors[i])))
+            )
+          }),
+          type = "item",
+          size = '100%',
+          itemMargin = 10,
+          rows = 10
+        )
+      ) |>
+      hc_tooltip(
+        formatter = JS("function() {
+          return '<b>' + this.point.name + ':</b> ' + this.y + '%';
+        }")
+      ) |>
+      hc_add_theme(base_hc_theme)
+
+    return(highcharts)
+  })
+
+  setNames(charts, states)
+}
 
 
 

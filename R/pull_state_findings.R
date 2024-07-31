@@ -98,7 +98,7 @@ if (state_for_report %in% names(all_scatter_race_ped_release)) {
 if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
   state_bubble_ped_fbi_index <-
     all_bubble_ped_fbi_index[[state_for_report]] |>
-    hc_size(height = 400)
+    hc_size(height = 250)
 } else {
   state_bubble_ped_fbi_index <- no_data_text
 }
