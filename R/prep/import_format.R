@@ -54,7 +54,6 @@ ncrp_data <- lapply(ncrp_files, fnc_load_ncrp_data)
 names(ncrp_data) <- names(ncrp_files)
 
 
-
 #------ Prepare NCRP Term Records ------#
 
 ncrp_term_records <- ncrp_data$term_records |>

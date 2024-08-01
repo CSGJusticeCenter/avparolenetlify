@@ -473,3 +473,16 @@ fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
 
 
 
+# Calculate n, prop, and create labels and tooltips when there are two columns of interest
+fnc_create_tooltip <- function(df, count_column) {
+  df %>%
+    count({{count_column}}) %>%
+    mutate(
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      tooltip = paste0("<b>", state, "</b><br><br>",
+                       "<b>", {{ count_column }}, "</b><br><br>",
+                       "Numbr of People: <b>", comma(n), "</b>",
+                       "Percentage of People: <b>", prop_label, "</b>", sep = "")
+    )
+}

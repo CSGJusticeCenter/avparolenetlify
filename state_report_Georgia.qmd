@@ -40,6 +40,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligi
 
 # Disparities Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_race_ped_release.rds"))
+
 
 state_for_report <- "Georgia"
 
@@ -151,6 +153,14 @@ An overview of the types of criminal offenses that lead to incarceration, provid
 Analysis of the distribution of sentence lengths within the prison population.  
 
 
+
+
+
+
+
+
+
+
 # Prison Releases
 
 Understanding trends in prison releases is crucial for assessing the effectiveness of parole and reentry programs.  
@@ -158,7 +168,11 @@ Understanding trends in prison releases is crucial for assessing the effectivene
 Sentence about change in releases from 2010 to 2020.
 Trend graph
 
+Proportion of parole-eligible populations released each year.
+
 ## Prison Release Types
+
+Prison releases that were conditional and unconditional.
 
 <br>
 <div class="divider"></div>
@@ -174,6 +188,8 @@ A demographic analysis of individuals released from prison, highlighting trends 
 
 An exploration of the timing of prison releases, including how long individuals serve before being released.  
 
+Timing of Release Relative to Parole Eligibility Year by Release Type (Unconditional and Conditional)
+
 <br>
 <div class="divider"></div>
 
@@ -181,7 +197,7 @@ An exploration of the timing of prison releases, including how long individuals 
 
 Detailed analysis of the average time served by individuals based on their offense type, providing insights into sentencing practices and their outcomes.  
 
-
+LOS and how its changed from 10 years ago
 
 
 
@@ -199,7 +215,7 @@ Detailed analysis of the average time served by individuals based on their offen
 
 Examining disparities within the prison system is essential for addressing issues of equity and justice. This section focuses on disparities in incarceration and release practices.  
 
-In prison.
+In prison. X People are X times more likely to be incarcerated than White people.
 
 ## In Prison Past Their Parole Eligibility Date
 
@@ -207,6 +223,8 @@ In prison.
 <div class="divider"></div>
 
 ## Years Spent in Prison After Parole Eligibility
+
+ADD TOTAL HERE
 
 This graph depicts the years individuals spend in prison after becoming eligible for parole by race and ethnicity. It highlights disparities in parole release timings among various racial and ethnic groups.  
 
@@ -218,6 +236,12 @@ div(id = "visualization", state_scatter_race_ped_release)
 <div class="divider"></div>
 
 ## Timing of Release by Offense Type
+
+This chart illustrates the proportion of parole-eligible people released from prison in their first, second, or third year or more after becoming eligible for parole. The data is categorized by offense type and racial and ethnic group, revealing that release patterns can vary for the same offense across these groups.
+
+```{r}
+div(id = "visualization", state_bubble_race_ped_release)
+```
 
 <br>
 <div class="divider"></div>

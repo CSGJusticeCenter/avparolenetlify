@@ -121,3 +121,24 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
 } else {
   state_sentence_parole_eligibility_sentlgth <- ""
 }
+
+
+
+
+
+
+
+####################
+
+# Disparities
+
+####################
+
+# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Date
+if (state_for_report %in% names(all_bubble_race_ped_release)) {
+  state_bubble_race_ped_release <-
+    all_bubble_race_ped_release[[state_for_report]] |>
+    hc_size(height = 500)
+} else {
+  state_bubble_race_ped_release <- no_data_text
+}
