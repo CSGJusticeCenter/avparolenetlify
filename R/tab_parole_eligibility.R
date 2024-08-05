@@ -143,7 +143,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
               reversed = TRUE,
               x = -10,
               title = list(style = list(fontWeight = "regular", fontSize = "12px"))) |>
-    hc_add_theme(base_hc_theme)
+    hc_add_theme(base_hc_theme) |>
+    hc_exporting(enabled = TRUE)
 
   return(highcharts)
 })
@@ -168,9 +169,9 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
              parelig_status == "Current"&
              rptyear == select_year)
 
-  sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people in prison past their parole eligibility date. This group made up ",
-                      df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
+  sentences <- paste0("In ", select_year, ", there were <b>", formattable::comma(df1$n, digits = 0),
+                      "</b> people in prison past their parole eligibility date. This group made up <b>",
+                      df1$prop_label, "</b> of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
   return(sentences)
 })
 
@@ -292,8 +293,8 @@ all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
     items_list <- lapply(1:nrow(items), function(i) {
       list(name = as.character(items$fbi_index[i]),
            value = items$n[i],
-           color = case_when(g == "Violent" ~ red,
-                             g == "Non-Violent" ~ green3,
+           color = case_when(g == "Violent" ~ color4,
+                             g == "Non-Violent" ~ color1,
                              TRUE ~ darkgray)) # Assuming color assignment based on group
     })
     list(name = g, data = items_list)
@@ -332,8 +333,9 @@ all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
       )
     ) |>
     hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.value}") |>
-    hc_colors(c(red, green3, darkgray)) |>
+    hc_colors(c(color4, color1, darkgray)) |>
     hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
+    hc_exporting(enabled = TRUE) |>
     hc_add_theme(base_hc_theme)
 
   return(highcharts)
@@ -453,7 +455,7 @@ all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
       sizeBy = "area"
     )) |>
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = FALSE)
+    hc_exporting(enabled = TRUE)
 
   return(highcharts)
 })
@@ -522,8 +524,8 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between ",
-                      df1$sentlgth, " constituted the majority, representing ", round(df1$prop*100, 0), " percent.")
+  sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between <b>",
+                      df1$sentlgth, "</b> constituted the majority, representing <b>", round(df1$prop*100, 0), "%</b>.")
   return(sentences)
 })
 

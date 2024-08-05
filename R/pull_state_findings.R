@@ -149,7 +149,46 @@ if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
   state_stackedbar_parole_eligibility_release <- no_data_text
 }
 
-# TITLE:
+# TITLE: Proportion of Conditional vs Unconditional Releases
+if (state_for_report %in% names(all_pie_release_type)) {
+  state_pie_release_type <-
+    all_pie_release_type[[state_for_report]] |>
+    hc_size(height = 200)
+} else {
+  state_pie_release_type <- no_data_text
+}
+
+# TITLE: Race and Ethnicity
+if (state_for_report %in% names(all_waffle_releases_race)) {
+  state_waffle_releases_race <-
+    all_waffle_releases_race[[state_for_report]]|>
+    hc_size(height = 350)|>
+    hc_title(text = paste0("Race and Ethnicity"))
+} else {
+  state_waffle_releases_race <- no_data_text
+}
+
+# TITLE: Gender
+if (state_for_report %in% names(all_waffle_releases_sex)) {
+  state_waffle_releases_sex <-
+    all_waffle_releases_sex[[state_for_report]]|>
+    hc_size(height = 350)|>
+    hc_title(text = paste0("Gender"))
+} else {
+  state_waffle_releases_sex <- no_data_text
+}
+
+# TITLE: Age
+if (state_for_report %in% names(all_waffle_releases_agerlse)) {
+  state_waffle_releases_agerlse <-
+    all_waffle_releases_agerlse[[state_for_report]]|>
+    hc_size(height = 350)|>
+    hc_title(text = paste0("Age"))
+} else {
+  state_waffle_releases_agerlse <- no_data_text
+}
+
+# TITLE: LOS by Offense Type
 if (state_for_report %in% names(all_lollipop_offense_los)) {
   state_lollipop_offense_los <-
     all_lollipop_offense_los[[state_for_report]] |>

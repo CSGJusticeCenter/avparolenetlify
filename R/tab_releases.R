@@ -48,7 +48,8 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color2))
 
   return(highcharts)
 })
@@ -68,34 +69,34 @@ all_line_releases_by_year$Georgia
 #   so, determine this below.
 
 # Calculate the number of parole eligible people released by state and year
-ncrp_pe_releases_by_year <- ncrp_releases %>%
-  filter(rptyear >= 2010) %>%
-  filter(parelig_status == "Current") %>%
-  group_by(state, rptyear) %>%
+ncrp_pe_releases_by_year <- ncrp_releases |>
+  filter(rptyear >= 2010) |>
+  filter(parelig_status == "Current") |>
+  group_by(state, rptyear) |>
   summarise(total_parole_eligible_releases = n())
 
 # Calculate the number of parole eligible people in prison by state and year
-ncrp_pe_population_not_released_by_year <- ncrp_yearendpop %>%
-  filter(rptyear >= 2010) %>%
-  filter(parelig_status == "Current") %>%
-  group_by(state, rptyear) %>%
+ncrp_pe_population_not_released_by_year <- ncrp_yearendpop |>
+  filter(rptyear >= 2010) |>
+  filter(parelig_status == "Current") |>
+  group_by(state, rptyear) |>
   summarise(total_parole_eligible_population_not_released = n())
 
 # Merge data together
-ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year %>%
-  left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) %>%
+ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
+  left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
   mutate(total_parole_eligible_population =
            total_parole_eligible_releases + total_parole_eligible_population_not_released,
          prop_parole_elgible_released =
-           total_parole_eligible_releases/total_parole_eligible_population) %>%
+           total_parole_eligible_releases/total_parole_eligible_population) |>
   select(state, rptyear,
          total_parole_eligible_population_not_released,
-         total_parole_eligible_releases) %>%
+         total_parole_eligible_releases) |>
   pivot_longer(
     cols = c(total_parole_eligible_population_not_released, total_parole_eligible_releases),
     names_to = "status",
     values_to = "n"
-  ) %>%
+  ) |>
   mutate(status = case_when(
     status == "total_parole_eligible_population_not_released" ~ "Not Released",
     status == "total_parole_eligible_releases" ~ "Released"
@@ -106,24 +107,24 @@ ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year %>%
 # Highchart stacked bar chart
 states <- unique(ncrp_pe_proportion_released$state)
 all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
-  df1 <- ncrp_pe_proportion_released %>%
+  df1 <- ncrp_pe_proportion_released |>
     filter(state == x)
   jsFormatter <- JS("function() {
                    var total = this.point.stackTotal;
                    var percentage = Math.round((this.y / total) * 100);
                    return percentage + '%';
                   }")
-  highcharts <- df1 %>%
+  highcharts <- df1 |>
     hchart(
       type = "column",
       hcaes(x = rptyear, y = n, group = status)
-    ) %>%
-    hc_yAxis(title = list(text = "")) %>%
+    ) |>
+    hc_yAxis(title = list(text = "")) |>
     hc_xAxis(categories = unique(df1$rptyear),
-             title = "") %>%
-    hc_add_theme(hc_theme_with_line) %>%
-    hc_legend(enabled = TRUE) %>%
-    hc_exporting(enabled = TRUE) %>%
+             title = "") |>
+    hc_add_theme(hc_theme_with_line) |>
+    hc_legend(enabled = TRUE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_plotOptions(series = list(stacking = "normal",
                                  animation = FALSE,
                                  cursor = "pointer",
@@ -138,11 +139,120 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
                                         linkedDescription = "TBD accessibility text",
                                         landmarkVerbosity = "one"),
                    area = list(accessibility = list(description = "TBD accessibility text"))) |>
-    hc_title(text = "Parole-Eligible People Released from Prison by Year")
+    hc_title(text = "Proportion of Parole-Eligible People Released from Prison by Year") |>
+    hc_colors(c(color2, color1))
   return(highcharts)
 })
 all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
 all_stackedbar_parole_eligibility_release$Georgia
+
+
+
+
+
+
+
+#------ Releases by Release Type ------#
+
+# Filter to people with release type information
+# Remove "Other releases" - although Alabama has 30% other releases
+ncrp_release_type <- ncrp_releases |>
+  filter(rptyear == select_year) |>
+  filter(reltype == "Conditional release" | reltype == "Unconditional release") |>
+  mutate(reltype = case_when(reltype == "Conditional release" ~ "Conditional Release",
+                             reltype == "Unconditional release" ~ "Unconditional Release",
+                             TRUE ~ reltype)) |>
+  group_by(state) |>
+  count(reltype)
+
+# Highchart pie chart showing releases by release type
+states <- unique(ncrp_release_type$state)
+all_pie_release_type <- map(.x = states, .f = function(x) {
+  df1 <- ncrp_release_type |>
+    ungroup() |>
+    filter(state == x)
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  released by release type (unconditional release vs. conditional
+                                  release) in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- # Create a pie chart
+    highchart() |>
+    hc_chart(type = "pie") |>
+    hc_title(text = "Proportion of Conditional vs. Unconditional Releases") |>
+    hc_tooltip(pointFormat = '{point.name}: <b>{point.percentage:.0f}%</b> ({point.y})') |>
+    hc_plotOptions(pie = list(
+      dataLabels = list(
+        enabled = TRUE,
+        format = '<span style="font-size:1em">{point.name}: </span><br><span style="font-size:2em"><b>{point.percentage:.0f}%</b></span>'
+      )
+    )) |>
+    hc_series(list(
+      name = "Release Type",
+      colorByPoint = TRUE,
+      data = list_parse2(df1 |>
+                           mutate(y = n) |>
+                           select(name = reltype, y))
+    )) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_colors(c(color2, color3))
+  return(highcharts)
+})
+all_pie_release_type <- setNames(all_pie_release_type, states)
+all_pie_release_type$Georgia
+
+
+
+
+
+#------ Releases by Race, Ethnicity, Age, and Gender ------#
+
+# Prepare the data for race
+current_ped_race <- fnc_prepare_releases_data(ncrp_releases, race)
+
+# Colors for race
+colors_race <- c(color1, color2, color3, color4)
+
+# Accessibility text for race
+accessibility_text_race <- "TBD"
+
+# Create the charts for race
+all_waffle_releases_race <- fnc_hc_waffle(current_ped_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+
+# Prepare the data for sex
+current_ped_sex <- fnc_prepare_releases_data(ncrp_releases, sex)
+
+# Colors for sex
+colors_sex <- c(color1, color3)
+
+# Accessibility text for sex
+accessibility_text_sex <- "TBD"
+
+# Create the charts for sex
+all_waffle_releases_sex <- fnc_hc_waffle(current_ped_sex, "sex", colors_sex, "Gender", accessibility_text_sex)
+
+# Prepare the data for age
+current_ped_agerlse <- fnc_prepare_releases_data(ncrp_releases, agerlse) |>
+  arrange(state, desc(agerlse))
+current_ped_agerlse$agerlse <- factor(current_ped_agerlse$agerlse,
+                                      levels = c("18-24 years",
+                                                 "25-34 years",
+                                                 "35-44 years",
+                                                 "45-54 years",
+                                                 "55+ years"))
+
+# Colors for age
+colors_age <- c(color1, color2, color3, color5, color4)
+
+# Accessibility text for age
+accessibility_text_age <- "TBD"
+
+# Create the charts for age
+all_waffle_releases_agerlse <- fnc_hc_waffle(current_ped_agerlse, "agerlse", colors_age, "Current Age", accessibility_text_age)
+
+# Display the chart for Georgia as an example
+all_waffle_releases_race$Georgia
+all_waffle_releases_sex$Georgia
+all_waffle_releases_agerlse$Georgia
 
 
 
@@ -328,9 +438,13 @@ all_lollipop_offense_los$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(all_lollipop_offense_los,  file = file.path(folder, "all_lollipop_offense_los.rds"))
   save(all_line_releases_by_year, file = file.path(folder, "all_line_releases_by_year.rds"))
   save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
+  save(all_pie_release_type,  file = file.path(folder, "all_pie_release_type.rds"))
+  save(all_waffle_releases_race,  file = file.path(folder, "all_waffle_releases_race.rds"))
+  save(all_waffle_releases_sex,  file = file.path(folder, "all_waffle_releases_sex.rds"))
+  save(all_waffle_releases_agerlse,  file = file.path(folder, "all_waffle_releases_agerlse.rds"))
+  save(all_lollipop_offense_los,  file = file.path(folder, "all_lollipop_offense_los.rds"))
 }
 
 

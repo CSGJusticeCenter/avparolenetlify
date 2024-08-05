@@ -72,12 +72,12 @@ fnc_load_aps_data <- function(year, icpsr_code) {
 #' @return A data frame with re-categorized admission type.
 #' @export
 fnc_create_admtype <- function(df) {
-  df <- df %>%
+  df <- df |>
     mutate(admtype = case_when(
       admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other or Unknown",
       is.na(admtype) ~ "Other or Unknown",
       TRUE ~ admtype
-    )) %>%
+    )) |>
     mutate(admtype = factor(admtype,
                             levels = c("New court commitment",
                                        "Parole return/revocation",
@@ -93,8 +93,8 @@ fnc_create_admtype <- function(df) {
 #' @return A data frame with parole eligibility status.
 #' @export
 fnc_create_parelig_status <- function(df) {
-  df <- df %>%
-    mutate(time_between_ped_rptyear = parelig_year - rptyear) %>%
+  df <- df |>
+    mutate(time_between_ped_rptyear = parelig_year - rptyear) |>
     mutate(
       parelig_status = case_when(
         parelig_year <= rptyear ~ "Current",
@@ -119,7 +119,7 @@ fnc_create_parelig_status <- function(df) {
 #' @return A data frame with re-categorized offense type.
 #' @export
 fnc_create_fbi_index <- function(df) {
-  df <- df %>%
+  df <- df |>
     mutate(fbi_index = case_when(
       offdetail == "Aggravated or simple assault" ~ "Aggravated or Simple Assault",
       offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder and Non-negligent Manslaughter",
@@ -130,7 +130,7 @@ fnc_create_fbi_index <- function(df) {
       offdetail == "Other/unspecified" ~ "Other or Unknown",
       is.na(offdetail) ~ "Other or Unknown",
       TRUE ~ offgeneral
-    )) %>%
+    )) |>
     mutate(fbi_index = factor(fbi_index,
                               levels = c("Murder and Non-negligent Manslaughter",
                                          "Rape or Sexual Assault",
@@ -152,18 +152,18 @@ fnc_create_fbi_index <- function(df) {
 #' @return A cleaned data frame.
 #' @export
 fnc_clean_bjs_data <- function(df) {
-  df <- df %>%
-    mutate(state = str_replace(state, "/.*", "")) %>%
-    mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
-    mutate(state = str_replace(state, "Utahc", "Utah")) %>%
+  df <- df |>
+    mutate(state = str_replace(state, "/.*", "")) |>
+    mutate(state = str_replace(state, "Alaskab", "Alaska")) |>
+    mutate(state = str_replace(state, "Utahc", "Utah")) |>
     filter(state != "" &
              state != "State" &
              state != "Federal" &
              state != "District of Columbia" &
              state != "U.S. Total" &
              state != "U.S. total" &
-             state != "U.S. tota") %>%
-    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) %>%
+             state != "U.S. tota") |>
+    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) |>
     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
   return(df)
 }
@@ -178,26 +178,26 @@ fnc_clean_bjs_data <- function(df) {
 #' @return A prepared data frame.
 #' @export
 fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
-  data <- data %>%
-    clean_names() %>%
+  data <- data |>
+    clean_names() |>
     mutate(rptyear = year)
 
   if (pre_2008) {
-    data <- data %>%
-      select(-stateid) %>%
-      rename(stateid = state) %>%
-      mutate(stateid = str_trim(stateid)) %>%
-      left_join(state_names_abb, by = "stateid") %>%
-      mutate(enreltsr = NA) %>%
-      select(state, rptyear, endisrel, enmanrel, enreltsr, incarcerated_from_parole = exincrev) %>%
-      mutate(released_to_parole = rowSums(.[c("endisrel", "enmanrel")], na.rm = TRUE)) %>%
+    data <- data |>
+      select(-stateid) |>
+      rename(stateid = state) |>
+      mutate(stateid = str_trim(stateid)) |>
+      left_join(state_names_abb, by = "stateid") |>
+      mutate(enreltsr = NA) |>
+      select(state, rptyear, endisrel, enmanrel, enreltsr, incarcerated_from_parole = exincrev) |>
+      mutate(released_to_parole = rowSums(.[c("endisrel", "enmanrel")], na.rm = TRUE)) |>
       mutate(released_to_parole = ifelse(released_to_parole == 0, NA, released_to_parole))
   } else {
-    data <- data %>%
-      mutate(state = str_sub(stateid, 6, -1)) %>%
-      mutate(rptyear = as.numeric(rptyear)) %>%
-      select(state, rptyear, endisrel, enmanrel, enreltsr, incarcerated_from_parole = exincrev) %>%
-      mutate(released_to_parole = rowSums(.[c("endisrel", "enmanrel", "enreltsr")], na.rm = TRUE)) %>%
+    data <- data |>
+      mutate(state = str_sub(stateid, 6, -1)) |>
+      mutate(rptyear = as.numeric(rptyear)) |>
+      select(state, rptyear, endisrel, enmanrel, enreltsr, incarcerated_from_parole = exincrev) |>
+      mutate(released_to_parole = rowSums(.[c("endisrel", "enmanrel", "enreltsr")], na.rm = TRUE)) |>
       mutate(released_to_parole = ifelse(released_to_parole == 0, NA, released_to_parole))
   }
 
@@ -371,12 +371,23 @@ hc_theme_map <- hc_theme_merge(
   )
 )
 
+
 # Create basic horizontal bar chart that isn't grouped
+#' Create Highcharts Bar Chart
+#'
+#' This function creates a basic horizontal bar chart using Highcharts.
+#'
+#' @param df A data frame containing the data.
+#' @param x_var The variable to be used for the x-axis.
+#' @param y_var The variable to be used for the y-axis.
+#' @param accessibility_text A string representing the accessibility text for the chart.
+#' @return A Highcharts object representing the bar chart.
+#' @export
 fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
 
   xaxis_order <- df[[x_var]]
 
-  highcharts <- highchart() %>%
+  highcharts <- highchart() |>
     hc_add_series(df,
                   type = "column",
                   hcaes(x = !!sym(x_var),
@@ -386,15 +397,15 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
                                     style = list(fontWeight = "regular",
                                                  fontSize = "1em",
                                                  fontFamily = "Graphik",
-                                                 textOutline = 0))) %>%
-    hc_xAxis(categories = xaxis_order) %>%
+                                                 textOutline = 0))) |>
+    hc_xAxis(categories = xaxis_order) |>
     hc_yAxis(labels = list(enabled = TRUE),
              title = list(text = "")
-    ) %>%
-    hc_add_theme(hc_theme_with_line) %>%
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) %>%
-    hc_legend(enabled = FALSE) %>%
-    hc_exporting(enabled = TRUE) %>%
+    ) |>
+    hc_add_theme(hc_theme_with_line) |>
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
+    hc_legend(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
@@ -409,7 +420,16 @@ fnc_hc_barchart <- function(df, x_var, y_var, accessibility_text) {
 }
 
 
+
 # Prepare data for a simple bar graph
+#' Prepare PE Data
+#'
+#' This function prepares the data for a simple bar graph, filtering for "Current" parole eligibility status and specific sentence lengths.
+#'
+#' @param df A data frame containing the data.
+#' @param count_column The column to count occurrences.
+#' @return A prepared data frame with necessary calculations.
+#' @export
 fnc_prepare_pe_data <- function(df, count_column){
   df1 <- df |>
     filter(rptyear == select_year &
@@ -434,12 +454,41 @@ fnc_prepare_pe_data <- function(df, count_column){
   return(df1)
 }
 
-# # Function to encode SVG icon with color
-# encode_icon <- function(color) {
-#   base64encode(charToRaw(sprintf(iconSVG, color)))
-# }
+# Prepare data for a simple bar graph
+#' Prepare Releases Data
+#'
+#' This function prepares the data for a simple bar graph based on the releases data.
+#'
+#' @param df A data frame containing the data.
+#' @param count_column The column to count occurrences.
+#' @return A prepared data frame with necessary calculations.
+#' @export
+fnc_prepare_releases_data <- function(df, count_column){
+  df1 <- df |>
+    filter(rptyear == select_year) |>
+    group_by(state) |>
+    count({{ count_column }}) |>
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) |>
+    ungroup() |>
+    mutate(tooltip = paste0("<b>", state, " - ",
+                            {{ count_column }}, "</b><br>",
+                            prop_label, "<br>"))
+  return(df1)
+}
 
-# Define the function to encode the SVG icon as a square
+# Encode SVG icon with color
+#' Encode Icon
+#'
+#' This function encodes an SVG icon as a base64 string with the given color.
+#'
+#' @param color A string representing the color of the icon.
+#' @return A base64 encoded string of the SVG icon.
+#' @export
 encode_icon <- function(color) {
   iconSVG <- sprintf(
     "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
@@ -450,7 +499,18 @@ encode_icon <- function(color) {
   base64encode(charToRaw(iconSVG))
 }
 
-# Define the main function to create Highcharts visualizations
+# Create Highcharts visualizations
+#' Create Highcharts Waffle Chart
+#'
+#' This function creates Highcharts waffle charts based on the provided data and settings.
+#'
+#' @param data A data frame containing the data.
+#' @param category A string representing the category column.
+#' @param colors A vector of colors for the categories.
+#' @param title A string representing the title of the chart.
+#' @param accessibility_text A string representing the accessibility text for the chart.
+#' @return A list of Highcharts objects for each state.
+#' @export
 fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
   data <- data |>
     mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
@@ -488,6 +548,7 @@ fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
           rows = 10
         )
       ) |>
+      hc_exporting(enabled = TRUE) |>
       hc_tooltip(
         formatter = JS("function() {
           return '<b>' + this.point.name + ':</b> ' + this.y + '%';
@@ -501,19 +562,24 @@ fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
   setNames(charts, states)
 }
 
-
-
-
-# Calculate n, prop, and create labels and tooltips when there are two columns of interest
+# Calculate n, prop, and create labels and tooltips
+#' Create Tooltip
+#'
+#' This function calculates the number of occurrences, proportions, and creates labels and tooltips.
+#'
+#' @param df A data frame containing the data.
+#' @param count_column The column to count occurrences.
+#' @return A data frame with calculated values and tooltips.
+#' @export
 fnc_create_tooltip <- function(df, count_column) {
-  df %>%
-    count({{count_column}}) %>%
+  df |>
+    count({{count_column}}) |>
     mutate(
       prop_label = paste0(round(prop*100, 0), "%"),
       n_label = formattable::comma(n, 0),
       tooltip = paste0("<b>", state, "</b><br><br>",
                        "<b>", {{ count_column }}, "</b><br><br>",
-                       "Numbr of People: <b>", comma(n), "</b>",
+                       "Number of People: <b>", comma(n), "</b>",
                        "Percentage of People: <b>", prop_label, "</b>", sep = "")
     )
 }

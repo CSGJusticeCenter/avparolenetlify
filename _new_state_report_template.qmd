@@ -39,6 +39,12 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligi
 
 # Releases Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_releases_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_releases_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_releases_agerlse.rds"))
+
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_offense_los.rds"))
 
@@ -62,8 +68,8 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: center;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date")),
-  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Date")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
   div(id = "bold-text", style = "text-align: center;", HTML("Parole Board Members"))
 )
 br()
@@ -78,7 +84,7 @@ br()
 `r paste(parole_eligibility_criteria, collapse = ", ")`
 <div class="divider"></div>
 
-## In Prison Past Their Parole Eligibility Date
+## In Prison Past Their Parole Eligibility Year
 
 `r paste(state_sentence_parole_eligibility_population, collapse = ", ")`
 
@@ -88,7 +94,7 @@ div(id = "visualization", state_stackedbar_pe_type)
 
 ### Demographics
 
-The charts below provide further details on the demographics of this population, illustrating the percentage of people in prison past their parole eligibility date by race and ethnicity, gender, and current age.  
+The demographics of people in prison past their parole eligibility year reveals notable proportions among <b>non-Hispanic Black</b> and <b>White people</b>. Gender distribution indicates a predominance of <b>males</b> over females. Age-wise, the majority of individuals fall within the <b>25-34 years</b> and <b>35-44</b> years brackets.
 
 ```{r}
 div(
@@ -100,10 +106,9 @@ div(
 )
 ```
 
-
 ### Criminal Offense
 
-Here, the charts present data on the types of criminal offenses committed by people in prison past their parole eligibility date.  
+The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for <b>aggravated or simple assault (26%) and property crimes (19%)</b>. Other offense categories make up smaller proportions of this population.
 
 ```{r}
 div(id = "visualization", state_bubble_ped_fbi_index)
@@ -172,41 +177,54 @@ Analysis of the distribution of sentence lengths within the prison population.
 
 ## Prison Release Trends
 
+From 2010 to 2020, the number of prison releases has declined, dropping from <b>21,717</b> in 2010 to <b>18,298</b> in 2020. This represents a decrease of <b>16%</b>.
+
 ```{r}
 div(id = "visualization", state_line_releases_by_year)
 ```
-
 <br>
+
+The proportions of parole-eligible individuals released versus those not released have shown fluctuating trends from 2010 to 2020. In 2020, <b>40%</b> of parole-eligible individuals were released, while <b>60%</b> remained in prison, reflecting ongoing challenges and changes in parole policies and practices.  
+
 ```{r}
 div(id = "visualization", state_stackedbar_parole_eligibility_release)
 ```
 
-## Prison Release Types
+<br>
+<div class="divider"></div>
 
-Prison releases that were conditional and unconditional.
+## Conditional Releases
+
+Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. In 2020, <b>45%</b> of releases are conditional, requiring ongoing supervision and compliance, while <b>55%</b> are unconditional, allowing individuals to reintegrate without additional constraints.
+
+```{r}
+div(id = "visualization", state_pie_release_type)
+```
+
 
 <br>
 <div class="divider"></div>
 
-## Demographics
+## Demographics of People Released
 
-A demographic analysis of individuals released from prison, highlighting trends and patterns in reentry.  
+The distribution of released individuals in 2020 spans various categories, including race and ethnicity, gender, and age. These findings provide insights into the populations transitioning back into the community.
 
-<br>
-<div class="divider"></div>
-
-## Timing of Release
-
-An exploration of the timing of prison releases, including how long individuals serve before being released.  
-
-Timing of Release Relative to Parole Eligibility Year by Release Type (Unconditional and Conditional)
+```{r}
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
+  div(id = "small-visualization", state_waffle_releases_race),
+  div(id = "small-visualization", state_waffle_releases_sex),
+  div(id = "small-visualization", state_waffle_releases_agerlse),
+)
+```
 
 <br>
 <div class="divider"></div>
 
 ## Time Served by Offense Type
 
-Detailed analysis of the average time served by individuals based on their offense type.  
+Between 2010 and 2020, shifts in average time served by individuals for different offense types have been observed. While some categories, like murder and non-negligent manslaughter, have seen a substantial increase in time served, others, like drug-related offenses, have remained relatively stable. 
 
 ```{r}
 div(id = "visualization", state_lollipop_offense_los)
@@ -231,7 +249,7 @@ Examining disparities within the prison system is essential for addressing issue
 
 In prison. X People are X times more likely to be incarcerated than White people.
 
-## In Prison Past Their Parole Eligibility Date
+## In Prison Past Their Parole Eligibility Year
 
 <br>
 <div class="divider"></div>
