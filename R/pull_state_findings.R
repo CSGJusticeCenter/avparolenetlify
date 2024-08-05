@@ -140,6 +140,15 @@ if (state_for_report %in% names(all_line_releases_by_year)) {
   state_line_releases_by_year <- no_data_text
 }
 
+# TITLE: Parole-Eligible Prison Population Released by Year
+if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
+  state_stackedbar_parole_eligibility_release <-
+    all_stackedbar_parole_eligibility_release[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_stackedbar_parole_eligibility_release <- no_data_text
+}
+
 # TITLE:
 if (state_for_report %in% names(all_lollipop_offense_los)) {
   state_lollipop_offense_los <-

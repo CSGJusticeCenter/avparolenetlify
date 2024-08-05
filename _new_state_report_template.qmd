@@ -39,10 +39,9 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligi
 
 # Releases Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_offense_los.rds"))
 
-
-all_line_releases_by_year
 
 # Disparities Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
@@ -177,7 +176,10 @@ Analysis of the distribution of sentence lengths within the prison population.
 div(id = "visualization", state_line_releases_by_year)
 ```
 
-Proportion of parole-eligible populations released each year.
+<br>
+```{r}
+div(id = "visualization", state_stackedbar_parole_eligibility_release)
+```
 
 ## Prison Release Types
 
