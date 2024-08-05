@@ -194,7 +194,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
                            select(name = reltype, y))
     )) |>
     hc_add_theme(base_hc_theme) |>
-    hc_colors(c(color2, color3))
+    hc_colors(c(color2, color3)) |>
+    hc_exporting(enabled = TRUE)
   return(highcharts)
 })
 all_pie_release_type <- setNames(all_pie_release_type, states)

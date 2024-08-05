@@ -214,3 +214,11 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
 } else {
   state_bubble_race_ped_release <- no_data_text
 }
+
+# TITLE: For every 100,000 people in the community, X are in prison
+if (state_for_report %in% names(all_hc_rri_chart)) {
+  state_hc_rri_chart <-
+    all_hc_rri_chart[[state_for_report]]
+} else {
+  state_hc_rri_chart <- no_data_text
+}
