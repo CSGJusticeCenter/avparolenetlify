@@ -37,6 +37,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_fbi_i
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
 
+# Releases Tab
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_offense_los.rds"))
 
 # Disparities Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
@@ -195,9 +197,12 @@ Timing of Release Relative to Parole Eligibility Year by Release Type (Unconditi
 
 ## Time Served by Offense Type
 
-Detailed analysis of the average time served by individuals based on their offense type, providing insights into sentencing practices and their outcomes.  
+Detailed analysis of the average time served by individuals based on their offense type.  
 
-LOS and how its changed from 10 years ago
+```{r}
+div(id = "visualization", state_lollipop_offense_los)
+```
+
 
 
 

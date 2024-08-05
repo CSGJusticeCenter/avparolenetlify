@@ -125,6 +125,21 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
 
 
 
+####################
+
+# Releases
+
+####################
+
+# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Date
+if (state_for_report %in% names(all_lollipop_offense_los)) {
+  state_lollipop_offense_los <-
+    all_lollipop_offense_los[[state_for_report]] |>
+    hc_size(height = 500)
+} else {
+  state_lollipop_offense_los <- no_data_text
+}
+
 
 
 

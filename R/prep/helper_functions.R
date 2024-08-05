@@ -300,7 +300,10 @@ hc_theme_with_line <- hc_theme(
   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
-  xAxis = list(labels = list(enabled = TRUE, style = common_style), gridLineColor = "transparent", lineColor = "transparent", minorGridLineColor = "transparent", tickColor = "transparent"),
+  xAxis = list(labels = list(enabled = TRUE, style = common_style)
+               #gridLineColor = "transparent",
+               #lineColor = "transparent", minorGridLineColor = "transparent", tickColor = "transparent"
+               ),
   yAxis = list(labels = list(enabled = TRUE, style = common_style)),
   plotOptions = list(
     line = list(marker = list(enabled = FALSE)),
