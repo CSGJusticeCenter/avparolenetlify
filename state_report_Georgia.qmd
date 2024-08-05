@@ -38,7 +38,11 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
 
 # Releases Tab
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_offense_los.rds"))
+
+
+all_line_releases_by_year
 
 # Disparities Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
@@ -128,6 +132,8 @@ This section will have information about missing parole eligibility data for the
 
 # Prison Population
 
+## Prison Population
+
 The size and composition of the prison population have significant implications for state resources and public safety. 
 
 Sentence about change in year-end population from 2010 to 2020.  
@@ -165,10 +171,11 @@ Analysis of the distribution of sentence lengths within the prison population.
 
 # Prison Releases
 
-Understanding trends in prison releases is crucial for assessing the effectiveness of parole and reentry programs.  
+## Prison Release Trends
 
-Sentence about change in releases from 2010 to 2020.
-Trend graph
+```{r}
+div(id = "visualization", state_line_releases_by_year)
+```
 
 Proportion of parole-eligible populations released each year.
 

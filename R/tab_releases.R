@@ -8,6 +8,57 @@
 #######################################
 
 
+#------ Prison Releases by Year ------#
+
+# Prison releases by year
+ncrp_releases_by_year <- ncrp_releases |>
+  filter(rptyear >= 2010) |>
+  group_by(state, rptyear) |>
+  summarise(total = n())
+
+# Highchart by state since 2010
+states <- unique(ncrp_releases_by_year$state)
+all_line_releases_by_year <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_releases_by_year |>
+    ungroup() |>
+    filter(state == x) |>
+    distinct()
+
+  # Determine the maximum value for the y-axis in the visualization
+  # Adds a small margin space at the top
+  max_value <- max(df1$total)*1.1
+
+  hc_accessibility_text <- paste0("This graph shows the number of releases in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- # Create the line chart
+    hc <- highchart() |>
+    hc_chart(type = "line") |>
+    hc_title(text = "Prison Releases by Year") |>
+    hc_yAxis(title = list(text = "")) |>
+    hc_xAxis(categories = df1$rptyear,
+             lineWidth = 1) |>
+    hc_series(
+      list(
+        name = "Releases",
+        data = df1$total,
+        tooltip = list(
+          pointFormat = "Year: {point.category}<br>Prison Releases: {point.y}"
+        )
+      )
+    ) |>
+    hc_add_theme(hc_theme_with_line) |>
+    hc_legend(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE)
+
+  return(highcharts)
+})
+all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
+all_line_releases_by_year$Georgia
+
+
+
+
+
 #------ Change in Length of Stay by Offense Type ------#
 
 # Calculate the average length of stay by state and by offense type
@@ -185,7 +236,8 @@ all_lollipop_offense_los$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(all_lollipop_offense_los, file = file.path(folder, "all_lollipop_offense_los.rds"))
+  save(all_lollipop_offense_los,  file = file.path(folder, "all_lollipop_offense_los.rds"))
+  save(all_line_releases_by_year, file = file.path(folder, "all_line_releases_by_year.rds"))
 }
 
 
@@ -269,13 +321,13 @@ for (folder in theseFOLDERS){
 
 
 # # Create the chart# Creatas.numeric()e the chart
-# hchart(df_combined %>% filter(year == "2010"), type = "scatter",
+# hchart(df_combined |> filter(year == "2010"), type = "scatter",
 #        hcaes(x = fbi_index, y = value), name = "2010",
-#        marker = list(symbol = "circle", fillColor = color2, radius = 5)) %>%
-#   hc_add_series(df_combined %>% filter(year == "2020"), type = "scatter",
+#        marker = list(symbol = "circle", fillColor = color2, radius = 5)) |>
+#   hc_add_series(df_combined |> filter(year == "2020"), type = "scatter",
 #                 hcaes(x = fbi_index, y = value), name = "2020",
-#                 marker = list(symbol = "circle", fillColor = color4, radius = 5)) %>%
-#   hc_xAxis(type = "category") %>%
-#   hc_yAxis(labels = list(format = "{value} years")) %>%
+#                 marker = list(symbol = "circle", fillColor = color4, radius = 5)) |>
+#   hc_xAxis(type = "category") |>
+#   hc_yAxis(labels = list(format = "{value} years")) |>
 #   hc_tooltip(shared = TRUE, crosshairs = TRUE)
 

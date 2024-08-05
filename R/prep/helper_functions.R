@@ -294,23 +294,50 @@ base_hc_theme <- hc_theme(
 #'
 #' This theme includes additional settings for line charts.
 #' @export
+# hc_theme_with_line <- hc_theme(
+#   colors = c(color1, color2, color3, color4, color5),
+#   chart = list(style = common_chart_style),
+#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
+#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+#   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+#   xAxis = list(labels = list(enabled = TRUE, style = common_style)
+#                #gridLineColor = "transparent",
+#                #lineColor = "transparent", minorGridLineColor = "transparent", tickColor = "transparent"
+#                ),
+#   yAxis = list(labels = list(enabled = TRUE, style = common_style)),
+#   plotOptions = list(
+#     line = list(marker = list(enabled = FALSE)),
+#     spline = list(marker = list(enabled = FALSE)),
+#     area = list(marker = list(enabled = FALSE)),
+#     areaspline = list(marker = list(enabled = FALSE)),
+#     arearange = list(marker = list(enabled = FALSE)),
+#     bubble = list(maxSize = "10%"),
+#     column = list(
+#       dataLabels = list(
+#         style = list(color = "black")
+#       )
+#     )
+#   )
+# )
 hc_theme_with_line <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
-  xAxis = list(labels = list(enabled = TRUE, style = common_style)
-               #gridLineColor = "transparent",
-               #lineColor = "transparent", minorGridLineColor = "transparent", tickColor = "transparent"
-               ),
+  xAxis = list(
+    labels = list(enabled = TRUE, style = common_style),
+    tickmarkPlacement = 'on',
+    tickLength = 5,
+    tickWidth = 1
+  ),
   yAxis = list(labels = list(enabled = TRUE, style = common_style)),
   plotOptions = list(
-    line = list(marker = list(enabled = FALSE)),
-    spline = list(marker = list(enabled = FALSE)),
-    area = list(marker = list(enabled = FALSE)),
-    areaspline = list(marker = list(enabled = FALSE)),
-    arearange = list(marker = list(enabled = FALSE)),
+    line = list(marker = list(enabled = TRUE)),
+    spline = list(marker = list(enabled = TRUE)),
+    area = list(marker = list(enabled = TRUE)),
+    areaspline = list(marker = list(enabled = TRUE)),
+    arearange = list(marker = list(enabled = TRUE)),
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
@@ -319,6 +346,7 @@ hc_theme_with_line <- hc_theme(
     )
   )
 )
+
 
 #' Highcharts Theme for Maps
 #'
