@@ -207,7 +207,7 @@ div(id = "visualization", state_pie_release_type)
 
 ## Demographics of People Released
 
-The distribution of released individuals in 2020 spans various categories, including race and ethnicity, gender, and age. These findings provide insights into the populations transitioning back into the community.
+The demographics of people released from prison in 2020 reveals notable proportions among <b>non-Hispanic Black</b> and <b>White people</b>. Gender distribution indicates a predominance of <b>males</b> over females. Age-wise, the majority of individuals fall within the <b>25-34 years</b> and <b>35-44</b> years brackets. These findings provide insights into the populations transitioning back into the community.
 
 ```{r}
 div(
@@ -245,9 +245,10 @@ div(id = "visualization", state_lollipop_offense_los)
 
 # Disparities
 
-Examining disparities within the prison system is essential for addressing issues of equity and justice. This section focuses on disparities in incarceration and release practices.  
+## Incarceration Rates
 
-In prison. X People are X times more likely to be incarcerated than White people.
+<br>
+<div class="divider"></div>
 
 ## In Prison Past Their Parole Eligibility Year
 
@@ -258,8 +259,6 @@ In prison. X People are X times more likely to be incarcerated than White people
 
 ADD TOTAL HERE
 
-This graph depicts the years individuals spend in prison after becoming eligible for parole by race and ethnicity. It highlights disparities in parole release timings among various racial and ethnic groups.  
-
 ```{r}
 div(id = "visualization", state_scatter_race_ped_release)
 ```
@@ -268,8 +267,6 @@ div(id = "visualization", state_scatter_race_ped_release)
 <div class="divider"></div>
 
 ## Timing of Release by Offense Type
-
-This chart illustrates the proportion of parole-eligible people released from prison in their first, second, or third year or more after becoming eligible for parole. The data is categorized by offense type and racial and ethnic group, revealing that release patterns can vary for the same offense across these groups.
 
 ```{r}
 div(id = "visualization", state_bubble_race_ped_release)
