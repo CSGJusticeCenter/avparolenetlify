@@ -107,7 +107,7 @@ current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
 states <- unique(current_ped_race$state)
 
 # Define colors for the groups
-colors_list <- c(red, purple, green2, blue)
+colors_list <- c(color1, color2, colo3)
 
 # Create Highcharts visualizations for each state
 all_waffle_parole_elgibility_race <- map(.x = states, .f = function(x) {

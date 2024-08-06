@@ -215,10 +215,34 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <- no_data_text
 }
 
-# TITLE: For every 100,000 people in the community, X are in prison
-if (state_for_report %in% names(all_hc_rri_chart)) {
-  state_hc_rri_chart <-
-    all_hc_rri_chart[[state_for_report]]
+# TITLE: For every 100,000 Black people in the community, X are in prison
+if (state_for_report %in% names(all_hc_waffle_rri_black)) {
+  state_hc_waffle_rri_black <-
+    all_hc_waffle_rri_black[[state_for_report]]
 } else {
-  state_hc_rri_chart <- no_data_text
+  state_hc_waffle_rri_black <- no_data_text
+}
+
+# TITLE: For every 100,000 White people in the community, X are in prison
+if (state_for_report %in% names(all_hc_waffle_rri_white)) {
+  state_hc_waffle_rri_white <-
+    all_hc_waffle_rri_white[[state_for_report]]
+} else {
+  state_hc_waffle_rri_white <- no_data_text
+}
+
+# TITLE: For every 100,000 Hispanic people in the community, X are in prison
+if (state_for_report %in% names(all_hc_waffle_rri_hispanic)) {
+  state_hc_waffle_rri_hispanic <-
+    all_hc_waffle_rri_hispanic[[state_for_report]]
+} else {
+  state_hc_waffle_rri_hispanic <- no_data_text
+}
+
+# TITLE: For every 100,000 Other race(s) people in the community, X are in prison
+if (state_for_report %in% names(all_hc_waffle_rri_other)) {
+  state_hc_waffle_rri_other <-
+    all_hc_waffle_rri_other[[state_for_report]]
+} else {
+  state_hc_waffle_rri_other <- no_data_text
 }

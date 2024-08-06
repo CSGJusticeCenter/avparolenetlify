@@ -70,206 +70,237 @@ rri_data <- merged_data %>%
   select(state, race, rri, incarceration_rate) |>
   mutate(incarceration_rate_10 = incarceration_rate/10)
 
-# df2 <- rri_data |>
-#   filter(state == "Georgia") |>
-#   select(-state, -rri) |>
-#   mutate(incarceration_rate = round(incarceration_rate, 1)) |>
-#    mutate(color = case_when(
-#      race == "Black, non-Hispanic" ~ color1,
-#      race == "Hispanic, any race" ~ color2,
-#      race == "Other race(s), non-Hispanic" ~ color3,
-#      race == "White, non-Hispanic" ~ color4
-#    ))
-#
-# # Black, non-Hispanic
-# df1 <- df2 |> filter(race == "Black, non-Hispanic")
-# rate_black <- df1$incarceration_rate[1]  # Adjust if there's more than one value
-#
-# hc_waffle_rri_black <- highchart() |>
-#   hc_chart(type = "item") |>
-#   hc_title(text = glue("For every 100,000 Black, non-Hispanic people in the community, {rate_black} are in prison.")) |>
-#   hc_xAxis(categories = df1$race) |>
-#   hc_yAxis(title = list(text = "")) |>
-#   hc_series(
-#     list(
-#       name = "",
-#       data = lapply(1:nrow(df1), function(i) {
-#         list(
-#           y = df1$incarceration_rate[i],
-#           marker = list(symbol = "square")
-#         )
-#       }),
-#       type = "item",
-#       size = '100%'
-#     )
-#   ) |>
-#   hc_legend(enabled = FALSE) |>
-#   hc_add_theme(base_hc_theme) |>
-#   hc_exporting(enabled = TRUE) |>
-#   hc_colors(c(color1))
-# hc_waffle_rri_black
-#
-# # Hispanic, any race
-# df1 <- df2 |> filter(race == "Hispanic, any race")
-# rate_hispanic <- df1$incarceration_rate[1]  # Adjust if there's more than one value
-#
-# hc_waffle_rri_hispanic <- highchart() |>
-#   hc_chart(type = "item") |>
-#   hc_title(text = glue("For every 100,000 Hispanic people in the community, {rate_hispanic} are in prison.")) |>
-#   hc_xAxis(categories = df1$race) |>
-#   hc_yAxis(title = list(text = "")) |>
-#   hc_series(
-#     list(
-#       name = "",
-#       data = lapply(1:nrow(df1), function(i) {
-#         list(
-#           y = df1$incarceration_rate[i],
-#           marker = list(symbol = "square")
-#         )
-#       }),
-#       type = "item",
-#       size = '100%'
-#     )
-#   ) |>
-#   hc_legend(enabled = FALSE) |>
-#   hc_add_theme(base_hc_theme) |>
-#   hc_exporting(enabled = TRUE) |>
-#   hc_colors(c(yellow))
-# hc_waffle_rri_hispanic
-#
-# # Other race(s), non-Hispanic
-# df1 <- df2 |> filter(race == "Other race(s), non-Hispanic")
-# rate_other <- df1$incarceration_rate[1]  # Adjust if there's more than one value
-#
-# hc_waffle_rri_other <- highchart() |>
-#   hc_chart(type = "item") |>
-#   hc_title(text = glue("For every 100,000 non-Hispanic people of American Indian, Alaskan Native, Asian, Native Hawaiian, Pacific Islander, or other race and ethnicity in the community, {rate_other} are in prison.")) |>
-#   hc_xAxis(categories = df1$race) |>
-#   hc_yAxis(title = list(text = "")) |>
-#   hc_series(
-#     list(
-#       name = "",
-#       data = lapply(1:nrow(df1), function(i) {
-#         list(
-#           y = df1$incarceration_rate[i],
-#           marker = list(symbol = "square")
-#         )
-#       }),
-#       type = "item",
-#       size = '100%'
-#     )
-#   ) |>
-#   hc_legend(enabled = FALSE) |>
-#   hc_add_theme(base_hc_theme) |>
-#   hc_exporting(enabled = TRUE) |>
-#   hc_colors(c(color4))
-# hc_waffle_rri_other
-#
-# # White, non-Hispanic
-# df1 <- df2 |> filter(race == "White, non-Hispanic")
-# rate_white <- df1$incarceration_rate[1]  # Adjust if there's more than one value
-#
-# hc_waffle_rri_white <- highchart() |>
-#   hc_chart(type = "item") |>
-#   hc_title(text = glue("For every 100,000 non-Hispanic White people in the community, {rate_white} are in prison.")) |>
-#   hc_xAxis(categories = df1$race) |>
-#   hc_yAxis(title = list(text = "")) |>
-#   hc_series(
-#     list(
-#       name = "",
-#       data = lapply(1:nrow(df1), function(i) {
-#         list(
-#           y = df1$incarceration_rate[i],
-#           marker = list(symbol = "square")
-#         )
-#       }),
-#       type = "item",
-#       size = '100%'
-#     )
-#   ) |>
-#   hc_legend(enabled = FALSE) |>
-#   hc_add_theme(base_hc_theme) |>
-#   hc_exporting(enabled = TRUE) |>
-#   hc_colors(c(color2))
-# hc_waffle_rri_white
-#
-# # Create highcharts showing breakdown of parole-eligible prison population by sentlgth
-# states <- unique(rri_data$state)
-# all_hc_rri_chart <- map(.x = states,  .f = function(x) {
-#   # Filter and prepare the sample data for Georgia
-#   df1 <- rri_data %>%
-#     ungroup() |>
-#     filter(state == x) %>%
-#     select(-state, -rri) %>%
-#     mutate(incarceration_rate = round(incarceration_rate, 1)) %>%
-#     mutate(color = case_when(
-#       race == "Black, non-Hispanic" ~ color1,
-#       race == "Hispanic, any race" ~ color2,
-#       race == "Other race(s), non-Hispanic" ~ color3,
-#       race == "White, non-Hispanic" ~ color4
-#     ))
-#
-#   # Split the data by race/ethnicity
-#   white_data <- df1 %>% filter(race == "White, non-Hispanic")
-#   black_data <- df1 %>% filter(race == "Black, non-Hispanic")
-#   hispanic_data <- df1 %>% filter(race == "Hispanic, any race")
-#   other_data <- df1 %>% filter(race == "Other race(s), non-Hispanic")
-#
-#   # Define SVG icon for person representation
-#   svg_person <- "M8 12s1.5-2 4-2 4 2 4 2-1.5 2-4 2-4-2-4-2zm6 3s2 1.5 2 4-2 2-2 2h-4s-2 0-2-2 2-4 2-4h4zM8 6s1.5 2 4 2 4-2 4-2-1.5-2-4-2-4 2-4 2z"
-#
-#   # Function to create highchart with SVG icon and fixed size
-#   create_item_chart <- function(data, color) {
-#     highchart() %>%
-#       hc_chart(type = "item", marginTop = 80) %>%
-#       hc_plotOptions(item = list(
-#         marker = list(
-#           symbol = svg_person,
-#           lineWidth = 2,
-#           lineColor = color,
-#           states = list(
-#             hover = list(
-#               enabled = TRUE
-#             )
-#           )
-#         )
-#       )) %>%
-#       hc_add_series(
-#         name = "Incarceration Rate",
-#         data = data$incarceration_rate_10
-#       ) %>%
-#       hc_add_theme(base_hc_theme) %>%
-#       hc_legend(enabled = FALSE) %>%
-#       hc_title(text = paste0("For every 100,000 ", data$race[1], " people in the community,<br>",
-#                              data$incarceration_rate[1], " are in prison."))
-#   }
-#
-#   # Create the charts for each racial/ethnic group
-#   chart_white <- create_item_chart(white_data, color4) %>%
-#     #hc_chart(marginLeft = 140, marginRight = 140) %>%
-#     hc_colors(c(color4))
-#
-#   chart_black <- create_item_chart(black_data, color1) %>%
-#     hc_colors(c(color1))
-#
-#   chart_hispanic <- create_item_chart(hispanic_data, color2) %>%
-#     #hc_chart(marginLeft = 160, marginRight = 160) %>%
-#     hc_colors(c(color2))
-#
-#   chart_other <- create_item_chart(other_data, color3) %>%
-#     #hc_chart(marginLeft = 195, marginRight = 195) %>%
-#     hc_colors(c(color3))
-#
-#   # Display the charts in a grid layout
-#   hc_rri_chart <- hw_grid(chart_black, chart_hispanic, chart_white, chart_other, ncol = 2)
-#   return(hc_rri_chart)
-# })
-# all_hc_rri_chart <- setNames(all_hc_rri_chart, states)
-# all_hc_rri_chart$Georgia
+# Common circle size in pixels
+circle_radius <- 4  # Adjust this value to make circles larger or smaller
+num_columns <- 50   # Fixed number of columns for layout
 
+calc_height <- function(num_items, columns, circle_radius) {
+  num_rows <- ceiling(num_items / columns)
+  height <- num_rows * (circle_radius*2)  # Adjust 4 as needed to increase spacing
+  return(ifelse(height < 100, 100, height))  # Ensure minimum height of 100
+}
+# Get unique states
+states <- unique(rri_data$state)
 
+# Create Highcharts visualizations for each state
+all_hc_waffle_rri_black <- map(.x = states, .f = function(x) {
 
+  df2 <- rri_data |>
+    ungroup() |>
+    filter(state == x) |>
+    select(-state, -rri) |>
+    mutate(incarceration_rate = round(incarceration_rate, 1)) |>
+    mutate(color = case_when(
+      race == "Black, non-Hispanic" ~ color1,
+      race == "Hispanic, any race" ~ color2,
+      race == "Other race(s), non-Hispanic" ~ color3,
+      race == "White, non-Hispanic" ~ color4
+    ))
 
+  # Black, non-Hispanic
+  df1 <- df2 |> filter(race == "Black, non-Hispanic")
+  rate_black <- df1$incarceration_rate[1]  # Adjust if there's more than one value
+  height_black <- calc_height(rate_black, num_columns, circle_radius)
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item") |>
+    hc_title(text = glue("For every 100,000 Black, non-Hispanic people in the community, {rate_black} are in prison."),
+             align = "left") |>
+    hc_xAxis(categories = df1$race) |>
+    hc_yAxis(title = list(text = "")) |>
+    hc_series(
+      list(
+        name = "",
+        data = lapply(1:round(rate_black), function(i) {
+          list(
+            y = 1,
+            marker = list(symbol = "circle", radius = circle_radius)
+          )
+        }),
+        type = "item",
+        marker = list(radius = circle_radius),
+        layoutAlgorithm = list(type = 'grid', rows = ceiling(rate_black / num_columns), columns = num_columns)
+      )
+    ) |>
+    hc_legend(enabled = FALSE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_size(height = height_black) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
+    hc_colors(c(color1))
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_hc_waffle_rri_black <- setNames(all_hc_waffle_rri_black, states)
+all_hc_waffle_rri_black$Georgia
+
+# Create Highcharts visualizations for each state
+all_hc_waffle_rri_hispanic <- map(.x = states, .f = function(x) {
+
+  df2 <- rri_data |>
+    ungroup() |>
+    filter(state == x) |>
+    select(-state, -rri) |>
+    mutate(incarceration_rate = round(incarceration_rate, 1)) |>
+    mutate(color = case_when(
+      race == "Black, non-Hispanic" ~ color1,
+      race == "Hispanic, any race" ~ color2,
+      race == "Other race(s), non-Hispanic" ~ color3,
+      race == "White, non-Hispanic" ~ color4
+    ))
+
+  # Black, non-Hispanic
+  df1 <- df2 |> filter(race == "Hispanic, any race")
+  rate_hispanic <- df1$incarceration_rate[1]  # Adjust if there's more than one value
+  height_hispanic <- calc_height(rate_hispanic, num_columns, circle_radius)
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item") |>
+    hc_title(text = glue("For every 100,000 Hispanic people in the community, {rate_hispanic} are in prison."),
+             align = "left") |>
+    hc_xAxis(categories = df1$race) |>
+    hc_yAxis(title = list(text = "")) |>
+    hc_series(
+      list(
+        name = "",
+        data = lapply(1:round(rate_hispanic), function(i) {
+          list(
+            y = 1,
+            marker = list(symbol = "circle", radius = circle_radius)
+          )
+        }),
+        type = "item",
+        marker = list(radius = circle_radius),
+        layoutAlgorithm = list(type = 'grid', rows = ceiling(rate_hispanic / num_columns), columns = num_columns)
+      )
+    ) |>
+    hc_legend(enabled = FALSE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_size(height = height_hispanic) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
+    hc_colors(c(color4))
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_hc_waffle_rri_hispanic <- setNames(all_hc_waffle_rri_hispanic, states)
+all_hc_waffle_rri_hispanic$Georgia
+
+# Create Highcharts visualizations for each state
+all_hc_waffle_rri_white <- map(.x = states, .f = function(x) {
+
+  df2 <- rri_data |>
+    ungroup() |>
+    filter(state == x) |>
+    select(-state, -rri) |>
+    mutate(incarceration_rate = round(incarceration_rate, 1)) |>
+    mutate(color = case_when(
+      race == "Black, non-Hispanic" ~ color1,
+      race == "Hispanic, any race" ~ color2,
+      race == "Other race(s), non-Hispanic" ~ color3,
+      race == "White, non-Hispanic" ~ color4
+    ))
+
+  # Black, non-Hispanic
+  df1 <- df2 |> filter(race == "White, non-Hispanic")
+  rate_white <- df1$incarceration_rate[1]  # Adjust if there's more than one value
+  height_white <- calc_height(rate_white, num_columns, circle_radius)
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item") |>
+    hc_title(text = glue("For every 100,000 White people in the community, {rate_white} are in prison."),
+             align = "left") |>
+    hc_xAxis(categories = df1$race) |>
+    hc_yAxis(title = list(text = "")) |>
+    hc_series(
+      list(
+        name = "",
+        data = lapply(1:round(rate_white), function(i) {
+          list(
+            y = 1,
+            marker = list(symbol = "circle", radius = circle_radius)
+          )
+        }),
+        type = "item",
+        marker = list(radius = circle_radius),
+        layoutAlgorithm = list(type = 'grid', rows = ceiling(rate_white / num_columns), columns = num_columns)
+      )
+    ) |>
+    hc_legend(enabled = FALSE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_size(height = height_white) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
+    hc_colors(c(color2))
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_hc_waffle_rri_white <- setNames(all_hc_waffle_rri_white, states)
+all_hc_waffle_rri_white$Georgia
+
+# Create Highcharts visualizations for each state
+all_hc_waffle_rri_other <- map(.x = states, .f = function(x) {
+
+  df2 <- rri_data |>
+    ungroup() |>
+    filter(state == x) |>
+    select(-state, -rri) |>
+    mutate(incarceration_rate = round(incarceration_rate, 1)) |>
+    mutate(color = case_when(
+      race == "Black, non-Hispanic" ~ color1,
+      race == "Hispanic, any race" ~ color2,
+      race == "Other race(s), non-Hispanic" ~ color3,
+      race == "White, non-Hispanic" ~ color4
+    ))
+
+  # Black, non-Hispanic
+  df1 <- df2 |> filter(race == "Other race(s), non-Hispanic")
+  rate_other <- df1$incarceration_rate[1]  # Adjust if there's more than one value
+  height_other <- calc_height(rate_other, num_columns, circle_radius)
+
+  highcharts <- highchart() |>
+    hc_chart(type = "item") |>
+    hc_title(text = glue("For every 100,000 non-Hispanic people of other* races in the community, {rate_other} are in prison."),
+             align = "left") |>
+    hc_xAxis(categories = df1$race) |>
+    hc_yAxis(title = list(text = "")) |>
+    hc_series(
+      list(
+        name = "",
+        data = lapply(1:round(rate_other), function(i) {
+          list(
+            y = 1,
+            marker = list(symbol = "circle", radius = circle_radius)
+          )
+        }),
+        type = "item",
+        marker = list(radius = circle_radius),
+        layoutAlgorithm = list(type = 'grid', rows = ceiling(rate_other / num_columns), columns = num_columns)
+      )
+    ) |>
+    hc_legend(enabled = FALSE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_size(height = height_other) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
+    hc_colors(c(color3))
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_hc_waffle_rri_other <- setNames(all_hc_waffle_rri_other, states)
+all_hc_waffle_rri_other$Georgia
 
 
 
@@ -500,5 +531,10 @@ for (folder in theseFOLDERS){
   save(all_scatter_race_ped_release, file = file.path(folder, "all_scatter_race_ped_release.rds"))
   save(all_bubble_race_ped_release,  file = file.path(folder, "all_bubble_race_ped_release.rds"))
   save(all_hc_rri_chart,             file = file.path(folder, "all_hc_rri_chart.rds"))
+
+  save(all_hc_waffle_rri_black,      file = file.path(folder, "all_hc_waffle_rri_black.rds"))
+  save(all_hc_waffle_rri_hispanic,   file = file.path(folder, "all_hc_waffle_rri_hispanic.rds"))
+  save(all_hc_waffle_rri_white,      file = file.path(folder, "all_hc_waffle_rri_white.rds"))
+  save(all_hc_waffle_rri_other,      file = file.path(folder, "all_hc_waffle_rri_other.rds"))
 }
 

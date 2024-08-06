@@ -16,7 +16,7 @@ create_waffle_data <- function(categories, values, rows = 10) {
 
 # Sample data
 categories <- c("Category A", "Category B", "Category C")
-values <- c(50, 30, 20)
+values <- c(10, 30, 20)
 
 # Create waffle chart data
 waffle_data <- create_waffle_data(categories, values)
@@ -30,7 +30,7 @@ interactive_waffle <- plot_ly(
   type = 'scatter',
   mode = 'markers',
   marker = list(
-    symbol = 'square',
+    symbol = 'circle',
     size = 20,
     color = ~factor(value),
     colors = RColorBrewer::brewer.pal(length(categories), "Set3")
