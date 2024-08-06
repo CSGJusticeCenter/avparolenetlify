@@ -70,6 +70,39 @@ rri_data <- merged_data %>%
   select(state, race, rri, incarceration_rate) |>
   mutate(incarceration_rate_10 = incarceration_rate/10)
 
+
+# Get list of states
+states <- unique(rri_data$state)
+
+# Generate sentences dynamically
+all_sentence_rri <- map(.x = states, .f = function(x) {
+
+  df1 <- rri_data %>%
+    filter(state == x)
+
+  higher_rates <- df1 %>%
+    filter(rri > 1 & race != "White, non-Hispanic") %>%
+    mutate(sentence = paste0(race, " people are incarcerated in state prison at a rate <b>",
+                             round(rri, 1), " times</b> higher")) %>%
+    pull(sentence)
+
+  if (length(higher_rates) > 0) {
+    final_sentence <- paste0("In ", x, ", ", paste(higher_rates, collapse = " and "),
+                             " than White non-Hispanic people, when accounting for population sizes in the community.")
+  } else {
+    final_sentence <- paste0("In ", x, ", there are no disparities in prison incarceration rates compared to White non-Hispanic individuals.")
+  }
+
+  return(final_sentence)
+})
+
+# Set names of the list to states
+all_sentence_rri <- setNames(all_sentence_rri, states)
+
+# Example output for Georgia
+all_sentence_rri$Georgia
+
+
 # Common circle size in pixels
 circle_radius <- 4  # Adjust this value to make circles larger or smaller
 num_columns <- 50   # Fixed number of columns for layout
@@ -124,7 +157,7 @@ all_hc_waffle_rri_black <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_exporting(enabled = FALSE) |>
     hc_size(height = height_black) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -179,7 +212,7 @@ all_hc_waffle_rri_hispanic <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_exporting(enabled = FALSE) |>
     hc_size(height = height_hispanic) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -234,7 +267,7 @@ all_hc_waffle_rri_white <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_exporting(enabled = FALSE) |>
     hc_size(height = height_white) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -289,7 +322,7 @@ all_hc_waffle_rri_other <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_exporting(enabled = FALSE) |>
     hc_size(height = height_other) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -532,6 +565,7 @@ for (folder in theseFOLDERS){
   save(all_bubble_race_ped_release,  file = file.path(folder, "all_bubble_race_ped_release.rds"))
   save(all_hc_rri_chart,             file = file.path(folder, "all_hc_rri_chart.rds"))
 
+  save(all_sentence_rri,             file = file.path(folder, "all_sentence_rri.rds"))
   save(all_hc_waffle_rri_black,      file = file.path(folder, "all_hc_waffle_rri_black.rds"))
   save(all_hc_waffle_rri_hispanic,   file = file.path(folder, "all_hc_waffle_rri_hispanic.rds"))
   save(all_hc_waffle_rri_white,      file = file.path(folder, "all_hc_waffle_rri_white.rds"))

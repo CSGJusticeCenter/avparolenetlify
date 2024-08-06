@@ -54,6 +54,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_race_ped_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_rri_chart.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_black.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_hispanic.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_white.rds"))
@@ -241,6 +242,8 @@ div(id = "visualization", state_lollipop_offense_los)
 
 ## Incarceration Rates
 
+`r paste(state_sentence_rri, collapse = ", ")`
+
 ```{r}
 div(id = "visualization", state_hc_waffle_rri_black)
 div(id = "visualization", state_hc_waffle_rri_hispanic)
@@ -248,11 +251,6 @@ div(id = "visualization", state_hc_waffle_rri_other)
 div(id = "visualization", state_hc_waffle_rri_white)
 ```
 
-
-<br>
-<div class="divider"></div>
-
-## In Prison Past Their Parole Eligibility Year
 
 <br>
 <div class="divider"></div>

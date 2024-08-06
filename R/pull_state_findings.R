@@ -215,6 +215,16 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <- no_data_text
 }
 
+# SENTENCE: "In STATE, X people are incarcerated at a rate X
+#            times</b> higher than White non-Hispanic people, when accounting for
+#            population sizes in the community."
+if (state_for_report %in% names(all_sentence_rri)) {
+  state_sentence_rri <-
+    all_sentence_rri[[state_for_report]]
+} else {
+  state_sentence_rri <- ""
+}
+
 # TITLE: For every 100,000 Black people in the community, X are in prison
 if (state_for_report %in% names(all_hc_waffle_rri_black)) {
   state_hc_waffle_rri_black <-
