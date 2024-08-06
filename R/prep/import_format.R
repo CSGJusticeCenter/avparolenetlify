@@ -226,45 +226,45 @@ state_names_abb <- data.frame(abbreviation = state.abb,
                               stringsAsFactors = FALSE) %>%
   rename(state = name, stateid = abbreviation)
 
-aps_files <- list(
-  list(file = "ICPSR_38058-V1/ICPSR_38058/DS0001/38058-0001-Data.rda", year = 2018),
-  list(file = "ICPSR_37471-V1/ICPSR_37471/DS0001/37471-0001-Data.rda", year = 2017),
-  list(file = "ICPSR_37441-V1/ICPSR_37441/DS0001/37441-0001-Data.rda", year = 2016),
-  list(file = "ICPSR_36619-V1/ICPSR_36619/DS0001/36619-0001-Data.rda", year = 2015),
-  list(file = "ICPSR_36320-V1/ICPSR_36320/DS0001/36320-0001-Data.rda", year = 2014),
-  list(file = "ICPSR_35629-V1/ICPSR_35629/DS0001/35629-0001-Data.rda", year = 2013),
-  list(file = "ICPSR_35257-V1/ICPSR_35257/DS0001/35257-0001-Data.rda", year = 2012),
-  list(file = "ICPSR_34718-V1/ICPSR_34718/DS0001/34718-0001-Data.rda", year = 2011),
-  list(file = "ICPSR_34382-V1/ICPSR_34382/DS0001/34382-0001-Data.rda", year = 2010),
-  list(file = "ICPSR_34381-V1/ICPSR_34381/DS0001/34381-0001-Data.rda", year = 2009),
-  list(file = "ICPSR_34380-V1/ICPSR_34380/DS0001/34380-0001-Data.rda", year = 2008),
-  list(file = "ICPSR_31332-V1/ICPSR_31332/DS0001/31332-0001-Data.rda", year = 2007),
-  list(file = "ICPSR_31331-V1/ICPSR_31331/DS0001/31331-0001-Data.rda", year = 2006),
-  list(file = "ICPSR_31330-V1/ICPSR_31330/DS0001/31330-0001-Data.rda", year = 2005),
-  list(file = "ICPSR_31329-V1/ICPSR_31329/DS0001/31329-0001-Data.rda", year = 2004),
-  list(file = "ICPSR_31328-V1/ICPSR_31328/DS0001/31328-0001-Data.rda", year = 2003),
-  list(file = "ICPSR_31327-V1/ICPSR_31327/DS0001/31327-0001-Data.rda", year = 2002),
-  list(file = "ICPSR_31326-V1/ICPSR_31326/DS0001/31326-0001-Data.rda", year = 2001),
-  list(file = "ICPSR_31325-V1/ICPSR_31325/DS0001/31325-0001-Data.rda", year = 2000)
-)
-
-aps_data_list <- lapply(aps_files, function(f) {
-  load(paste0(config$sp_data_path, "/data/raw/Annual Parole Survey/", f$file))
-  get(ls()[1])
-})
-names(aps_data_list) <- paste0("aps_", sapply(aps_files, function(f) f$year))
-
-aps_years <- sapply(aps_files, function(f) f$year)
-aps_pre_2008 <- aps_years < 2008
-
-aps_parole_by_rptyear <- mapply(
-  fnc_prepare_aps_data,
-  data = aps_data_list,
-  year = aps_years,
-  pre_2008 = aps_pre_2008,
-  SIMPLIFY = FALSE) |> bind_rows() |>
-  filter(!state %in% c("District of Columbia", "Federal") & !is.na(state))
-
+# aps_files <- list(
+#   list(file = "ICPSR_38058-V1/ICPSR_38058/DS0001/38058-0001-Data.rda", year = 2018),
+#   list(file = "ICPSR_37471-V1/ICPSR_37471/DS0001/37471-0001-Data.rda", year = 2017),
+#   list(file = "ICPSR_37441-V1/ICPSR_37441/DS0001/37441-0001-Data.rda", year = 2016),
+#   list(file = "ICPSR_36619-V1/ICPSR_36619/DS0001/36619-0001-Data.rda", year = 2015),
+#   list(file = "ICPSR_36320-V1/ICPSR_36320/DS0001/36320-0001-Data.rda", year = 2014),
+#   list(file = "ICPSR_35629-V1/ICPSR_35629/DS0001/35629-0001-Data.rda", year = 2013),
+#   list(file = "ICPSR_35257-V1/ICPSR_35257/DS0001/35257-0001-Data.rda", year = 2012),
+#   list(file = "ICPSR_34718-V1/ICPSR_34718/DS0001/34718-0001-Data.rda", year = 2011),
+#   list(file = "ICPSR_34382-V1/ICPSR_34382/DS0001/34382-0001-Data.rda", year = 2010),
+#   list(file = "ICPSR_34381-V1/ICPSR_34381/DS0001/34381-0001-Data.rda", year = 2009),
+#   list(file = "ICPSR_34380-V1/ICPSR_34380/DS0001/34380-0001-Data.rda", year = 2008),
+#   list(file = "ICPSR_31332-V1/ICPSR_31332/DS0001/31332-0001-Data.rda", year = 2007),
+#   list(file = "ICPSR_31331-V1/ICPSR_31331/DS0001/31331-0001-Data.rda", year = 2006),
+#   list(file = "ICPSR_31330-V1/ICPSR_31330/DS0001/31330-0001-Data.rda", year = 2005),
+#   list(file = "ICPSR_31329-V1/ICPSR_31329/DS0001/31329-0001-Data.rda", year = 2004),
+#   list(file = "ICPSR_31328-V1/ICPSR_31328/DS0001/31328-0001-Data.rda", year = 2003),
+#   list(file = "ICPSR_31327-V1/ICPSR_31327/DS0001/31327-0001-Data.rda", year = 2002),
+#   list(file = "ICPSR_31326-V1/ICPSR_31326/DS0001/31326-0001-Data.rda", year = 2001),
+#   list(file = "ICPSR_31325-V1/ICPSR_31325/DS0001/31325-0001-Data.rda", year = 2000)
+# )
+#
+# aps_data_list <- lapply(aps_files, function(f) {
+#   load(paste0(config$sp_data_path, "/data/raw/Annual Parole Survey/", f$file))
+#   get(ls()[1])
+# })
+# names(aps_data_list) <- paste0("aps_", sapply(aps_files, function(f) f$year))
+#
+# aps_years <- sapply(aps_files, function(f) f$year)
+# aps_pre_2008 <- aps_years < 2008
+#
+# aps_parole_by_rptyear <- mapply(
+#   fnc_prepare_aps_data,
+#   data = aps_data_list,
+#   year = aps_years,
+#   pre_2008 = aps_pre_2008,
+#   SIMPLIFY = FALSE) |> bind_rows() |>
+#   filter(!state %in% c("District of Columbia", "Federal") & !is.na(state))
+#
 
 
 #------ Prepare BJS: Prisoners in 2020 ------#
@@ -325,7 +325,7 @@ for (folder in theseFOLDERS){
   save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
   save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
-  save(aps_parole_by_rptyear,              file = file.path(folder, "aps_parole_by_rptyear.rds"))
+  #save(aps_parole_by_rptyear,              file = file.path(folder, "aps_parole_by_rptyear.rds"))
   save(bjs_prison_pop_by_race_2020,        file = file.path(folder, "bjs_prison_pop_by_race_2020.rds"))
   save(bjs_prison_pop_by_rptyear,          file = file.path(folder, "bjs_prison_pop_by_rptyear.rds"))
 
