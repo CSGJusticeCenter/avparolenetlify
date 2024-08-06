@@ -344,15 +344,15 @@ all_hc_waffle_rri_other$Georgia
 #------ Years Spent in Prison After Parole Eligibility by Race and Ethnicity ------#
 
 # Filter and prepare the data
-parole_release_disparities <- ncrp_releases |>
+all_parole_release_disparities <- ncrp_releases |>
   filter(rptyear == select_year) |>
   filter(time_between_ped_release_category != "Missing Parole Eligibility Year" &
            time_between_ped_release_category != "Released before Parole Eligibility Year" &
            !is.na(parelig_year) &
            !is.na(relyr) &
            !is.na(race) &
-           time_between_ped_release >= 0
-         # & reltype == "Conditional release"
+           time_between_ped_release >= 0 &
+           reltype == "Conditional release"
   ) |>
   filter(admtype == "New court commitment") |>
   filter(sentlgth == "1-1.9 years" |
@@ -366,12 +366,12 @@ parole_release_disparities <- ncrp_releases |>
                                   "Other race(s), non-Hispanic")))
 
 # Get unique states
-states <- unique(parole_release_disparities$state)
+states <- unique(all_parole_release_disparities$state)
 
 # Create Highcharts visualizations for each state
 all_scatter_race_ped_release <- map(.x = states, .f = function(x) {
 
-  df1 <- parole_release_disparities |>
+  df1 <- all_parole_release_disparities |>
     filter(state == x) |>
     select(time_between_ped_release, race)
 
@@ -411,6 +411,21 @@ all_scatter_race_ped_release <- setNames(all_scatter_race_ped_release, states)
 
 # Display the chart for Georgia as an example
 all_scatter_race_ped_release$Georgia
+
+
+
+df1 <- all_parole_release_disparities |>
+  filter(state == "Georgia") |>
+  select(time_between_ped_release, race) |>
+  group_by(race) |>
+  summarise(total_years = sum(time_between_ped_release, na.rm = TRUE))
+
+
+
+
+
+
+
 
 
 
@@ -572,14 +587,15 @@ all_bubble_race_ped_release$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(all_scatter_race_ped_release, file = file.path(folder, "all_scatter_race_ped_release.rds"))
-  save(all_bubble_race_ped_release,  file = file.path(folder, "all_bubble_race_ped_release.rds"))
-  save(all_hc_rri_chart,             file = file.path(folder, "all_hc_rri_chart.rds"))
+  save(all_parole_release_disparities, file = file.path(folder, "all_parole_release_disparities.rds"))
+  save(all_scatter_race_ped_release,   file = file.path(folder, "all_scatter_race_ped_release.rds"))
+  save(all_bubble_race_ped_release,    file = file.path(folder, "all_bubble_race_ped_release.rds"))
+  save(all_hc_rri_chart,               file = file.path(folder, "all_hc_rri_chart.rds"))
 
-  save(all_sentence_rri,             file = file.path(folder, "all_sentence_rri.rds"))
-  save(all_hc_waffle_rri_black,      file = file.path(folder, "all_hc_waffle_rri_black.rds"))
-  save(all_hc_waffle_rri_hispanic,   file = file.path(folder, "all_hc_waffle_rri_hispanic.rds"))
-  save(all_hc_waffle_rri_white,      file = file.path(folder, "all_hc_waffle_rri_white.rds"))
-  save(all_hc_waffle_rri_other,      file = file.path(folder, "all_hc_waffle_rri_other.rds"))
+  save(all_sentence_rri,               file = file.path(folder, "all_sentence_rri.rds"))
+  save(all_hc_waffle_rri_black,        file = file.path(folder, "all_hc_waffle_rri_black.rds"))
+  save(all_hc_waffle_rri_hispanic,     file = file.path(folder, "all_hc_waffle_rri_hispanic.rds"))
+  save(all_hc_waffle_rri_white,        file = file.path(folder, "all_hc_waffle_rri_white.rds"))
+  save(all_hc_waffle_rri_other,        file = file.path(folder, "all_hc_waffle_rri_other.rds"))
 }
 
