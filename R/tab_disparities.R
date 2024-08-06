@@ -464,7 +464,6 @@ years <- c("First Year", "Second Year", "Third Year or More")
 # Get unique states
 states <- unique(ncrp_time_between_ped_release$state)
 
-# Create Highcharts visualizations for each state
 all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
 
   df1 <- ncrp_time_between_ped_release |>
@@ -520,6 +519,9 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
   year_mapping <- setNames(seq_along(years) - 1, years)
   df_complete$x_value <- year_mapping[df_complete$Year] * length(races) + as.numeric(factor(df_complete$Race, levels = races)) - 1
 
+  # Filter out entries with Value 0
+  df_complete <- df_complete |> filter(Value > 0)
+
   # Create plot bands for years
   plot_bands <- list(
     list(from = -0.5, to = 2.5, color = "lightgray", label = list(text = "First Year", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "bold"))),
@@ -534,7 +536,11 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
   # Create the chart
   highcharts <- highchart() |>
     hc_chart(type = "bubble", marginTop = 70) |>
-    hc_xAxis(categories = rep(races, times = length(years)), plotBands = plot_bands, labels = list(style = list(fontWeight = "bold"))) |>
+    hc_xAxis(categories = rep(races, times = length(years)), plotBands = plot_bands, labels = list(
+      formatter = JS("function() {
+        return '<span style=\"font-weight: ' + (this.pos < 3 ? 'bold' : 'regular') + '\">' + this.value + '</span>';
+      }")
+    )) |>
     hc_yAxis(categories = y_levels, title = list(text = ""), type = "category", min = 0, max = length(y_levels) - 1) |>
     hc_add_series(name = "", data = list_parse(data.frame(x = df_complete$x_value, y = df_complete$y_value, z = df_complete$Value, n = df_complete$n, color = df_complete$color, Race = df_complete$Race, Level = df_complete$Level, Year = df_complete$Year))) |>
     hc_title(text = "Proportion of People Released by Year of Parole Eligibility and Offense Type") |>
@@ -548,7 +554,7 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
         style = list(
           color = "black",
           textOutline = "none",
-          fontWeight = "bold"
+          fontWeight = "regular"
         )
       )
     )) |>
@@ -558,6 +564,7 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
+
 
 # Name the list of charts by state
 all_bubble_race_ped_release <- setNames(all_bubble_race_ped_release, states)
