@@ -206,11 +206,11 @@ if (state_for_report %in% names(all_lollipop_offense_los)) {
 
 ####################
 
-# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Date
+# TITLE:
 if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <-
     all_bubble_race_ped_release[[state_for_report]] |>
-    hc_size(height = 500)
+    hc_size(height = 600)
 } else {
   state_bubble_race_ped_release <- no_data_text
 }
@@ -259,9 +259,19 @@ if (state_for_report %in% names(all_hc_waffle_rri_other)) {
 
 
 # TITLE: Average Length of Stay by Race, Ethnicity, and Offense Type
+if (state_for_report %in% names(all_lollipop_los_race)) {
+  state_lollipop_los_race <-
+    all_lollipop_los_race[[state_for_report]] |>
+    hc_size(width = 350,
+            height = 100)
+
+} else {
+  state_lollipop_los_race <- no_data_text
+}
 if (state_for_report %in% names(all_scatter_los_race_offense)) {
   state_scatter_los_race_offense <-
-    all_scatter_los_race_offense[[state_for_report]]
+    all_scatter_los_race_offense[[state_for_report]] |>
+    hc_size(height = 600)
 } else {
   state_scatter_los_race_offense <- no_data_text
 }

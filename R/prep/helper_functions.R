@@ -217,7 +217,7 @@ fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
 common_style <- list(
   fontFamily = "Graphik",
   color = "black",
-  fontSize = "12px",
+  fontSize = "14px",
   fontWeight = "regular"
 )
 
@@ -228,7 +228,7 @@ common_style <- list(
 #' @export
 common_chart_style <- list(
   fontFamily = "Graphik",
-  fontSize = "12px",
+  fontSize = "14px",
   color = "black"
 )
 
@@ -276,19 +276,62 @@ base_hc_theme <- hc_theme(
     style = common_style
   ),
   plotOptions = list(
-    line = list(marker = list(enabled = FALSE)),
-    spline = list(marker = list(enabled = FALSE)),
-    area = list(marker = list(enabled = FALSE)),
-    areaspline = list(marker = list(enabled = FALSE)),
-    arearange = list(marker = list(enabled = FALSE)),
-    bubble = list(maxSize = "10%"),
+    line = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    spline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    area = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    areaspline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    arearange = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    bubble = list(maxSize = "10%", dataLabels = list(style = common_style)),
     column = list(
       dataLabels = list(
-        style = list(color = "black")
+        style = common_style
       )
     )
   )
 )
+
+# base_hc_theme <- hc_theme(
+#   colors = c(color1, color2, color3, color4, color5),
+#   chart = list(style = common_chart_style),
+#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
+#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+#   legend = list(
+#     align = "center",
+#     verticalAlign = "top",
+#     itemStyle = common_style
+#   ),
+#   xAxis = list(
+#     labels = list(enabled = TRUE, style = common_style),
+#     gridLineColor = "transparent",
+#     lineColor = "black",
+#     minorGridLineColor = "transparent",
+#     tickColor = "black"
+#   ),
+#   yAxis = list(
+#     labels = list(enabled = TRUE, style = common_style),
+#     gridLineColor = "transparent",
+#     lineColor = "transparent",
+#     majorGridLineColor = "transparent",
+#     minorGridLineColor = "transparent",
+#     tickColor = "transparent"
+#   ),
+#   tooltip = list(
+#     style = common_style
+#   ),
+#   plotOptions = list(
+#     line = list(marker = list(enabled = FALSE)),
+#     spline = list(marker = list(enabled = FALSE)),
+#     area = list(marker = list(enabled = FALSE)),
+#     areaspline = list(marker = list(enabled = FALSE)),
+#     arearange = list(marker = list(enabled = FALSE)),
+#     bubble = list(maxSize = "10%"),
+#     column = list(
+#       dataLabels = list(
+#         style = list(color = "black")
+#       )
+#     )
+#   )
+# )
 
 #' Highcharts Theme with Lines
 #'

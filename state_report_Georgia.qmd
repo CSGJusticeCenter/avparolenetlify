@@ -61,6 +61,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_hi
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_white.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_other.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
 state_for_report <- "Georgia"
@@ -275,7 +276,7 @@ cat(message)
 ```{r}
 div(
   id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 10px;",
+  style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
   div(style = "color: #00bdb2; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
   div(style = "color: #3f8bca; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
   div(style = "color: #de663e; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
@@ -284,10 +285,10 @@ div(
   div(style = "color: #3f8bca; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
   div(style = "color: #de663e; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
   div(style = "color: #f4b811; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(id = "bold-text", style = "text-align: center;", HTML("Black People")),
-  div(id = "bold-text", style = "text-align: center;", HTML("White People")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Hispanic People")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Other Race(s), Non-Hispanic People"))
+  div(style = "text-align: center;", HTML("Black People")),
+  div(style = "text-align: center;", HTML("White People")),
+  div(style = "text-align: center;", HTML("Hispanic People")),
+  div(style = "text-align: center;", HTML("Other Race(s), Non-Hispanic People"))
 )
 br()
 ```
@@ -299,7 +300,9 @@ div(id = "visualization", state_scatter_race_ped_release)
 <br>
 <div class="divider"></div>
 
-## Timing of Release by Offense
+## Timing of Release After Parole Eligibility
+
+The timing of release for individuals after their parole eligibility year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
 
 ```{r}
 div(id = "visualization", state_bubble_race_ped_release)
@@ -308,7 +311,18 @@ div(id = "visualization", state_bubble_race_ped_release)
 <br>
 <div class="divider"></div>
 
-## Time Served  by Offense
+## Time Served
+
+```{r}
+section_text <- "Hispanic individuals faced the longest average length of stay in prison in 2020. Similarly, Black, non-Hispanic individuals also experienced notably longer prison stays compared to their White, non-Hispanic counterparts, who had the shortest average length of stay."
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 10px;",
+  section_text,
+  div(id = "visualization", state_lollipop_los_race)
+)
+br()
+```
 
 ```{r}
 div(id = "visualization", state_scatter_los_race_offense)

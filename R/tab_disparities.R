@@ -524,26 +524,37 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
 
   # Create plot bands for years
   plot_bands <- list(
-    list(from = -0.5, to = 2.5, color = "lightgray", label = list(text = "First Year", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "bold"))),
-    list(from = 2.5, to = 5.5, color = "white", label = list(text = "Second Year", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "bold"))),
-    list(from = 5.5, to = 8.5, color = "lightgray", label = list(text = "Third Year or More", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "bold")))
+    list(from = -0.5, to = 2.5, color = "#EFEFEF", label = list(text = "First Year", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "bold"))),
+    list(from = 2.5, to = 5.5, color = "white", label = list(text = "Second Year", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "regular"))),
+    list(from = 5.5, to = 8.5, color = "#EFEFEF", label = list(text = "Third Year or More", align = "center", verticalAlign = "top", y = -10, style = list(color = "black", fontWeight = "regular")))
   )
 
   # Define colors for races
-  color_mapping <- c("Black, non-Hispanic" = color1, "White, non-Hispanic" = color4, "Hispanic, any race" = color3)
+  color_mapping <- c("Black, non-Hispanic" = color1, "White, non-Hispanic" = color2, "Hispanic, any race" = color3)
   df_complete$color <- color_mapping[df_complete$Race]
 
   # Create the chart
   highcharts <- highchart() |>
     hc_chart(type = "bubble", marginTop = 70) |>
-    hc_xAxis(categories = rep(races, times = length(years)), plotBands = plot_bands, labels = list(
-      formatter = JS("function() {
-        return '<span style=\"font-weight: ' + (this.pos < 3 ? 'bold' : 'regular') + '\">' + this.value + '</span>';
-      }")
-    )) |>
+    # hc_xAxis(categories = rep(races, times = length(years)), plotBands = plot_bands, labels = list(
+    #   formatter = JS("function() {
+    #     return '<span style=\"font-weight: ' + (this.pos < 3 ? 'bold' : 'regular') + '\">' + this.value + '</span>';
+    #   }")
+    # )) |>
+    hc_xAxis(
+      categories = rep(races, times = length(years)), plotBands = plot_bands, labels = list(
+        formatter = JS("function() {
+      if (this.pos < 3) return '<span style=\"font-weight: bold;\">' + this.value + '</span>';
+      return '';
+    }"),
+        style = list(
+          fontWeight = "bold"
+        )
+      )
+    ) |>
     hc_yAxis(categories = y_levels, title = list(text = ""), type = "category", min = 0, max = length(y_levels) - 1) |>
     hc_add_series(name = "", data = list_parse(data.frame(x = df_complete$x_value, y = df_complete$y_value, z = df_complete$Value, n = df_complete$n, color = df_complete$color, Race = df_complete$Race, Level = df_complete$Level, Year = df_complete$Year))) |>
-    hc_title(text = "Proportion of People Released by Year of Parole Eligibility and Offense Type") |>
+    hc_title(text = "When are people released from prison after their parole eligibility year?") |>
     hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = '<b>Race:</b> {point.Race}<br><b>Level:</b> {point.Level}<br><b>Year:</b> {point.Year}<br><b>Percentage:</b> {point.z}%<br><b>Count:</b> {point.n}<br>') |>
     hc_plotOptions(bubble = list(
       maxSize = 50,
@@ -565,7 +576,6 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
   return(highcharts)
 })
 
-
 # Name the list of charts by state
 all_bubble_race_ped_release <- setNames(all_bubble_race_ped_release, states)
 
@@ -580,6 +590,19 @@ all_bubble_race_ped_release$Georgia
 
 #------ Time Served by Offense Type ------#
 
+# Calculate average length of stay by race and state
+ncrp_race_los <- ncrp_releases |>
+  filter(rptyear == select_year) |>
+  filter(race != "Unknown") |>
+  group_by(state, race, rptyear) |>
+  summarise(
+    average_los = mean(time_between_admisson_release, na.rm = TRUE)) |>
+  pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
+  select(-type)
+
+df1 <- ncrp_race_los |> filter(state == "Georgia")
+
+
 # Calculate the average length of stay by race, state, and by offense type
 ncrp_race_los_by_offense_type <- ncrp_releases |>
   filter(rptyear == select_year) |>
@@ -591,7 +614,6 @@ ncrp_race_los_by_offense_type <- ncrp_releases |>
   pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
   select(-type) |>
   mutate(race = factor(race, levels = c("Black, non-Hispanic", "White, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")))
-
 
 # Get unique states
 states <- unique(ncrp_race_los_by_offense_type$state)
@@ -634,7 +656,6 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       marker = list(symbol = "circle", radius = 5),
       hcaes(x = average_los, y = fbi_index_num, group = race, name = fbi_index)
     ) |>
-    hc_add_theme(base_hc_theme)|>
     hc_yAxis(
       title = list(text = ""),
       majorGridLineColor = "transparent",
@@ -668,7 +689,8 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       )
     ) |>
     hc_legend(verticalAlign = "top",
-              layout = "horizontal")
+              layout = "horizontal") |>
+    hc_add_theme(base_hc_theme)
 
   return(highcharts)
 })
@@ -678,6 +700,121 @@ all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
 
 # Display the chart for Georgia as an example
 all_scatter_los_race_offense$Georgia
+
+
+
+
+
+
+# Calculate average length of stay by race and state
+ncrp_race_los <- ncrp_releases |>
+  filter(rptyear == select_year) |>
+  filter(race != "Unknown") |>
+  group_by(state, race, rptyear) |>
+  summarise(
+    average_los = mean(time_between_admisson_release, na.rm = TRUE)) |>
+  pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
+  select(-type)  |>
+  droplevels()
+
+
+
+
+states <- unique(ncrp_race_los$state)
+
+all_lollipop_los_race <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_race_los |>
+    ungroup() |>
+    filter(state == x) |>
+    arrange(desc(average_los)) |>
+    mutate(race_num = row_number())
+
+  max_los <- max(df1$average_los, na.rm = TRUE)
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(as.character(df1$race), df1$race_num)
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_los) |>
+    select(race_num, start_x, end_x, race)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df_lines,
+      type = 'line',
+      hcaes(x = value, y = race_num, group = race),
+      lineWidth = 1,
+      color = "black",
+      dashStyle = "solid",
+      opacity = 1,
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE,
+      showInLegend = FALSE
+    ) |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_los, y = race_num, group = race, name = race),
+      dataLabels = list(
+        enabled = TRUE,
+        format = '{point.x:.1f} Years',
+        align = "left",
+        y = 9,
+        x = 8,
+        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
+      )
+    ) |>
+    hc_add_theme(base_hc_theme)|>
+    hc_yAxis(
+      labels = list(
+        style = list(
+          color = 'black',
+          fontWeight = "regular",
+          fontSize = "12px"
+        )
+      ),
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      title = list(text = ""),
+      labels = list(enabled = FALSE),
+      lineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickLength = 0,
+      gridLineColor = "transparent",
+      tickColor = "transparent",
+      max = max_los*1.5
+    ) |>
+    hc_colors(c(color1, color2, color4, color3)) |>
+    hc_exporting(enabled = FALSE) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_legend(enabled = FALSE) |>
+    hc_size(height = 150)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_lollipop_los_race <- setNames(all_lollipop_los_race, states)
+
+# Display the chart for Georgia as an example
+all_lollipop_los_race$Georgia
+
+
 
 
 
@@ -697,6 +834,7 @@ for (folder in theseFOLDERS){
   save(all_hc_waffle_rri_white,        file = file.path(folder, "all_hc_waffle_rri_white.rds"))
   save(all_hc_waffle_rri_other,        file = file.path(folder, "all_hc_waffle_rri_other.rds"))
 
+  save(all_lollipop_los_race,          file = file.path(folder, "all_lollipop_los_race.rds"))
   save(all_scatter_los_race_offense,   file = file.path(folder, "all_scatter_los_race_offense.rds"))
 }
 
