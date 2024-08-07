@@ -542,15 +542,15 @@
     "objectID": "state_report_Georgia.html#criminal-offenses",
     "href": "state_report_Georgia.html#criminal-offenses",
     "title": "Georgia",
-    "section": "",
-    "text": "An overview of the types of criminal offenses that lead to incarceration, providing insight into the most common crimes and their prevalence."
+    "section": "Criminal Offenses",
+    "text": "Criminal Offenses"
   },
   {
     "objectID": "state_report_Georgia.html#sentence-lengths",
     "href": "state_report_Georgia.html#sentence-lengths",
     "title": "Georgia",
-    "section": "",
-    "text": "Analysis of the distribution of sentence lengths within the prison population."
+    "section": "Sentence Lengths",
+    "text": "Sentence Lengths"
   },
   {
     "objectID": "state_report_Georgia.html#prison-release-types",
@@ -563,8 +563,8 @@
     "objectID": "state_report_Georgia.html#demographics-1",
     "href": "state_report_Georgia.html#demographics-1",
     "title": "Georgia",
-    "section": "",
-    "text": "An examination of the demographic composition of Georgia’s prison population, including age, gender, race, and other relevant factors."
+    "section": "Demographics",
+    "text": "Demographics"
   },
   {
     "objectID": "state_report_Georgia.html#timing-of-release",
@@ -598,8 +598,8 @@
     "objectID": "state_report_Georgia.html#timing-of-release-by-offense-type",
     "href": "state_report_Georgia.html#timing-of-release-by-offense-type",
     "title": "Georgia",
-    "section": "",
-    "text": "This chart illustrates the proportion of parole-eligible people released from prison in their first, second, or third year or more after becoming eligible for parole. The data is categorized by offense type and racial and ethnic group, revealing that release patterns can vary for the same offense across these groups."
+    "section": "Timing of Release by Offense Type",
+    "text": "Timing of Release by Offense Type"
   },
   {
     "objectID": "state_report_Georgia.html#time-served",
@@ -705,5 +705,19 @@
     "title": "Georgia",
     "section": "",
     "text": "In Georgia, Black, non-Hispanic people are incarcerated in state prison at a rate 3 times higher than White non-Hispanic people, when accounting for population sizes in the community."
+  },
+  {
+    "objectID": "state_report_Georgia.html#prison-population-trends",
+    "href": "state_report_Georgia.html#prison-population-trends",
+    "title": "Georgia",
+    "section": "Prison Population Trends",
+    "text": "Prison Population Trends"
+  },
+  {
+    "objectID": "state_report_Georgia.html#time-served-by-offense",
+    "href": "state_report_Georgia.html#time-served-by-offense",
+    "title": "Georgia",
+    "section": "",
+    "text": "Between 2010 and 2020, shifts in average time served by individuals for different offense types have been observed. While some categories, like murder and non-negligent manslaughter, have seen a substantial increase in time served, others, like drug-related offenses, have remained relatively stable."
   }
 ]

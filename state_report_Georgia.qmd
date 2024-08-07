@@ -61,6 +61,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_hi
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_white.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_other.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
+
 state_for_report <- "Georgia"
 
 source("R/pull_state_findings.R")
@@ -218,7 +220,7 @@ div(
 <br>
 <div class="divider"></div>
 
-## Time Served by Offense Type
+## Time Served by Offense
 
 Between 2010 and 2020, shifts in average time served by individuals for different offense types have been observed. While some categories, like murder and non-negligent manslaughter, have seen a substantial increase in time served, others, like drug-related offenses, have remained relatively stable. 
 
@@ -297,7 +299,7 @@ div(id = "visualization", state_scatter_race_ped_release)
 <br>
 <div class="divider"></div>
 
-## Timing of Release by Offense Type
+## Timing of Release by Offense
 
 ```{r}
 div(id = "visualization", state_bubble_race_ped_release)
@@ -306,7 +308,12 @@ div(id = "visualization", state_bubble_race_ped_release)
 <br>
 <div class="divider"></div>
 
-## Time Served 
+## Time Served  by Offense
+
+```{r}
+div(id = "visualization", state_scatter_los_race_offense)
+```
+
 
 <br>
 <div class="divider"></div>

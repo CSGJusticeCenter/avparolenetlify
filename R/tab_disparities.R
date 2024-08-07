@@ -88,9 +88,9 @@ all_sentence_rri <- map(.x = states, .f = function(x) {
 
   if (length(higher_rates) > 0) {
     final_sentence <- paste0("In ", x, ", ", paste(higher_rates, collapse = " and "),
-                             " than White non-Hispanic people, when accounting for population sizes in the community.")
+                             " than White, non-Hispanic people, when accounting for population sizes in the community.")
   } else {
-    final_sentence <- paste0("In ", x, ", there are no disparities in prison incarceration rates compared to White non-Hispanic individuals.")
+    final_sentence <- paste0("In ", x, ", there are no disparities in prison incarceration rates compared to White, non-Hispanic individuals.")
   }
 
   return(final_sentence)
@@ -578,14 +578,100 @@ all_bubble_race_ped_release$Georgia
 
 
 
+#------ Time Served by Offense Type ------#
+
+# Calculate the average length of stay by race, state, and by offense type
+ncrp_race_los_by_offense_type <- ncrp_releases |>
+  filter(rptyear == select_year) |>
+  filter(race != "Unknown") |>
+  group_by(state, race, fbi_index, rptyear) |>
+  summarise(
+    average_los = mean(time_between_admisson_release, na.rm = TRUE),
+    people_released = n()) |>
+  pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
+  select(-type) |>
+  mutate(race = factor(race, levels = c("Black, non-Hispanic", "White, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")))
 
 
+# Get unique states
+states <- unique(ncrp_race_los_by_offense_type$state)
 
+all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
+  df1 <- ncrp_race_los_by_offense_type |>
+    ungroup() |>
+    filter(state == x)|>
+    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
 
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
 
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_los) |>
+    select(fbi_index_num, start_x, end_x, race, fbi_index)
 
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
 
+  highcharts <- highchart() |>
+    hc_add_series(
+      df_lines,
+      type = 'line',
+      hcaes(x = value, y = fbi_index_num, group = fbi_index),
+      lineWidth = 1,
+      color = lightgray,
+      dashStyle = "solid",
+      opacity = 1,
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE,
+      showInLegend = FALSE
+    ) |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_los, y = fbi_index_num, group = race, name = fbi_index)
+    ) |>
+    hc_yAxis(
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "transparent",
+      categories = y_labels
+    ) |>
+    hc_xAxis(title = list(text = "Average Length of Stay (Years)",
+                          style = list(fontWeight = "bold", color = "black")),
+             labels = list(style = list(fontWeight = "bold", color = "black"))) |>
+    hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
+    hc_colors(c(color1, color2, color4, color3)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_tooltip(
+      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
+      pointFormat = paste0(
+        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
+        'Offense: {point.name}<br/>',
+        'Average LOS: {point.x: .1f} years<br/>',
+        'People Released: {point.people_released}<br/>'
+      )
+    ) |>
+    hc_legend(verticalAlign = "top",
+              layout = "horizontal",
+              itemStyle = list(fontWeight = "bold")) |>
+    hc_add_theme(hc_theme_with_line)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
+
+# Display the chart for Georgia as an example
+all_scatter_los_race_offense$Georgia
 
 
 
@@ -604,5 +690,7 @@ for (folder in theseFOLDERS){
   save(all_hc_waffle_rri_hispanic,     file = file.path(folder, "all_hc_waffle_rri_hispanic.rds"))
   save(all_hc_waffle_rri_white,        file = file.path(folder, "all_hc_waffle_rri_white.rds"))
   save(all_hc_waffle_rri_other,        file = file.path(folder, "all_hc_waffle_rri_other.rds"))
+
+  save(all_scatter_los_race_offense,   file = file.path(folder, "all_scatter_los_race_offense.rds"))
 }
 

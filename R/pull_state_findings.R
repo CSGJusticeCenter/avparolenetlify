@@ -256,3 +256,12 @@ if (state_for_report %in% names(all_hc_waffle_rri_other)) {
 } else {
   state_hc_waffle_rri_other <- no_data_text
 }
+
+
+# TITLE: Average Length of Stay by Race, Ethnicity, and Offense Type
+if (state_for_report %in% names(all_scatter_los_race_offense)) {
+  state_scatter_los_race_offense <-
+    all_scatter_los_race_offense[[state_for_report]]
+} else {
+  state_scatter_los_race_offense <- no_data_text
+}

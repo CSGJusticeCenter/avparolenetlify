@@ -94,6 +94,11 @@ pre {
   src: local('Graphik'), url("fonts/GraphikBold.ttf");
   font-weight: bold;
 }
+@font-face {
+  font-family: "Wee People";
+  src: local('Wee People'), url("fonts/weepeople.ttf");
+  font-weight: bold;
+}
 
 /* Change font throughout website */
 html,

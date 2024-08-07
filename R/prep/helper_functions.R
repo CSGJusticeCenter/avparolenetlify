@@ -331,7 +331,8 @@ hc_theme_with_line <- hc_theme(
     tickLength = 5,
     tickWidth = 1
   ),
-  yAxis = list(labels = list(enabled = TRUE, style = common_style)),
+  yAxis = list(
+    labels = list(enabled = TRUE, style = common_style)),
   plotOptions = list(
     line = list(marker = list(enabled = TRUE)),
     spline = list(marker = list(enabled = TRUE)),
