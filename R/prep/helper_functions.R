@@ -260,9 +260,9 @@ base_hc_theme <- hc_theme(
   xAxis = list(
     labels = list(enabled = TRUE, style = common_style),
     gridLineColor = "transparent",
-    lineColor = "transparent",
+    lineColor = "black",
     minorGridLineColor = "transparent",
-    tickColor = "transparent"
+    tickColor = "black"
   ),
   yAxis = list(
     labels = list(enabled = TRUE, style = common_style),

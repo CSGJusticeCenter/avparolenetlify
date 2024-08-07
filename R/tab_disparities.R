@@ -621,7 +621,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       type = 'line',
       hcaes(x = value, y = fbi_index_num, group = fbi_index),
       lineWidth = 1,
-      color = lightgray,
+      color = "black",
       dashStyle = "solid",
       opacity = 1,
       marker = list(enabled = FALSE),
@@ -634,6 +634,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       marker = list(symbol = "circle", radius = 5),
       hcaes(x = average_los, y = fbi_index_num, group = race, name = fbi_index)
     ) |>
+    hc_add_theme(base_hc_theme)|>
     hc_yAxis(
       title = list(text = ""),
       majorGridLineColor = "transparent",
@@ -641,12 +642,19 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       lineColor = "transparent",
       majorGridLineColor = "transparent",
       minorGridLineColor = "transparent",
-      tickColor = "transparent",
+      tickColor = "black",
       categories = y_labels
     ) |>
-    hc_xAxis(title = list(text = "Average Length of Stay (Years)",
-                          style = list(fontWeight = "bold", color = "black")),
-             labels = list(style = list(fontWeight = "bold", color = "black"))) |>
+    hc_xAxis(
+      lineColor = "black",
+      tickColor = "black",
+      title = list(text = "Average Length of Stay (Years)",
+                   style = list(color = "black")),
+      labels = list(style = list(color = "black")),
+      gridLineDashStyle = "Dash",  # Add dashed grid lines
+      gridLineWidth = 1,           # Ensure grid lines are visible
+      gridLineColor = lightgray       # Set grid line color
+    ) |>
     hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
     hc_colors(c(color1, color2, color4, color3)) |>
     hc_exporting(enabled = TRUE) |>
@@ -660,9 +668,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       )
     ) |>
     hc_legend(verticalAlign = "top",
-              layout = "horizontal",
-              itemStyle = list(fontWeight = "bold")) |>
-    hc_add_theme(hc_theme_with_line)
+              layout = "horizontal")
 
   return(highcharts)
 })
