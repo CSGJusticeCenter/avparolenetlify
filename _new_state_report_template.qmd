@@ -33,6 +33,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_el
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_ageyrend.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
@@ -46,6 +47,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_populatio
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_ageyrend.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
 
 # Releases Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
@@ -132,7 +134,7 @@ div(
 The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for <b>aggravated or simple assault (26%) and property crimes (19%)</b>. Other offense categories make up smaller proportions of this population.
 
 ```{r}
-div(id = "visualization", state_bubble_ped_fbi_index)
+div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
 
@@ -188,6 +190,11 @@ div(
 <div class="divider"></div>
 
 ## Criminal Offenses
+
+```{r}
+div(id = "visualization", state_bar_population_fbi_index)
+```
+
 
 <br>
 <div class="divider"></div>

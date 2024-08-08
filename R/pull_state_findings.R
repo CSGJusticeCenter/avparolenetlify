@@ -106,6 +106,15 @@ if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
   state_bubble_ped_fbi_index <- no_data_text
 }
 
+# TITLE: OPTION 2 = Offense Breakdown for People in Prison Past Their Parole Eligibility Date
+if (state_for_report %in% names(all_bar_ped_fbi_index)) {
+  state_bar_ped_fbi_index <-
+    all_bar_ped_fbi_index[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_bar_ped_fbi_index <- no_data_text
+}
+
 # TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Date
 if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
   state_bar_parole_eligibility_sentlgth <-
@@ -185,6 +194,14 @@ if (state_for_report %in% names(all_waffle_population_ageyrend)) {
   state_waffle_population_ageyrend <- no_data_text
 }
 
+# TITLE: Offenses for Prison Population
+if (state_for_report %in% names(all_bar_population_fbi_index)) {
+  state_bar_population_fbi_index <-
+    all_bar_population_fbi_index[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_bar_population_fbi_index <- no_data_text
+}
 
 # TITLE: Sentence Lengths for Prison Population
 if (state_for_report %in% names(all_bar_population_sentlgth)) {
@@ -194,6 +211,7 @@ if (state_for_report %in% names(all_bar_population_sentlgth)) {
 } else {
   state_bar_population_sentlgth <- no_data_text
 }
+
 
 
 

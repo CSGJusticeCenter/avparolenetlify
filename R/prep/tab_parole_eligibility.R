@@ -11,11 +11,8 @@
 # pop = population
 # ncrp = NCRP data
 
-####################
 
-# TITLE: Pct of Prison Population by Parole Eligibility Status
-
-####################
+#------ Prison Population by PE Status ------#
 
 # Total prison population by state and year
 ncrp_pop <- ncrp_yearendpop |>
@@ -45,9 +42,6 @@ ncrp_pes_subset <- ncrp_yearendpop|>
                   "Percentage of the Prison Population: <br><b>",
                   paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
          prop_label = paste0(round(prop*100, 0), "%"))
-
-
-
 
 # horizontal stacked bar chart showing prison population by parole eligibility status
 states <- unique(ncrp_pes_subset$state)
@@ -152,11 +146,10 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
 all_stackedbar_pe_type$Georgia
 
-##########
+
 # SENTENCE: In X year, there were X people who were in prison past their parole
 #           eligibility date. This group made up X% of the people in prison for
 #           new crimes and sentence lengths between 1-25 years.
-##########
 
 # get list of states
 states <- unique(ncrp_pes_subset$state)
@@ -181,11 +174,8 @@ all_sentence_parole_eligibility_population$Georgia
 
 
 
-####################
-#
-# TITLE: Demographics
-#
-####################
+#------ PE Prison Population by Demographics ------#
+
 
 # Prepare the data for race
 current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
@@ -241,19 +231,10 @@ all_waffle_parole_eligibility_ageyrend$Georgia
 
 
 
-####################
-#
-# TITLE: Offense Types
-#
-####################
+#------ PE Prison Population by Offense Type ------#
 
-# Currently parole eligible population but still in prison by fbi_index in select year
-# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
-current_ped_fbi_index <-
-  fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) |>
-  mutate(prop_label = paste0(
-    "<b>", prop_label, "</b> (", n_label, ")")
-  ) |>
+current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
+current_ped_fbi_index <- current_ped_fbi_index |>
   mutate(group = case_when(
     fbi_index %in% c("Murder and Non-negligent Manslaughter",
                      "Rape or Sexual Assault",
@@ -261,219 +242,45 @@ current_ped_fbi_index <-
                      "Aggravated or Simple Assault",
                      "Other Violent Offenses") ~ "Violent",
     fbi_index %in% c("Drugs", "Public order", "Property") ~ "Non-Violent",
-    TRUE ~ fbi_index
+    TRUE ~ "Other or Unknown"
+  ),
+  color = case_when(
+    group == "Violent" ~ color3,
+    group == "Non-Violent" ~ color2,
+    group == "Other or Unknown" ~ darkgray
   ))
 
-
-# Get unique states
+# Generate the highcharts for each state
 states <- unique(current_ped_fbi_index$state)
+all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
+  df1 <- current_ped_fbi_index %>%
+    filter(state == x) %>%
+    mutate(prop = prop * 100,
+           tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
+                            "<b>Count:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Proportion:</b> ", round(prop, 1), "%"))
 
-# Create Highcharts visualizations for each state
-all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
+  hc_accessibility_text <- paste0("TBD")
 
-  df1 <- current_ped_fbi_index |>
-    filter(state == x) |>
-    select(fbi_index, n, group)
-
-  # Manual adjustments to group names
-  df1$group <- as.character(df1$group)
-  df1$group[df1$group == "Murder and Non-negligent Manslaughter"] <- "Murder and Non-negligent<br>Manslaughter"
-  df1$group[df1$group == "Rape or Sexual Assault"] <- "Rape or<br>Sexual Assault"
-  df1$group[df1$group == "Aggravated or Simple Assault"] <- "Aggravated or<br>Simple Assault"
-  df1$group[df1$group == "Other Violent Offenses"] <- "Other Violent"
-  df1$group[df1$group == "Other or Unknown"] <- "Other or<br>Unknown"
-
-  # Unique groups
-  groups <- unique(df1$group)
-
-  # Create the nested list structure
-  data <- lapply(groups, function(g) {
-    items <- df1[df1$group == g, ]
-    items_list <- lapply(1:nrow(items), function(i) {
-      list(name = as.character(items$fbi_index[i]),
-           value = items$n[i],
-           color = case_when(g == "Violent" ~ color4,
-                             g == "Non-Violent" ~ color1,
-                             TRUE ~ darkgray)) # Assuming color assignment based on group
-    })
-    list(name = g, data = items_list)
-  })
-
-  # Create the plot
-  highcharts <- highchart() |>
-    hc_chart(type = "packedbubble"
-             # marginTop = 50, marginBottom = 50,
-             # marginLeft = 50, marginRight = 50
-             ) |>
-    hc_add_series_list(data) |>
-    hc_plotOptions(
-      packedbubble = list(
-        minSize = "20%",
-        maxSize = "80%",
-        layoutAlgorithm = list(
-          splitSeries = TRUE,
-          gravitationalConstant = 0.02,
-          seriesInteraction = FALSE,
-          parentNodeLimit = TRUE
-        ),
-        dataLabels = list(
-          enabled = TRUE,
-          useHTML = TRUE, # Use HTML to support line breaks
-          format = '{point.name}',
-          style = list(
-            color = "black",
-            textOutline = "none",
-            fontWeight = "normal",
-            fontSize = "10px", # Adjust the font size
-            textAlign = "center" # Center text horizontally
-          ),
-          allowOverlap = TRUE
-        )
-      )
-    ) |>
-    hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.value}") |>
-    hc_colors(c(color4, color1, darkgray)) |>
-    hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-    hc_exporting(enabled = TRUE) |>
-    hc_add_theme(base_hc_theme)
+  highcharts <- fnc_hc_barchart(df1, "fbi_index", "prop", hc_accessibility_text) %>%
+    hc_yAxis(max = max(df1$prop) * 1.5,
+             labels = list(
+               formatter = JS("function() {
+                  return this.value + '%';
+                }")
+             )) %>%
+    hc_title(text = "Offense Types for People in Prison Past Their Parole Eligibility Year") %>%
+    hc_tooltip(pointFormat = "{point.tooltip}") %>%
+    hc_plotOptions(series = list(
+      colorByPoint = TRUE
+    )) %>%
+    hc_colors(df1$color)
 
   return(highcharts)
 })
 
-# Name the list of charts by state
-all_bubble_ped_fbi_index <- setNames(all_bubble_ped_fbi_index, states)
-
-# Display the chart for Georgia as an example
-all_bubble_ped_fbi_index$Georgia
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Get unique states
-states <- unique(current_ped_fbi_index$state)
-
-# Create Highcharts visualizations for each state
-all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
-
-  # # Manual adjustments to group names
-  # df1$group <- as.character(df1$group)
-  # df1$group[df1$group == "Murder and Non-negligent Manslaughter"] <- "Murder and Non-negligent<br>Manslaughter"
-  # df1$group[df1$group == "Rape or Sexual Assault"] <- "Rape or<br>Sexual Assault"
-  # df1$group[df1$group == "Aggravated or Simple Assault"] <- "Aggravated or<br>Simple Assault"
-  # df1$group[df1$group == "Other Violent Offenses"] <- "Other Violent"
-  # df1$group[df1$group == "Other or Unknown"] <- "Other or<br>Unknown"
-
-  df1 <- current_ped_fbi_index |>
-    filter(state == x) |>
-    select(fbi_index, n, prop, group) |>
-    mutate(y = 1,
-           prop = round(prop*100,0),
-           prop_label = paste0(prop, "%"),
-           color = case_when(
-             group == "Violent" ~ color3,
-             group == "Non-Violent" ~ color2,
-             group == "Other or Unknown" ~ darkgray
-           ))
-
-  # Create bubble chart
-  highcharts <- highchart() |>
-    hc_chart(type = "bubble", marginTop = 0) |>
-    hc_add_series(
-      data = df1,
-      type = "bubble",
-      hcaes(x = fbi_index, y = y, size = n, color = color),
-      name = "Proportion"
-    ) |>
-    hc_add_series(
-      data = df1,
-      type = "scatter",
-      hcaes(x = fbi_index, y = y),
-      name = "Labels",
-      marker = list(enabled = FALSE),
-      dataLabels = list(
-        enabled = TRUE,
-        useHTML = TRUE,
-        format = '{point.prop_label}',
-        style = list(
-          color = "black",
-          textOutline = "none",
-          fontWeight = "bold",
-          fontSize = "1em",
-          textAlign = "center"
-        ),
-        align = "center",
-        verticalAlign = "bottom",
-        allowOverlap = TRUE,
-        y = 50 # Adjust y position to place label above the x-axis
-      )
-    ) |>
-    hc_title(text = "Bubble Chart Example") |>
-    hc_add_theme(base_hc_theme) |>
-    hc_yAxis(title = list(text = ""), visible = FALSE) |>
-    hc_xAxis(
-      # categories = df1$fbi_index,
-      categories = c(
-        "Murder and<br>Non-negligent<br>Manslaughter",
-        "Rape or<br>Sexual<br>Assault",
-        "Robbery",
-        "Aggravated<br>or Simple<br>Assault",
-        "Other<br>Violent<br>Offenses",
-        "Property",
-        "Public<br>Order",
-        "Drugs",
-        "Other or<br>Unknown"
-      ),
-      title = list(text = ""),
-      labels = list(
-        enabled = TRUE,
-        rotation = 0,
-        overflow = "allow",
-        allowOverlap = TRUE
-      ),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "black",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black"
-    ) |>
-    hc_tooltip(pointFormat = '<b>{point.fbi_index}</b><br>Count: {point.n:,.0f}<br>Proportion: {point.prop}%') |>
-    hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-    hc_plotOptions(bubble = list(
-      minSize = 10,
-      maxSize = 50,
-      sizeBy = "area"
-    )) |>
-    hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE)
-
-  return(highcharts)
-})
-
-# Name the list of charts by state
-all_bubble_ped_fbi_index <- setNames(all_bubble_ped_fbi_index, states)
-
-# Display the chart for Georgia as an example
-all_bubble_ped_fbi_index$Georgia
-
-
-
-
+all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
+all_bar_ped_fbi_index$Georgia
 
 
 
@@ -506,7 +313,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
                                   who are currently eligible for parole but not yet released by
                                   their original sentence length in ",
                                   select_year, " in the state of ", x, ".")
-  highcharts <- fnc_hc_barchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
+  highcharts <- fnc_hc_columnchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
     hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() {
@@ -564,6 +371,7 @@ for (folder in theseFOLDERS){
   save(all_waffle_parole_eligibility_sex,          file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
   save(all_waffle_parole_eligibility_ageyrend,     file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
   save(all_bubble_ped_fbi_index,                   file = file.path(folder, "all_bubble_ped_fbi_index.rds"))
+  save(all_bar_ped_fbi_index,                      file = file.path(folder, "all_bar_ped_fbi_index.rds"))
   save(all_bar_parole_eligibility_sentlgth,        file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
   save(all_sentence_parole_eligibility_sentlgth,   file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))
 }
