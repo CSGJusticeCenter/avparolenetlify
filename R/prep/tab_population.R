@@ -235,6 +235,44 @@ all_waffle_population_race <- fnc_hc_waffle(current_pop_race, "race", colors_rac
 # # all_waffle_population_age$Georgia
 
 
+# Currently parole eligible population but still in prison by sentlgth in select year
+# Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
+current_population_sentlgth <- ncrp_yearendpop |>
+  group_by(state) |>
+  count(sentlgth) |>
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
+  ) |>
+  ungroup() |>
+  mutate(tooltip = paste0("<b>", state, " - ",
+                          sentlgth, "</b><br>",
+                          prop_label, "<br>"))
+
+# Create highcharts showing breakdown of parole-eligible prison population by sentlgth
+states <- unique(current_population_sentlgth$state)
+all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- current_population_sentlgth |>
+    filter(state == x) |>
+    mutate(prop = prop*100)
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
+                                  who are currently eligible for parole but not yet released by
+                                  their original sentence length in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_hc_barchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = "Sentence Lengths for People in Prison")
+  return(highcharts)
+})
+all_bar_population_sentlgth <- setNames(all_bar_population_sentlgth, states)
+all_bar_population_sentlgth$Georgia
 
 
 
@@ -248,8 +286,8 @@ for (folder in theseFOLDERS){
   save(all_waffle_population_race,     file = file.path(folder, "all_waffle_population_race.rds"))
   save(all_waffle_population_sex,      file = file.path(folder, "all_waffle_population_sex.rds"))
   save(all_waffle_population_ageyrend, file = file.path(folder, "all_waffle_population_ageyrend.rds"))
+  save(all_bar_population_sentlgth,    file = file.path(folder, "all_bar_population_sentlgth.rds"))
 }
-
 
 
 

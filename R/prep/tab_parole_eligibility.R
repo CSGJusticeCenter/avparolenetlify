@@ -161,7 +161,6 @@ all_stackedbar_pe_type$Georgia
 # get list of states
 states <- unique(ncrp_pes_subset$state)
 
-# generate sentence about most serious sentenced offense in select year by state
 all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x) {
 
   df1 <- ncrp_pes_subset |>
@@ -393,7 +392,7 @@ all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
 
   # Create bubble chart
   highcharts <- highchart() |>
-    hc_chart(type = "bubble") |>
+    hc_chart(type = "bubble", marginTop = 0) |>
     hc_add_series(
       data = df1,
       type = "bubble",
@@ -420,11 +419,12 @@ all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
         align = "center",
         verticalAlign = "bottom",
         allowOverlap = TRUE,
-        y = 100 # Adjust y position to place label above the x-axis
+        y = 50 # Adjust y position to place label above the x-axis
       )
     ) |>
     hc_title(text = "Bubble Chart Example") |>
-    hc_yAxis(title = list(text = "Y-axis"), visible = FALSE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_yAxis(title = list(text = ""), visible = FALSE) |>
     hc_xAxis(
       # categories = df1$fbi_index,
       categories = c(
@@ -444,11 +444,16 @@ all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
         rotation = 0,
         overflow = "allow",
         allowOverlap = TRUE
-      )
+      ),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "black",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black"
     ) |>
     hc_tooltip(pointFormat = '<b>{point.fbi_index}</b><br>Count: {point.n:,.0f}<br>Proportion: {point.prop}%') |>
     hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-    hc_add_theme(base_hc_theme) |>
     hc_plotOptions(bubble = list(
       minSize = 10,
       maxSize = 50,

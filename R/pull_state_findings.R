@@ -186,6 +186,14 @@ if (state_for_report %in% names(all_waffle_population_ageyrend)) {
 }
 
 
+# TITLE: Sentence Lengths for Prison Population
+if (state_for_report %in% names(all_bar_population_sentlgth)) {
+  state_bar_population_sentlgth <-
+    all_bar_population_sentlgth[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_bar_population_sentlgth <- no_data_text
+}
 
 
 

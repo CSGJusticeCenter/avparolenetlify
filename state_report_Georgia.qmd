@@ -45,6 +45,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_populatio
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_ageyrend.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
+
 # Releases Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
@@ -191,6 +193,10 @@ div(
 <div class="divider"></div>
 
 ## Sentence Lengths
+
+```{r}
+div(id = "visualization", state_bar_population_sentlgth)
+```
 
 <br>
 
@@ -359,8 +365,6 @@ div(id = "visualization", state_scatter_los_race_offense)
 
 
 <br>
-<div class="divider"></div>
-
 <br>
 
 
