@@ -71,10 +71,10 @@ div(
 map_percent |> 
     hc_size(height = 690) |> 
     hc_exporting(enabled = TRUE,
-               buttons = list(contextButton = list(align = 'right',
-                                                   verticalAlign = 'top',
-                                                   y = 0,
-                                                   x = -5))) |> 
+                 buttons = list(contextButton = list(align = 'right',
+                                                     verticalAlign = 'top',
+                                                     y = 0,
+                                                     x = -5))) |> 
     hc_chart(marginTop = 0, marginBottom = -50, height = 740)
 ```
 </div>

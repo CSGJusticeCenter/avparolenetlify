@@ -97,14 +97,22 @@ if (state_for_report %in% names(all_scatter_race_ped_release)) {
   state_scatter_race_ped_release <- no_data_text
 }
 
-# TITLE: Offense Breakdown for People in Prison Past Their Parole Eligibility Date
-if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
-  state_bubble_ped_fbi_index <-
-    all_bubble_ped_fbi_index[[state_for_report]] |>
-    hc_size(height = 250)
+# TITLE: NONE
+if (state_for_report %in% names(all_bubble_ped_offense_group)) {
+  state_bubble_ped_offense_group <-
+    all_bubble_ped_offense_group[[state_for_report]]
 } else {
-  state_bubble_ped_fbi_index <- no_data_text
+  state_bubble_ped_offense_group <- no_data_text
 }
+
+# # TITLE: Offense Breakdown for People in Prison Past Their Parole Eligibility Date
+# if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
+#   state_bubble_ped_fbi_index <-
+#     all_bubble_ped_fbi_index[[state_for_report]] |>
+#     hc_size(height = 250)
+# } else {
+#   state_bubble_ped_fbi_index <- no_data_text
+# }
 
 # TITLE: OPTION 2 = Offense Breakdown for People in Prison Past Their Parole Eligibility Date
 if (state_for_report %in% names(all_bar_ped_fbi_index)) {

@@ -272,7 +272,17 @@ base_hc_theme <- hc_theme(
     minorGridLineColor = "transparent",
     tickColor = "transparent"
   ),
+  # tooltip = list(
+  #   style = common_style
+  # ),
   tooltip = list(
+    useHTML = TRUE,
+    formatter = JS("function() {
+      return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+      '<div style=\"text-align:left;\">' +
+      '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+      '</div></div>';
+    }"),
     style = common_style
   ),
   plotOptions = list(

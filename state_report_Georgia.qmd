@@ -32,7 +32,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_el
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_ageyrend.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_offense_group.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
@@ -131,7 +131,25 @@ div(
 
 ### Criminal Offense
 
-The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for <b>aggravated or simple assault (26%) and property crimes (19%)</b>. Other offense categories make up smaller proportions of this population.
+```{r}
+# section_text <- HTML("")
+# 
+# div(
+#   id = "grid-container",
+#   style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 10px; margin-bottom: 0px;",
+#   section_text,
+#   div(id = "visualization", state_bubble_ped_offense_group)
+# )
+```
+
+In 2020, 61% of people in prison past their parole eligibility date were in prison for violent offenses.
+
+```{r}
+div(id = "visualization", style = "width: 200px; height: 200px; overflow: hidden;", state_bubble_ped_offense_group)
+br()
+```
+
+The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for aggravated or simple assault (26%) and property crimes (19%). Other offense categories make up smaller proportions of this population.
 
 ```{r}
 div(id = "visualization", state_bar_ped_fbi_index)
