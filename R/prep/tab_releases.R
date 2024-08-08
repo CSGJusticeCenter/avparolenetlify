@@ -16,6 +16,39 @@ ncrp_releases_by_year <- ncrp_releases |>
   group_by(state, rptyear) |>
   summarise(total = n())
 
+states <- unique(ncrp_releases_by_year$state)
+
+# Generate sentence for each state
+all_sentence_releases <- map(.x = states, .f = function(x) {
+  # Filter data for the specific state
+  df1 <- ncrp_releases_by_year %>% filter(state == x)
+
+  # Find the earliest and latest year prison releases
+  earliest_year <- min(df1$rptyear)
+  latest_year <- max(df1$rptyear)
+  earliest_year_release <- df1$total[df1$rptyear == earliest_year]
+  latest_year_release <- df1$total[df1$rptyear == latest_year]
+
+  # Calculate the percent change
+  percent_change <- (latest_year_release - earliest_year_release) / earliest_year_release * 100
+  change_type <- ifelse(percent_change < 0, "decreased", "increased")
+  percent_change_abs <- abs(round(percent_change, 0))
+
+  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", prison releases <b>",
+                      change_type, " ", percent_change_abs, "%</b>, dropping from ",
+                      format(earliest_year_release, big.mark = ","), " in ",
+                      earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
+  return(sentences)
+})
+
+# Set names for the list elements
+all_sentence_releases <- setNames(all_sentence_releases, states)
+
+# Check the sentence for Georgia
+all_sentence_releases$Georgia
+
+
+
 # Highchart by state since 2010
 states <- unique(ncrp_releases_by_year$state)
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
@@ -27,6 +60,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   # Determine the maximum value for the y-axis in the visualization
   # Adds a small margin space at the top
   max_value <- max(df1$total)*1.1
+  min_value <- min(df1$total)/1.5
 
   hc_accessibility_text <- paste0("This graph shows the number of releases in ",
                                   select_year, " in the state of ", x, ".")
@@ -34,7 +68,9 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc <- highchart() |>
     hc_chart(type = "line") |>
     hc_title(text = "Prison Releases by Year") |>
-    hc_yAxis(title = list(text = "")) |>
+    hc_yAxis(title = list(text = ""),
+             min = min_value,
+             max = max_value) |>
     hc_xAxis(categories = df1$rptyear,
              lineWidth = 1) |>
     hc_series(
@@ -49,7 +85,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))
+    hc_colors(c(color1))
 
   return(highcharts)
 })
@@ -439,6 +475,7 @@ all_lollipop_offense_los$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
+  save(all_sentence_releases, file = file.path(folder, "all_sentence_releases.rds"))
   save(all_line_releases_by_year, file = file.path(folder, "all_line_releases_by_year.rds"))
   save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
   save(all_pie_release_type,  file = file.path(folder, "all_pie_release_type.rds"))

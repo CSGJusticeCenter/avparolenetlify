@@ -125,11 +125,58 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
 
 
 
+
+####################
+
+# Population
+
+####################
+
+# SENTENCE: "From YEAR to YEAR, the prison population decreased/increased X percent."
+if (state_for_report %in% names(all_sentence_population)) {
+  state_sentence_population <-
+    all_sentence_population[[state_for_report]]
+} else {
+  state_sentence_population <- ""
+}
+
+# TITLE: Prison Population by Year
+if (state_for_report %in% names(all_line_population_by_year)) {
+  state_line_population_by_year <-
+    all_line_population_by_year[[state_for_report]] |>
+    hc_size(height = 300)
+} else {
+  state_line_population_by_year <- no_data_text
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ####################
 
 # Releases
 
 ####################
+
+# SENTENCE: "From YEAR to YEAR, prison releases decreased/increased X percent."
+if (state_for_report %in% names(all_sentence_releases)) {
+  state_sentence_releases <-
+    all_sentence_releases[[state_for_report]]
+} else {
+  state_sentence_releases <- ""
+}
 
 # TITLE: Prison Releases by Year
 if (state_for_report %in% names(all_line_releases_by_year)) {

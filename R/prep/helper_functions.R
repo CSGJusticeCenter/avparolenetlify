@@ -362,6 +362,34 @@ base_hc_theme <- hc_theme(
 #     )
 #   )
 # )
+# hc_theme_with_line <- hc_theme(
+#   colors = c(color1, color2, color3, color4, color5),
+#   chart = list(style = common_chart_style),
+#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
+#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+#   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+#   xAxis = list(
+#     labels = list(enabled = TRUE, style = common_style),
+#     tickmarkPlacement = 'on',
+#     tickLength = 5,
+#     tickWidth = 1
+#   ),
+#   yAxis = list(
+#     labels = list(enabled = TRUE, style = common_style)),
+#   plotOptions = list(
+#     line = list(marker = list(enabled = TRUE)),
+#     spline = list(marker = list(enabled = TRUE)),
+#     area = list(marker = list(enabled = TRUE)),
+#     areaspline = list(marker = list(enabled = TRUE)),
+#     arearange = list(marker = list(enabled = TRUE)),
+#     bubble = list(maxSize = "10%"),
+#     column = list(
+#       dataLabels = list(
+#         style = list(color = "black")
+#       )
+#     )
+#   )
+# )
 hc_theme_with_line <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
@@ -372,16 +400,44 @@ hc_theme_with_line <- hc_theme(
     labels = list(enabled = TRUE, style = common_style),
     tickmarkPlacement = 'on',
     tickLength = 5,
-    tickWidth = 1
+    tickWidth = 1,
+    tickColor = "black",
+    lineColor = "black"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = common_style)),
+    labels = list(enabled = TRUE, style = common_style)
+  ),
   plotOptions = list(
-    line = list(marker = list(enabled = TRUE)),
-    spline = list(marker = list(enabled = TRUE)),
-    area = list(marker = list(enabled = TRUE)),
-    areaspline = list(marker = list(enabled = TRUE)),
-    arearange = list(marker = list(enabled = TRUE)),
+    line = list(
+      marker = list(
+        enabled = TRUE,
+        symbol = 'circle'  # This line ensures that the dots are circles
+      )
+    ),
+    spline = list(
+      marker = list(
+        enabled = TRUE,
+        symbol = 'circle'  # Ensures that the dots are circles
+      )
+    ),
+    area = list(
+      marker = list(
+        enabled = TRUE,
+        symbol = 'circle'  # Ensures that the dots are circles
+      )
+    ),
+    areaspline = list(
+      marker = list(
+        enabled = TRUE,
+        symbol = 'circle'  # Ensures that the dots are circles
+      )
+    ),
+    arearange = list(
+      marker = list(
+        enabled = TRUE,
+        symbol = 'circle'  # Ensures that the dots are circles
+      )
+    ),
     bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
@@ -390,6 +446,7 @@ hc_theme_with_line <- hc_theme(
     )
   )
 )
+
 
 
 #' Highcharts Theme for Maps
@@ -497,6 +554,28 @@ fnc_prepare_pe_data <- function(df, count_column){
                             prop_label, "<br>"))
   return(df1)
 }
+
+
+
+
+# Prepare BJS data
+fnc_clean_bjs_data <- function(df){
+  df <- df %>%
+    mutate(state = str_replace(state, "/.*", "")) %>%
+    mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
+    mutate(state = str_replace(state, "Utahc", "Utah")) %>%
+    filter(state != "" &
+             state != "State" &
+             state != "Federal" &
+             state != "District of Columbia" &
+             state != "U.S. Total" &
+             state != "U.S. total" &
+             state != "U.S. tota") %>%
+    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) %>%
+    mutate(bjs_prison_population = as.numeric(bjs_prison_population))
+}
+
+
 
 # Prepare data for a simple bar graph
 #' Prepare Releases Data

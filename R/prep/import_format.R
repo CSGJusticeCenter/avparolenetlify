@@ -218,14 +218,22 @@ bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
 
 
 
+
+#------ Import BJS: Prisoners Data ------#
+
+# Source: https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners
+
+
+
+
 #------ Import Annual Parole Survey ------#
 
-# get state abbreviations and state names
-state_names_abb <- data.frame(abbreviation = state.abb,
-                              name = state.name,
-                              stringsAsFactors = FALSE) %>%
-  rename(state = name, stateid = abbreviation)
-
+# # get state abbreviations and state names
+# state_names_abb <- data.frame(abbreviation = state.abb,
+#                               name = state.name,
+#                               stringsAsFactors = FALSE) %>%
+#   rename(state = name, stateid = abbreviation)
+#
 # aps_files <- list(
 #   list(file = "ICPSR_38058-V1/ICPSR_38058/DS0001/38058-0001-Data.rda", year = 2018),
 #   list(file = "ICPSR_37471-V1/ICPSR_37471/DS0001/37471-0001-Data.rda", year = 2017),
@@ -264,7 +272,7 @@ state_names_abb <- data.frame(abbreviation = state.abb,
 #   pre_2008 = aps_pre_2008,
 #   SIMPLIFY = FALSE) |> bind_rows() |>
 #   filter(!state %in% c("District of Columbia", "Federal") & !is.na(state))
-#
+
 
 
 #------ Prepare BJS: Prisoners in 2020 ------#
