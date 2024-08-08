@@ -172,57 +172,6 @@ ncrp_yearendpop <- ncrp_data$yearendpop |>
 
 
 
-#------ Import and Prepare BJS Race, Ethnicity, Gender Data ------#
-
-bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
-                                                     "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
-
-# Define the list of filenames and corresponding column indices
-file_info <- list(
-  "2010" = list(file = "p10/p10at01.csv", col = "x_3"),
-  "2011" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_1"),
-  "2012" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_5"),
-  "2013" = list(file = "p13/p13t02.csv", col = "x_5"),
-  "2014" = list(file = "p14/CSV tables/p14t02.csv", col = "x_5"),
-  "2015" = list(file = "p15/p15t02.csv", col = "x_6"),
-  "2016" = list(file = "p16/p16t02.csv", col = "x_5"),
-  "2017" = list(file = "p17/p17t02.csv", col = "x_5"),
-  "2018" = list(file = "p18/p18t02.csv", col = "x_5"),
-  "2019" = list(file = "p19/p19t02.csv", col = "x_5"),
-  "2020" = list(file = "p20st/p20stt02.csv", col = "x_4"),
-  "2021" = list(file = "p21st/p21stt02.csv", col = "x_4")
-)
-
-# Initialize an empty list to store the cleaned data
-cleaned_data_list <- list()
-
-# Loop through the file information to read, process, and store the data
-for (year in names(file_info)) {
-  file_path <- paste0(config$sp_data_path, "/data/raw/BJS Prison Pop/", file_info[[year]]$file)
-  col_name <- file_info[[year]]$col
-
-  # Read and process the data
-  df <- read.csv(file_path) |>
-    clean_names() |>
-    select(state = x, bjs_prison_population = !!sym(col_name)) |>
-    fnc_clean_bjs_data() |>
-    mutate(rptyear = as.numeric(year))
-
-  # Append the cleaned data to the list
-  cleaned_data_list[[year]] <- df
-}
-
-# Combine all years' data into a single dataframe
-bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
-
-
-
-
-
-#------ Import BJS: Prisoners Data ------#
-
-# Source: https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners
-
 
 
 
@@ -275,8 +224,56 @@ bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
 
 
 
-#------ Prepare BJS: Prisoners in 2020 ------#
 
+
+
+#------ Import and Prepare BJS Race, Ethnicity, Gender Data ------#
+
+bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
+                                                     "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
+bjs_prison_pop_by_race_state_2022 <- read.csv(paste0(config$sp_data_path,
+                                                     "/data/raw/BJS Prison Pop/p22st/p22stat01.csv"), skip = 10)
+
+# Define the list of filenames and corresponding column indices
+file_info <- list(
+  "2010" = list(file = "p10/p10at01.csv", col = "x_3"),
+  "2011" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_1"),
+  "2012" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_5"),
+  "2013" = list(file = "p13/p13t02.csv", col = "x_5"),
+  "2014" = list(file = "p14/CSV tables/p14t02.csv", col = "x_5"),
+  "2015" = list(file = "p15/p15t02.csv", col = "x_6"),
+  "2016" = list(file = "p16/p16t02.csv", col = "x_5"),
+  "2017" = list(file = "p17/p17t02.csv", col = "x_5"),
+  "2018" = list(file = "p18/p18t02.csv", col = "x_5"),
+  "2019" = list(file = "p19/p19t02.csv", col = "x_5"),
+  "2020" = list(file = "p20st/p20stt02.csv", col = "x_4"),
+  "2021" = list(file = "p21st/p21stt02.csv", col = "x_4"),
+  "2022" = list(file = "p22st/p22stt02.csv", col = "x_1")
+)
+
+# Initialize an empty list to store the cleaned data
+cleaned_data_list <- list()
+
+# Loop through the file information to read, process, and store the data
+for (year in names(file_info)) {
+  file_path <- paste0(config$sp_data_path, "/data/raw/BJS Prison Pop/", file_info[[year]]$file)
+  col_name <- file_info[[year]]$col
+
+  # Read and process the data
+  df <- read.csv(file_path) |>
+    clean_names() |>
+    select(state = x, bjs_prison_population = !!sym(col_name)) |>
+    fnc_clean_bjs_data() |>
+    mutate(rptyear = as.numeric(year))
+
+  # Append the cleaned data to the list
+  cleaned_data_list[[year]] <- df
+}
+
+# Combine all years' data into a single dataframe
+bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
+
+# Total pop in 2020
 total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
   clean_names() |>
   filter(jurisdiction == "") |>
@@ -285,6 +282,7 @@ total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
   mutate(total = str_replace_all(total, ",", ""),
          total = as.numeric(total))
 
+# Pop by Race and Ethnicity
 # Warning OK - characters like '~' turned to NA
 bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
   clean_names() |>
@@ -321,6 +319,89 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
          population_type = "In Prison") |>
   select(-total)
 
+# Total pop in 2022
+total_bjs_pop_2022 <- bjs_prison_pop_by_race_state_2022 |>
+  clean_names() |>
+  filter(jurisdiction == "") |>
+  select(x, total) |>
+  rename(state = x) |>
+  mutate(total = str_replace_all(total, ",", ""),
+         total = as.numeric(total))
+
+# Pop by Race and Ethnicity
+# Warning OK - characters like '~' turned to NA
+bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
+  clean_names() |>
+  filter(jurisdiction == "") |>
+  select(-jurisdiction) |>
+  rename(state = x) |>
+  mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
+  mutate(across(-state, as.numeric)) |>
+  pivot_longer(cols = total:did_not_report,
+               names_to = "race",
+               values_to = "n") |>
+  mutate(race = case_when(
+    race == "total" ~ "Total Population",
+    race == "white_a" ~ "White, non-Hispanic",
+    race == "black_a" ~ "Black, non-Hispanic",
+    race == "hispanic" ~ "Hispanic, any race",
+    race %in% c("american_indian_alaska_native_a",
+                "asian_a",
+                "native_hawaiian_other_pacific_islander_a",
+                "two_or_more_races_a",
+                "other_a") ~ "Other race(s), non-Hispanic",
+    race == "unknown" ~ "Unknown",
+    race == "did_not_report" ~ "Unknown",
+    TRUE ~ race
+  )) |>
+  filter(race != "Unknown" & race != "Total Population") |>
+  group_by(state, race) |>
+  summarise(n = sum(n, na.rm = TRUE)) |>
+  left_join(total_bjs_pop_2022, by = "state") |>
+  ungroup() |>
+  mutate(prop = n / total,
+         prop_label = paste0(round(prop*100, 0), "%"),
+         n_label = formattable::comma(n, 0),
+         population_type = "In Prison") |>
+  select(-total)|>
+  mutate(state = str_replace(state, "/.*", ""))
+
+
+bjs_prison_pop_by_gender_2022_raw <- read_csv("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/BJS Prison Pop/p22st/p22stt02.csv")
+
+bjs_prison_pop_by_gender_2022 <- bjs_prison_pop_by_gender_2022_raw  |>
+  clean_names() |>
+  select(state = x2, male = x8, female = x9) |>
+  mutate(state = str_replace(state, "/.*", "")) %>%
+  mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
+  mutate(state = str_replace(state, "Utahc", "Utah")) %>%
+  filter(state != "" &
+           state != "State" &
+           state != "Federal" &
+           state != "District of Columbia" &
+           state != "U.S. Total" &
+           state != "U.S. total" &
+           state != "U.S. tota") |>
+  mutate(male = str_replace_all(male, "[^\\d]", "")) |>
+  mutate(male = as.numeric(male)) |>
+  mutate(female = str_replace_all(female, "[^\\d]", "")) |>
+  mutate(female = as.numeric(female)) |>
+  pivot_longer(cols = c(male, female), names_to = "gender", values_to = "population") |>
+  group_by(state) |>
+  mutate(
+    n = population,
+    prop = population/sum(population),
+    yearendpop_ped = sum(population),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(population, 0)
+  ) |>
+  ungroup() |>
+  mutate(tooltip = paste0("<b>", state, " - ",
+                          gender, "</b><br>",
+                          prop_label, "<br>")) |>
+  mutate(gender = case_when(gender == "male" ~ "Male",
+                            gender == "female" ~ "Female",
+                            TRUE ~ gender))
 
 
 #------ Save Data ------#
@@ -335,6 +416,8 @@ for (folder in theseFOLDERS){
   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
   #save(aps_parole_by_rptyear,              file = file.path(folder, "aps_parole_by_rptyear.rds"))
   save(bjs_prison_pop_by_race_2020,        file = file.path(folder, "bjs_prison_pop_by_race_2020.rds"))
+  save(bjs_prison_pop_by_race_2022,        file = file.path(folder, "bjs_prison_pop_by_race_2022.rds"))
+  save(bjs_prison_pop_by_gender_2022,      file = file.path(folder, "bjs_prison_pop_by_gender_2022.rds"))
   save(bjs_prison_pop_by_rptyear,          file = file.path(folder, "bjs_prison_pop_by_rptyear.rds"))
 
   save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))

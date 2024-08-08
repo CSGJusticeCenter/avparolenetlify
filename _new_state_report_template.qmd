@@ -41,6 +41,9 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligi
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_ageyrend.rds"))
 
 # Releases Tab
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
@@ -160,10 +163,24 @@ This section will have information about missing parole eligibility data for the
 div(id = "visualization", state_line_population_by_year)
 ```
 
+<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
+
 <br>
 <div class="divider"></div>
 
 ## Demographics
+
+```{r}
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
+  div(id = "small-visualization", state_waffle_population_race),
+  div(id = "small-visualization", state_waffle_population_sex),
+  div(id = "small-visualization", state_waffle_population_ageyrend)
+)
+```
+
+<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners 2022 - Race and Ethnicity</a>
 
 <br>
 <div class="divider"></div>

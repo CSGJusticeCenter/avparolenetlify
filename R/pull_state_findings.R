@@ -60,7 +60,8 @@ if (state_for_report %in% names(all_waffle_parole_eligibility_race)) {
   state_waffle_parole_eligibility_race <-
     all_waffle_parole_eligibility_race[[state_for_report]]|>
     hc_size(height = 350)|>
-    hc_title(text = paste0("Race and Ethnicity"))
+    hc_title(text = paste0("Race and Ethnicity"))|>
+    hc_exporting(enabled = FALSE)
 } else {
   state_waffle_parole_eligibility_race <- no_data_text
 }
@@ -70,7 +71,8 @@ if (state_for_report %in% names(all_waffle_parole_eligibility_sex)) {
   state_waffle_parole_eligibility_sex <-
     all_waffle_parole_eligibility_sex[[state_for_report]]|>
     hc_size(height = 350)|>
-    hc_title(text = paste0("Gender"))
+    hc_title(text = paste0("Gender"))|>
+    hc_exporting(enabled = FALSE)
 } else {
   state_waffle_parole_eligibility_sex <- no_data_text
 }
@@ -80,7 +82,8 @@ if (state_for_report %in% names(all_waffle_parole_eligibility_ageyrend)) {
   state_waffle_parole_eligibility_ageyrend <-
     all_waffle_parole_eligibility_ageyrend[[state_for_report]]|>
     hc_size(height = 350)|>
-    hc_title(text = paste0("Age"))
+    hc_title(text = paste0("Age"))|>
+    hc_exporting(enabled = FALSE)
 } else {
   state_waffle_parole_eligibility_ageyrend <- no_data_text
 }
@@ -149,7 +152,38 @@ if (state_for_report %in% names(all_line_population_by_year)) {
   state_line_population_by_year <- no_data_text
 }
 
+# TITLE: Race and Ethnicity
+if (state_for_report %in% names(all_waffle_population_race)) {
+  state_waffle_population_race <-
+    all_waffle_population_race[[state_for_report]]|>
+    hc_size(height = 350)|>
+    hc_title(text = paste0("Race and Ethnicity"))|>
+    hc_exporting(enabled = FALSE)
+} else {
+  state_waffle_population_race <- no_data_text
+}
 
+# TITLE: Gender
+if (state_for_report %in% names(all_waffle_population_sex)) {
+  state_waffle_population_sex <-
+    all_waffle_population_sex[[state_for_report]]|>
+    hc_size(height = 350)|>
+    hc_title(text = paste0("Gender"))|>
+    hc_exporting(enabled = FALSE)
+} else {
+  state_waffle_population_sex <- no_data_text
+}
+
+# TITLE: Age
+if (state_for_report %in% names(all_waffle_population_ageyrend)) {
+  state_waffle_population_ageyrend <-
+    all_waffle_population_ageyrend[[state_for_report]]|>
+    hc_size(height = 350)|>
+    hc_title(text = paste0("Age")) |>
+    hc_exporting(enabled = FALSE)
+} else {
+  state_waffle_population_ageyrend <- no_data_text
+}
 
 
 
@@ -210,7 +244,8 @@ if (state_for_report %in% names(all_waffle_releases_race)) {
   state_waffle_releases_race <-
     all_waffle_releases_race[[state_for_report]]|>
     hc_size(height = 350)|>
-    hc_title(text = paste0("Race and Ethnicity"))
+    hc_title(text = paste0("Race and Ethnicity"))|>
+    hc_exporting(enabled = FALSE)
 } else {
   state_waffle_releases_race <- no_data_text
 }
@@ -220,7 +255,8 @@ if (state_for_report %in% names(all_waffle_releases_sex)) {
   state_waffle_releases_sex <-
     all_waffle_releases_sex[[state_for_report]]|>
     hc_size(height = 350)|>
-    hc_title(text = paste0("Gender"))
+    hc_title(text = paste0("Gender"))|>
+    hc_exporting(enabled = FALSE)
 } else {
   state_waffle_releases_sex <- no_data_text
 }
@@ -230,7 +266,8 @@ if (state_for_report %in% names(all_waffle_releases_agerlse)) {
   state_waffle_releases_agerlse <-
     all_waffle_releases_agerlse[[state_for_report]]|>
     hc_size(height = 350)|>
-    hc_title(text = paste0("Age"))
+    hc_title(text = paste0("Age"))|>
+    hc_exporting(enabled = FALSE)
 } else {
   state_waffle_releases_agerlse <- no_data_text
 }

@@ -217,7 +217,7 @@ fnc_prepare_aps_data <- function(data, year, pre_2008 = FALSE) {
 common_style <- list(
   fontFamily = "Graphik",
   color = "black",
-  fontSize = "14px",
+  fontSize = "12px",
   fontWeight = "regular"
 )
 
@@ -228,7 +228,7 @@ common_style <- list(
 #' @export
 common_chart_style <- list(
   fontFamily = "Graphik",
-  fontSize = "14px",
+  fontSize = "12px",
   color = "black"
 )
 
@@ -556,6 +556,24 @@ fnc_prepare_pe_data <- function(df, count_column){
 }
 
 
+
+
+fnc_prepare_population_data <- function(df, count_column){
+  df1 <- df |>
+    group_by(state) |>
+    count({{ count_column }}) |>
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) |>
+    ungroup() |>
+    mutate(tooltip = paste0("<b>", state, " - ",
+                            {{ count_column }}, "</b><br>",
+                            prop_label, "<br>"))
+  return(df1)
+}
 
 
 # Prepare BJS data
