@@ -1,5 +1,5 @@
 ---
-title: 'Project Overview'
+title: Arnold Ventures Parole Project
 format:
   html:
     css: styles.css
@@ -7,71 +7,25 @@ format:
     code-fold: true
     page-layout: full
     fig_caption: yes
-    toc: TRUE
 ---
 
-# **Introduction**
+<br>
 
-*Welcome to the West Virginia Justice Reinvestment Initiative (JRI) project website. This is a private, password-protected website that should not be shared externally.* This section provides a comprehensive introduction to the project, detailing the scope and goals of JRI.
+The Council of State Governments (CSG) Justice Center intends to illuminate parole release policies and practices in the United States and how they impact prison population sizes and lengths of stay, using data from the National Corrections Reporting Program (NCRP) from up to 45 states to:
 
-# **Key Questions**
+(1) Examine trends in their parole-eligible populations;
+(2) Conduct original empirical research on racial, ethnic, and gender disparities on the portion of sentences that are served in carceral settings past parole eligibility; and
+(3) Conduct deep dives into selected states to shed light on parole board decision-making. For these states, we will seek to identify any disparate decision-making and associated outcomes and recommend changes to policy and practice to prevent unnecessarily long prison stays while maintaining public safety.
 
-- **What are the primary drivers of West Virginia’s high incarceration rates, including pretrial detentions, supervision violations, and recidivism rates?**
-- **How effective are current supervision practices and responses to technical violations for probation and parole?**
-- **What barriers exist that hinder successful reentry into society, including obstacles to workforce integration and access to necessary treatments and services?**
-- **What are the behavioral health challenges across the criminal justice population, and what gaps exist in treatment and services?**
-- **How do staffing shortages and high turnover among corrections employees impact the system?**
 
-# **Objectives**
 
-The primary goals and expected outcomes of the project include:
 
-- **Reducing recidivism rates.**
-- **Optimizing the use of justice system resources.**
-- **Enhancing public safety.**
-- **Addressing behavioral health challenges within the justice system.**
-- **Improving the effectiveness of supervision practices.**
-- **Facilitating successful reentry into society for formerly incarcerated individuals.**
 
-# **Data**
 
-**AOC Data Variables**
+<br><br><br><br>
 
-- **Criminal Cases:** Case number, SID number, age, sex, race, ethnicity, date of arrest, county of arrest, case filing date, court identifier, jurisdiction, highest charge level.
-- **Charges:** Original and final offense codes, descriptions, classes, and severities.
-- **Dispositions:** Disposition date, sentence date, outcome, length, fines, fees, restitution, court identifier, judge.
-- **Assessments:** Pretrial risk assessment, substance abuse screening, mental health screening.
-- **Magistrate Court Data:** Similar to criminal cases but focused on lower court levels.
-- **Probation Supervision:** Supervision placements, terminations, snapshot files, assessments, program referrals and participation, supervision violations, community correction centers.
+::: {layout-ncol="2"}
+![](img/csg-logo.png){width="300"}
 
-**DCR Data Variables**
-
-- **Jail Data:** Admissions, releases, end-of-year snapshots, assessments, program referrals and participation.
-- **Prison Data:** Similar to jail data but with added details on parole placements and terminations.
-- **Parole Supervision Data:** Placements, terminations, snapshot files, assessments, program referrals and participation, parole violations.
-
-# **Project Links**
-
-Access to project resources and repositories is critical for team collaboration and transparency. Below are the links to key project tools and platforms:
-
-- **SharePoint:** [Link to the project's SharePoint](#)
-- **GitHub Repository:** [Link to the project's GitHub repository](#)
-- **Asana:** [Link to the project's Asana page](#)
-- **Project Charter:** [Link to the project charter](#)
-
-# **Stakeholders**
-
-This project involves collaboration between multiple stakeholders, including government agencies, community organizations, and justice system partners. Key stakeholders and their roles include:  
-
-- **West Virginia Department of Corrections and Rehabilitation (WVDCR):** Oversees state prisons and regional jails.  
-- **West Virginia Department of Health and Human Resources (DHHR):** Provides support for behavioral health services.  
-- **Administrative Office of the Courts (AOC):** Manages court data and pretrial services.  
-- **Local Counties:** Regional jails.
-- **Community Organizations:** Provide reentry support and behavioral health services.  
-- **Legislative and Judicial Leaders:** Engage in policymaking and oversight of the criminal justice system.  
-
-# **About JRI**
-
-*JRI is a data-driven approach to improve public safety, reduce corrections, and related criminal justice spending, and reinvest savings in strategies that can decrease crime and reduce recidivism. JRI is supported and funded by the U.S. Department of Justice's Office of Justice Programs' Bureau of Justice Assistance (BJA), The Pew Charitable Trusts, and Arnold Ventures.*
-
-![](img/JC+CSG_Logo_BLUE_RGB_for_web.jpg){width="300"}
+![](img/Arnold_Ventures_logo_2021.png){width="200"}
+:::

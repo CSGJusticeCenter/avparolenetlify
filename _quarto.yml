@@ -2,50 +2,23 @@ project:
   type: website
 
 website:
-  title: "JRI: West Virginia"
+  title: "AV Parole Project"
+  description: For CSG Justice Center use only
   favicon: img/favicon.png
+  search:
+    location: navbar
+    type: textbox
   navbar:
-    right:
+    left:
       - text: "Project Overview"
         href: index.html
-      - text: "Executive Summary"
-        href: executive_summary.html
-      - text: "Data Analysis"
-        menu:
-          - text: "Launch Presentation"
-            href: launch_presentation.html
-          - text: "Maps"
-            href: maps.html
-      - text: "Policy"
-        menu:
-          - text: "Important Documents"
-            href: policy_documents.html
-          - text: "Qualitative Assessment"
-            href: qualitative_assessment.html
-          - text: "Policy Recommendations"
-            href: policy_recommendations.html
-      - text: "Research"
-        menu:
-          - text: "Analysis Plan"
-            href: analysis_plan.html
-          - text: "Decision Making"
-            href: decision_making.html
-          - text: "Descriptive Statistics"
-            href: overall_descriptives.html
-          - text: "Codebooks"
-            href: data_codebooks.html
-          - text: "Data Diagram"
-            href: data_diagram.html
-      - text: "Questions and Updates"
-        href: project_questions_updates.html
-      - text: "Contact"
-        href: contact.html
-      - text: "Github"
-        href: https://github.com/CSGJusticeCenter
+      - text: "National Trends"
+        href: national_trends.html
+      - text: "State Reports"
+        href: state_report_links.html
 
 format:
   html:
-    theme: flatly
     css: styles.css
     toc: true
     toc-location: left
