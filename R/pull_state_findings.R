@@ -329,7 +329,7 @@ if (state_for_report %in% names(all_lollipop_offense_los)) {
 if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <-
     all_bubble_race_ped_release[[state_for_report]] |>
-    hc_size(height = 600)
+    hc_size(height = 650)
 } else {
   state_bubble_race_ped_release <- no_data_text
 }

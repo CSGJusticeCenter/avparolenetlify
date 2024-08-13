@@ -135,6 +135,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   )) |>
     hc_add_series(name = "Current",
                   data = list(list(y = df1$prop[1], tooltip = df1$tooltip[1], label = df1$prop_label[1])),
+                  color = color1,
                   stack = "a",
                   dataLabels = list(
                     enabled = TRUE,

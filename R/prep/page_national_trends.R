@@ -103,7 +103,7 @@ y <- y / max_r
 
 # Create a data frame with the coordinates
 data <- data.frame(x = c(0, x), y = c(0, y), size = c(2, rep(1, n)),
-                   color = c("#de663e", rep(colors$darkgray, n)),
+                   color = c(color4, rep(darkgray, n)),
                    alpha = c(1, rep(0.5, n)))
 
 # Adjust the alpha column to apply transparency only to gray circles

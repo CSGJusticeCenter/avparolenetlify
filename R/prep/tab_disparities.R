@@ -728,7 +728,13 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
     ungroup() |>
     filter(state == x) |>
     arrange(desc(average_los)) |>
-    mutate(race_num = row_number())
+    mutate(race_num = row_number(),
+           color = case_when(
+             race == "White, non-Hispanic" ~ color2,
+             race == "Black, non-Hispanic" ~ color1,
+             race == "Hispanic, any race" ~ color4,
+             race == "Other race(s), non-Hispanic" ~ color3
+           ))
 
   max_los <- max(df1$average_los, na.rm = TRUE)
 
@@ -761,7 +767,7 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
       df1,
       type = 'scatter',
       marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_los, y = race_num, group = race, name = race),
+      hcaes(x = average_los, y = race_num, group = race, name = race, color = color),
       dataLabels = list(
         enabled = TRUE,
         format = '{point.x:.1f} Years',
@@ -799,7 +805,6 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
       tickColor = "transparent",
       max = max_los*1.5
     ) |>
-    hc_colors(c(color1, color2, color4, color3)) |>
     hc_exporting(enabled = FALSE) |>
     hc_tooltip(enabled = FALSE) |>
     hc_legend(enabled = FALSE) |>

@@ -99,47 +99,56 @@ colors <- list(
   brown     = "#9e6c10"  # primary color
 )
 
-colors <- list(
-  lightgray = "#d7d7d7",
-  darkgray  = "#969696",
-  purple    = "#938ebf", # primary color
-  red       = "#de663e", # primary color
-  blue      = "#3f8bca", # primary color
-  yellow    = "#f4b811", # primary color
-  green1    = "#b1d4d5",
-  green2    = "#00bdb2",
-  green3    = "#176f6d", # primary color
-  green4    = "#104040",
-  brown     = "#9e6c10"  # primary color
-)
+# colors <- list(
+#   lightgray = "#d7d7d7",
+#   darkgray  = "#969696",
+#   purple    = "#938ebf", # primary color
+#   red       = "#de663e", # primary color
+#   blue      = "#3f8bca", # primary color
+#   yellow    = "#f4b811", # primary color
+#   green1    = "#b1d4d5",
+#   green2    = "#00bdb2",
+#   green3    = "#176f6d", # primary color
+#   green4    = "#104040",
+#   brown     = "#9e6c10"  # primary color
+# )
 
-# # Colors for the groups
-# blue <- "#55b4e5"
-# teal <- "#49a7a1"
-# lightteal <- "#a1e1da"
-# yellow <-  "#decf64"
-# red <- "#d97d68"
-# purple <- "#938ebf"
-# brown     = "#9e6c10"
-
-blue <- "#3f8bca"
-teal <- "#00bdb2"
-lightteal <- "#a1e1da"
-yellow <- "#f4b811"
-red <- "#de663e"
-orange <- "#ff912b"
-beige <- "#fbf0e3"
-lightorange <- "#fce2c5"
+# Colors for the groups
+blue <- "#55b4e5"
+teal <- "#49a7a1"
+lightteal <- "#b1d4d5"
+yellow <-  "#decf64"
+red <- "#d97d68"
+purple <- "#938ebf"
+brown     = "#9e6c10"
 
 color1 <- teal
 color2 <- blue
 color3 <- yellow
 color4 <- red
-color5 <- lightteal
-color6 <- lightorange
-color6 <- orange
+color5 <- purple
+color6 <- lightteal
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
+
+# blue <- "#3f8bca"
+# teal <- "#00bdb2"
+# lightteal <- "#a1e1da"
+# yellow <- "#f4b811"
+# red <- "#de663e"
+# orange <- "#ff912b"
+# beige <- "#fbf0e3"
+# lightorange <- "#fce2c5"
+
+# color1 <- teal
+# color2 <- blue
+# color3 <- yellow
+# color4 <- red
+# color5 <- lightteal
+# color6 <- lightorange
+# color6 <- orange
+# darkgray <- "#969696"
+# lightgray <- "#d7d7d7"
 
 
 # Custom SVG icon with color placeholder

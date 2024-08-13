@@ -1,3 +1,12 @@
+
+# source("R/config.R")
+# source("R/prep/page_national_trends.R")
+# source("R/prep/tab_parole_eligibility.R")
+# source("R/prep/tab_population.R")
+# source("R/prep/tab_releases.R")
+# source("R/prep/tab_disparities.R")
+
+
 # Save working directory
 wd <- getwd()
 
@@ -20,3 +29,6 @@ replace_write_qmd <- function(state) {
 
 # Iterate over replacement values and write new qmds
 walk(states_qmd, replace_write_qmd)
+
+# # Render Georgia
+# quarto::quarto_render("state_report_Georgia.qmd")
