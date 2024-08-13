@@ -3,26 +3,33 @@
 /******************************************************************************/
 
 /* Center align headers */
-h1, h2, h3, h4, h5, h6 {
+h3, h4, h5, h6 {
   text-align: center;
+  border-bottom: 1px solid white;
+  font-weight: bold;
+  margin-top: 50px;
+}
+
+/* Increase the font size for h1 elements */
+h1 {
+  text-align: center;
+  font-size: 3em; /* Adjust the size as needed */
   border-bottom: 1px solid white;
   font-weight: bold;
 }
 
 /* Increase the font size for h1 elements */
-h1 {
-  font-size: 3em; /* Adjust the size as needed */
-}
-
-/* Increase the font size for h1 elements */
 h2 {
+  text-align: center;
   font-size: 1.75em; /* Adjust the size as needed */
+  border-bottom: 1px solid white;
+  font-weight: bold;
 }
 
 .divider {
  /* margin: 1em 0; */
-  margin-top: 1.3em;
-  margin-bottom: 1em;
+  margin-top: 2em;
+  margin-bottom: 2em;
   border-bottom: 3px solid #d7d7d7;
 }
 
@@ -170,13 +177,21 @@ body {
 #visualization {
   margin: 0 auto; /* Center the narrow section horizontally */
   text-align: left; /* Center align text inside the narrow section */
-  /*margin-left: -10px; Move section slightly to the left so it aligns with other text */
+  margin-left: -10px; /*Move section slightly to the left so it aligns with other text */
 }
 
+/*
+#small-visualization {
+  text-align: left; Center align text inside the narrow section
+  margin-left: -12px; Move section slightly to the left so it aligns with other text }*/
 
 #small-visualization {
-  text-align: left; /* Center align text inside the narrow section */
-  margin-left: -12px; /* Move section slightly to the left so it aligns with other text */
+  text-align: center; /* Center align text inside the narrow section */
+}
+
+#highlight-visualization {
+  margin: 0 auto; /* Center the narrow section horizontally */
+  text-align: center; /* Center align text inside the narrow section */
 }
 
 #narrow-section {

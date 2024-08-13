@@ -58,20 +58,24 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
       eligible in the future, and population with missing parole eligibility data.")
 
   highcharts <- highchart() |>
-    hc_chart(type = "bar", marginLeft = 10) |>
-    hc_title(text = "Pct. of Prison Population by Parole Eligibility Status",
-             align = "left") |>
+    hc_chart(type = "bar", marginLeft = 10,
+             marginBottom = 10
+             ) |>
+    hc_title(text = "Pct. of Prison Population by Parole Eligibility Status") |>
+    hc_add_theme(base_hc_theme) |>
     hc_xAxis(title = list(text = NULL),
              lineWidth = 0,
              minorGridLineWidth = 0,
+             tickColor = "transparent",
              lineColor = 'transparent',
              labels = list(enabled = FALSE)) |>
     hc_yAxis(title = list(text = ""),
              gridLineWidth = 0,
+             tickColor = "transparent",
              minorGridLineWidth = 0,
              labels = list(enabled = FALSE)) |>
     hc_plotOptions(series = list(stacking = "normal",
-                                 pointWidth = 60)) |>
+                                 pointWidth = 50)) |>
     hc_tooltip(formatter = JS("function () {
     return this.point.tooltip;
   }")) |>
@@ -82,12 +86,16 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  //
-                      return this.point.label;
-                    }
-                    return null;
-                  }"),
-                    style = list(fontSize = "12px", color = "#ffffff", textOutline = "none")
+                  if (this.y > 0.00) {
+                    return this.point.label;
+                  }
+                  return null;
+                }"),
+                    # align = "center",  # Center align the label
+                    # verticalAlign = "bottom",  # Position label below the bar
+                    x = 0,
+                    y = 100,
+                    style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Future 6+ Years",
                   data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
@@ -96,12 +104,16 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  //
-                      return this.point.label;
-                    }
-                    return null;
-                  }"),
-                    style = list(fontSize = "12px", color = "#ffffff", textOutline = "none")
+                  if (this.y > 0.00) {
+                    return this.point.label;
+                  }
+                  return null;
+                }"),
+                    # align = "center",  # Center align the label
+                    # verticalAlign = "bottom",  # Position label below the bar
+                    x = 0,
+                    y = 100,
+                    style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Future 1-5 Years",
                   data = list(list(y = df1$prop[2], tooltip = df1$tooltip[2], label = df1$prop_label[2])),
@@ -110,35 +122,42 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  //
-                      return this.point.label;
-                    }
-                    return null;
-                  }"),
-                    style = list(fontSize = "12px", color = "#ffffff", textOutline = "none")
+                  if (this.y > 0.00) {
+                    return this.point.label;
+                  }
+                  return null;
+                }"),
+                    # align = "center",  # Center align the label
+                    # verticalAlign = "bottom",  # Position label below the bar
+                    x = 0,
+                    y = 100,
+                    style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Current",
                   data = list(list(y = df1$prop[1], tooltip = df1$tooltip[1], label = df1$prop_label[1])),
                   stack = "a",
-                  color = color1,
                   dataLabels = list(
                     enabled = TRUE,
                     formatter = JS("function() {
-                    if (this.y > 0.05) {  //
-                      return this.point.label;
-                    }
-                    return null;
-                  }"),
-                    style = list(fontSize = "12px", color = "#ffffff", textOutline = "none")
+                  if (this.y > 0.00) {
+                    return this.point.label;
+                  }
+                  return null;
+                }"),
+                    # align = "center",  # Center align the label
+                    # verticalAlign = "bottom",  # Position label below the bar
+                    reversed = TRUE,
+                    x = 0,
+                    y = 100,
+                    style = list(fontSize = "12px", fontWeight = "regular", color = "#000000", textOutline = "none")
                   )) |>
     hc_legend(align = "left",
               verticalAlign = "top",
               layout = "horizontal",
-              reversed = TRUE,
               x = -10,
+              reversed = TRUE,
               title = list(style = list(fontWeight = "regular", fontSize = "12px"))) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = FALSE)
 
   return(highcharts)
 })
@@ -161,9 +180,9 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
              parelig_status == "Current"&
              rptyear == select_year)
 
-  sentences <- paste0("In ", select_year, ", there were <b>", formattable::comma(df1$n, digits = 0),
-                      "</b> people in prison past their parole eligibility date. This group made up <b>",
-                      df1$prop_label, "</b> of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
+  sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
+                      " people in prison past their parole eligibility date. This group made up ",
+                      df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
   return(sentences)
 })
 
@@ -375,11 +394,26 @@ all_bubble_ped_offense_group <- map(.x = states, .f = function(x) {
         parentNodeLimit = TRUE
       )
     ) %>%
-    hc_tooltip(pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}"
+    # hc_tooltip(pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}"
+    # ) |>
+    hc_tooltip(
+      pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}",
+      borderWidth = 1,
+      borderRadius = 0,
+      backgroundColor = '#FFFFFF', # Fully opaque white background
+      outside = TRUE, # Ensure tooltip is rendered outside
+      useHTML = TRUE,
+      formatter = JS("function() {
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+          '<div style=\"text-align:left;\">' +
+          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+          '</div></div>';
+    }")
     ) |>
     hc_add_theme(base_hc_theme) |>
     hc_legend(enabled = FALSE) |>
-    hc_colors(c(df1$color))
+    hc_colors(c(df1$color)) |>
+    hc_exporting(enabled = FALSE)
 
   return(highcharts)
 })
@@ -406,10 +440,10 @@ all_bubble_ped_offense_group$Georgia
 
 # Currently parole eligible population but still in prison by sentlgth in select year
 # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
-current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth) |>
-  mutate(prop_label = paste0(
-    "<b>", prop_label, "</b> (", n_label, ")")
-  )
+current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)
+  # mutate(prop_label = paste0(
+  #   "<b>", prop_label, "</b> (", n_label, ")")
+  # )
 
 # Create highcharts showing breakdown of parole-eligible prison population by sentlgth
 states <- unique(current_ped_sentlgth$state)
@@ -428,7 +462,8 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Date")
+    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Date") |>
+    hc_exporting(enabled = FALSE)
   return(highcharts)
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
@@ -444,8 +479,8 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between <b>",
-                      df1$sentlgth, "</b> constituted the majority, representing <b>", round(df1$prop*100, 0), "%</b>.")
+  sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between ",
+                      df1$sentlgth, " constituted the majority, representing ", round(df1$prop*100, 0), "%.")
   return(sentences)
 })
 
@@ -570,7 +605,7 @@ for (folder in theseFOLDERS){
 #     hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.value}") |>
 #     hc_colors(c(color4, color1, darkgray)) |>
 #     hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-#     hc_exporting(enabled = TRUE) |>
+#     hc_exporting(enabled = FALSE) |>
 #     hc_add_theme(base_hc_theme)
 #
 #   return(highcharts)
@@ -680,7 +715,7 @@ for (folder in theseFOLDERS){
 #       sizeBy = "area"
 #     )) |>
 #     hc_legend(enabled = FALSE) |>
-#     hc_exporting(enabled = TRUE)
+#     hc_exporting(enabled = FALSE)
 #
 #   return(highcharts)
 # })

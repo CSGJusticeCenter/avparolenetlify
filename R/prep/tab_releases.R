@@ -34,8 +34,8 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
   change_type <- ifelse(percent_change < 0, "decreased", "increased")
   percent_change_abs <- abs(round(percent_change, 0))
 
-  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", prison releases <b>",
-                      change_type, " ", percent_change_abs, "%</b>, dropping from ",
+  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", prison releases ",
+                      change_type, " ", percent_change_abs, "%, dropping from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
   return(sentences)

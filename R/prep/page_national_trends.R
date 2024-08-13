@@ -83,7 +83,7 @@ avg_parole_board_members_select_states <- mean(parole_board_members_select_state
 parole_board_member_per_person <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)/sum(parole_board_members_select_states$parole_board_members)
 
 # Set the number of surrounding dots
-n <- 500#round(parole_board_member_per_person, 0)
+n <- round(parole_board_member_per_person, 0)
 
 # Calculate the number of rows and columns for the grid
 grid_size <- ceiling(sqrt(n))
@@ -103,7 +103,7 @@ y <- y / max_r
 
 # Create a data frame with the coordinates
 data <- data.frame(x = c(0, x), y = c(0, y), size = c(2, rep(1, n)),
-                   color = c(colors$red, rep(colors$darkgray, n)),
+                   color = c("#de663e", rep(colors$darkgray, n)),
                    alpha = c(1, rep(0.5, n)))
 
 # Adjust the alpha column to apply transparency only to gray circles
@@ -111,7 +111,7 @@ data$alpha[data$color == colors$red] <- 1
 
 # Plot the graphic
 square_dot_parole_graphic <- ggplot(data, aes(x, y, color = color, size = size, alpha = alpha)) +
-  geom_point() +
+  geom_point(size = 9) +
   scale_color_identity() +  # Use the color column directly
   scale_size_identity() +   # Use the size column directly
   scale_alpha_identity() +  # Use the alpha column directly
@@ -121,7 +121,7 @@ square_dot_parole_graphic <- ggplot(data, aes(x, y, color = color, size = size, 
     plot.title = element_markdown(size = 16, face = "bold", hjust = 0.5)  # Center and format the title with ggtext
   ) +
   coord_fixed() +
-  labs(title = "<span style='color:#d97d68;'>1 parole board member</span> per<br>500 people in prison<br>and eligible for parole")
+  labs(title = "<span style='color:#de663e;'>1 parole board member</span> per<br>362 people in prison<br>and eligible for parole")
 
 square_dot_parole_graphic
 

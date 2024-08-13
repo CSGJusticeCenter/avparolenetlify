@@ -117,7 +117,7 @@ div(id = "visualization", state_stackedbar_pe_type)
 
 ### Demographics
 
-The demographics of people in prison past their parole eligibility year reveals notable proportions among <b>non-Hispanic Black</b> and <b>White people</b>. Gender distribution indicates a predominance of <b>males</b> over females. Age-wise, the majority of individuals fall within the <b>25-34 years</b> and <b>35-44</b> years brackets.
+The demographics of people in prison past their parole eligibility year reveals notable proportions among non-Hispanic Black and White people. Gender distribution indicates a predominance of males over females. Age-wise, the majority of individuals fell within the 25-34 years and 35-44 years brackets.
 
 ```{r}
 div(
@@ -145,7 +145,7 @@ div(
 In 2020, 61% of people in prison past their parole eligibility date were in prison for violent offenses.
 
 ```{r}
-div(id = "visualization", style = "width: 200px; height: 200px; overflow: hidden;", state_bubble_ped_offense_group)
+div(id = "highlight-visualization", style = "width: 200px; height: 200px; overflow: hidden;", state_bubble_ped_offense_group)
 br()
 ```
 
@@ -243,7 +243,7 @@ div(id = "visualization", state_line_releases_by_year)
 ```
 <br>
 
-The proportions of parole-eligible individuals released versus those not released have shown fluctuating trends from 2010 to 2020. In 2020, <b>40%</b> of parole-eligible individuals were released, while <b>60%</b> remained in prison, reflecting ongoing challenges and changes in parole policies and practices.  
+The proportions of parole-eligible individuals released versus those not released have shown fluctuating trends from 2010 to 2020. In 2020, 40% of parole-eligible individuals were released, while 60% remained in prison, reflecting ongoing challenges and changes in parole policies and practices.  
 
 ```{r}
 div(id = "visualization", state_stackedbar_parole_eligibility_release)
@@ -254,7 +254,7 @@ div(id = "visualization", state_stackedbar_parole_eligibility_release)
 
 ## Conditional Releases
 
-Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. In 2020, <b>45%</b> of releases are conditional, requiring ongoing supervision and compliance, while <b>55%</b> are unconditional, allowing individuals to reintegrate without additional constraints.
+Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. In 2020, 45% of releases are conditional, requiring ongoing supervision and compliance, while 55% are unconditional, allowing individuals to reintegrate without additional constraints.
 
 ```{r}
 div(id = "visualization", state_pie_release_type)
@@ -266,7 +266,7 @@ div(id = "visualization", state_pie_release_type)
 
 ## Demographics of People Released
 
-The demographics of people released from prison in 2020 reveals notable proportions among <b>non-Hispanic Black</b> and <b>White people</b>. Gender distribution indicates a predominance of <b>males</b> over females. Age-wise, the majority of individuals fall within the <b>25-34 years</b> and <b>35-44</b> years brackets. These findings provide insights into the populations transitioning back into the community.
+The demographics of people released from prison in 2020 reveals notable proportions among non-Hispanic Black and White people. Gender distribution indicates a predominance of males over females. Age-wise, the majority of individuals fall within the 25-34 years and 35-44 years brackets. These findings provide insights into the populations transitioning back into the community.
 
 ```{r}
 div(
@@ -327,8 +327,8 @@ df1 <- all_parole_release_disparities |> filter(state == state_for_report) |>
   group_by(race) |> 
   summarise(total_years = sum(time_between_ped_release, na.rm = TRUE))
 
-message <- paste("In 2020, people in prison past their parole eligibility year collectively spent a total of<b>",
-                 comma(sum(df1$total_years)), " years</b> behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups.")
+message <- paste("In 2020, people in prison past their parole eligibility year collectively spent a total of",
+                 comma(sum(df1$total_years)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups.")
 
 cat(message)
 ```
@@ -345,10 +345,10 @@ div(
   div(style = "color: #3f8bca; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
   div(style = "color: #de663e; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
   div(style = "color: #f4b811; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "text-align: center;", HTML("Black People")),
-  div(style = "text-align: center;", HTML("White People")),
-  div(style = "text-align: center;", HTML("Hispanic People")),
-  div(style = "text-align: center;", HTML("Other Race(s), Non-Hispanic People"))
+  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Black People")),
+  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
+  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
+  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
 )
 br()
 ```

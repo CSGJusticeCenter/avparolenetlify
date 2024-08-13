@@ -40,7 +40,8 @@ parole_eligibility_criteria <- subset(carl_state_notes,
 if (state_for_report %in% names(all_stackedbar_pe_type)) {
   state_stackedbar_pe_type <-
     all_stackedbar_pe_type[[state_for_report]] |>
-    hc_size(height = 175)
+    hc_size(height = 150) |>
+    hc_title(text = "")
 } else {
   state_stackedbar_pe_type <- no_data_text
 }

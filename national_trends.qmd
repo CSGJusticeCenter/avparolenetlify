@@ -33,7 +33,7 @@ num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
-In 2020,86,000 people nationally were in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. 
+In 2020, there were 86,000 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. 
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -80,12 +80,18 @@ map_percent |>
 
 ## The Power of Parole Boards
 
-<div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
-  <p><br>
-    Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
-  </p>
-  ![](square_dot_parole_graphic.png)
-</div>
+Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
+
+VISUALIZATION?
+
+```{r}
+# <div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
+#   <p><br>
+#     Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
+#   </p>
+#   ![](square_dot_parole_graphic.png)
+# </div>
+```
 
 
 

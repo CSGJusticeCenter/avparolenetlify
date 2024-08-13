@@ -42,8 +42,8 @@ all_sentence_population <- map(.x = states, .f = function(x) {
   change_type <- ifelse(percent_change < 0, "decreased", "increased")
   percent_change_abs <- abs(round(percent_change, 0))
 
-  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the prison population <b>",
-                      change_type, " ", percent_change_abs, "%</b>, changing from ",
+  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the prison population ",
+                      change_type, " ", percent_change_abs, "%, changing from ",
                       format(earliest_year_population, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_population, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
