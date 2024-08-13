@@ -826,7 +826,6 @@ for (folder in theseFOLDERS){
   save(all_parole_release_disparities, file = file.path(folder, "all_parole_release_disparities.rds"))
   save(all_scatter_race_ped_release,   file = file.path(folder, "all_scatter_race_ped_release.rds"))
   save(all_bubble_race_ped_release,    file = file.path(folder, "all_bubble_race_ped_release.rds"))
-  save(all_hc_rri_chart,               file = file.path(folder, "all_hc_rri_chart.rds"))
 
   save(all_sentence_rri,               file = file.path(folder, "all_sentence_rri.rds"))
   save(all_hc_waffle_rri_black,        file = file.path(folder, "all_hc_waffle_rri_black.rds"))

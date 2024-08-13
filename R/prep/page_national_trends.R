@@ -202,7 +202,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
       all_na == FALSE & abolished_discretionary_parole == "No" ~
         paste0("<b>", state, "</b><br>",
-               "<b>People in Prison Past Their Parole Eligibility Date</b><br>",
+               "<b>People in Prison Past Their Parole Eligibility Year</b><br>",
                "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
                "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Proportion of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
@@ -245,7 +245,29 @@ map_data_breaks <- map_data |>
 
 map_data_breaks$url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", map_data_breaks$state)))
 
+# Adding a dummy column for value in the abolished discretionary parole series
+map_data_breaks <- map_data_breaks |>
+  mutate(dummy_value = ifelse(abolished_discretionary_parole == "Yes", 1, NA))
+
 map_percent <- highchart() |>
+
+  # Series for states with abolished discretionary parole
+  hc_add_series_map(
+    map = hex_gj,
+    df = map_data_breaks |> filter(abolished_discretionary_parole == "Yes"),
+    joinBy = "state_abb",
+    value = "dummy_value",  # Using the dummy column as the value
+    color = colors$yellow,
+    borderColor = "#FFFFFF",  # Ensuring the outline is white
+    borderWidth = 2,  # Outline width
+    showInLegend = TRUE,
+    name = "Abolished Discretionary Parole",
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      point = list(valueDescriptionFormat = "{point.state} has abolished discretionary parole.")
+    )
+  ) |>
 
   hc_add_series_map(
     map = hex_gj,
@@ -278,14 +300,39 @@ map_percent <- highchart() |>
                  formatter = JS("function() { return this.value + '%'; }")
                )) |>
 
+  # hc_legend(align = "left",
+  #           verticalAlign = "top",
+  #           layout = "horizontal",
+  #           symbolWidth = 250,
+  #           x = -7,
+  #           title = list(text = "Pct. of People in Prison Past Their Parole Eligibility Year",
+  #                        style = list(fontWeight = "regular",
+  #                          fontSize = "12px"))
+  # ) |>
   hc_legend(align = "left",
+            x = -8,
             verticalAlign = "top",
             layout = "horizontal",
-            symbolWidth = 250,
-            x = -7,
-            title = list(text = "Pct. of People in Prison Past Their Parole Eligibility Date",
-                         style = list(fontWeight = "regular",
-                           fontSize = "12px"))
+            itemStyle = list(
+              fontWeight = "normal",
+              fontSize = "12px"
+            ),
+            # Customizing the title for the gradient legend
+            title = list(
+              text = "Pct. of People in Prison Past Their Parole Eligibility Year",
+              style = list(fontWeight = "normal", fontSize = "14px")
+            ),
+            # Customizing the legend for abolished discretionary parole
+            useHTML = TRUE,
+            labelFormatter = JS(paste0("
+              function() {
+                if (this.name === 'Abolished Discretionary Parole') {
+                  return '<span style=\"background-color: white; font-weight: normal;", "; padding: 0 0px; border-radius: 3px;\">' + this.name + '</span>';
+                } else {
+                  return this.name;
+                }
+              }
+            "))
   ) |>
 
   hc_xAxis(title = "") |>
@@ -321,12 +368,12 @@ map_percent <- highchart() |>
     enabled = TRUE,
     keyboardNavigation = list(enabled = TRUE),
     linkedDescription =
-      paste0("This map shows the proportion of people in prison who are past their parole eligibility date."),
+      paste0("This map shows the proportion of people in prison who are past their parole eligibility year."),
     landmarkVerbosity = "one"
   ),
   area = list(accessibility = list(description = paste0("TEXT")))
   ) |>
-  hc_title(text = paste0("People in Prison Past Their Parole Eligibility Date in ", analysis_year),
+  hc_title(text = paste0("People in Prison Past Their Parole Eligibility Year in ", analysis_year),
            align = "left")
 map_percent
 
@@ -340,3 +387,4 @@ for (folder in theseFOLDERS){
   save(map_percent,              file = file.path(folder, "map_percent.rds"))
   save(parole_eligibility_table, file = file.path(folder, "parole_eligibility_table.rds"))
 }
+

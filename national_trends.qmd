@@ -33,37 +33,31 @@ num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
-In 2020, over 88,000 people nationally were in prison past their parole eligibility date, highlighting the critical role that parole boards play in determining the timing of release. 
+In 2020,86,000 people nationally were in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. 
 
 ```{r}
+# Filter the dataframe where current_count is not NA and abolished_parole is "No"
+filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_discretionary_parole == "No", ]
+
+# Calculate the total current_count for this filtered data
+total_current_count <- sum(filtered_df$current_count, na.rm = TRUE)
+
+# Calculate the national percentage based on filtered_total_pop
+national_percentage <- paste0(round(total_current_count / sum(filtered_df$filtered_total_pop, na.rm = TRUE) * 100, 0), "%")
+
+
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr);",
-  div(id = "national-highlight", style = "text-align: left; color: #d97d68;", "32"),
-  div(id = "national-highlight", style = "text-align: left; color: #d97d68;", "XX%"),
-  div(id = "national-highlight", style = "text-align: left; color: #d97d68;", formattable::comma(num_people_current, digits = 0)),
+  div(id = "national-highlight", style = "text-align: left; color: #00bdb2;", "32"),
+  div(id = "national-highlight", style = "text-align: left; color: #00bdb2;", national_percentage),
+  div(id = "national-highlight", style = "text-align: left; color: #00bdb2;", formattable::comma(num_people_current, digits = 0)),
   div(id = "bold-text", style = "text-align: left;", HTML("States With Parole Systems")),
-  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Date")),
-  div(id = "bold-text", style = "text-align: left;", HTML("People in Prison<br>Past Their Parole Eligibility Date"))
+  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: left;", HTML("People in Prison<br>Past Their Parole Eligibility Year"))
 )
 ```
-
 </div>
-
-```{r}
-#<div id="narrow-section">
-# div(
-#   id = "grid-container",
-#   style = "display: grid; grid-template-columns: repeat(3, 1fr);",
-#   div(id = "highlight-text", "32"),
-#   div(id = "highlight-text", "XX%"),
-#   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
-#   div(id = "bold-text", HTML("States With Parole")),
-#   div(id = "bold-text", HTML("Proportion of People in Prison<br>Past Their Parole Eligibility Date")),
-#   div(id = "bold-text", HTML("People in Prison<br>Past Their Parole Eligibility Date"))
-# )
-# </div>
-```
 
 <div class="divider"></div>
 <div id="map-section">
@@ -98,7 +92,7 @@ map_percent |>
 <div class="divider"></div>
 ## Parole Eligibility by State
 
-This table provides a comprehensive look at parole eligibility across states for people incarcerated for new crimes, with sentence lengths between 1 and 25 years. It details the percentage and number of eligible individuals, the total prison population, the status of discretionary parole, and the number of parole board members, providing insights into state-level parole practices.  
+This table provides a comprehensive look at state-level parole practices for people incarcerated for new crimes and with sentence lengths between 1 and 25 years. It details the percentage and number of individuals in prison past their parole eligibility year, the total prison population, the status of discretionary parole, and the number of parole board members.
 
 ```{r}
 # Custom function to create data bars with NA handling
@@ -164,7 +158,7 @@ reactable(
                    align = "center")
   ),
   columnGroups = list(
-    colGroup(name = "In Prison Past Their Parole Eligibility Date", columns = c("current_perc", "current_count"))
+    colGroup(name = "In Prison Past Their Parole Eligibility Year", columns = c("current_perc", "current_count"))
   )
 )
 
@@ -178,17 +172,8 @@ reactable(
 <div class="divider"></div>
 ## Disparities in Parole Decisions
 
-Research indicates significant racial, ethnic, and gender disparities in parole decisions. Black and Hispanic individuals are less likely to be granted parole compared to their white counterparts. Gender disparities also exist, with women facing different challenges and rates of releases to parole compared to men.  
-
- 
-
-
-<br>
-<div class="divider"></div>
-## Impact on Recidivism
-
-Studies indicate that timely parole can reduce recidivism rates. People who are granted parole and receive proper support are less likely to re-offend.
-
+STATE EXAMPLES
+NATIONAL NUMBERS
 
 
 
@@ -196,10 +181,10 @@ Studies indicate that timely parole can reduce recidivism rates. People who are 
 <div class="divider"></div>
 ## Economic Impact of Parole
 
-Effective parole systems can reduce incarceration costs and improve economic outcomes for individuals and communities.  
+Effective parole systems can reduce incarceration costs.  
 <br>
 
-If incarceration costs and marginal costs are available, show them here. Graph with potential cost savings?
+If incarceration costs and marginal costs are available, show them here. Visualization of potential cost savings?
 
 <br>
 

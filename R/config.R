@@ -99,6 +99,20 @@ colors <- list(
   brown     = "#9e6c10"  # primary color
 )
 
+colors <- list(
+  lightgray = "#d7d7d7",
+  darkgray  = "#969696",
+  purple    = "#938ebf", # primary color
+  red       = "#de663e", # primary color
+  blue      = "#3f8bca", # primary color
+  yellow    = "#f4b811", # primary color
+  green1    = "#b1d4d5",
+  green2    = "#00bdb2",
+  green3    = "#176f6d", # primary color
+  green4    = "#104040",
+  brown     = "#9e6c10"  # primary color
+)
+
 # # Colors for the groups
 # blue <- "#55b4e5"
 # teal <- "#49a7a1"

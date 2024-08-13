@@ -18,7 +18,7 @@
     "href": "national_trends.html",
     "title": "The Discretionary Power of Parole",
     "section": "",
-    "text": "In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards’ discretion to decide when people can be supervised in the community.\nIn 2020, over 88,000 people nationally were in prison past their parole eligibility date, highlighting the critical role that parole boards play in determining the timing of release.\n\n\n\n32\nXX%\n88,661\nStates With Parole Systems\nPct. of People in PrisonPast Their Parole Eligibility Date\nPeople in PrisonPast Their Parole Eligibility Date\nAbout this data"
+    "text": "In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards’ discretion to decide when people can be supervised in the community.\nIn 2020,86,000 people nationally were in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release.\n\n\n\n32\n33%\n88,661\nStates With Parole Systems\nPct. of People in PrisonPast Their Parole Eligibility Year\nPeople in PrisonPast Their Parole Eligibility Year\nAbout this data"
   },
   {
     "objectID": "state_report_Alabama.html",
@@ -641,14 +641,14 @@
     "href": "national_trends.html#parole-eligibility-by-state",
     "title": "The Discretionary Power of Parole",
     "section": "Parole Eligibility by State",
-    "text": "Parole Eligibility by State\nThis table provides a comprehensive look at parole eligibility across states for people incarcerated for new crimes, with sentence lengths between 1 and 25 years. It details the percentage and number of eligible individuals, the total prison population, the status of discretionary parole, and the number of parole board members, providing insights into state-level parole practices.\n\n\n\n\n\n\nAbout this data"
+    "text": "Parole Eligibility by State\nThis table provides a comprehensive look at state-level parole practices for people incarcerated for new crimes and with sentence lengths between 1 and 25 years. It details the percentage and number of individuals in prison past their parole eligibility year, the total prison population, the status of discretionary parole, and the number of parole board members.\n\n\n\n\n\n\nAbout this data"
   },
   {
     "objectID": "national_trends.html#disparities-in-parole-decisions",
     "href": "national_trends.html#disparities-in-parole-decisions",
     "title": "The Discretionary Power of Parole",
     "section": "Disparities in Parole Decisions",
-    "text": "Disparities in Parole Decisions\nResearch indicates significant racial, ethnic, and gender disparities in parole decisions. Black and Hispanic individuals are less likely to be granted parole compared to their white counterparts. Gender disparities also exist, with women facing different challenges and rates of releases to parole compared to men."
+    "text": "Disparities in Parole Decisions\nSTATE EXAMPLES NATIONAL NUMBERS"
   },
   {
     "objectID": "national_trends.html#impact-on-recidivism",
@@ -662,7 +662,7 @@
     "href": "national_trends.html#economic-impact-of-parole",
     "title": "The Discretionary Power of Parole",
     "section": "Economic Impact of Parole",
-    "text": "Economic Impact of Parole\nEffective parole systems can reduce incarceration costs and improve economic outcomes for individuals and communities.\n\nIf incarceration costs and marginal costs are available, show them here. Graph with potential cost savings?"
+    "text": "Economic Impact of Parole\nEffective parole systems can reduce incarceration costs.\n\nIf incarceration costs and marginal costs are available, show them here. Visualization of potential cost savings?"
   },
   {
     "objectID": "state_report_Georgia.html#prison-release-trends",
