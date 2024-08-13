@@ -1,0 +1,14 @@
+---
+title: 'Section 1B'
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+    toc: TRUE
+---
+
+# About This Page
+Description and analysis for Section 1B.

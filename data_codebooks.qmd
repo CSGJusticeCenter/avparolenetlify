@@ -1,0 +1,188 @@
+---
+title: 'Codebooks'
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+
+source("R/config.R")
+library(kableExtra)
+library(reactable)
+
+
+# Load all dictionaries
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_drc_program_referral.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_ocms_financial_assessment.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_ocms_offender_supervision.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_ocms_risk_assessment.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_ocms_sentencing.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_ocms_substance_testing.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_probation_ocms_supervision_violations.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_arrest.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_bailpiece_served.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_bond.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_fee_assessment.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_hearing.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_pretrial_risk_assessment.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_sentencing.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_transfer_appealed.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_circuit_data_request.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/dictionary_raw_wv_magistrate_case_defendant_disposition.rds"))
+
+# Function to render reactable
+render_reactable <- function(dictionary) {
+  reactable(
+    get(dictionary),
+    compact = TRUE,
+    sortable = FALSE,
+    pagination = FALSE,
+    defaultColDef = colDef(
+      minWidth = 90,
+      format = colFormat(separators = TRUE),
+      align = "left"
+    ),
+    columns = list(
+      `Variable Name` = colDef(width = 200),
+      `Variable Description` = colDef(show = FALSE, width = 200),
+      `Number of Unique Values` = colDef(name = "Unique Values"),
+      `Missing Values` = colDef(name = "Missing (N)"),
+      `Percentage Missing` = colDef(name = "Missing (%)"),
+      Statistics = colDef(width = 600, html = TRUE, cell = function(value) {
+        HTML(gsub("<br>", "<br/>", value))
+      }),
+      `Variable Type` = colDef(show = FALSE)
+    )
+  )
+}
+```
+
+<br>
+
+## Probation Data
+
+### Probation_DRC Program Referral
+
+The WV Probation DRC Program Referral dataset contains variables related to probation and day report center program referrals across counties in WV. The data spans from 2013 to 2023. The dataset has no missing values.
+
+```{r}
+render_reactable("dictionary_raw_probation_drc_program_referral")
+```
+
+### Probation_OCMS Financial Assessment
+
+The WV Probation OCMS Financial Assessment dataset contains variables related to the financial assessments conducted for probation cases across counties in West Virginia. The data spans from 2013 to 2023. An interesting aspect of the data is that the most common account type recorded is "Substance Screening Fees," which accounts for 35.9% of all entries (88,478 out of 246,367 total assessments). The dataset has no missing values.
+
+```{r}
+render_reactable("dictionary_raw_probation_ocms_financial_assessment")
+```
+
+### Probation_OCMS Offender Supervision
+
+```{r}
+render_reactable("dictionary_raw_probation_ocms_offender_supervision")
+```
+
+### Probation_OCMS Risk Assessment
+
+```{r}
+render_reactable("dictionary_raw_probation_ocms_risk_assessment")
+```
+
+### Probation_OCMS Sentencing
+
+```{r}
+render_reactable("dictionary_raw_probation_ocms_sentencing")
+```
+
+### Probation_OCMS Substance Testing
+
+```{r}
+render_reactable("dictionary_raw_probation_ocms_substance_testing")
+```
+
+### Probation_OCMS Supervision Violations
+
+```{r}
+render_reactable("dictionary_raw_probation_ocms_supervision_violations")
+```
+
+## Magistrate Data
+
+### WV Magistrate Arrest
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_arrest")
+```
+
+### WV Magistrate Bailpiece Served
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_bailpiece_served")
+```
+
+### WV Magistrate Bond
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_bond")
+```
+
+### WV Magistrate Fee Assessment
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_fee_assessment")
+```
+
+### WV Magistrate Hearing
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_hearing")
+```
+
+### WV Magistrate Pretrial Risk Assessment
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_pretrial_risk_assessment")
+```
+
+### WV Magistrate Sentencing
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_sentencing")
+```
+
+### WV Magistrate Transfer Appealed
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_transfer_appealed")
+```
+
+### WV Circuit Data Request
+
+```{r}
+render_reactable("dictionary_raw_wv_circuit_data_request")
+```
+
+### WV Magistrate Case Defendant Disposition
+
+```{r}
+render_reactable("dictionary_raw_wv_magistrate_case_defendant_disposition")
+```
+
+
+
+
+
+
+

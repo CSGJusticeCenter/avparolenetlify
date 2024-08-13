@@ -1,0 +1,125 @@
+:root {
+  --main-color: #263C4B; /* Define your menu bar color here */
+    --hover-bg-color: white; /* Define your hover background color here */
+    --hover-font-color: #263C4B; /* Define your hover font color here */
+}
+body {
+  max-width: 1200px; /* Set the maximum width */
+    margin: 0 auto;
+}
+
+/* Header styles with gray bottom border */
+  h1{
+    border-bottom: 2px solid #d3d3d3; /* Gray line */
+    padding-bottom: 10px; /* Space between text and line */
+      text-align: center;
+  }
+.title, h1.title {
+  border-bottom: 5px solid #fff;
+}
+/* Add fonts*/
+  @font-face {
+    font-family: 'Franklin Gothic';
+    src: local('Franklin Gothic'), url('fonts/Franklin_Gothic_Book_Regular.ttf');
+  }
+
+/* Remove rounded edges on everything */
+  *{
+    border-radius: 0!important;
+  }
+
+/* Change font throughout website */
+  html, body {
+    font-family: 'Franklin Gothic Book', sans-serif;
+    color: black!important;
+  }
+
+.title {
+  font-size: 2.5em;
+  font-family: 'Franklin Gothic Book';
+  font-weight: bold;
+  text-align: center;
+  color: black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* TAB SETTINGS */
+
+  .tab-content {
+    border: none; /* remove border around box */
+  }
+
+/* Active state for tabs - changes the color and background of the active tab */
+  .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: white; /* Set active text color to white */
+      background-color: #50A25D; /* Set active background color */
+  }
+
+/* Set height for tab content in the first .panel-tabset */
+  .nav-pills .tab-content .tab-pane {
+    height: 1200px; /* Specific height for the tab content */
+  }
+
+/* Default state for tabs - changes the color and background of the inactive tabs */
+  .nav-pills .nav-link {
+    color: black; /* Set default text color to black */
+      background-color: #d7d7d7; /* Set default background color */
+  }
+
+/* Flexbox properties to make tabs stretch across the full width */
+  .nav-tabs {
+    display: flex; /* Use flexbox layout for the container */
+      border-bottom: 1px solid white; /* Add bottom border to the tabs container */
+      justify-content: space-between; /* Distribute tabs equally across the container */
+      text-align: center; /* Center align text within each tab */
+      font-family: Graphik; /* Set font family for the tabs */
+      width: 100%; /* Ensure the container stretches to full width */
+  }
+
+/* Ensure each tab takes up an equal amount of space */
+  .nav-tabs .nav-item {
+    flex: 1; /* Each tab will take up equal space within the container */
+      text-align: center; /* Center align text within each tab */
+  }
+
+.nav-tabs .nav-link {
+  display: block; /* Ensure the link is a block element to take up full space */
+    width: 100%; /* Ensure the link stretches to full width of the tab item */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Center align text within each tab */
+    border: 1px solid white; /* Add white border around each tab */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+
+
+#visualization{
+  max-width: 700px;
+  background-color: white;
+  /*margin: 0 auto;  center the content horizontally */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

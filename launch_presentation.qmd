@@ -1,0 +1,133 @@
+---
+title: 'Launch Presentation'
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png",
+  fig.align = "center"
+)
+
+source("R/config.R")
+
+load(file = paste0(config$sp_data_path, "/data/analysis/hc_prion_adm_pp_rev.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/hc_prison_adm_types.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/hc_jail_capacity.rds"))
+```
+
+<br> This page provides an overview of the publicly available data that informs the West Virginia Justice Reinvestment Initiative (JRI).
+
+# Incarceration Rates and Trends
+
+-   **Adult Imprisonment Rate:** In 2022, West Virginia had an adult imprisonment rate of 413 people per 100,000 adults, ranking 20th highest in the United States<sup>1</sup>.
+-   **Prison Population Decrease:** The state prison population decreased by 18%, from 7,262 people in FY 2019 to 5,959 people in FY 2023<sup>1</sup>.
+-   **Jail Population Decrease:** Admissions to regional jails decreased by 21%, from 47,051 in 2019 to 37,184 in 2023<sup>1</sup>.
+
+<br>
+
+# Supervision Revocations
+
+The number of admissions for technical revocations has fluctuated over the years, with a notable peak around 2020.
+
+```{r}
+div(style = "display: flex; justify-content: center;", 
+  div(id = "visualization", hc_prion_adm_pp_rev |> 
+        hc_size(height = 400, width = 600) |> 
+        hc_title(text = "Prison Admissions for Parole and Probation Technical Violations")) 
+)
+```
+
+In FY 2023, parole and probation technical revocations accounted for 27 percent of prison admissions.
+
+```{r}
+div(style = "display: flex; justify-content: center;", 
+  div(id = "visualization", hc_prison_adm_types |> 
+        hc_size(height = 275, width = 450) |> 
+        hc_title(text = "Prison Admission by Type, FY 2023")) 
+)
+```
+
+# Pretrial Detention and Jail Capacity
+
+More than half of the population (52%) in regional jails in FY 2023 was held pretrial, with overcrowding remaining a significant issue<sup>1</sup>. In FY 2023, 18% of people sentenced to prison were housed in regional jails, constituting 27% of the average daily population<sup>1</sup>.
+
+
+```{r}
+# **Composition of Jails, FY 2023**
+# knitr::include_graphics(paste0(config$sp_data_path, "/data/analysis/jail_comp_buildings.svg"))
+```
+
+```{r}
+div(style = "display: flex; justify-content: center;", 
+    div(id = "visualization", hc_jail_capacity |> hc_size(height = 450)) 
+)
+```
+
+<br>
+
+# Bail Practices
+
+-   **Cash Bail System:** West Virginia primarily uses a cash bail system, which can result in individuals being detained pretrial simply because they cannot afford to pay bail<sup>3</sup>. This system disproportionately impacts low-income individuals.
+-   **Magistrate Decisions:** Bail amounts and decisions are typically made by magistrates, who assess the risk of flight and danger to the community. However, there is variability in how bail is set, which can lead to inconsistencies and inequities in pretrial detention<sup>3</sup>.
+
+<br>
+
+# Behavioral Health Challenges
+
+-   **Overdose Rates:** In 2021, West Virginia had the highest overdose rate in the country at 90.9 deaths per 100,000 people, with 83% due to opioid overdoses. Nationally, the overdose death rate was 28.3 per 100,000 people<sup>2</sup>.
+-   **Substance Use and Alcohol Misuse:** In 2021, 16% of adults reported alcohol misuse, and nearly 4% reported opioid misuse, the 8th highest rate in the nation<sup>2</sup>.
+-   **Prison Population and Drug Offenses:** The proportion of the prison population incarcerated for drug offenses has remained steady, at 13% in FY 2018 and 12% in FY 2022<sup>1</sup>.
+
+<br>
+
+# Staffing Crisis and Fiscal Pressures
+
+-   **National Guard Deployment:** In August 2022, Governor Jim Justice declared a state of emergency due to extreme staffing shortages and deployed 300 National Guard members to staff prisons and regional jails. This deployment cost the WVDCR \$21 million in salary reimbursements and over \$2 million for accommodations<sup>1</sup>.
+-   **Correctional Expenditures:** The cost of corrections increased 25% between 2019 and 2023, from \$363 million to \$452 million<sup>1</sup>.
+-   **County Expenditures:** In 2019, counties spent approximately \$44 million on regional jails<sup>1</sup>.
+
+<br>
+
+# Other Critical Issues
+
+-   **Economic Challenges and Poverty:** High poverty rates and limited economic opportunities. West Virginia has a poverty rate of 16%, which is higher than the national average of 11.4%<sup>4,5</sup>.
+-   **Reentry Barriers:** Individuals face significant barriers to reentry, including difficulties finding employment, housing, and accessing social services. Approximately 30% of formerly incarcerated individuals are unemployed, compared to the national average unemployment rate of 4%<sup>6,7</sup>.
+-   **Homelessness:** West Virginia has an estimated 1,348 individuals experiencing homelessness on any given night. Nationally, about 17 people per 10,000 experience homelessness<sup>8</sup>.
+-   **Opioids:** The opioid crisis continues to severely impact West Virginia, contributing to high rates of addiction and overdose deaths. In 2021, the state had 90.9 overdose deaths per 100,000 people, with 83% of these deaths due to opioids<sup>2</sup>. Nationally, the overdose death rate was 28.3 per 100,000 people<sup>2</sup>.
+-   **Employment:** Unemployment and underemployment are major issues, with the state's unemployment rate at 6.1%, higher than the national average of 3.7%<sup>5</sup>. Many individuals struggle to find stable, well-paying jobs, with a significant portion of the workforce employed in low-wage positions.
+-   **Minimum Wage:** West Virginia's minimum wage is \$8.75 per hour, which is higher than the federal minimum wage of \$7.25 per hour but still challenging for many families to live on. The living wage needed for a family of four in West Virginia is estimated to be \$16.28 per hour<sup>5</sup>.
+-   **Medicaid:** Many low-income individuals rely on Medicaid for healthcare, with over 27% of West Virginia's population enrolled in Medicaid. Nationally, about 21% of the population is enrolled in Medicaid<sup>9</sup>.
+
+<br>
+
+# Conclusion
+
+West Virginia's criminal justice system is grappling with several significant challenges, including high incarceration rates, a substantial backlog in regional jails, increasing technical parole revocations, severe behavioral health issues, and a critical staffing crisis within correctional facilities. These issues are compounded by rising correctional expenditures, placing additional financial strain on state and county budgets.
+
+<br>
+
+# Data Sources
+
+The data presented here is derived from a variety of reliable public sources, including:
+
+1.  West Virginia Department of Corrections and Rehabilitation (WVDCR), Administrative Office of the Courts (AOC), Bureau of Justice Statistics (BJS)
+2.  West Virginia Department of Health and Human Resources (DHHR), Centers for Disease Control and Prevention (CDC), National Institute on Drug Abuse (NIDA)
+3.  West Virginia Judiciary
+4.  U.S. Census Bureau, Poverty Rate Data: [Link](https://www.census.gov/quickfacts/fact/table/US/PST045221)
+5.  Bureau of Labor Statistics (BLS), Employment Data: [Link](https://www.bls.gov/)
+6.  West Virginia Housing Development Fund, Housing Data: [Link](https://www.wvhdf.com/)
+7.  Council of State Governments Justice Center
+8.  West Virginia Coalition to End Homelessness, Homelessness Data: [Link](https://wvceh.org/)
+9.  West Virginia Medicaid, Medicaid Data: [Link](https://dhhr.wv.gov/bms/)

@@ -2,21 +2,22 @@
 /* Overview */
 /******************************************************************************/
 
-/* Center align headers */
-h1, h2, h3, h4, h5, h6 {
-  text-align: center;
-  border-bottom: 1px solid white;
-  font-weight: bold;
-}
-
-/* Increase the font size for h1 elements */
 h1 {
-  font-size: 3em; /* Adjust the size as needed */
+  text-align: center;
+  font-weight: bold;
+  font-size: 2.5em;
 }
 
-/* Increase the font size for h1 elements */
 h2 {
-  font-size: 1.75em; /* Adjust the size as needed */
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 1px solid white;
+  font-size: 2em;
+}
+
+h3, h4, h5, h6  {
+  border-bottom: 1px solid white;
+  text-align: left;
 }
 
 .divider {
@@ -28,18 +29,11 @@ h2 {
 
 /* General mobile-friendly adjustments */
 body {
-  max-width: 900px; /* Adjust the maximum width for the content container */
+  max-width: 1200px; /* Adjust the maximum width for the content container */
   margin: 0 auto; /* Center the content horizontally */
   line-height: 1.6;
   padding: 0;
   box-sizing: border-box;
-}
-
-.container {
-  width: 100%;
-  max-width: 900px; /* Adjust the maximum width for the content container */
-  margin: 0 auto;
-  padding: 0 15px; /* Adjust padding for smaller screens */
 }
 
 /* Responsive images */
@@ -55,65 +49,19 @@ table {
   margin-bottom: 1em;
 }
 
-table th, table td {
-  padding: 0.5em;
-  border: 1px solid #969696;
-  text-align: left;
-}
-
-/* Responsive layout adjustments */
-@media (max-width: 768px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  table, th, td {
-    font-size: 0.9em;
-  }
-}
-
-/* Adjusting code blocks for mobile */
-pre {
-  white-space: pre-wrap;       /* CSS3 */
-  white-space: -moz-pre-wrap;  /* Firefox */
-  white-space: -pre-wrap;      /* Opera <7 */
-  white-space: -o-pre-wrap;    /* Opera 7 */
-  word-wrap: break-word;       /* IE */
-}
-
-/* Import Graphik from Google Fonts */
-/*@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');*/
-
 /* add fonts*/
 @font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/Graphik.ttf");
-}
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/GraphikBold.ttf");
-  font-weight: bold;
-}
-@font-face {
-  font-family: "Wee People";
-  src: local('Wee People'), url("fonts/weepeople.ttf");
-  font-weight: bold;
+  font-family: "Franklin Gothic Book";
+  src: local('Franklin Gothic Book'), url("fonts/fa-regular-400.ttf");
 }
 
 /* Change font throughout website */
 html,
 body {
-  font-family: 'Graphik', sans-serif;
+  font-family: 'Franklin Gothic Book', sans-serif;
   color: black!important;
  /* background-color: lightblue; */
 }
-
-#state-body-section{
-  max-width: 750px;
-  background-color: white;
-  margin: 0 auto; /* center the content horizontally */
-}
-
 
 /* TAB SETTINGS */
 
@@ -122,13 +70,13 @@ body {
 }
 
 .navbar {
-  background-color: black;
+  background-color: #263C4B;
 }
 
 /* Active state for tabs - changes the color and background of the active tab */
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     color: white; /* Set active text color to white */
-    background-color: #00bdb2; /* Set active background color */
+    background-color: #263C4B; /* Set active background color */
 }
 
 /* Set height for tab content in the first .panel-tabset */
@@ -148,7 +96,7 @@ body {
   border-bottom: 1px solid white; /* Add bottom border to the tabs container */
   justify-content: space-between; /* Distribute tabs equally across the container */
   text-align: center; /* Center align text within each tab */
-  font-family: 'Graphik', sans-serif; /* Set font family for the tabs */
+  font-family: 'Franklin Gothic Book', sans-serif; /* Set font family for the tabs */
   width: 100%; /* Ensure the container stretches to full width */
 }
 
@@ -173,47 +121,10 @@ body {
   /*margin-left: -10px; Move section slightly to the left so it aligns with other text */
 }
 
-
-#small-visualization {
-  text-align: left; /* Center align text inside the narrow section */
-  margin-left: -12px; /* Move section slightly to the left so it aligns with other text */
-}
-
-#narrow-section {
-  max-width: 750px;
-  margin: 0 auto; /* Center the narrow section horizontally */
-  text-align: center; /* Center align text inside the narrow section */
-}
-
-#map-section {
-  max-width: 1200px;
-  margin: 0 auto; /* Center the narrow section horizontally */
-  text-align: left; /* Center align text inside the narrow section */
-  margin-left: -10px; /* Move section slightly to the left so it aligns with other text */
-}
-
-/* highlighted text underneath state name */
-#highlight-text {
-  font-size: 2em;
-  font-family: 'Graphik', sans-serif;
-  font-weight: bold;
-  color: #00bdb2;
-  text-align: center;
-}
-
-/* highlighted text on national trend page */
-#national-highlight {
-  font-size: 1.5em;
-  font-family: 'Graphik', sans-serif;
-  font-weight: bold;
-  color: #00bdb2;
-  text-align: center;
-}
-
 /* bold app text */
 #bold-text {
   font-size: 0.9em;
-  font-family: 'Graphik', sans-serif;
+  font-family: 'Franklin Gothic Book', sans-serif;
   font-weight: bold;
   text-align: center;
   color: black,

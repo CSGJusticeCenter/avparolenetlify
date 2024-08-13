@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: config.R
 # Authors: Mari Roberts
-# Date last updated: June 27, 2024 (MAR)
+# Date last updated: July 18, 2024 (MAR)
 # Description:
 #    This script is responsible for setting up the environment for the AV Parole project.
 #    It includes the following tasks:
@@ -44,7 +44,8 @@ required_packages <- c(
   "reactable", "reactablefmtr", "sysfonts", "extrafont", "showtext", "htmlwidgets",
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
-  "ggtext", "scales", "base64enc", "glue"
+  "ggtext", "scales", "base64enc", "shadowtext", "leaflet", "tidycensus", "sf",
+  "tigris", "stringr", "readxl"
 )
 
 lapply(required_packages, library, character.only = TRUE)
@@ -55,85 +56,43 @@ lapply(required_packages, library, character.only = TRUE)
 
 # Set project path
 csg_set_project_path(
-  project = "AVParole",
-  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
+  project = "JRWV",
+  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/JR_WV",
   force = TRUE
 )
 
 # Save Sharepoint data path
 config <- list(
-  sp_data_path = csg_get_project_path("AVParole")
+  sp_data_path = csg_get_project_path("JRWV")
 )
 
-# Most recent year of NCRP data
-analysis_year <- 2020
-select_year <- 2020
+# Sharepoint save location
+savefolder <- paste0(config$sp_data_path, "/data/analysis/")
 
-#------ Fonts ------#
+# JRI official colors
+lightgray <- "#d0cece"
 
-# Add custom fonts
-font_add("Graphik",     regular = "fonts/Graphik.ttf")
-font_add("GraphikBold", regular = "fonts/GraphikBold.ttf")
+darkblue  <- "#263C4B"
+blue      <- "#3F95B0"
+lightblue <- "#d7ebf1"
 
-#------ Highcharter Options ------#
+lightgreen <- "#dbedde"
+green     <- "#50A25D"
+darkgreen <- "#28512f"
 
-# Set options so that y axis has comma separator on highcharts
-hcoptslang <- getOption("highcharter.lang")
-hcoptslang$thousandsSep <- ","
-options(highcharter.lang = hcoptslang)
+darkred <- "#811d14"
+red       <- "#e25448"
+lightred <- "#f9ddda"
 
-#------ Colors ------#
-
-# Michael colors
-colors <- list(
-  lightgray = "#d7d7d7",
-  darkgray  = "#969696",
-  purple    = "#938ebf", # primary color
-  red       = "#d97d68", # primary color
-  blue      = "#55b4e5", # primary color
-  yellow    = "#decf64", # primary color
-  green1    = "#b1d4d5",
-  green2    = "#49a7a1",
-  green3    = "#176f6d", # primary color
-  green4    = "#104040",
-  brown     = "#9e6c10"  # primary color
-)
-
-# # Colors for the groups
-# blue <- "#55b4e5"
-# teal <- "#49a7a1"
-# lightteal <- "#a1e1da"
-# yellow <-  "#decf64"
-# red <- "#d97d68"
-# purple <- "#938ebf"
-# brown     = "#9e6c10"
-
-blue <- "#3f8bca"
-teal <- "#00bdb2"
-lightteal <- "#a1e1da"
-yellow <- "#f4b811"
-red <- "#de663e"
-orange <- "#ff912b"
-beige <- "#fbf0e3"
-lightorange <- "#fce2c5"
-
-color1 <- teal
-color2 <- blue
-color3 <- yellow
-color4 <- red
-color5 <- lightteal
-color6 <- lightorange
-color6 <- orange
-darkgray <- "#969696"
-lightgray <- "#d7d7d7"
+lightorange <- "#f9e4d6"
+orange    <- "#E17630"
+darkorange <- "#773a11"
 
 
-# Custom SVG icon with color placeholder
-iconSVG <- "
-<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
-  <path fill='%s' d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/>
-</svg>"
+# Load Franklin Gothic Book - JRI official font
+font_add(family  = "Franklin Gothic Book",
+         regular = "FRABK.ttf",
+         italic  = "FRABKIT.ttf",
+         bold    = "FRADM.ttf")
+showtext_auto()
 
-# Usage Example:
-# ggplot(data, aes(x, y)) +
-#   geom_line(color = colors$blue)

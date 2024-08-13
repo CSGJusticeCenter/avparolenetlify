@@ -1,0 +1,72 @@
+---
+title: 'Questions and Updates'
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+    toc: TRUE
+---
+
+# About This Page
+Questions for team members and stakeholders, and updates regarding the ongoing progress of the project.
+
+# To Do
+To do list for Research.
+
+# Policy Questions
+Questions for the policy team.
+
+# Stakeholder Questions
+
+**West Virginia Money Topics**
+
+Regional Jails: 
+
+- Does the current population-only formula for baseline jail usage and charges 
+to counties work fairly? Does it create any perverse incentives?
+What is the cost of current programming, treatment, and education efforts in 
+jails?
+- How much do counties and the state spend to support the regional jail 
+system? Per diem?
+- Does the current arrangement of counties to jails fit the different capacities 
+of the jails? (I.e., are the catchment areas the right ones?)
+Prisons
+- What is the difference in cost for jails versus prisons and what explains any 
+difference?
+- What is the cost of current programming, treatment, and education efforts in 
+prison?
+- What is the correctional officer salary structure for prisons and jails and how 
+does it compare with comparable positions in neighboring states?
+
+Probation & Parole:
+
+- Are there pay differences between judicial branch probation officers and 
+state parole officers?
+- Do counties provide funding for probation budgets in some or all counties 
+and does that create differentials?
+- How much reliance is there on supervision fees in either system, i.e., what 
+proportion of the cost is covered by fees?
+- What are per diem costs for probation and parole populations?
+- What is the cost of the population covered by § 62-12-26,  the extended 
+supervision statute for certain sex offenders?
+
+Community Corrections: 
+
+- How much do counties and the state spend to support the community 
+corrections system?
+- How many people are served by day report centers?
+What are per diem costs and differentials across DRCs?
+- How much reliance is there on fees, i.e., what proportion of the cost is 
+covered by fees?
+- What would it cost to beef up all DRCs to provide more robust services? To 
+serve more people?
+- How do other state community corrections acts distribute funds to counties? 
+(I have some slides on this topic.)
+
+Behavioral Health: 
+
+- How much do counties and the state spend on behavioral health treatment?  
+- How much is aimed at the CJ population?   
