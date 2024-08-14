@@ -157,7 +157,7 @@ all_hc_waffle_rri_black <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_size(height = height_black) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -212,7 +212,7 @@ all_hc_waffle_rri_hispanic <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_size(height = height_hispanic) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -267,7 +267,7 @@ all_hc_waffle_rri_white <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_size(height = height_white) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -322,7 +322,7 @@ all_hc_waffle_rri_other <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(enabled = FALSE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_size(height = height_other) |>
     hc_tooltip(enabled = FALSE) |>
     hc_plotOptions(series = list(marker = list(radius = circle_radius))) |>
@@ -805,7 +805,7 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
       tickColor = "transparent",
       max = max_los*1.5
     ) |>
-    hc_exporting(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
     hc_tooltip(enabled = FALSE) |>
     hc_legend(enabled = FALSE) |>
     hc_size(height = 150)

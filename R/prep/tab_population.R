@@ -273,7 +273,8 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Sentence Lengths for People in Prison") |>
-    hc_tooltip(pointFormat = "{point.tooltip}")
+    hc_tooltip(pointFormat = "{point.tooltip}") |>
+    hc_colors(c(color5))
   return(highcharts)
 })
 all_bar_population_sentlgth <- setNames(all_bar_population_sentlgth, states)

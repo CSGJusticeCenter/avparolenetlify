@@ -40,8 +40,7 @@ parole_eligibility_criteria <- subset(carl_state_notes,
 if (state_for_report %in% names(all_stackedbar_pe_type)) {
   state_stackedbar_pe_type <-
     all_stackedbar_pe_type[[state_for_report]] |>
-    hc_size(height = 150) |>
-    hc_title(text = "")
+    hc_size(height = 170)
 } else {
   state_stackedbar_pe_type <- no_data_text
 }
@@ -325,15 +324,6 @@ if (state_for_report %in% names(all_lollipop_offense_los)) {
 
 ####################
 
-# TITLE:
-if (state_for_report %in% names(all_bubble_race_ped_release)) {
-  state_bubble_race_ped_release <-
-    all_bubble_race_ped_release[[state_for_report]] |>
-    hc_size(height = 650)
-} else {
-  state_bubble_race_ped_release <- no_data_text
-}
-
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for
 #            population sizes in the community."
@@ -376,6 +366,15 @@ if (state_for_report %in% names(all_hc_waffle_rri_other)) {
   state_hc_waffle_rri_other <- no_data_text
 }
 
+# TITLE:
+if (state_for_report %in% names(all_bubble_race_ped_release)) {
+  state_bubble_race_ped_release <-
+    all_bubble_race_ped_release[[state_for_report]] |>
+    hc_size(height = 650)|>
+    hc_title(text = "")
+} else {
+  state_bubble_race_ped_release <- no_data_text
+}
 
 # TITLE: Average Length of Stay by Race, Ethnicity, and Offense Type
 if (state_for_report %in% names(all_lollipop_los_race)) {
@@ -390,7 +389,8 @@ if (state_for_report %in% names(all_lollipop_los_race)) {
 if (state_for_report %in% names(all_scatter_los_race_offense)) {
   state_scatter_los_race_offense <-
     all_scatter_los_race_offense[[state_for_report]] |>
-    hc_size(height = 600)
+    hc_size(height = 600) |>
+    hc_title(text = "")
 } else {
   state_scatter_los_race_offense <- no_data_text
 }

@@ -69,6 +69,8 @@ config <- list(
 analysis_year <- 2020
 select_year <- 2020
 
+alignment <- "center"
+
 #------ Fonts ------#
 
 # Add custom fonts

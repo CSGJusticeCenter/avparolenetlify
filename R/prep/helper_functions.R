@@ -250,10 +250,10 @@ common_title_style <- list(
 base_hc_theme <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
-  title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-  subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+  title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "16px"))),
+  subtitle = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "14px"))),
   legend = list(
-    align = "center",
+    align = alignment,
     verticalAlign = "top",
     itemStyle = common_style
   ),
@@ -303,10 +303,10 @@ base_hc_theme <- hc_theme(
 # base_hc_theme <- hc_theme(
 #   colors = c(color1, color2, color3, color4, color5),
 #   chart = list(style = common_chart_style),
-#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+#   title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "16px"))),
+#   subtitle = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "14px"))),
 #   legend = list(
-#     align = "center",
+#     align = alignment,
 #     verticalAlign = "top",
 #     itemStyle = common_style
 #   ),
@@ -350,9 +350,9 @@ base_hc_theme <- hc_theme(
 # hc_theme_with_line <- hc_theme(
 #   colors = c(color1, color2, color3, color4, color5),
 #   chart = list(style = common_chart_style),
-#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
-#   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+#   title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "16px"))),
+#   subtitle = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "14px"))),
+#   legend = list(align = alignment, verticalAlign = "top", itemStyle = common_style),
 #   xAxis = list(labels = list(enabled = TRUE, style = common_style)
 #                #gridLineColor = "transparent",
 #                #lineColor = "transparent", minorGridLineColor = "transparent", tickColor = "transparent"
@@ -375,9 +375,9 @@ base_hc_theme <- hc_theme(
 # hc_theme_with_line <- hc_theme(
 #   colors = c(color1, color2, color3, color4, color5),
 #   chart = list(style = common_chart_style),
-#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
-#   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+#   title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "16px"))),
+#   subtitle = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "14px"))),
+#   legend = list(align = alignment, verticalAlign = "top", itemStyle = common_style),
 #   xAxis = list(
 #     labels = list(enabled = TRUE, style = common_style),
 #     tickmarkPlacement = 'on',
@@ -403,9 +403,9 @@ base_hc_theme <- hc_theme(
 hc_theme_with_line <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
-  title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-  subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
-  legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+  title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "16px"))),
+  subtitle = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "14px"))),
+  legend = list(align = alignment, verticalAlign = "top", itemStyle = common_style),
   xAxis = list(
     labels = list(enabled = TRUE, style = common_style),
     tickmarkPlacement = 'on',
@@ -468,7 +468,7 @@ hc_theme_map <- hc_theme_merge(
   base_hc_theme,
   hc_theme(
     chart = list(style = modifyList(common_chart_style, list(fontSize = "14px"))),
-    title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "22px"))),
+    title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "22px"))),
     plotOptions = list(
       series = list(states = list(inactive = list(opacity = 1))),
       line = list(marker = list(enabled = TRUE)),

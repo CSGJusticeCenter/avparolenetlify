@@ -129,7 +129,7 @@ div(
 )
 ```
 
-### Criminal Offense
+### Criminal Offenses
 
 ```{r}
 # section_text <- HTML("")
@@ -140,23 +140,23 @@ div(
 #   section_text,
 #   div(id = "visualization", state_bubble_ped_offense_group)
 # )
-```
-
-In 2020, 61% of people in prison past their parole eligibility date were in prison for violent offenses.
-
-```{r}
-div(id = "highlight-visualization", style = "width: 200px; height: 200px; overflow: hidden;", state_bubble_ped_offense_group)
+section_text <- "In 2020, 61% of people in prison past their parole eligibility date were in prison for violent offenses. The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for aggravated or simple assault (26%) and property crimes (19%). Other offense categories make up smaller proportions of this population."
+div(
+  id = "grid-container",
+  style = "display: grid; grid-template-columns: 3fr 1fr; grid-row-gap: 0px; grid-column-gap: 20px;",
+  section_text,
+  div(id = "highlight-visualization", style = "width: 200px; height: 200px; overflow: hidden; margin-right: 0; margin-left: 0px;", state_bubble_ped_offense_group)
+)
 br()
 ```
-
-The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for aggravated or simple assault (26%) and property crimes (19%). Other offense categories make up smaller proportions of this population.
 
 ```{r}
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
 
-### Sentence Length
+
+### Original Sentence Lengths
 
 `r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
 
@@ -168,10 +168,14 @@ div(id = "visualization", state_bar_parole_eligibility_sentlgth)
 <div class="divider"></div>
 
 ## Missing Data
-
-This section will have information about missing parole eligibility data for the state once new NCRP data is released.
-
 <br>
+
+
+
+
+
+
+
 
 
 
@@ -337,18 +341,18 @@ cat(message)
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-  div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
-  div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
-  div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
-  div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
-  div(style = "color: #49a7a1; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "color: #55b4e5; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "color: #d97d68; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "color: #decf64; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Black People")),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
+  div(style = "color: #49a7a1; text-align: left; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
+  div(style = "color: #55b4e5; text-align: left; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
+  div(style = "color: #d97d68; text-align: left; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
+  div(style = "color: #decf64; text-align: left; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
+  div(style = "color: #49a7a1; text-align: left; font-size: 20px; font-weight: bold;", "Years"),
+  div(style = "color: #55b4e5; text-align: left; font-size: 20px; font-weight: bold;", "Years"),
+  div(style = "color: #d97d68; text-align: left; font-size: 20px; font-weight: bold;", "Years"),
+  div(style = "color: #decf64; text-align: left; font-size: 20px; font-weight: bold;", "Years"),
+  div(style = "text-align: left; font-size: 14px; font-weight: bold;", HTML("Black People")),
+  div(style = "text-align: left; font-size: 14px; font-weight: bold;", HTML("White People")),
+  div(style = "text-align: left; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
+  div(style = "text-align: left; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
 )
 br()
 ```
@@ -374,7 +378,7 @@ div(id = "visualization", state_bubble_race_ped_release)
 ## Time Served
 
 ```{r}
-section_text <- "Hispanic individuals faced the longest average length of stay in prison in 2020. Similarly, Black, non-Hispanic individuals also experienced notably longer prison stays compared to their White, non-Hispanic counterparts, who had the shortest average length of stay."
+section_text <- "Hispanic individuals faced the longest average time served in prison in 2020. Similarly, Black, non-Hispanic individuals also experienced notably longer prison stays compared to their White, non-Hispanic counterparts, who had the shortest average time served."
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 10px;",

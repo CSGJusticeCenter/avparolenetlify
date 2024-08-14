@@ -58,8 +58,10 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
       eligible in the future, and population with missing parole eligibility data.")
 
   highcharts <- highchart() |>
-    hc_chart(type = "bar", marginLeft = 10,
-             marginBottom = 10
+    hc_chart(type = "bar"
+             # marginLeft = 10,
+             # marginBottom = -30,
+             # marginTop = 10
              ) |>
     hc_title(text = "Pct. of Prison Population by Parole Eligibility Status") |>
     hc_add_theme(base_hc_theme) |>
@@ -70,12 +72,13 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
              lineColor = 'transparent',
              labels = list(enabled = FALSE)) |>
     hc_yAxis(title = list(text = ""),
+             max = 1,
              gridLineWidth = 0,
              tickColor = "transparent",
              minorGridLineWidth = 0,
              labels = list(enabled = FALSE)) |>
     hc_plotOptions(series = list(stacking = "normal",
-                                 pointWidth = 50)) |>
+                                 pointWidth = 40)) |>
     hc_tooltip(formatter = JS("function () {
     return this.point.tooltip;
   }")) |>
@@ -91,10 +94,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   }
                   return null;
                 }"),
-                    # align = "center",  # Center align the label
-                    # verticalAlign = "bottom",  # Position label below the bar
                     x = 0,
-                    y = 100,
+                    y = 60,
                     style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Future 6+ Years",
@@ -109,10 +110,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   }
                   return null;
                 }"),
-                    # align = "center",  # Center align the label
-                    # verticalAlign = "bottom",  # Position label below the bar
                     x = 0,
-                    y = 100,
+                    y = 60,
                     style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Future 1-5 Years",
@@ -127,10 +126,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   }
                   return null;
                 }"),
-                    # align = "center",  # Center align the label
-                    # verticalAlign = "bottom",  # Position label below the bar
                     x = 0,
-                    y = 100,
+                    y = 60,
                     style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Current",
@@ -145,26 +142,27 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   }
                   return null;
                 }"),
-                    # align = "center",  # Center align the label
-                    # verticalAlign = "bottom",  # Position label below the bar
                     reversed = TRUE,
                     x = 0,
-                    y = 100,
+                    y = 60,
                     style = list(fontSize = "12px", fontWeight = "regular", color = "#000000", textOutline = "none")
                   )) |>
     hc_legend(align = "left",
               verticalAlign = "top",
               layout = "horizontal",
-              x = -10,
               reversed = TRUE,
               title = list(style = list(fontWeight = "regular", fontSize = "12px"))) |>
-    hc_exporting(enabled = FALSE)
+    hc_exporting(enabled = TRUE)
 
   return(highcharts)
 })
 
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
-all_stackedbar_pe_type$Georgia
+all_stackedbar_pe_type$Georgia |>
+  hc_size(height = 150)|>
+  hc_chart( backgroundColor = "darkgray")
+save(all_stackedbar_pe_type, file = file.path(folder, "all_stackedbar_pe_type.rds"))
+
 
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
@@ -189,8 +187,6 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
 
 all_sentence_parole_eligibility_population <- setNames(all_sentence_parole_eligibility_population, states)
 all_sentence_parole_eligibility_population$Georgia
-
-
 
 
 
@@ -464,7 +460,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Date") |>
-    hc_exporting(enabled = FALSE)
+    hc_exporting(enabled = TRUE)
   return(highcharts)
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
@@ -606,7 +602,7 @@ for (folder in theseFOLDERS){
 #     hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.value}") |>
 #     hc_colors(c(color4, color1, darkgray)) |>
 #     hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-#     hc_exporting(enabled = FALSE) |>
+#     hc_exporting(enabled = TRUE) |>
 #     hc_add_theme(base_hc_theme)
 #
 #   return(highcharts)
@@ -716,7 +712,7 @@ for (folder in theseFOLDERS){
 #       sizeBy = "area"
 #     )) |>
 #     hc_legend(enabled = FALSE) |>
-#     hc_exporting(enabled = FALSE)
+#     hc_exporting(enabled = TRUE)
 #
 #   return(highcharts)
 # })
