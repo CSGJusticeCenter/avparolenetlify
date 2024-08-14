@@ -555,7 +555,6 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
     hc_yAxis(categories = y_levels, title = list(text = ""), type = "category", min = 0, max = length(y_levels) - 1) |>
     hc_add_series(name = "", data = list_parse(data.frame(x = df_complete$x_value, y = df_complete$y_value, z = df_complete$Value, n = df_complete$n, color = df_complete$color, Race = df_complete$Race, Level = df_complete$Level, Year = df_complete$Year))) |>
     hc_title(text = "When are people released from prison after their parole eligibility year?") |>
-    hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = '<b>Race:</b> {point.Race}<br><b>Level:</b> {point.Level}<br><b>Year:</b> {point.Year}<br><b>Percentage:</b> {point.z}%<br><b>Count:</b> {point.n}<br>') |>
     hc_plotOptions(bubble = list(
       maxSize = 50,
       sizeBy = "area",
@@ -571,7 +570,8 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
     )) |>
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
-    hc_add_theme(base_hc_theme)
+    hc_add_theme(base_hc_theme) |>
+    hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = '<b>Race:</b> {point.Race}<br><b>Level:</b> {point.Level}<br><b>Year:</b> {point.Year}<br><b>Percentage:</b> {point.z}%<br><b>Count:</b> {point.n}<br>')
 
   return(highcharts)
 })
@@ -679,6 +679,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
     hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
     hc_colors(c(color1, color2, color4, color3)) |>
     hc_exporting(enabled = TRUE) |>
+    hc_add_theme(base_hc_theme) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
       pointFormat = paste0(
@@ -689,8 +690,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       )
     ) |>
     hc_legend(verticalAlign = "top",
-              layout = "horizontal") |>
-    hc_add_theme(base_hc_theme)
+              layout = "horizontal")
 
   return(highcharts)
 })
@@ -805,7 +805,7 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
       tickColor = "transparent",
       max = max_los*1.5
     ) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_exporting(enabled = FALSE) |>
     hc_tooltip(enabled = FALSE) |>
     hc_legend(enabled = FALSE) |>
     hc_size(height = 150)

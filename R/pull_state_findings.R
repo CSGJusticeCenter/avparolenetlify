@@ -298,6 +298,20 @@ if (state_for_report %in% names(all_pie_release_type)) {
   state_pie_release_type <- no_data_text
 }
 
+
+# SENTENCE: The demographics of people released from prison reveal
+#           notable proportions among Black, non-Hispanic and white,
+#           non-hispanic people. Gender distribution indicates a
+#           predominance of males over females. Age-wise, the majority
+#           of people were 25-34 years and 35-44 years old. These findings
+#           provide insights into the populations transitioning back into the community
+if (state_for_report %in% names(all_sentence_releases_demographics)) {
+  state_sentence_releases_demographics <-
+    all_sentence_releases_demographics[[state_for_report]]
+} else {
+  state_sentence_releases_demographics <- ""
+}
+
 # TITLE: Race and Ethnicity
 if (state_for_report %in% names(all_waffle_releases_race)) {
   state_waffle_releases_race <-

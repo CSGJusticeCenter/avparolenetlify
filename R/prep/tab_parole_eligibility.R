@@ -180,7 +180,7 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
              rptyear == select_year)
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people in prison past their parole eligibility date. This group made up ",
+                      " people in prison past their parole eligibility year. This group made up ",
                       df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
   return(sentences)
 })
@@ -501,12 +501,12 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
   # Check if the top two groups have equal proportions
   if (length(unique(df1$prop[1:2])) == 1) {
-    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility date were in prison for ",
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility year were in prison for ",
                              tolower(df1$group[1]), " offenses and ",
                              round(df1$prop[2] * 100, 0), "% for ",
                              tolower(df1$group[2]), " offenses.")
   } else {
-    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility date were in prison for ",
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility year were in prison for ",
                              tolower(df1$group[1]), " offenses.")
   }
 
@@ -572,7 +572,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Date") |>
+    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Year") |>
     hc_exporting(enabled = TRUE)
   return(highcharts)
 })

@@ -215,7 +215,6 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     highchart() |>
     hc_chart(type = "pie") |>
     hc_title(text = "Proportion of Conditional vs. Unconditional Releases") |>
-    hc_tooltip(pointFormat = '{point.name}: <b>{point.percentage:.0f}%</b> ({point.y})') |>
     hc_plotOptions(pie = list(
       dataLabels = list(
         enabled = TRUE,
@@ -231,7 +230,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     )) |>
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color2, color3)) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_tooltip(pointFormat = '{point.name}: <b>{point.percentage:.0f}%</b> ({point.y})')
   return(highcharts)
 })
 all_pie_release_type <- setNames(all_pie_release_type, states)
@@ -244,7 +244,7 @@ all_pie_release_type$Georgia
 #------ Releases by Race, Ethnicity, Age, and Gender ------#
 
 # Prepare the data for race
-current_ped_race <- fnc_prepare_releases_data(ncrp_releases, race)
+current_releases_race <- fnc_prepare_releases_data(ncrp_releases, race)
 
 # Colors for race
 colors_race <- c(color1, color2, color3, color4)
@@ -253,10 +253,10 @@ colors_race <- c(color1, color2, color3, color4)
 accessibility_text_race <- "TBD"
 
 # Create the charts for race
-all_waffle_releases_race <- fnc_hc_waffle(current_ped_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+all_waffle_releases_race <- fnc_hc_waffle(current_releases_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
 
 # Prepare the data for sex
-current_ped_sex <- fnc_prepare_releases_data(ncrp_releases, sex)
+current_releases_sex <- fnc_prepare_releases_data(ncrp_releases, sex)
 
 # Colors for sex
 colors_sex <- c(color1, color3)
@@ -265,12 +265,12 @@ colors_sex <- c(color1, color3)
 accessibility_text_sex <- "TBD"
 
 # Create the charts for sex
-all_waffle_releases_sex <- fnc_hc_waffle(current_ped_sex, "sex", colors_sex, "Gender", accessibility_text_sex)
+all_waffle_releases_sex <- fnc_hc_waffle(current_releases_sex, "sex", colors_sex, "Gender", accessibility_text_sex)
 
 # Prepare the data for age
-current_ped_agerlse <- fnc_prepare_releases_data(ncrp_releases, agerlse) |>
+current_releases_agerlse <- fnc_prepare_releases_data(ncrp_releases, agerlse) |>
   arrange(state, desc(agerlse))
-current_ped_agerlse$agerlse <- factor(current_ped_agerlse$agerlse,
+current_releases_agerlse$agerlse <- factor(current_releases_agerlse$agerlse,
                                       levels = c("18-24 years",
                                                  "25-34 years",
                                                  "35-44 years",
@@ -284,7 +284,7 @@ colors_age <- c(color1, color2, color3, color5, color4)
 accessibility_text_age <- "TBD"
 
 # Create the charts for age
-all_waffle_releases_agerlse <- fnc_hc_waffle(current_ped_agerlse, "agerlse", colors_age, "Current Age", accessibility_text_age)
+all_waffle_releases_agerlse <- fnc_hc_waffle(current_releases_agerlse, "agerlse", colors_age, "Current Age", accessibility_text_age)
 
 # Display the chart for Georgia as an example
 all_waffle_releases_race$Georgia
@@ -292,7 +292,72 @@ all_waffle_releases_sex$Georgia
 all_waffle_releases_agerlse$Georgia
 
 
+states <- unique(current_releases_race$state)
+all_sentence_releases_demographics <- map(.x = states,  .f = function(x) {
 
+  # Race demographics
+  df_race <- current_releases_race  |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check for missing race data
+  if (nrow(df_race) < 2 || any(is.na(df_race$prop[1:2]))) {
+    race_sentence <- "Data on race and ethnicity is incomplete or missing."
+  } else {
+    # race_sentence <- paste0("notable proportions among ",
+    #                         df_race$race[1], " (", round(df_race$prop[1] * 100, 0), "%) and ",
+    #                         tolower(df_race$race[2]), " (", round(df_race$prop[2] * 100, 0), "%) people.")
+    race_sentence <- paste0("notable proportions among ",
+                            df_race$race[1], " and ",
+                            tolower(df_race$race[2]), " people.")
+  }
+
+  # Gender distribution
+  df_sex <- current_releases_sex  |>
+    filter(state == x)
+
+  # Check for missing sex data
+  if (nrow(df_sex) < 2 || any(is.na(df_sex$prop))) {
+    sex_sentence <- "Gender distribution data is incomplete or missing."
+  } else {
+    if (df_sex$prop[df_sex$sex == "Male"] > df_sex$prop[df_sex$sex == "Female"]) {
+      sex_sentence <- "Gender distribution indicates a predominance of males over females."
+    } else if (df_sex$prop[df_sex$sex == "Female"] > df_sex$prop[df_sex$sex == "Male"]) {
+      sex_sentence <- "Gender distribution indicates a predominance of females over males."
+    } else {
+      sex_sentence <- "Gender distribution indicates an equal number of males and females."
+    }
+  }
+
+  # Age distribution
+  df_agerlse <- current_releases_agerlse  |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check for missing agerlse data
+  if (nrow(df_agerlse) < 2 || any(is.na(df_agerlse$prop[1:2]))) {
+    age_sentence <- "Age distribution data is incomplete or missing."
+  } else {
+    # age_sentence <- paste0("Age-wise, the majority of people were ",
+    #                        df_agerlse$agerlse[1], " (", round(df_agerlse$prop[1] * 100, 0), "%) and ",
+    #                        df_agerlse$agerlse[2], " (", round(df_agerlse$prop[2] * 100, 0), "%) old.")
+    age_sentence <- paste0("Age-wise, the majority of people were ",
+                           df_agerlse$agerlse[1], " and ",
+                           df_agerlse$agerlse[2],
+                           " old. These findings provide insights into the populations transitioning back into the community.")
+  }
+
+  # Combine the sentences
+  sentences <- paste0("The demographics of people released from prison reveal ",
+                      race_sentence, " ", sex_sentence, " ", age_sentence)
+
+  return(sentences)
+})
+
+all_sentence_releases_demographics <- setNames(all_sentence_releases_demographics, states)
+all_sentence_releases_demographics$Georgia
 
 
 
@@ -479,6 +544,8 @@ for (folder in theseFOLDERS){
   save(all_line_releases_by_year, file = file.path(folder, "all_line_releases_by_year.rds"))
   save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
   save(all_pie_release_type,  file = file.path(folder, "all_pie_release_type.rds"))
+
+  save(all_sentence_releases_demographics, file = file.path(folder, "all_sentence_releases_demographics.rds"))
   save(all_waffle_releases_race,  file = file.path(folder, "all_waffle_releases_race.rds"))
   save(all_waffle_releases_sex,  file = file.path(folder, "all_waffle_releases_sex.rds"))
   save(all_waffle_releases_agerlse,  file = file.path(folder, "all_waffle_releases_agerlse.rds"))
