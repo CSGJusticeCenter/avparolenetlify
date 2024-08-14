@@ -55,6 +55,19 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_population)) {
   state_sentence_parole_eligibility_population <- ""
 }
 
+# SENTENCE: The demographics of people in prison past their parole eligibility
+#           year reveal notable proportions among Black, non-Hispanic (56%)
+#           and white, non-hispanic (40%) people. Gender distribution
+#           indicates a predominance of males (93%) over females (7%).
+#           Age-wise, the majority of people were 25-34 years (39%) and
+#           35-44 years (26%) old."
+if (state_for_report %in% names(all_sentence_parole_eligibility_demographics)) {
+  state_sentence_parole_eligibility_demographics <-
+    all_sentence_parole_eligibility_demographics[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_demographics <- ""
+}
+
 # TITLE: Race and Ethnicity
 if (state_for_report %in% names(all_waffle_parole_eligibility_race)) {
   state_waffle_parole_eligibility_race <-
@@ -97,7 +110,19 @@ if (state_for_report %in% names(all_scatter_race_ped_release)) {
   state_scatter_race_ped_release <- no_data_text
 }
 
-# TITLE: NONE
+# SENTENCE: In 2020, 61% of people in prison past their parole eligibility date
+#           were in prison for violent offenses. The breakdown of criminal
+#           offenses of people in prison past their parole eligibility year
+#           reveals a varied landscape, with the majority of people incarcerated
+#           for aggravated or simple assault (26%) and property (19%) offenses."
+if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
+  state_sentence_parole_eligibility_fbi_index <-
+    all_sentence_parole_eligibility_fbi_index[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_fbi_index <- ""
+}
+
+# TITLE: Violent vs Non-Violent
 if (state_for_report %in% names(all_bubble_ped_offense_group)) {
   state_bubble_ped_offense_group <-
     all_bubble_ped_offense_group[[state_for_report]]

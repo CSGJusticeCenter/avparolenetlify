@@ -241,6 +241,71 @@ all_waffle_parole_eligibility_race$Georgia
 all_waffle_parole_eligibility_sex$Georgia
 all_waffle_parole_eligibility_ageyrend$Georgia
 
+states <- unique(current_ped_race$state)
+all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(x) {
+
+  # Race demographics
+  df_race <- current_ped_race  |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check for missing race data
+  if (nrow(df_race) < 2 || any(is.na(df_race$prop[1:2]))) {
+    race_sentence <- "Data on race and ethnicity is incomplete or missing."
+  } else {
+    # race_sentence <- paste0("notable proportions among ",
+    #                         df_race$race[1], " (", round(df_race$prop[1] * 100, 0), "%) and ",
+    #                         tolower(df_race$race[2]), " (", round(df_race$prop[2] * 100, 0), "%) people.")
+    race_sentence <- paste0("notable proportions among ",
+                            df_race$race[1], " and ",
+                            tolower(df_race$race[2]), " people.")
+  }
+
+  # Gender distribution
+  df_sex <- current_ped_sex  |>
+    filter(state == x)
+
+  # Check for missing sex data
+  if (nrow(df_sex) < 2 || any(is.na(df_sex$prop))) {
+    sex_sentence <- "Gender distribution data is incomplete or missing."
+  } else {
+    if (df_sex$prop[df_sex$sex == "Male"] > df_sex$prop[df_sex$sex == "Female"]) {
+      sex_sentence <- "Gender distribution indicates a predominance of males over females."
+    } else if (df_sex$prop[df_sex$sex == "Female"] > df_sex$prop[df_sex$sex == "Male"]) {
+      sex_sentence <- "Gender distribution indicates a predominance of females over males."
+    } else {
+      sex_sentence <- "Gender distribution indicates an equal number of males and females."
+    }
+  }
+
+  # Age distribution
+  df_ageyrend <- current_ped_ageyrend  |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check for missing ageyrend data
+  if (nrow(df_ageyrend) < 2 || any(is.na(df_ageyrend$prop[1:2]))) {
+    age_sentence <- "Age distribution data is incomplete or missing."
+  } else {
+    # age_sentence <- paste0("Age-wise, the majority of people were ",
+    #                        df_ageyrend$ageyrend[1], " (", round(df_ageyrend$prop[1] * 100, 0), "%) and ",
+    #                        df_ageyrend$ageyrend[2], " (", round(df_ageyrend$prop[2] * 100, 0), "%) old.")
+    age_sentence <- paste0("Age-wise, the majority of people were ",
+                           df_ageyrend$ageyrend[1], " and ",
+                           df_ageyrend$ageyrend[2], " old.")
+  }
+
+  # Combine the sentences
+  sentences <- paste0("The demographics of people in prison past their parole eligibility year reveal ",
+                      race_sentence, " ", sex_sentence, " ", age_sentence)
+
+  return(sentences)
+})
+
+all_sentence_parole_eligibility_demographics <- setNames(all_sentence_parole_eligibility_demographics, states)
+all_sentence_parole_eligibility_demographics$Georgia
 
 
 
@@ -421,6 +486,54 @@ all_bubble_ped_offense_group <- setNames(all_bubble_ped_offense_group, states)
 # Display the chart for Georgia as an example
 all_bubble_ped_offense_group$Georgia
 
+states <- unique(current_ped_fbi_index$state)
+all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) {
+
+  # Get the top group
+  df1 <- current_ped_offense_group  |>
+    filter(state == x) |>
+    arrange(-prop)
+
+  # Check if there's missing data in df1
+  if (nrow(df1) < 2 || any(is.na(df1$prop[1:2]))) {
+    return(paste0("Data for ", x, " is incomplete or missing for the top offense groups."))
+  }
+
+  # Check if the top two groups have equal proportions
+  if (length(unique(df1$prop[1:2])) == 1) {
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility date were in prison for ",
+                             tolower(df1$group[1]), " offenses and ",
+                             round(df1$prop[2] * 100, 0), "% for ",
+                             tolower(df1$group[2]), " offenses.")
+  } else {
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility date were in prison for ",
+                             tolower(df1$group[1]), " offenses.")
+  }
+
+  # Get the top two FBI index categories
+  df2 <- current_ped_fbi_index |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check if there's missing data in df2
+  if (nrow(df2) < 2 || any(is.na(df2$prop[1:2]))) {
+    return(paste0("Data for ", x, " is incomplete or missing."))
+  }
+
+  # Construct the sentence for the FBI index breakdown
+  fbi_sentence <- paste0("The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for ",
+                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1] * 100, 0), "%) and ",
+                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2] * 100, 0), "%) offenses.")
+
+  # Combine the sentences
+  sentences <- paste0("In ", select_year, ", ", group_sentence, " ", fbi_sentence)
+
+  return(sentences)
+})
+
+all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
+all_sentence_parole_eligibility_fbi_index$`West Virginia`
 
 
 
@@ -505,258 +618,16 @@ all_sentence_parole_eligibility_sentlgth$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(all_stackedbar_pe_type,                     file = file.path(folder, "all_stackedbar_pe_type.rds"))
-  save(all_sentence_parole_eligibility_population, file = file.path(folder, "all_sentence_parole_eligibility_population.rds"))
-  save(all_waffle_parole_eligibility_race,         file = file.path(folder, "all_waffle_parole_eligibility_race.rds"))
-  save(all_waffle_parole_eligibility_sex,          file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
-  save(all_waffle_parole_eligibility_ageyrend,     file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
-  # save(all_bubble_ped_fbi_index,                   file = file.path(folder, "all_bubble_ped_fbi_index.rds"))
-  save(all_bubble_ped_offense_group,               file = file.path(folder, "all_bubble_ped_offense_group.rds"))
-  save(all_bar_ped_fbi_index,                      file = file.path(folder, "all_bar_ped_fbi_index.rds"))
-  save(all_bar_parole_eligibility_sentlgth,        file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
-  save(all_sentence_parole_eligibility_sentlgth,   file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))
+  save(all_stackedbar_pe_type,                       file = file.path(folder, "all_stackedbar_pe_type.rds"))
+  save(all_sentence_parole_eligibility_population,   file = file.path(folder, "all_sentence_parole_eligibility_population.rds"))
+  save(all_sentence_parole_eligibility_demographics, file = file.path(folder, "all_sentence_parole_eligibility_demographics.rds"))
+  save(all_waffle_parole_eligibility_race,           file = file.path(folder, "all_waffle_parole_eligibility_race.rds"))
+  save(all_waffle_parole_eligibility_sex,            file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
+  save(all_waffle_parole_eligibility_ageyrend,       file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
+  save(all_sentence_parole_eligibility_fbi_index,    file = file.path(folder, "all_sentence_parole_eligibility_fbi_index.rds"))
+  save(all_bubble_ped_offense_group,                 file = file.path(folder, "all_bubble_ped_offense_group.rds"))
+  save(all_bar_ped_fbi_index,                        file = file.path(folder, "all_bar_ped_fbi_index.rds"))
+  save(all_bar_parole_eligibility_sentlgth,          file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
+  save(all_sentence_parole_eligibility_sentlgth,     file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))
 }
 
-# current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) |>
-#   mutate(group = case_when(
-#     fbi_index %in% c("Murder and Non-negligent Manslaughter",
-#                      "Rape or Sexual Assault",
-#                      "Robbery",
-#                      "Aggravated or Simple Assault",
-#                      "Other Violent Offenses") ~ "Violent",
-#     fbi_index %in% c("Drugs", "Public order", "Property") ~ "Non-Violent",
-#     TRUE ~ "Other or Unknown"
-#   ),
-#   color = case_when(
-#     group == "Violent" ~ color3,
-#     group == "Non-Violent" ~ color2,
-#     group == "Other or Unknown" ~ darkgray
-#   ))
-#
-# # Get unique states
-# states <- unique(current_ped_fbi_index$state)
-#
-# # Create Highcharts visualizations for each state
-# all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
-#
-#   df1 <- current_ped_fbi_index |>
-#     filter(state == x) |>
-#     select(fbi_index, n, group)
-#
-#   # Manual adjustments to group names
-#   df1$group <- as.character(df1$group)
-#   df1$group[df1$group == "Murder and Non-negligent Manslaughter"] <- "Murder and Non-negligent<br>Manslaughter"
-#   df1$group[df1$group == "Rape or Sexual Assault"] <- "Rape or<br>Sexual Assault"
-#   df1$group[df1$group == "Aggravated or Simple Assault"] <- "Aggravated or<br>Simple Assault"
-#   df1$group[df1$group == "Other Violent Offenses"] <- "Other Violent"
-#   df1$group[df1$group == "Other or Unknown"] <- "Other or<br>Unknown"
-#
-#   # Unique groups
-#   groups <- unique(df1$group)
-#
-#   # Create the nested list structure
-#   data <- lapply(groups, function(g) {
-#     items <- df1[df1$group == g, ]
-#     items_list <- lapply(1:nrow(items), function(i) {
-#       list(name = as.character(items$fbi_index[i]),
-#            value = items$n[i],
-#            color = case_when(g == "Violent" ~ color4,
-#                              g == "Non-Violent" ~ color1,
-#                              TRUE ~ darkgray)) # Assuming color assignment based on group
-#     })
-#     list(name = g, data = items_list)
-#   })
-#
-#   # Create the plot
-#   highcharts <- highchart() |>
-#     hc_chart(type = "packedbubble"
-#              # marginTop = 50, marginBottom = 50,
-#              # marginLeft = 50, marginRight = 50
-#     ) |>
-#     hc_add_series_list(data) |>
-#     hc_plotOptions(
-#       packedbubble = list(
-#         minSize = "20%",
-#         maxSize = "80%",
-#         layoutAlgorithm = list(
-#           splitSeries = TRUE,
-#           gravitationalConstant = 0.02,
-#           seriesInteraction = FALSE,
-#           parentNodeLimit = TRUE
-#         ),
-#         dataLabels = list(
-#           enabled = TRUE,
-#           useHTML = TRUE, # Use HTML to support line breaks
-#           format = '{point.name}',
-#           style = list(
-#             color = "black",
-#             textOutline = "none",
-#             fontWeight = "normal",
-#             fontSize = "10px", # Adjust the font size
-#             textAlign = "center" # Center text horizontally
-#           ),
-#           allowOverlap = TRUE
-#         )
-#       )
-#     ) |>
-#     hc_tooltip(pointFormat = "<b>{point.name}:</b> {point.value}") |>
-#     hc_colors(c(color4, color1, darkgray)) |>
-#     hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-#     hc_exporting(enabled = TRUE) |>
-#     hc_add_theme(base_hc_theme)
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_bubble_ped_fbi_index <- setNames(all_bubble_ped_fbi_index, states)
-#
-# # Display the chart for Georgia as an example
-# all_bubble_ped_fbi_index$Georgia
-#
-#
-#
-# # Get unique states
-# states <- unique(current_ped_fbi_index$state)
-#
-# # Create Highcharts visualizations for each state
-# all_bubble_ped_fbi_index <- map(.x = states, .f = function(x) {
-#
-#   # # Manual adjustments to group names
-#   # df1$group <- as.character(df1$group)
-#   # df1$group[df1$group == "Murder and Non-negligent Manslaughter"] <- "Murder and Non-negligent<br>Manslaughter"
-#   # df1$group[df1$group == "Rape or Sexual Assault"] <- "Rape or<br>Sexual Assault"
-#   # df1$group[df1$group == "Aggravated or Simple Assault"] <- "Aggravated or<br>Simple Assault"
-#   # df1$group[df1$group == "Other Violent Offenses"] <- "Other Violent"
-#   # df1$group[df1$group == "Other or Unknown"] <- "Other or<br>Unknown"
-#
-#   df1 <- current_ped_fbi_index |>
-#     filter(state == x) |>
-#     select(fbi_index, n, prop, group) |>
-#     mutate(y = 1,
-#            prop = round(prop*100,0),
-#            prop_label = paste0(prop, "%"),
-#            color = case_when(
-#              group == "Violent" ~ color3,
-#              group == "Non-Violent" ~ color2,
-#              group == "Other or Unknown" ~ darkgray
-#            ))
-#
-#   # Create bubble chart
-#   highcharts <- highchart() |>
-#     hc_chart(type = "bubble", marginTop = 0) |>
-#     hc_add_series(
-#       data = df1,
-#       type = "bubble",
-#       hcaes(x = fbi_index, y = y, size = n, color = color),
-#       name = "Proportion"
-#     ) |>
-#     hc_add_series(
-#       data = df1,
-#       type = "scatter",
-#       hcaes(x = fbi_index, y = y),
-#       name = "Labels",
-#       marker = list(enabled = FALSE),
-#       dataLabels = list(
-#         enabled = TRUE,
-#         useHTML = TRUE,
-#         format = '{point.prop_label}',
-#         style = list(
-#           color = "black",
-#           textOutline = "none",
-#           fontWeight = "bold",
-#           fontSize = "1em",
-#           textAlign = "center"
-#         ),
-#         align = "center",
-#         verticalAlign = "bottom",
-#         allowOverlap = TRUE,
-#         y = 50 # Adjust y position to place label above the x-axis
-#       )
-#     ) |>
-#     hc_title(text = "Bubble Chart Example") |>
-#     hc_add_theme(base_hc_theme) |>
-#     hc_yAxis(title = list(text = ""), visible = FALSE) |>
-#     hc_xAxis(
-#       # categories = df1$fbi_index,
-#       categories = c(
-#         "Murder and<br>Non-negligent<br>Manslaughter",
-#         "Rape or<br>Sexual<br>Assault",
-#         "Robbery",
-#         "Aggravated<br>or Simple<br>Assault",
-#         "Other<br>Violent<br>Offenses",
-#         "Property",
-#         "Public<br>Order",
-#         "Drugs",
-#         "Other or<br>Unknown"
-#       ),
-#       title = list(text = ""),
-#       labels = list(
-#         enabled = TRUE,
-#         rotation = 0,
-#         overflow = "allow",
-#         allowOverlap = TRUE
-#       ),
-#       majorGridLineColor = "transparent",
-#       gridLineColor = "transparent",
-#       lineColor = "black",
-#       majorGridLineColor = "transparent",
-#       minorGridLineColor = "transparent",
-#       tickColor = "black"
-#     ) |>
-#     hc_tooltip(pointFormat = '<b>{point.fbi_index}</b><br>Count: {point.n:,.0f}<br>Proportion: {point.prop}%') |>
-#     hc_title(text = "Offense Breakdown for People in Prison Past Their Parole Eligibility Date") |>
-#     hc_plotOptions(bubble = list(
-#       minSize = 10,
-#       maxSize = 50,
-#       sizeBy = "area"
-#     )) |>
-#     hc_legend(enabled = FALSE) |>
-#     hc_exporting(enabled = TRUE)
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_bubble_ped_fbi_index <- setNames(all_bubble_ped_fbi_index, states)
-#
-# # Display the chart for Georgia as an example
-# all_bubble_ped_fbi_index$Georgia
-
-
-
-
-# # Get unique states
-# states <- unique(current_ped_fbi_index$state)
-#
-# # Create Highcharts visualizations for each state
-# all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
-#
-#   df1 <- current_ped_fbi_index |>
-#     filter(state == x) |>
-#     mutate(prop = prop*100,
-#            tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
-#                             "<b>Count:</b> ", formattable::comma(n, 0), "<br>",
-#                             "<b>Proportion:</b> ", round(prop, 1), "%"))
-#
-#   hc_accessibility_text <- paste0("TBD")
-#
-#   highcharts <- fnc_hc_barchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
-#     hc_yAxis(max = max(df1$prop)*1.5,
-#              labels = list(
-#                formatter = JS("function() {
-#         return this.value + '%';
-#       }")
-#              )) |>
-#     hc_title(text = "Offense Types for People in Prison Past Their Parole Eligibility Year") |>
-#     hc_tooltip(pointFormat = "{point.tooltip}") |>
-#     hc_colors(c(color3))
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
-#
-# # Display the chart for Georgia as an example
-# all_bar_ped_fbi_index$Georgia
