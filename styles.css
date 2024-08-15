@@ -186,9 +186,8 @@ body {
   margin-left: -12px; Move section slightly to the left so it aligns with other text }*/
 
 #small-visualization {
-  text-align: center; /* Center align text inside the narrow section */
+  text-align: center;
 }
-
 
 #highlight-visualization {
   margin: 0 auto;

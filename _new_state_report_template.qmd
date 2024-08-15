@@ -61,7 +61,10 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_releases_
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_releases_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_releases_agerlse.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_offense_los.rds"))
 
 
@@ -77,7 +80,10 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_hi
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_white.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_waffle_rri_other.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
 state_for_report <- "change_me"
@@ -135,19 +141,21 @@ div(
 ### Criminal Offenses
 
 ```{r}
-div(
-  id = "grid-container",
-  style = "display: grid; grid-template-columns: 3fr 1fr; grid-row-gap: 0px; grid-column-gap: 20px;",
-  state_sentence_parole_eligibility_fbi_index,
-  div(id = "highlight-visualization", style = "width: 200px; height: 200px; overflow: hidden; margin-right: 0; margin-left: 0px;", state_bubble_ped_offense_group)
-)
-br()
+# div(
+#   id = "grid-container",
+#   style = "display: grid; grid-template-columns: 3fr 1fr; grid-row-gap: 0px; grid-column-gap: 20px;",
+#   state_sentence_parole_eligibility_fbi_index,
+#   div(id = "highlight-visualization", style = "width: 200px; height: 200px; overflow: hidden; margin-right: 0; margin-left: 0px;", state_bubble_ped_offense_group)
+# )
+# br()
 ```
+
+`r paste(state_sentence_parole_eligibility_fbi_index, collapse = ", ")`
 
 ```{r}
+# div(id = "visualization", state_bubble_ped_offense_group)
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
-
 
 
 ### Original Sentence Lengths
@@ -162,6 +170,10 @@ div(id = "visualization", state_bar_parole_eligibility_sentlgth)
 <div class="divider"></div>
 
 ## Missing Data
+
+This section will contain information related to missingness in the NCRP data. Keep?
+<br>
+<br>
 <br>
 
 
@@ -241,7 +253,7 @@ div(id = "visualization", state_line_releases_by_year)
 ```
 <br>
 
- 
+`r paste(state_sentence_pe_proportion_released, collapse = ", ")`
 
 ```{r}
 div(id = "visualization", state_stackedbar_parole_eligibility_release)
@@ -280,6 +292,8 @@ div(
 <div class="divider"></div>
 
 ## Time Served by Offense
+
+`r paste(state_sentence_los_offense, collapse = ", ")`
 
 ```{r}
 div(id = "visualization", state_lollipop_offense_los)
@@ -323,7 +337,7 @@ df1 <- all_parole_release_disparities |> filter(state == state_for_report) |>
   group_by(race) |> 
   summarise(total_years = sum(time_between_ped_release, na.rm = TRUE))
 
-message <- paste("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of",
+message <- paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
                  comma(sum(df1$total_years)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups.")
 
 cat(message)
@@ -370,15 +384,23 @@ div(id = "visualization", state_bubble_race_ped_release)
 ## Time Served
 
 ```{r}
-section_text <- "X individuals faced the longest average time served in prison in 2020. Similarly, Y, individuals also experienced notably longer prison stays compared to their Z counterparts, who had the shortest average time served."
-div(
-  id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 10px;",
-  section_text,
-  div(id = "visualization", state_lollipop_los_race)
-)
-br()
+# section_text <- "X individuals faced the longest average time served in prison in 2020. Similarly, Y, individuals also experienced notably longer prison stays compared to their Z counterparts, who had the shortest average time served."
+# div(
+#   id = "grid-container",
+#   style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
+#   section_text,
+#   div(id = "visualization", state_lollipop_los_race)
+# )
+# br()
 ```
+
+`r paste(state_sentence_los_race, collapse = ", ")`
+
+```{r}
+div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
+```
+
+`r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r}
 div(id = "visualization", state_scatter_los_race_offense)

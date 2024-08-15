@@ -10,7 +10,7 @@
 wd <- getwd()
 
 # Get list of 50 states
-states <- c("Georgia", "Iowa", "Idaho", "West Virginia")
+states <- c("Georgia", "Iowa", "Idaho", "West Virginia") #state.name
 
 # Read in original qmd
 orig_qmd <- read_lines("_new_state_report_template.qmd")

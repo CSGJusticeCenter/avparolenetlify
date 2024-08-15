@@ -164,10 +164,10 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
     hc_plotOptions(series = list(stacking = "normal",
                                  animation = FALSE,
                                  cursor = "pointer",
-                                 dataLabels = list(enabled = TRUE,
-                                                   style = list(textOutline = "none",
-                                                                color = "white"),
-                                                   formatter = jsFormatter),
+                                 # dataLabels = list(enabled = TRUE,
+                                 #                   style = list(textOutline = "none",
+                                 #                                color = "white"),
+                                 #                   formatter = jsFormatter),
                                  borderWidth = 3,
                                  minPointLength = 4),
                    accessibility = list(enabled = TRUE,
@@ -184,7 +184,63 @@ all_stackedbar_parole_eligibility_release$Georgia
 
 
 
+# In 2020, X% of people eligible for parole were released during their eligibility
+# year. This represents a X% decrease/increase compared YEAR.
+states <- unique(ncrp_pe_proportion_released$state)
 
+all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
+
+  df1 <- ncrp_pe_proportion_released %>%
+    filter(state == x) %>%
+    group_by(rptyear, status) %>%
+    summarize(total = sum(n, na.rm = TRUE), .groups = "drop") %>%
+    pivot_wider(names_from = status, values_from = total, values_fill = list(total = 0)) %>%
+    mutate(proportion_released = Released / (Released + `Not Released`) * 100) %>%
+    arrange(rptyear)
+
+  # Handling case with only one year of data
+  if (nrow(df1) == 1) {
+    latest_year <- df1$rptyear[1]
+    latest_value <- df1$proportion_released[1]
+    sentence <- paste0(
+      "In ", latest_year, ", ", round(latest_value, 1),
+      "% of people eligible for parole were released during their eligibility year."
+    )
+    return(sentence)
+  }
+
+  # Handling missing data
+  if (nrow(df1) < 2) {
+    return(paste0("Insufficient data for ", x))
+  }
+
+  # Get the latest and earliest years
+  latest_year <- tail(df1$rptyear, 1)
+  earliest_year <- head(df1$rptyear, 1)
+
+  # Get the values for the latest and earliest years
+  latest_value <- tail(df1$proportion_released, 1)
+  earliest_value <- head(df1$proportion_released, 1)
+
+  # Calculate the percentage change
+  percentage_change <- latest_value - earliest_value
+
+  # Determine if the change is an increase or decrease
+  change_type <- ifelse(percentage_change >= 0, "increase", "decrease")
+
+  # Construct the sentence
+  sentence <- paste0(
+    "In ", latest_year, ", ", round(latest_value, 0),
+    "% of people eligible for parole were released during their eligibility year. ",
+    "This represents a ", round(abs(percentage_change), 0), "% ", change_type,
+    " compared to ", earliest_year, "."
+  )
+
+  return(sentence)
+})
+
+all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
+all_sentence_pe_proportion_released$Arizona
 
 
 
@@ -366,80 +422,23 @@ all_sentence_releases_demographics$Georgia
 
 # Calculate the average length of stay by state and by offense type
 ncrp_los_by_offense_type <- ncrp_releases |>
+  filter(rptyear >= 2010) |>
   group_by(state, fbi_index, rptyear) |>
   summarise(
     Average = mean(time_between_admisson_release, na.rm = TRUE)) |>
   pivot_longer(cols = Average, names_to = "type", values_to = "value") |>
   group_by(state) |>
   mutate(max_rptyear = max(rptyear),
-         min_rptyear = max_rptyear - 10) |>
+         min_rptyear = min(rptyear),
+         years_ago = max_rptyear - min_rptyear) |>
   filter(rptyear == min_rptyear | rptyear == max_rptyear) |>
   group_by(state, fbi_index) |>
-  mutate(change_value_10_years = last(value) - first(value),
+  mutate(change_value_over_years = last(value) - first(value),
          prop = (last(value) - first(value)) / first(value) * 100,
          change_sentence = ifelse(prop >= 0,
-                                  paste0(round(value, 1), "<br><b>", "\u2191", "</b> ", round(prop, 0), "% from 10 years ago"),
-                                  paste0(round(value, 1), "<br><b>", "\u2193", "</b> ", round(abs(prop), 0), "% from 10 years ago"))) |>
+                                  paste0(round(value, 1), "<br><b>", "\u2191", "</b> ", round(prop, 0), "% from ", years_ago, " years ago"),
+                                  paste0(round(value, 1), "<br><b>", "\u2193", "</b> ", round(abs(prop), 0), "% from ", years_ago, " years ago"))) |>
   ungroup()
-
-# # Create Highcharts visualizations for each state
-# all_lollipop_offense_los <- map(.x = states, .f = function(x) {
-#
-#   # Get the max and min reporting years for the current state
-#   state_data <- ncrp_los_by_offense_type |> filter(state == x)
-#   max_rptyear <- max(state_data$rptyear)
-#   min_rptyear <- max_rptyear - 10
-#
-#   # Ensure that the necessary years exist for calculations
-#   if (!all(c(min_rptyear, max_rptyear) %in% state_data$rptyear)) {
-#     return(NULL)  # Skip the state if required years are missing
-#   }
-#
-#   # Create the df1 data frame
-#   df1 <- state_data |>
-#     ungroup() |>
-#     select(fbi_index, rptyear, value) |>
-#     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
-#
-#   # Pivot the data wider for calculations
-#   df_wide <- df1 |>
-#     pivot_wider(names_from = rptyear, values_from = value, names_prefix = "year_")
-#
-#   # Calculate percentage change and prepare tooltip text
-#   df_calculations <- df_wide |>
-#     mutate(
-#       pct_change = (get(paste0("year_", max_rptyear)) - get(paste0("year_", min_rptyear))) / get(paste0("year_", min_rptyear)) * 100,
-#       tooltip_text = paste0(
-#         "Offense: ", fbi_index, "<br>",
-#         min_rptyear, ": ", round(get(paste0("year_", min_rptyear)), 2), "<br>",
-#         max_rptyear, ": ", round(get(paste0("year_", max_rptyear)), 2), "<br>",
-#         "Change: ", round(pct_change, 2), "%")
-#     ) |>
-#     select(fbi_index, tooltip_text)
-#
-#   # Merge tooltip text back into df1
-#   df1 <- df1 |>
-#     left_join(df_calculations, by = "fbi_index")
-#
-#   # Create a named vector for y-axis labels
-#   y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
-#
-#   highcharts <- # Plotting
-#     df1 |>
-#     hchart('scatter', hcaes(x = value, y = fbi_index_num, group = rptyear, name = fbi_index)) |>
-#     hc_yAxis(
-#       title = list(text = ""),
-#       categories = y_labels
-#     ) |>
-#     hc_xAxis(title = list(text = "Length of Stay (Years)")) |>
-#     hc_add_theme(hc_theme_with_line) |>
-#     hc_title(text = "Change in Length of Stay by Offense Type") |>
-#     hc_colors(c(color2, color4)) |>
-#     hc_exporting(enabled = TRUE) |>
-#     hc_tooltip(pointFormat = "{point.tooltip_text}")
-#
-#   return(highcharts)
-# })
 
 # Get unique states
 states <- unique(ncrp_los_by_offense_type$state)
@@ -450,7 +449,7 @@ all_lollipop_offense_los <- map(.x = states, .f = function(x) {
   # Get the max and min reporting years for the current state
   state_data <- ncrp_los_by_offense_type |> filter(state == x)
   max_rptyear <- max(state_data$rptyear)
-  min_rptyear <- max_rptyear - 10
+  min_rptyear <- min(state_data$rptyear)
 
   # Ensure that the necessary years exist for calculations
   if (!all(c(min_rptyear, max_rptyear) %in% state_data$rptyear)) {
@@ -527,7 +526,63 @@ all_lollipop_offense_los <- map(.x = states, .f = function(x) {
 all_lollipop_offense_los <- setNames(all_lollipop_offense_los, states)
 
 # Display the chart for Georgia as an example
-all_lollipop_offense_los$Georgia
+all_lollipop_offense_los$Kansas
+
+
+states <- unique(ncrp_los_by_offense_type$state)
+
+# Generate sentence for each state
+all_sentence_los_offense <- map(.x = states, .f = function(x) {
+  # Filter data for the specific state
+  df_state <- ncrp_los_by_offense_type %>% filter(state == x)
+
+  # Handling missing data
+  if (nrow(df_state) == 0) {
+    return(paste0("No data available for ", x))
+  }
+
+  # Handling case with only one year of data
+  if (length(unique(df_state$rptyear)) == 1) {
+    single_year <- unique(df_state$rptyear)
+    sentence <- paste0(
+      "In ", single_year, ", the average time served for different offense types was observed in ", x, "."
+    )
+    return(sentence)
+  }
+
+  # Calculate the largest change in percentage
+  df_change <- df_state %>%
+    arrange(desc(abs(prop))) %>%
+    slice(1)
+
+  largest_change_offense <- df_change$fbi_index
+  largest_change_value <- df_change$prop
+  change_type <- ifelse(largest_change_value >= 0, "increased", "decreased")
+
+  # Get the earliest and latest year
+  earliest_year <- min(df_state$rptyear)
+  latest_year <- max(df_state$rptyear)
+
+  # Construct the sentence
+  sentence <- paste0(
+    "Between ", earliest_year, " and ", latest_year,
+    ", there were shifts in the average time served by individuals for different offense types in ", x, ". ",
+    "The largest change was for ", tolower(as.character(largest_change_offense)), " offenses, which ", change_type, " by ",
+    round(abs(largest_change_value), 0), "%."
+  )
+
+  return(sentence)
+})
+
+# Set names for the list elements
+all_sentence_los_offense <- setNames(all_sentence_los_offense, states)
+
+# Check the sentence for Georgia
+all_sentence_los_offense$Georgia
+
+
+
+
 
 
 
@@ -542,6 +597,8 @@ theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app
 for (folder in theseFOLDERS){
   save(all_sentence_releases, file = file.path(folder, "all_sentence_releases.rds"))
   save(all_line_releases_by_year, file = file.path(folder, "all_line_releases_by_year.rds"))
+
+  save(all_sentence_pe_proportion_released, file = file.path(folder, "all_sentence_pe_proportion_released.rds"))
   save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
   save(all_pie_release_type,  file = file.path(folder, "all_pie_release_type.rds"))
 
@@ -549,97 +606,8 @@ for (folder in theseFOLDERS){
   save(all_waffle_releases_race,  file = file.path(folder, "all_waffle_releases_race.rds"))
   save(all_waffle_releases_sex,  file = file.path(folder, "all_waffle_releases_sex.rds"))
   save(all_waffle_releases_agerlse,  file = file.path(folder, "all_waffle_releases_agerlse.rds"))
+
+  save(all_sentence_los_offense,  file = file.path(folder, "all_sentence_los_offense.rds"))
   save(all_lollipop_offense_los,  file = file.path(folder, "all_lollipop_offense_los.rds"))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # Get unique states
-# states <- unique(ncrp_los_by_offense_type$state)
-#
-# # Create Highcharts visualizations for each state
-# all_lollipop_offense_los <- map(.x = states, .f = function(x) {
-#
-#   # Create the df1 data frame
-#   df1 <- ncrp_los_by_offense_type |>
-#     ungroup() |>
-#     filter(state == x) |>
-#     select(fbi_index, rptyear, value) |>
-#     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
-#
-#   # Calculate percentage change and prepare tooltip text
-#   df_calculations <- df1 |>
-#     pivot_wider(names_from = rptyear, values_from = value, names_prefix = "year_") |>
-#     mutate(pct_change = (year_2020 - year_2010) / year_2010 * 100,
-#            tooltip_text = paste0(
-#              "Offense: ", fbi_index, "<br>",
-#              "2010: ", round(year_2010, 2), "<br>2020: ", round(year_2020, 2), "<br>Change: ", round(pct_change, 2), "%")) |>
-#     select(fbi_index, tooltip_text)
-#
-#   # Merge tooltip text back into df1
-#   df1 <- df1 |>
-#     left_join(df_calculations, by = "fbi_index")
-#
-#   # Create a named vector for y-axis labels
-#   y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
-#
-#   hc_accessibility_text <- paste0("Text TBD")
-#
-#   highcharts <- # Plotting
-#     df1 |>
-#     hchart('scatter', hcaes(x = value, y = fbi_index_num, group = rptyear, name = fbi_index)) |>
-#     hc_yAxis(
-#       title = list(text = ""),
-#       categories = y_labels
-#     ) |>
-#     hc_xAxis(title = list(text = "Length of Stay (Years)")) |>
-#     hc_add_theme(hc_theme_with_line) |>
-#     hc_title(text = "Change in Length of Stay by Offense Type") |>
-#     hc_colors(c(color2, color4)) |>
-#     hc_exporting(enabled = TRUE) |>
-#     hc_tooltip(pointFormat = "{point.tooltip_text}")
-#
-#   return(highcharts)
-# })
-#
-# # Name the list of charts by state
-# all_lollipop_offense_los <- setNames(all_lollipop_offense_los, states)
-#
-# # Display the chart for Georgia as an example
-# all_lollipop_offense_los$Georgia
-
-
-
-
-# # Create the chart# Creatas.numeric()e the chart
-# hchart(df_combined |> filter(year == "2010"), type = "scatter",
-#        hcaes(x = fbi_index, y = value), name = "2010",
-#        marker = list(symbol = "circle", fillColor = color2, radius = 5)) |>
-#   hc_add_series(df_combined |> filter(year == "2020"), type = "scatter",
-#                 hcaes(x = fbi_index, y = value), name = "2020",
-#                 marker = list(symbol = "circle", fillColor = color4, radius = 5)) |>
-#   hc_xAxis(type = "category") |>
-#   hc_yAxis(labels = list(format = "{value} years")) |>
-#   hc_tooltip(shared = TRUE, crosshairs = TRUE)
 

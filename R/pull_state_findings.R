@@ -280,6 +280,15 @@ if (state_for_report %in% names(all_line_releases_by_year)) {
   state_line_releases_by_year <- no_data_text
 }
 
+# SENTENCE: In 2020, 40% of people eligible for parole were released during
+#           their eligibility year. This represents a 3% decrease compared to 2010.
+if (state_for_report %in% names(all_sentence_pe_proportion_released)) {
+  state_sentence_pe_proportion_released <-
+    all_sentence_pe_proportion_released[[state_for_report]]
+} else {
+  state_sentence_pe_proportion_released <- ""
+}
+
 # TITLE: Parole-Eligible Prison Population Released by Year
 if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
   state_stackedbar_parole_eligibility_release <-
@@ -343,6 +352,16 @@ if (state_for_report %in% names(all_waffle_releases_agerlse)) {
     hc_exporting(enabled = FALSE)
 } else {
   state_waffle_releases_agerlse <- no_data_text
+}
+
+# SENTENCE: Between 2010 and 2020, shifts in average time served by individuals
+#           for different offense types have been observed in Georgia.
+#           The largest change was for Robbery offenses, which increased by 24%."
+if (state_for_report %in% names(all_sentence_los_offense)) {
+  state_sentence_los_offense <-
+    all_sentence_los_offense[[state_for_report]]
+} else {
+  state_sentence_los_offense <- ""
 }
 
 # TITLE: LOS by Offense Type
@@ -415,16 +434,39 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <- no_data_text
 }
 
+
+# SENTENCE: "Hispanic, any race individuals faced the longest average time
+#            served in prison in 2020, with an average of 3.8 years.
+#            White, non-Hispanic individuals experienced shorter prison stays,
+#            averaging 2.3 years compared to their counterparts."
+if (state_for_report %in% names(all_sentence_los_race)) {
+  state_sentence_los_race <-
+    all_sentence_los_race[[state_for_report]]
+} else {
+  state_sentence_los_race <- ""
+}
+
 # TITLE: Average Length of Stay by Race, Ethnicity, and Offense Type
 if (state_for_report %in% names(all_lollipop_los_race)) {
   state_lollipop_los_race <-
     all_lollipop_los_race[[state_for_report]] |>
-    hc_size(width = 350,
-            height = 100)
-
+    hc_size(height = 150)
 } else {
   state_lollipop_los_race <- no_data_text
 }
+
+
+# SENTENCE: "By offense type, disparities were observed in time served by race
+#            and ethnicity. For Robbery offenses, Hispanic, any race individuals
+#            had 4.47 more years on average compared to Other race(s), non-Hispanic
+#            individuals, who had the shortest time served for these offenses."
+if (state_for_report %in% names(all_sentence_los_race_offense)) {
+  state_sentence_los_race_offense <-
+    all_sentence_los_race_offense[[state_for_report]]
+} else {
+  state_sentence_los_race_offense <- ""
+}
+
 if (state_for_report %in% names(all_scatter_los_race_offense)) {
   state_scatter_los_race_offense <-
     all_scatter_los_race_offense[[state_for_report]] |>
