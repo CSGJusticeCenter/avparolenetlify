@@ -33,7 +33,7 @@ num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
-In 2020, there were 86,000 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. 
+In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. 
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -48,13 +48,13 @@ national_percentage <- paste0(round(total_current_count / sum(filtered_df$filter
 
 div(
   id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(3, 1fr);",
-  div(id = "national-highlight", style = "text-align: left; color: #00bdb2;", "32"),
-  div(id = "national-highlight", style = "text-align: left; color: #00bdb2;", national_percentage),
-  div(id = "national-highlight", style = "text-align: left; color: #00bdb2;", formattable::comma(num_people_current, digits = 0)),
-  div(id = "bold-text", style = "text-align: left;", HTML("States With Parole Systems")),
-  div(id = "bold-text", style = "text-align: left;", HTML("Pct. of People in Prison<br>Past Their Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: left;", HTML("People in Prison<br>Past Their Parole Eligibility Year"))
+  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
+  div(id = "national-highlight", style = "text-align: center; color: #49a7a1;", formattable::comma(num_people_current, digits = 0)),
+  div(id = "national-highlight", style = "text-align: center; color: #49a7a1;", national_percentage),
+  div(id = "national-highlight", style = "text-align: center; color: #49a7a1;", "32"),
+  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population In Past<br>Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("States With<br>Discretionary Parole"))
 )
 ```
 </div>
@@ -170,27 +170,31 @@ reactable(
 
 
 ```
+
+<div id="footnotes-text"><br>*Includes people in prison for new crimes and with original sentence lengths between 1 to 25 years. Does not include people in prison for parole revocations or sentence lengths less than one year or more than 25 years.<br></div>
+
 <a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About this data</a>
 
 
 
 <br>
 <div class="divider"></div>
-## Disparities in Parole Decisions
+## Disparities 
 
 STATE EXAMPLES
 NATIONAL NUMBERS
-
-
+<br>
+- Incarceration Rates  
+- Release to Parole After Parole Eligibility  
 
 <br>
 <div class="divider"></div>
 ## Economic Impact of Parole
 
-Effective parole systems can reduce incarceration costs.  
+Effective parole systems can reduce incarceration costs...  
 <br>
 
-If incarceration costs and marginal costs are available, show them here. Visualization of potential cost savings?
+If incarceration costs and marginal costs are available, show them here. Visualization of potential cost savings? Savings through timly release after parole eligibility?
 
 <br>
 

@@ -243,6 +243,12 @@ body {
   color: black,
 }
 
+#footnotes-text {
+  font-size: 0.7em;
+  font-family: 'Graphik', sans-serif;
+  text-align: left;
+  color: gray,
+}
 
 /* remove rounded edges everything */
 * {
