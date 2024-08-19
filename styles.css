@@ -200,8 +200,14 @@ body {
 }
 
 .custom-tabs .nav-link {
-  height: 40px;
+ display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */
+  height: 30px;
   width: 200px; /* Allow each tab to take up only as much space as needed */
+  text-align: center; /* Ensure the text is centered within the tab */
+  padding: 0; /* Remove any padding to ensure proper centering */
+  font-size: 0.8em;
 }
 
 .custom-tabs .nav-link.active, .custom-tabs .show>.nav-link {
