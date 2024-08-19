@@ -6,6 +6,7 @@ format:
     code-fold: true
     page-layout: full
     fig_caption: yes
+    anchor-sections: false 
 ---
 
 ```{r setup, include=FALSE}
@@ -385,7 +386,7 @@ div(id = "visualization", state_scatter_race_ped_release)
 
 ### Gender
 
-In progress. Same as type of graph in race and ethnicity tab.
+In progress. Same type of graph as race and ethnicity tab.
 
 :::
 
@@ -409,7 +410,7 @@ div(id = "visualization", state_bubble_race_ped_release)
 
 ### Gender
 
-In progress. Same as type of graph in race and ethnicity tab.
+In progress. Same type of graph as race and ethnicity tab.
 
 :::
 
@@ -451,7 +452,7 @@ div(id = "visualization", state_scatter_los_race_offense)
 
 ### Gender 
 
-In progress. Same as type of graph in race and ethnicity tab.
+In progress. Same type of graph as race and ethnicity tab.
 
 :::
 
