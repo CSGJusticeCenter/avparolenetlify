@@ -303,7 +303,7 @@ if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
 if (state_for_report %in% names(all_pie_release_type)) {
   state_pie_release_type <-
     all_pie_release_type[[state_for_report]] |>
-    hc_size(height = 200)
+    hc_size(height = 225)
 } else {
   state_pie_release_type <- no_data_text
 }
@@ -430,7 +430,7 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <-
     all_bubble_race_ped_release[[state_for_report]] |>
     hc_size(height = 650)|>
-    hc_title(text = "")
+    hc_title(text = "How Soon People Are Released After Their Parole Eligibility Year")
 } else {
   state_bubble_race_ped_release <- no_data_text
 }
@@ -471,8 +471,7 @@ if (state_for_report %in% names(all_sentence_los_race_offense)) {
 if (state_for_report %in% names(all_scatter_los_race_offense)) {
   state_scatter_los_race_offense <-
     all_scatter_los_race_offense[[state_for_report]] |>
-    hc_size(height = 600) |>
-    hc_title(text = "")
+    hc_size(height = 600)
 } else {
   state_scatter_los_race_offense <- no_data_text
 }

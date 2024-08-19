@@ -93,7 +93,7 @@ source("R/pull_state_findings.R")
 
 <div id="state-body-section">
 
-```{r}
+```{r highlight}
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
@@ -120,7 +120,7 @@ br()
 
 `r paste(state_sentence_parole_eligibility_population, collapse = ", ")`
 
-```{r}
+```{r state_stackedbar_pe_type}
 div(id = "visualization", state_stackedbar_pe_type)
 ```
 
@@ -128,7 +128,7 @@ div(id = "visualization", state_stackedbar_pe_type)
 
 `r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
 
-```{r}
+```{r state_waffle_parole_eligibility_demographics}
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
@@ -140,7 +140,7 @@ div(
 
 ### Criminal Offenses
 
-```{r}
+```{r state_sentence_parole_eligibility_fbi_index}
 # div(
 #   id = "grid-container",
 #   style = "display: grid; grid-template-columns: 3fr 1fr; grid-row-gap: 0px; grid-column-gap: 20px;",
@@ -152,7 +152,7 @@ div(
 
 `r paste(state_sentence_parole_eligibility_fbi_index, collapse = ", ")`
 
-```{r}
+```{r state_bar_ped_fbi_index}
 # div(id = "visualization", state_bubble_ped_offense_group)
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
@@ -162,7 +162,7 @@ div(id = "visualization", state_bar_ped_fbi_index)
 
 `r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
 
-```{r}
+```{r state_bar_parole_eligibility_sentlgth}
 div(id = "visualization", state_bar_parole_eligibility_sentlgth)
 ```
 
@@ -191,7 +191,7 @@ This section will contain information related to missingness in the NCRP data. K
 
 `r paste(state_sentence_population, collapse = ", ")`
 
-```{r}
+```{r state_line_population_by_year}
 div(id = "visualization", state_line_population_by_year)
 ```
 
@@ -202,7 +202,7 @@ div(id = "visualization", state_line_population_by_year)
 
 ## Demographics
 
-```{r}
+```{r state_waffle_population_demographics}
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
@@ -219,7 +219,7 @@ div(
 
 ## Criminal Offenses
 
-```{r}
+```{r state_bar_population_fbi_index}
 div(id = "visualization", state_bar_population_fbi_index)
 ```
 
@@ -229,7 +229,7 @@ div(id = "visualization", state_bar_population_fbi_index)
 
 ## Sentence Lengths
 
-```{r}
+```{r state_bar_population_sentlgth}
 div(id = "visualization", state_bar_population_sentlgth)
 ```
 
@@ -248,14 +248,14 @@ div(id = "visualization", state_bar_population_sentlgth)
 
 `r paste(state_sentence_releases, collapse = ", ")`
 
-```{r}
+```{r state_line_releases_by_year}
 div(id = "visualization", state_line_releases_by_year)
 ```
 <br>
 
 `r paste(state_sentence_pe_proportion_released, collapse = ", ")`
 
-```{r}
+```{r state_stackedbar_parole_eligibility_release}
 div(id = "visualization", state_stackedbar_parole_eligibility_release)
 ```
 
@@ -266,7 +266,7 @@ div(id = "visualization", state_stackedbar_parole_eligibility_release)
 
 Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. 
 
-```{r}
+```{r state_pie_release_type}
 div(id = "visualization", state_pie_release_type)
 ```
 
@@ -278,7 +278,7 @@ div(id = "visualization", state_pie_release_type)
 
 `r paste(state_sentence_releases_demographics, collapse = ", ")`
 
-```{r}
+```{r state_waffle_releases_demographics}
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
@@ -295,7 +295,7 @@ div(
 
 `r paste(state_sentence_los_offense, collapse = ", ")`
 
-```{r}
+```{r state_lollipop_offense_los}
 div(id = "visualization", state_lollipop_offense_los)
 ```
 
@@ -318,7 +318,7 @@ div(id = "visualization", state_lollipop_offense_los)
 
 `r paste(state_sentence_rri, collapse = ", ")`
 
-```{r}
+```{r state_hc_waffle_rri_demographics}
 div(id = "visualization", state_hc_waffle_rri_black)
 div(id = "visualization", state_hc_waffle_rri_white)
 div(id = "visualization", state_hc_waffle_rri_hispanic)
@@ -331,39 +331,48 @@ div(id = "visualization", state_hc_waffle_rri_other)
 
 ## Years Spent in Prison After Parole Eligibility
 
-```{r, results='asis'}
-df1 <- all_parole_release_disparities |> filter(state == state_for_report) |> 
+```{r state_parole_release_disparities, results='asis'}
+df1 <- all_parole_release_disparities |>
+  filter(state == state_for_report) |> 
+  filter(!is.na(race)) |> 
   select(time_between_ped_release, race) |> 
   group_by(race) |> 
   summarise(total_years = sum(time_between_ped_release, na.rm = TRUE))
 
-message <- paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
-                 comma(sum(df1$total_years)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups.")
-
-cat(message)
+# Check if all total_years are NA
+if (!all(is.na(df1$total_years))) {
+  
+  message <- HTML(paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
+                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups."))
+  
+  cat(message)
+  
+  html_output <- div(
+    id = "grid-container",
+    style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
+    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
+    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
+    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
+    div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
+    div(style = "color: #49a7a1; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    div(style = "color: #55b4e5; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    div(style = "color: #d97d68; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    div(style = "color: #decf64; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Black People")),
+    div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
+    div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
+    div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
+  )
+  
+  cat(as.character("<br><br>"))
+  cat(as.character(html_output))
+  br()
+} else {
+  cat("")
+}
 ```
 
-```{r}
-div(
-  id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-  div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
-  div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
-  div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
-  div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
-  div(style = "color: #49a7a1; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "color: #55b4e5; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "color: #d97d68; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "color: #decf64; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Black People")),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
-  div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
-)
-br()
-```
-
-```{r}
+```{r state_scatter_race_ped_release}
 div(id = "visualization", state_scatter_race_ped_release)
 ```
 
@@ -374,7 +383,7 @@ div(id = "visualization", state_scatter_race_ped_release)
 
 The timing of release for individuals after their parole eligibility year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
 
-```{r}
+```{r state_bubble_race_ped_release}
 div(id = "visualization", state_bubble_race_ped_release)
 ```
 
@@ -396,13 +405,13 @@ div(id = "visualization", state_bubble_race_ped_release)
 
 `r paste(state_sentence_los_race, collapse = ", ")`
 
-```{r}
+```{r state_lollipop_los_race}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
 ```
 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
-```{r}
+```{r state_scatter_los_race_offense}
 div(id = "visualization", state_scatter_los_race_offense)
 ```
 
