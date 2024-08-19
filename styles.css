@@ -220,26 +220,26 @@ body {
   font-size: 2em;
   font-family: 'Graphik', sans-serif;
   font-weight: bold;
-  color: #49a7a1;
+  color: #176f6d;
   text-align: center;
 }
 
 /* highlighted text on national trend page */
 #national-highlight {
-  font-size: 1.5em;
+  font-size: 2em;
   font-family: 'Graphik', sans-serif;
   font-weight: bold;
-  color: #49a7a1;
+  color: #176f6d;
   text-align: center;
 }
 
 /* bold app text */
 #bold-text {
-  font-size: 0.9em;
+  font-size: 1em;
   font-family: 'Graphik', sans-serif;
   font-weight: bold;
   text-align: center;
-  color: black,
+  line-height: 1.3;
 }
 
 #footnotes-text {

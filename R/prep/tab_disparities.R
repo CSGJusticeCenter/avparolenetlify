@@ -64,7 +64,7 @@ reference_rate <- merged_data %>%
   select(state, incarceration_rate) %>%
   rename(reference_rate = incarceration_rate)
 
-rri_data <- merged_data %>%
+all_rri_data <- merged_data %>%
   inner_join(reference_rate, by = "state") %>%
   mutate(rri = incarceration_rate / reference_rate) %>%
   select(state, race, rri, incarceration_rate) |>
@@ -72,12 +72,12 @@ rri_data <- merged_data %>%
 
 
 # Get list of states
-states <- unique(rri_data$state)
+states <- unique(all_rri_data$state)
 
 # Generate sentences dynamically
 all_sentence_rri <- map(.x = states, .f = function(x) {
 
-  df1 <- rri_data %>%
+  df1 <- all_rri_data %>%
     filter(state == x)
 
   higher_rates <- df1 %>%
@@ -113,12 +113,12 @@ calc_height <- function(num_items, columns, circle_radius) {
   return(ifelse(height < 100, 100, height))  # Ensure minimum height of 100
 }
 # Get unique states
-states <- unique(rri_data$state)
+states <- unique(all_rri_data$state)
 
 # Create Highcharts visualizations for each state
 all_hc_waffle_rri_black <- map(.x = states, .f = function(x) {
 
-  df2 <- rri_data |>
+  df2 <- all_rri_data |>
     ungroup() |>
     filter(state == x) |>
     select(-state, -rri) |>
@@ -173,7 +173,7 @@ all_hc_waffle_rri_black$Georgia
 # Create Highcharts visualizations for each state
 all_hc_waffle_rri_hispanic <- map(.x = states, .f = function(x) {
 
-  df2 <- rri_data |>
+  df2 <- all_rri_data |>
     ungroup() |>
     filter(state == x) |>
     select(-state, -rri) |>
@@ -228,7 +228,7 @@ all_hc_waffle_rri_hispanic$Georgia
 # Create Highcharts visualizations for each state
 all_hc_waffle_rri_white <- map(.x = states, .f = function(x) {
 
-  df2 <- rri_data |>
+  df2 <- all_rri_data |>
     ungroup() |>
     filter(state == x) |>
     select(-state, -rri) |>
@@ -283,7 +283,7 @@ all_hc_waffle_rri_white$Georgia
 # Create Highcharts visualizations for each state
 all_hc_waffle_rri_other <- map(.x = states, .f = function(x) {
 
-  df2 <- rri_data |>
+  df2 <- all_rri_data |>
     ungroup() |>
     filter(state == x) |>
     select(-state, -rri) |>
@@ -952,5 +952,8 @@ for (folder in theseFOLDERS){
 
   save(all_sentence_los_race_offense,  file = file.path(folder, "all_sentence_los_race_offense.rds"))
   save(all_scatter_los_race_offense,   file = file.path(folder, "all_scatter_los_race_offense.rds"))
+
+  save(all_rri_data ,                  file = file.path(folder, "all_rri_data.rds"))
+
 }
 

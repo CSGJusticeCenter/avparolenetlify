@@ -163,6 +163,7 @@ all_states <- state.name
 
 # Define the gradient colors for categories
 gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)
+# gradient_colors <- c(colors$red1, colors$red2, colors$red3, colors$red4)
 
 # Prepare data for national maps
 map_data <- filtered_parole_elig_table_analysis_year |>
@@ -186,25 +187,25 @@ map_data <- filtered_parole_elig_table_analysis_year |>
     # Create tooltips
     tooltip = case_when(
       all_na == TRUE & abolished_discretionary_parole == "No" ~
-        paste0("<b>", state, "<br><br>",
-               "Parole eligibility data is not available.</b><br><br>",
-               "Click on the state to view the state report."),
+        paste0("<b>", state, "</b><br>",
+               "Parole eligibility data is not available.<br>",
+               "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>"),
 
       all_na == TRUE & abolished_discretionary_parole == "Yes" ~
-        paste0("<b>", state, "<br><br>",
-               state, " abolished discretionary parole.</b><br><br>",
-               "Click on the state to view the state report."),
+        paste0("<b>", state, "</b><br>",
+               state, " abolished discretionary parole.<br>",
+               "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>"),
 
       all_na == FALSE & abolished_discretionary_parole == "Yes" ~
-        paste0("<b>", state, "<br><br>",
-               state, " abolished discretionary parole.</b><br><br>",
-               "Click on the state to view the state report."),
+        paste0("<b>", state, "</b><br>",
+               state, " abolished discretionary parole.<br>",
+               "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>"),
 
       all_na == FALSE & abolished_discretionary_parole == "No" ~
         paste0("<b>", state, "</b><br>",
                "<b>People in Prison Past Their Parole Eligibility Year</b><br>",
                "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
-               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Proportion of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Percentage of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
                       "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>- Number of People in Prison:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                       paste(formattable::comma(current_count, 0), "</b></td></tr></table>",
@@ -221,9 +222,6 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
-
-# Define the gradient colors for categories
-gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)  # Adjusted colors to match the example gradient
 
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1

@@ -33,7 +33,7 @@ num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
-In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. 
+In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. This delay not only affects individual lives but also contributes to keeping prison populations higher than necessary, with 33% of those in prison remaining there longer than expected, straining resources and capacity.
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -49,12 +49,12 @@ national_percentage <- paste0(round(total_current_count / sum(filtered_df$filter
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
-  div(id = "national-highlight", style = "text-align: center; color: #49a7a1;", formattable::comma(num_people_current, digits = 0)),
-  div(id = "national-highlight", style = "text-align: center; color: #49a7a1;", national_percentage),
-  div(id = "national-highlight", style = "text-align: center; color: #49a7a1;", "32"),
-  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population In Past<br>Their Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("States With<br>Discretionary Parole"))
+  div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
+  div(id = "national-highlight", national_percentage),
+  div(id = "national-highlight", "34"),
+  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year")),
+  div(id = "bold-text", HTML("Prison Population In Past<br>Their Parole Eligibility Year")),
+  div(id = "bold-text", HTML("States With<br>Discretionary Parole"))
 )
 ```
 </div>
@@ -98,7 +98,7 @@ VISUALIZATION?
 <div class="divider"></div>
 ## Parole Eligibility by State
 
-This table provides a comprehensive look at state-level parole practices for people incarcerated for new crimes and with sentence lengths between 1 and 25 years. It details the percentage and number of individuals in prison past their parole eligibility year, the total prison population, the status of discretionary parole, and the number of parole board members.
+This table provides a comprehensive overview of state-level prison populations*, highlighting the percentage and number of people in prison past their parole eligibility year, alongside details about whether the state has abolished discretionary parole and the number of parole board members.
 
 ```{r}
 # Custom function to create data bars with NA handling
@@ -181,20 +181,19 @@ reactable(
 <div class="divider"></div>
 ## Disparities 
 
-STATE EXAMPLES
-NATIONAL NUMBERS
-<br>
-- Incarceration Rates  
-- Release to Parole After Parole Eligibility  
+Here we can show national disparities in incarceration rates and release after parole eligibility.   
+
+Would you prefer this information to be displayed in this section or on the landing page? Should the policy paper be linked here?
 
 <br>
 <div class="divider"></div>
 ## Economic Impact of Parole
 
-Effective parole systems can reduce incarceration costs...  
-<br>
+Is it of interest to show costs? For instance, we could show potential cost savings, such as savings from timely release after parole eligibility. How much did it cost states on average to incarcerate people past their parole eligibility date?
 
-If incarceration costs and marginal costs are available, show them here. Visualization of potential cost savings? Savings through timly release after parole eligibility?
+Would you prefer this information to be displayed in this section or on the landing page?
+
+
 
 <br>
 

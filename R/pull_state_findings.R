@@ -5,6 +5,7 @@ select_year <- 2020
 no_data_text <- paste0("Data is not available. ", state_for_report,
                        " did not submit this data to the National Corrections Reporting Program in ",
                        select_year, ".")
+no_data_text <- ""
 
 ####################
 
