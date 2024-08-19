@@ -6,7 +6,6 @@ format:
     code-fold: true
     page-layout: full
     fig_caption: yes
-    anchor-sections: false 
 ---
 
 ```{r setup, include=FALSE}
@@ -87,7 +86,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_rac
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
-state_for_report <- "Georgia"
+state_for_report <- "change_me"
 
 source("R/pull_state_findings.R")
 ```
