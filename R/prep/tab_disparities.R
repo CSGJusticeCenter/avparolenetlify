@@ -915,7 +915,7 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
   # Construct the sentence
   sentence <- paste0(
     "By offense type, disparities were observed in time served by race and ethnicity. ",
-    "For ", offense_type, " offenses, ", race_longest,
+    "For ", tolower(offense_type), " offenses, ", race_longest,
     " individuals had ", disparity_diff, " more years on average compared to ",
     race_shortest, " individuals, who had the shortest time served for these offenses."
   )

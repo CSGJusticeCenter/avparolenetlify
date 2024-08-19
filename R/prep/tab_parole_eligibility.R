@@ -264,7 +264,7 @@ all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(
     #                         tolower(df_race$race[2]), " (", round(df_race$prop[2] * 100, 0), "%) people.")
     race_sentence <- paste0("notable proportions among ",
                             df_race$race[1], " and ",
-                            tolower(df_race$race[2]), " people.")
+                            df_race$race[2], " people.")
   }
 
   # Gender distribution

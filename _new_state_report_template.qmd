@@ -440,8 +440,8 @@ In progress. Same type of graph as race and ethnicity tab.
 `r paste(state_sentence_los_race, collapse = ", ")`
 
 ```{r state_lollipop_los_race}
-# div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
-div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
+div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
+# div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
