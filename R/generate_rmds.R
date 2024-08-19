@@ -10,7 +10,7 @@
 wd <- getwd()
 
 # Get list of 50 states
-states <- c("Georgia", "Iowa", "Idaho", "West Virginia", "Colorado") #state.name
+states <- state.name
 
 # Read in original qmd
 orig_qmd <- read_lines("_new_state_report_template.qmd")
@@ -30,4 +30,4 @@ replace_write_qmd <- function(state) {
 walk(states_qmd, replace_write_qmd)
 
 # # Render Georgia
-# quarto::quarto_render("state_report_Georgia.qmd")
+# quarto::quarto_render()

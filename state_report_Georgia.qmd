@@ -347,6 +347,7 @@ if (!all(is.na(df1$total_years))) {
   
   cat(message)
   
+  br()
   html_output <- div(
     id = "grid-container",
     style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",

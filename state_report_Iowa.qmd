@@ -365,6 +365,7 @@ if (!all(is.na(df1$total_years))) {
     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
   )
   
+  cat(as.character("<br><br>"))
   cat(as.character(html_output))
   br()
 } else {
