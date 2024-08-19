@@ -101,7 +101,7 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population In Past<br>Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("1 in 3 Prisoners Are Held<br>Past Their Parole Eligibility Year")),
   div(id = "bold-text", style = "text-align: center;", HTML("Parole Board Members"))
 )
 br()

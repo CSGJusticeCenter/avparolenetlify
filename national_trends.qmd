@@ -27,13 +27,13 @@ parole_elig_txt <- "Parole eligibility is a critical milestone in the criminal j
 load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
-num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
+num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE) 
 ```
 
 <div id="body-section">
 In the United States, parole boards hold significant power over the lives of incarcerated people eligible for parole. While 16 states have abolished parole release for crimes committed after a certain date, 34 states still rely on parole boards' discretion to decide when people can be supervised in the community.
 
-In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. This delay not only affects individual lives but also contributes to keeping prison populations higher than necessary, with 33% of those in prison remaining there longer than expected, straining resources and capacity.
+In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. This delay not only affects individual lives but also contributes to keeping prison populations higher than necessary, with 1 in 3 people, or 33% of those in prison remaining there longer than expected, straining resources and capacity.
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -45,17 +45,34 @@ total_current_count <- sum(filtered_df$current_count, na.rm = TRUE)
 # Calculate the national percentage based on filtered_total_pop
 national_percentage <- paste0(round(total_current_count / sum(filtered_df$filtered_total_pop, na.rm = TRUE) * 100, 0), "%")
 
-
 div(
   id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
+  style = "
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: auto 1fr; 
+    grid-row-gap: 0px; 
+    grid-column-gap: 20px; 
+    align-items: end;
+  ",
   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
-  div(id = "national-highlight", national_percentage),
+  img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", HTML("Prison Population In Past<br>Their Parole Eligibility Year")),
+  div(id = "bold-text", HTML("1 in 3 People Are In Prison Past<br>Their Parole Eligibility Year")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole"))
 )
+# div(
+#   id = "grid-container",
+#   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
+#   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
+#   # div(id = "national-highlight", national_percentage),
+#   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
+#   div(id = "national-highlight", "34"),
+#   div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year")),
+#   div(id = "bold-text", HTML("1 in 3 People Are In Prison Past<br>Their Parole Eligibility Year")),
+#   div(id = "bold-text", HTML("States With<br>Discretionary Parole"))
+# )
 ```
 </div>
 
