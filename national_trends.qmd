@@ -75,8 +75,9 @@ div(
 # )
 ```
 </div>
-
+<br>
 <div class="divider"></div>
+<br>
 <div id="map-section">
 ```{r}
 map_percent |> 
