@@ -12,10 +12,10 @@
 # ncrp = NCRP data
 
 
-#------ Prison Population by PE Status ------#
+# ------------------------ Prison Population by PE Status ------------------------ #
 
 # Total prison population by state and year
-# Only intrested in people in prison for new court commitments and
+# Only interested in people in prison for new court commitments and
 # with sentence lengths between 1-25 years
 ncrp_pop <- ncrp_yearendpop |>
   filter(admtype == "New court commitment") |>
@@ -39,13 +39,6 @@ ncrp_pes_subset <- ncrp_yearendpop|>
   count(parelig_status) |>
   left_join(ncrp_pop,
             by = c("state", "rptyear")) |>
-  # mutate(prop = n / yearendpop,
-  #        tooltip =
-  #          paste0("<b>", state, "</b><br><br>",
-  #                 "<b>", parelig_status, "</b><br><br>",
-  #                 "Percentage of the Prison Population: <br><b>",
-  #                 paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
-  #        prop_label = paste0(round(prop*100, 0), "%")) |>
   mutate(prop = n / yearendpop,
          tooltip = paste0("<b>Parole Eligibility Status:</b> ", parelig_status, "<br>",
                           "<b>People:</b> ", formattable::comma(n, 0), "<br>",
@@ -88,7 +81,9 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
              minorGridLineWidth = 0,
              labels = list(enabled = FALSE)) |>
     hc_plotOptions(series = list(stacking = "normal",
-                                 pointWidth = 40)) |>
+                                 pointWidth = 40,
+                                 borderWidth = 3,  # Adjust this to increase outline size
+                                 borderColor = "#FFFFFF")) |>
     hc_tooltip(formatter = JS("function () {
     return this.point.tooltip;
   }")) |>
@@ -176,9 +171,10 @@ all_stackedbar_pe_type$Georgia
 #           eligibility date. This group made up X% of the people in prison for
 #           new crimes and sentence lengths between 1-25 years.
 
-# get list of states
+# Get list of states
 states <- unique(ncrp_pes_subset$state)
 
+# Generate sentence for each state
 all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x) {
 
   df1 <- ncrp_pes_subset |>
@@ -197,11 +193,11 @@ all_sentence_parole_eligibility_population$Georgia
 
 
 
-#------ PE Prison Population by Demographics ------#
-
+# ------------------------ PE Prison Population by Demographics ------------------------ #
 
 # Prepare the data for race
 current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
+current_ped_race <- current_ped_race |> arrange(desc(n))
 
 # Colors for race
 colors_race <- c(color1, color2, color3, color4)
@@ -212,9 +208,6 @@ accessibility_text_race <- "This graph shows the proportion of the prison popula
 # Create the charts for race
 all_waffle_parole_eligibility_race <- fnc_hc_waffle(current_ped_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
 all_waffle_parole_eligibility_race$Georgia
-
-
-
 
 # Prepare the data for sex
 current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
@@ -252,6 +245,7 @@ all_waffle_parole_eligibility_race$Georgia
 all_waffle_parole_eligibility_sex$Georgia
 all_waffle_parole_eligibility_ageyrend$Georgia
 
+# Generate graph for each state
 states <- unique(current_ped_race$state)
 all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(x) {
 
@@ -322,9 +316,10 @@ all_sentence_parole_eligibility_demographics$Georgia
 
 
 
+# ------------------------ PE Prison Population by Offense Type ------------------------ #
 
-#------ PE Prison Population by Offense Type ------#
-
+# Get number and proportion of people in prison past their parole eligibility year
+# by offense
 current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
 current_ped_fbi_index <- current_ped_fbi_index |>
   mutate(group = case_when(
@@ -342,7 +337,7 @@ current_ped_fbi_index <- current_ped_fbi_index |>
     group == "Other or Unknown" ~ darkgray
   ))
 
-# Generate the highcharts for each state
+# Generate graph for each state
 states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
   df1 <- current_ped_fbi_index |>
@@ -377,7 +372,7 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
 
-
+# Get proportion of offenses that were violent and non-violent
 current_ped_offense_group <- ncrp_yearendpop |>
   filter(rptyear == select_year &
            parelig_status == "Current") |>
@@ -415,95 +410,93 @@ current_ped_offense_group <- ncrp_yearendpop |>
          )) |>
   mutate(group = ifelse(group == "Other or Unknown", "Other<br>or Unknown", group))
 
-# Get unique states
-states <- unique(current_ped_offense_group$state)
+# # Get unique states
+# states <- unique(current_ped_offense_group$state)
+#
+# # Create Highcharts visualizations for each state
+# all_bubble_ped_offense_group <- map(.x = states, .f = function(x) {
+#
+#   # Sample data for three circles
+#   df1 <- current_ped_offense_group |>
+#     filter(state == x) |>
+#     rename(name = group,
+#            value = prop)
+#
+#   highcharts <- highchart() |>
+#     hc_chart(
+#       type = "packedbubble",
+#       height = 200, # Adjust height
+#       width = 200,  # Adjust width
+#       margin = c(0, 0, 0, 0),
+#
+#       spacingBottom = 0,
+#       spacingTop = 0,
+#       spacingLeft = 0,
+#       spacingRight = 0
+#     ) |>
+#     hc_add_series(
+#       data = list_parse(df1),
+#       type = "packedbubble",
+#       dataLabels = list(
+#         enabled = TRUE,
+#         useHTML = TRUE,
+#         style = list(
+#           color = "black",
+#           textOutline = "none",
+#           fontWeight = "normal", # Normal weight for proportions
+#           fontSize = "14px" # Adjust the font size
+#         ),
+#         align = 'center', # Center text horizontally
+#         verticalAlign = 'middle', # Center text vertically
+#         allowOverlap = TRUE,
+#         inside = TRUE,
+#         formatter = JS("function() {
+#           if (this.point.value < .01) {
+#             return null;
+#           }
+#           return '<div style=\"text-align: center;\">' + this.point.name + '<br>' + this.point.prop_label + '</div>';
+#         }")
+#       ),
+#       maxSize = "100%",
+#       layoutAlgorithm = list(
+#         gravitationalConstant = 0.05,
+#         splitSeries = FALSE,
+#         seriesInteraction = TRUE,
+#         dragBetweenSeries = TRUE,
+#         parentNodeLimit = TRUE
+#       )
+#     ) |>
+#     # hc_tooltip(pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}"
+#     # ) |>
+#     hc_tooltip(
+#       pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}",
+#       borderWidth = 1,
+#       borderRadius = 0,
+#       backgroundColor = '#FFFFFF', # Fully opaque white background
+#       outside = TRUE, # Ensure tooltip is rendered outside
+#       useHTML = TRUE,
+#       formatter = JS("function() {
+#           return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+#           '<div style=\"text-align:left;\">' +
+#           '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+#           '</div></div>';
+#     }")
+#     ) |>
+#     hc_add_theme(base_hc_theme) |>
+#     hc_legend(enabled = FALSE) |>
+#     hc_colors(c(df1$color)) |>
+#     hc_exporting(enabled = FALSE)
+#
+#   return(highcharts)
+# })
+#
+# # Name the list of charts by state
+# all_bubble_ped_offense_group <- setNames(all_bubble_ped_offense_group, states)
+#
+# # Display the chart for Georgia as an example
+# all_bubble_ped_offense_group$Georgia
 
-# Create Highcharts visualizations for each state
-all_bubble_ped_offense_group <- map(.x = states, .f = function(x) {
-
-  # Sample data for three circles
-  df1 <- current_ped_offense_group |>
-    filter(state == x) |>
-    rename(name = group,
-           value = prop)
-
-  highcharts <- highchart() |>
-    hc_chart(
-      type = "packedbubble",
-      height = 200, # Adjust height
-      width = 200,  # Adjust width
-      margin = c(0, 0, 0, 0),
-
-      spacingBottom = 0,
-      spacingTop = 0,
-      spacingLeft = 0,
-      spacingRight = 0
-    ) |>
-    hc_add_series(
-      data = list_parse(df1),
-      type = "packedbubble",
-      dataLabels = list(
-        enabled = TRUE,
-        useHTML = TRUE,
-        style = list(
-          color = "black",
-          textOutline = "none",
-          fontWeight = "normal", # Normal weight for proportions
-          fontSize = "14px" # Adjust the font size
-        ),
-        align = 'center', # Center text horizontally
-        verticalAlign = 'middle', # Center text vertically
-        allowOverlap = TRUE,
-        inside = TRUE,
-        formatter = JS("function() {
-          if (this.point.value < .01) {
-            return null;
-          }
-          return '<div style=\"text-align: center;\">' + this.point.name + '<br>' + this.point.prop_label + '</div>';
-        }")
-      ),
-      maxSize = "100%",
-      layoutAlgorithm = list(
-        gravitationalConstant = 0.05,
-        splitSeries = FALSE,
-        seriesInteraction = TRUE,
-        dragBetweenSeries = TRUE,
-        parentNodeLimit = TRUE
-      )
-    ) |>
-    # hc_tooltip(pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}"
-    # ) |>
-    hc_tooltip(
-      pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}",
-      borderWidth = 1,
-      borderRadius = 0,
-      backgroundColor = '#FFFFFF', # Fully opaque white background
-      outside = TRUE, # Ensure tooltip is rendered outside
-      useHTML = TRUE,
-      formatter = JS("function() {
-          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
-          '<div style=\"text-align:left;\">' +
-          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
-          '</div></div>';
-    }")
-    ) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_legend(enabled = FALSE) |>
-    hc_colors(c(df1$color)) |>
-    hc_exporting(enabled = FALSE)
-
-  return(highcharts)
-})
-
-# Name the list of charts by state
-all_bubble_ped_offense_group <- setNames(all_bubble_ped_offense_group, states)
-
-# Display the chart for Georgia as an example
-all_bubble_ped_offense_group$Georgia
-
-
-
-
+# Generate sentence for each state
 states <- unique(current_ped_fbi_index$state)
 all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) {
 
@@ -551,7 +544,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 })
 
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
-all_sentence_parole_eligibility_fbi_index$`West Virginia`
+all_sentence_parole_eligibility_fbi_index$Georgia
 
 
 
@@ -560,20 +553,14 @@ all_sentence_parole_eligibility_fbi_index$`West Virginia`
 
 
 
-####################
-#
-# TITLE: Sentence Lengths
-#
-####################
+# ------------------------ Sentence Length ------------------------ #
+
 
 # Currently parole eligible population but still in prison by sentlgth in select year
 # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
 current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)
-  # mutate(prop_label = paste0(
-  #   "<b>", prop_label, "</b> (", n_label, ")")
-  # )
 
-# Create highcharts showing breakdown of parole-eligible prison population by sentlgth
+# Generate graph for each state
 states <- unique(current_ped_sentlgth$state)
 all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_sentlgth |>
@@ -602,8 +589,7 @@ all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentl
 all_bar_parole_eligibility_sentlgth$Georgia
 
 
-
-# Create sentences describing breakdown of parole-eligible prison population by sentlgth
+# Generate sentence for each state
 states <- unique(current_ped_sentlgth$state)
 all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_sentlgth |>
@@ -647,7 +633,6 @@ for (folder in theseFOLDERS){
   save(all_waffle_parole_eligibility_sex,            file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
   save(all_waffle_parole_eligibility_ageyrend,       file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
   save(all_sentence_parole_eligibility_fbi_index,    file = file.path(folder, "all_sentence_parole_eligibility_fbi_index.rds"))
-  # save(all_bubble_ped_offense_group,                 file = file.path(folder, "all_bubble_ped_offense_group.rds"))
   save(all_bar_ped_fbi_index,                        file = file.path(folder, "all_bar_ped_fbi_index.rds"))
   save(all_bar_parole_eligibility_sentlgth,          file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
   save(all_sentence_parole_eligibility_sentlgth,     file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))

@@ -571,7 +571,7 @@ all_bubble_race_ped_release <- map(.x = states, .f = function(x) {
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
     hc_add_theme(base_hc_theme) |>
-    hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = '<b>Race:</b> {point.Race}<br><b>Level:</b> {point.Level}<br><b>Year:</b> {point.Year}<br><b>Percentage:</b> {point.z}%<br><b>Count:</b> {point.n}<br>')
+    hc_tooltip(useHTML = TRUE, headerFormat = "", pointFormat = '<b>Race and Ethnicity:</b> {point.Race}<br><b>Offense:</b> {point.Level}<br><b>Year of Parole Eligibility Released:</b> {point.Year}<br><b>Percentage of Parole Eligible People Released:</b> {point.z}%<br><b>People:</b> {point.n}<br>')
 
   return(highcharts)
 })

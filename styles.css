@@ -2,33 +2,12 @@
 /* Overview */
 /******************************************************************************/
 
-
-/* Specific style for .tab2 tabs */
-.tab2 .nav-link {
-    font-size: .9em;
-    border: 1px solid #969696;
-    padding-bottom: 0.1em;
-    color: black;
-}
-.tab2 .nav-link.active, .tab2 .show>.nav-link {
-    color: #fff;
-    background-color: #969696;
-    font-size: .9em;
-    border: 1px solid #969696;
-    padding-bottom: 0.1em;
-}
-
-/* Specific height for tabs in .tab2
-.tab2 .tab-content .tab-pane {
-    height: 450px;
-}*/
-
 /* Align headers */
 h3, h4, h5, h6 {
   text-align: center;
   border-bottom: 1px solid white;
   font-weight: bold;
-  margin-top: 50px;
+  /*margin-top: 50px;*/
   letter-spacing: 0.02em;
 }
 
@@ -52,8 +31,8 @@ h2 {
 
 .divider {
  /* margin: 1em 0; */
-  margin-top: 2em;
-  margin-bottom: 2em;
+ /* margin-top: 2em;*/
+ /* margin-bottom: 2em;*/
   border-bottom: 3px solid black/*#d7d7d7;*/
 }
 
@@ -139,9 +118,10 @@ body {
 }
 
 #state-body-section{
-  max-width: 750px;
-  background-color: white;
-  margin: 0 auto; /* center the content horizontally */
+  max-width: 750px; /* Adjust the maximum width for the content container */
+  margin: 0 auto; /* Center the content horizontally */
+  line-height: 1.6;
+  padding: 0;
 }
 
 
@@ -162,10 +142,11 @@ body {
     background-color: #49a7a1; /* Set active background color */
 }
 
-/* Set height for tab content in the first .panel-tabset */
+ /* Specific height for the tab content */
+/* Set height for tab content in the first .panel-tabset
 .nav-pills .tab-content .tab-pane {
-    height: 1200px; /* Specific height for the tab content */
-}
+    height: 1200px;
+}*/
 
 /* Default state for tabs - changes the color and background of the inactive tabs */
 .nav-pills .nav-link {
@@ -198,10 +179,52 @@ body {
   box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
+
+
+/* Custom tabs - Do not take up the entire width */
+.custom-tabs .nav-tabs {
+  display: inline-flex; /* Use inline-flex to shrink the width */
+  justify-content: center; /* Center the tabs horizontally */
+  width: auto; /* Set width to auto to only take up necessary space */
+  margin: 0 auto; /* Center the entire tab set within its container */
+}
+
+/* Ensure the tabs are styled correctly but don't span the full width */
+.custom-tabs .nav-item {
+  flex: none; /* Disable flex-grow to prevent tabs from expanding */
+  text-align: center; /* Center text within each tab */
+}
+
+.custom-tabs .nav-link {
+  height: 40px;
+  width: 200px; /* Allow each tab to take up only as much space as needed */
+}
+
+.custom-tabs .nav-link.active, .custom-tabs .show>.nav-link {
+    color: #fff;
+    background-color: #969696;
+}
+
+/*
+.custom-tabs .tab-content .tab-pane {
+    height: 1200px;  Specific height for the custom tab content
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
 #visualization {
   margin: 0 auto; /* Center the narrow section horizontally */
   text-align: left; /* Center align text inside the narrow section */
-  margin-left: -10px; /*Move section slightly to the left so it aligns with other text */
+  /*margin-left: -10px; Move section slightly to the left so it aligns with other text */
 }
 
 /*

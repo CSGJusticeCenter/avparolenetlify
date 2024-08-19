@@ -77,8 +77,11 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
       list(
         name = "Releases",
         data = df1$total,
+        # tooltip = list(
+        #   pointFormat = "Year: {point.category}<br>Prison Releases: {point.y}"
+        # )
         tooltip = list(
-          pointFormat = "Year: {point.category}<br>Prison Releases: {point.y}"
+          pointFormat = "<b>Prison Releases:</b> {point.y}"
         )
       )
     ) |>
@@ -184,10 +187,10 @@ all_stackedbar_parole_eligibility_release$Georgia
 
 
 
-# In 2020, X% of people eligible for parole were released during their eligibility
-# year. This represents a X% decrease/increase compared YEAR.
-states <- unique(ncrp_pe_proportion_released$state)
+# SENTENCE: In 2020, X% of people eligible for parole were released during their eligibility
+#           year. This represents a X% decrease/increase compared YEAR.
 
+states <- unique(ncrp_pe_proportion_released$state)
 all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
 
   df1 <- ncrp_pe_proportion_released %>%
@@ -241,6 +244,7 @@ all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
 
 all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
 all_sentence_pe_proportion_released$Arizona
+all_sentence_pe_proportion_released$Georgia
 
 
 
@@ -287,7 +291,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color2, color3)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_tooltip(pointFormat = '{point.name}: <b>{point.percentage:.0f}%</b> ({point.y})')
+    hc_tooltip(pointFormat = 'Number of Releases: {point.y}<br>Percentage of Releases: {point.percentage:.0f}%')
   return(highcharts)
 })
 all_pie_release_type <- setNames(all_pie_release_type, states)
@@ -301,6 +305,7 @@ all_pie_release_type$Georgia
 
 # Prepare the data for race
 current_releases_race <- fnc_prepare_releases_data(ncrp_releases, race)
+current_releases_race <- current_releases_race |> arrange(desc(n))
 
 # Colors for race
 colors_race <- c(color1, color2, color3, color4)
@@ -310,6 +315,7 @@ accessibility_text_race <- "TBD"
 
 # Create the charts for race
 all_waffle_releases_race <- fnc_hc_waffle(current_releases_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+all_waffle_releases_race$Georgia
 
 # Prepare the data for sex
 current_releases_sex <- fnc_prepare_releases_data(ncrp_releases, sex)

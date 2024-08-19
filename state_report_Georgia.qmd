@@ -114,6 +114,8 @@ br()
 ## How Parole Eligibility is Determined
 
 `r paste(parole_eligibility_criteria, collapse = ", ")`
+
+<br>
 <div class="divider"></div>
 
 ## In Prison Past Their Parole Eligibility Year
@@ -331,6 +333,10 @@ div(id = "visualization", state_hc_waffle_rri_other)
 
 ## Years Spent in Prison After Parole Eligibility
 
+::: {.panel-tabset .custom-tabs}
+
+### Race and Ethnicity
+
 ```{r state_parole_release_disparities, results='asis'}
 df1 <- all_parole_release_disparities |>
   filter(state == state_for_report) |> 
@@ -377,10 +383,23 @@ if (!all(is.na(df1$total_years))) {
 div(id = "visualization", state_scatter_race_ped_release)
 ```
 
+### Gender
+
+In progress. Same as type of graph in race and ethnicity tab.
+
+:::
+
 <br>
 <div class="divider"></div>
 
+
+
+
 ## Timing of Release After Parole Eligibility
+
+::: {.panel-tabset .custom-tabs}
+
+### Race and Ethnicity
 
 The timing of release for individuals after their parole eligibility year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
 
@@ -388,12 +407,21 @@ The timing of release for individuals after their parole eligibility year varied
 div(id = "visualization", state_bubble_race_ped_release)
 ```
 
+### Gender
+
+In progress. Same as type of graph in race and ethnicity tab.
+
+:::
+
 <br>
 <div class="divider"></div>
 
+
+
+
 ## Time Served
 
-:::: {.panel-tabset .tab2}
+::: {.panel-tabset .custom-tabs}
 
 ### Race and Ethnicity
 
@@ -411,7 +439,8 @@ div(id = "visualization", state_bubble_race_ped_release)
 `r paste(state_sentence_los_race, collapse = ", ")`
 
 ```{r state_lollipop_los_race}
-div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
+# div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
+div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
@@ -420,9 +449,11 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 div(id = "visualization", state_scatter_los_race_offense)
 ```
 
-### Gender
+### Gender 
 
-::::
+In progress. Same as type of graph in race and ethnicity tab.
+
+:::
 
 <br>
 <br>

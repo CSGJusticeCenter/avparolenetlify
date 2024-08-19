@@ -10,6 +10,7 @@
 
 #------ Prison Population by Year ------#
 
+# Get states with data
 states <- unique(bjs_prison_pop_by_rptyear$state)
 
 # Generate sentence for each state
@@ -56,13 +57,17 @@ all_sentence_population <- setNames(all_sentence_population, states)
 all_sentence_population$Georgia
 
 
-# Highchart by state since 2010
+# Generate graph for each state
 states <- unique(bjs_prison_pop_by_rptyear$state)
 all_line_population_by_year <- map(.x = states,  .f = function(x) {
-  df1 <- bjs_prison_pop_by_rptyear |>
+   df1 <- bjs_prison_pop_by_rptyear |>
     ungroup() |>
     filter(state == x) |>
-    distinct()
+    distinct() |>
+    mutate(tooltip =
+             paste0(
+               "Year: ", rptyear, "<br>",
+               "Year-End Population: ", bjs_prison_population))
 
   # Determine the maximum value for the y-axis in the visualization
   # Adds a small margin space at the top
@@ -85,7 +90,8 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
         name = "population",
         data = df1$bjs_prison_population,
         tooltip = list(
-          pointFormat = "Year: {point.category}<br>Prison Population: {point.y}"
+          # pointFormat = "Year: {point.category}<br>Prison Population: {point.y}"
+          pointFormat = "<b>Prison Population:</b> {point.y}"
         )
       )
     ) |>
@@ -107,12 +113,11 @@ all_line_population_by_year$Georgia
 
 
 
-
-
 #------ NCRP Population by Race, Ethnicity, Age, and Gender ------#
 
 # Prepare the data for race
 current_population_race <- ncrp_yearendpop |>
+  filter(race != "Unknown") |>
   group_by(state) |>
   count(race) |>
   mutate(
@@ -126,14 +131,18 @@ current_population_race <- ncrp_yearendpop |>
                           race, "</b><br>",
                           prop_label, "<br>"))
 
+current_population_race <- current_population_race |> arrange(desc(n))
+
 # Colors for race
-colors_race <- c(color1, color2, color3, color4, darkgray)
+colors_race <- c(color1, color2, color3, color4)
 
 # Accessibility text for race
 accessibility_text_race <- "TBD"
 
 # Create the charts for race
 all_waffle_population_race <- fnc_hc_waffle(current_population_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+all_waffle_population_race$Georgia
+
 
 # Prepare the data for sex
 current_population_sex <- fnc_prepare_population_data(ncrp_yearendpop, sex)
@@ -199,7 +208,7 @@ current_population_fbi_index <- ncrp_yearendpop |>
     TRUE ~ "Other or Unknown"
   ),
   color = case_when(
-    group == "Violent" ~ color3,
+    group == "Violent" ~ color2,
     group == "Non-Violent" ~ color2,
     group == "Other or Unknown" ~ darkgray
   ))
@@ -209,6 +218,9 @@ current_population_fbi_index <- ncrp_yearendpop |>
 states <- unique(current_population_fbi_index$state)
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- current_population_fbi_index |>
+    mutate(fbi_index = case_when(fbi_index == "Murder and Non-negligent Manslaughter" ~
+                                   "Murder and Non-negligent<br>Manslaughter",
+                                 TRUE ~ fbi_index)) |>
     filter(state == x) |>
     mutate(prop = prop*100,
            tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
@@ -298,6 +310,7 @@ all_bar_population_sentlgth$`New Hampshire`
 
 # Prepare the data for race
 current_pop_race <- bjs_prison_pop_by_race_2022
+current_pop_race <- current_pop_race |> arrange(desc(n))
 
 # Colors for race
 colors_race <- c(color1, color2, color3, color4)
@@ -307,7 +320,7 @@ accessibility_text_race <- "TBD"
 
 # Create the charts for race
 all_waffle_population_race <- fnc_hc_waffle(current_pop_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
-
+all_waffle_population_race$Georgia
 
 
 
@@ -325,8 +338,6 @@ for (folder in theseFOLDERS){
   save(all_waffle_population_ageyrend, file = file.path(folder, "all_waffle_population_ageyrend.rds"))
   save(all_bar_population_sentlgth,    file = file.path(folder, "all_bar_population_sentlgth.rds"))
   save(all_bar_population_fbi_index,   file = file.path(folder, "all_bar_population_fbi_index.rds"))
-
-
 }
 
 

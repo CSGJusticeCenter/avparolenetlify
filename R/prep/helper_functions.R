@@ -637,6 +637,7 @@ fnc_prepare_releases_data <- function(df, count_column){
   df1 <- df |>
     filter(rptyear == select_year) |>
     group_by(state) |>
+    filter({{ count_column }} != "Unknown") |>
     count({{ count_column }}) |>
     mutate(
       prop = n/sum(n),
@@ -684,15 +685,14 @@ encode_icon <- function(color) {
 fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
   data <- data |>
     mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
-           prop = prop * 100)
+           prop = prop * 100,
+           prop = round(prop, 0))
 
   states <- unique(data$state)
 
   charts <- map(.x = states, .f = function(x) {
     state_data <- data |>
-      filter(state == x) |>
-      arrange(desc(n)) |>
-      mutate(prop = round(prop, 0))
+      filter(state == x)
 
     hc_accessibility_text <- sprintf(accessibility_text, category, select_year, x)
 

@@ -1,5 +1,5 @@
 
-source("R/config.R")
+# source("R/config.R")
 # source("R/prep/page_national_trends.R")
 # source("R/prep/tab_parole_eligibility.R")
 # source("R/prep/tab_population.R")
@@ -10,7 +10,8 @@ source("R/config.R")
 wd <- getwd()
 
 # Get list of 50 states
-states <- "Georgia" # state.name
+states <- state.name
+states <- "Georgia"
 
 # Read in original qmd
 orig_qmd <- read_lines("_new_state_report_template.qmd")
