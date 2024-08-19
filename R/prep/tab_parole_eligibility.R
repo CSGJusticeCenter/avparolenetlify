@@ -15,6 +15,8 @@
 #------ Prison Population by PE Status ------#
 
 # Total prison population by state and year
+# Only intrested in people in prison for new court commitments and
+# with sentence lengths between 1-25 years
 ncrp_pop <- ncrp_yearendpop |>
   filter(admtype == "New court commitment") |>
   filter(sentlgth == "1-1.9 years" |
@@ -24,7 +26,9 @@ ncrp_pop <- ncrp_yearendpop |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n())
 
+# Prison population by parole eligibility status (missing, current, eligible in the future)
 # Total prison population for new crimes/sentence lengths between 1-25 years by state and year
+# In essence, who is in prison past their parole eligibility year?
 ncrp_pes_subset <- ncrp_yearendpop|>
   filter(admtype == "New court commitment") |>
   filter(sentlgth == "1-1.9 years" |
@@ -35,15 +39,21 @@ ncrp_pes_subset <- ncrp_yearendpop|>
   count(parelig_status) |>
   left_join(ncrp_pop,
             by = c("state", "rptyear")) |>
+  # mutate(prop = n / yearendpop,
+  #        tooltip =
+  #          paste0("<b>", state, "</b><br><br>",
+  #                 "<b>", parelig_status, "</b><br><br>",
+  #                 "Percentage of the Prison Population: <br><b>",
+  #                 paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
+  #        prop_label = paste0(round(prop*100, 0), "%")) |>
   mutate(prop = n / yearendpop,
-         tooltip =
-           paste0("<b>", state, "</b><br><br>",
-                  "<b>", parelig_status, "</b><br><br>",
-                  "Percentage of the Prison Population: <br><b>",
-                  paste0(round(prop*100, 1), "%</b></b>", sep = ""), "<br>"),
+         tooltip = paste0("<b>Parole Eligibility Status:</b> ", parelig_status, "<br>",
+                          "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                          "<b>Percentage of People:</b> ", round(prop*100, 0), "%"),
          prop_label = paste0(round(prop*100, 0), "%"))
 
-# horizontal stacked bar chart showing prison population by parole eligibility status
+# VISUALIZATION: Pct. of Prison Population by Parole Eligibility Status
+# Horizontal stacked bar chart showing prison population by parole eligibility status
 states <- unique(ncrp_pes_subset$state)
 all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 
@@ -158,10 +168,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 })
 
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
-all_stackedbar_pe_type$Georgia |>
-  hc_size(height = 150)|>
-  hc_chart( backgroundColor = "darkgray")
-save(all_stackedbar_pe_type, file = file.path(folder, "all_stackedbar_pe_type.rds"))
+all_stackedbar_pe_type$Georgia
 
 
 
@@ -200,10 +207,14 @@ current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
 colors_race <- c(color1, color2, color3, color4)
 
 # Accessibility text for race
-accessibility_text_race <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by %s in %s in the state of %s."
+accessibility_text_race <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by race and ethnicity"
 
 # Create the charts for race
 all_waffle_parole_eligibility_race <- fnc_hc_waffle(current_ped_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+all_waffle_parole_eligibility_race$Georgia
+
+
+
 
 # Prepare the data for sex
 current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
@@ -212,7 +223,7 @@ current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 colors_sex <- c(color1, color3)
 
 # Accessibility text for sex
-accessibility_text_sex <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by %s in %s in the state of %s."
+accessibility_text_sex <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by gender."
 
 # Create the charts for sex
 all_waffle_parole_eligibility_sex <- fnc_hc_waffle(current_ped_sex, "sex", colors_sex, "Gender", accessibility_text_sex)
@@ -231,7 +242,7 @@ current_ped_ageyrend$ageyrend <- factor(current_ped_ageyrend$ageyrend,
 colors_age <- c(color1, color2, color3, color5, color4)
 
 # Accessibility text for age
-accessibility_text_age <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by %s in %s in the state of %s."
+accessibility_text_age <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by age."
 
 # Create the charts for age
 all_waffle_parole_eligibility_ageyrend <- fnc_hc_waffle(current_ped_ageyrend, "ageyrend", colors_age, "Current Age", accessibility_text_age)
@@ -326,7 +337,7 @@ current_ped_fbi_index <- current_ped_fbi_index |>
     TRUE ~ "Other or Unknown"
   ),
   color = case_when(
-    group == "Violent" ~ color3,
+    group == "Violent" ~ color2, # color3
     group == "Non-Violent" ~ color2,
     group == "Other or Unknown" ~ darkgray
   ))
@@ -334,27 +345,30 @@ current_ped_fbi_index <- current_ped_fbi_index |>
 # Generate the highcharts for each state
 states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
-  df1 <- current_ped_fbi_index %>%
-    filter(state == x) %>%
+  df1 <- current_ped_fbi_index |>
+    mutate(fbi_index = case_when(fbi_index == "Murder and Non-negligent Manslaughter" ~
+                              "Murder and Non-negligent<br>Manslaughter",
+                              TRUE ~ fbi_index)) |>
+    filter(state == x) |>
     mutate(prop = prop * 100,
            tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
-                            "<b>Count:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Proportion:</b> ", round(prop, 1), "%"))
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
 
   hc_accessibility_text <- paste0("TBD")
 
-  highcharts <- fnc_hc_barchart(df1, "fbi_index", "prop", hc_accessibility_text) %>%
+  highcharts <- fnc_hc_barchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
     hc_yAxis(max = max(df1$prop) * 1.5,
              labels = list(
                formatter = JS("function() {
                   return this.value + '%';
                 }")
-             )) %>%
-    hc_title(text = "Offense Types for People in Prison Past Their Parole Eligibility Year") %>%
-    hc_tooltip(pointFormat = "{point.tooltip}") %>%
+             )) |>
+    hc_title(text = "Offense Types for People in Prison Past Their Parole Eligibility Year") |>
+    hc_tooltip(pointFormat = "{point.tooltip}") |>
     hc_plotOptions(series = list(
       colorByPoint = TRUE
-    )) %>%
+    )) |>
     hc_colors(df1$color)
 
   return(highcharts)
@@ -362,6 +376,7 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
+
 
 current_ped_offense_group <- ncrp_yearendpop |>
   filter(rptyear == select_year &
@@ -392,7 +407,7 @@ current_ped_offense_group <- ncrp_yearendpop |>
   mutate(tooltip = paste0("<b>", state, " - ",
                           group, "</b><br>",
                           "Number of People: ", n_label, "<br>",
-                          "Proportion: ", prop_label, "<br>"),
+                          "Percentage of People: ", prop_label, "<br>"),
          color = case_when(
            group == "Violent" ~ color3,
            group == "Non-Violent" ~ color2,
@@ -412,7 +427,7 @@ all_bubble_ped_offense_group <- map(.x = states, .f = function(x) {
     rename(name = group,
            value = prop)
 
-  highcharts <- highchart() %>%
+  highcharts <- highchart() |>
     hc_chart(
       type = "packedbubble",
       height = 200, # Adjust height
@@ -423,7 +438,7 @@ all_bubble_ped_offense_group <- map(.x = states, .f = function(x) {
       spacingTop = 0,
       spacingLeft = 0,
       spacingRight = 0
-    ) %>%
+    ) |>
     hc_add_series(
       data = list_parse(df1),
       type = "packedbubble",
@@ -455,7 +470,7 @@ all_bubble_ped_offense_group <- map(.x = states, .f = function(x) {
         dragBetweenSeries = TRUE,
         parentNodeLimit = TRUE
       )
-    ) %>%
+    ) |>
     # hc_tooltip(pointFormat = "<b>{point.name} Offenses:</b><br><br>Number of People: {point.n_label}<br>Proportion: {point.prop_label}"
     # ) |>
     hc_tooltip(
@@ -485,6 +500,9 @@ all_bubble_ped_offense_group <- setNames(all_bubble_ped_offense_group, states)
 
 # Display the chart for Georgia as an example
 all_bubble_ped_offense_group$Georgia
+
+
+
 
 states <- unique(current_ped_fbi_index$state)
 all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) {
@@ -560,7 +578,11 @@ states <- unique(current_ped_sentlgth$state)
 all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_sentlgth |>
     filter(state == x) |>
-    mutate(prop = prop*100)
+    mutate(prop = prop*100,
+           tooltip = paste0("<b>Sentence Length:</b> ", sentlgth, "<br>",
+                     "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                     "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
                                   their original sentence length in ",
@@ -625,7 +647,7 @@ for (folder in theseFOLDERS){
   save(all_waffle_parole_eligibility_sex,            file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
   save(all_waffle_parole_eligibility_ageyrend,       file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
   save(all_sentence_parole_eligibility_fbi_index,    file = file.path(folder, "all_sentence_parole_eligibility_fbi_index.rds"))
-  save(all_bubble_ped_offense_group,                 file = file.path(folder, "all_bubble_ped_offense_group.rds"))
+  # save(all_bubble_ped_offense_group,                 file = file.path(folder, "all_bubble_ped_offense_group.rds"))
   save(all_bar_ped_fbi_index,                        file = file.path(folder, "all_bar_ped_fbi_index.rds"))
   save(all_bar_parole_eligibility_sentlgth,          file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
   save(all_sentence_parole_eligibility_sentlgth,     file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))

@@ -58,9 +58,9 @@ div(
   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", HTML("1 in 3 People Are In Prison Past<br>Their Parole Eligibility Year")),
-  div(id = "bold-text", HTML("States With<br>Discretionary Parole"))
+  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year<br><br>")),
+  div(id = "bold-text", HTML("1 in 3 Incarcerated People Are In Prison Past Their Parole Eligibility Year")),
+  div(id = "bold-text", HTML("States With<br>Discretionary Parole<br><br>"))
 )
 # div(
 #   id = "grid-container",
@@ -190,7 +190,8 @@ reactable(
 
 <div id="footnotes-text"><br>*Includes people in prison for new crimes and with original sentence lengths between 1 to 25 years. Does not include people in prison for parole revocations or sentence lengths less than one year or more than 25 years.<br></div>
 
-<a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About this data</a>
+<a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About This Data</a>
+<a href="" style="font-size: 0.7em; color: gray;">Download Table</a>
 
 
 

@@ -430,7 +430,7 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <-
     all_bubble_race_ped_release[[state_for_report]] |>
     hc_size(height = 650)|>
-    hc_title(text = "How Soon People Are Released After Their Parole Eligibility Year")
+    hc_title(text = "How Soon People Are Released After Their Parole Eligibility Year by Offense Type and Race and Ethnicity")
 } else {
   state_bubble_race_ped_release <- no_data_text
 }

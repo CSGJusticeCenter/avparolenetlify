@@ -101,8 +101,8 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("1 in 3 Prisoners Are Held<br>Past Their Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Parole Board Members"))
+  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Parole Board<br>Members"))
 )
 br()
 ```
@@ -393,6 +393,10 @@ div(id = "visualization", state_bubble_race_ped_release)
 
 ## Time Served
 
+:::: {.panel-tabset .tab2}
+
+### Race and Ethnicity
+
 ```{r}
 # section_text <- "X individuals faced the longest average time served in prison in 2020. Similarly, Y, individuals also experienced notably longer prison stays compared to their Z counterparts, who had the shortest average time served."
 # div(
@@ -416,6 +420,9 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 div(id = "visualization", state_scatter_los_race_offense)
 ```
 
+### Gender
+
+::::
 
 <br>
 <br>

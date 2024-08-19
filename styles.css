@@ -2,12 +2,34 @@
 /* Overview */
 /******************************************************************************/
 
+
+/* Specific style for .tab2 tabs */
+.tab2 .nav-link {
+    font-size: .9em;
+    border: 1px solid #969696;
+    padding-bottom: 0.1em;
+    color: black;
+}
+.tab2 .nav-link.active, .tab2 .show>.nav-link {
+    color: #fff;
+    background-color: #969696;
+    font-size: .9em;
+    border: 1px solid #969696;
+    padding-bottom: 0.1em;
+}
+
+/* Specific height for tabs in .tab2
+.tab2 .tab-content .tab-pane {
+    height: 450px;
+}*/
+
 /* Align headers */
 h3, h4, h5, h6 {
   text-align: center;
   border-bottom: 1px solid white;
   font-weight: bold;
   margin-top: 50px;
+  letter-spacing: 0.02em;
 }
 
 /* Increase the font size for h1 elements */
@@ -16,6 +38,7 @@ h1 {
   font-size: 3em; /* Adjust the size as needed */
   border-bottom: 1px solid white;
   font-weight: bold;
+  letter-spacing: 0.02em;
 }
 
 /* Increase the font size for h2 elements */
@@ -24,6 +47,7 @@ h2 {
   font-size: 1.75em; /* Adjust the size as needed */
   border-bottom: 1px solid white;
   font-weight: bold;
+  letter-spacing: 0.02em;
 }
 
 .divider {
@@ -240,6 +264,7 @@ body {
   font-weight: bold;
   text-align: center;
   line-height: 1.3;
+  letter-spacing: 0.01em;
 }
 
 #footnotes-text {

@@ -580,10 +580,7 @@ fnc_prepare_pe_data <- function(df, count_column){
       prop_label = paste0(round(prop*100, 0), "%"),
       n_label = formattable::comma(n, 0)
     ) |>
-    ungroup() |>
-    mutate(tooltip = paste0("<b>", state, " - ",
-                            {{ count_column }}, "</b><br>",
-                            prop_label, "<br>"))
+    ungroup()
   return(df1)
 }
 
