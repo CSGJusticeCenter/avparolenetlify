@@ -276,11 +276,11 @@ all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(
     sex_sentence <- "Gender distribution data is incomplete or missing."
   } else {
     if (df_sex$prop[df_sex$sex == "Male"] > df_sex$prop[df_sex$sex == "Female"]) {
-      sex_sentence <- "Gender distribution indicates a predominance of males over females."
+      sex_sentence <- "By gender, there were more males than females."
     } else if (df_sex$prop[df_sex$sex == "Female"] > df_sex$prop[df_sex$sex == "Male"]) {
-      sex_sentence <- "Gender distribution indicates a predominance of females over males."
+      sex_sentence <- "By gender, there were more females than males"
     } else {
-      sex_sentence <- "Gender distribution indicates an equal number of males and females."
+      sex_sentence <- "By gender, there were equal proportions of males and females."
     }
   }
 
@@ -343,6 +343,7 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
   df1 <- current_ped_fbi_index |>
     mutate(fbi_index = case_when(fbi_index == "Murder and Non-negligent Manslaughter" ~
                               "Murder and Non-negligent<br>Manslaughter",
+                              fbi_index == "Aggravated or Simple Assault" ~ "Aggravated or<br>Simple Assault",
                               TRUE ~ fbi_index)) |>
     filter(state == x) |>
     mutate(prop = prop * 100,
@@ -533,7 +534,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
   }
 
   # Construct the sentence for the FBI index breakdown
-  fbi_sentence <- paste0("The breakdown of criminal offenses of people in prison past their parole eligibility year reveals a varied landscape, with the majority of people incarcerated for ",
+  fbi_sentence <- paste0("The breakdown of criminal offenses reveals a more varied landscape, with the majority of people incarcerated for ",
                          tolower(df2$fbi_index[1]), " (", round(df2$prop[1] * 100, 0), "%) and ",
                          tolower(df2$fbi_index[2]), " (", round(df2$prop[2] * 100, 0), "%) offenses.")
 
@@ -597,8 +598,8 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", among the prison population eligible for parole but not yet released, people with sentences between ",
-                      df1$sentlgth, " constituted the majority, representing ", round(df1$prop*100, 0), "%.")
+  sentences <- paste0("In ", select_year, ", the majority of people in prison past their parole eligibility year had original sentence lengths between ",
+                      df1$sentlgth, " representing ", round(df1$prop*100, 0), "% of those eligible for parole.")
   return(sentences)
 })
 

@@ -40,6 +40,13 @@ h2 {
   border-bottom: 3px solid black/*#d7d7d7;*/
 }
 
+.transparentdivider {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-bottom: 1px solid white
+}
+
+
 body {
   max-width: 900px; /* Adjust the maximum width for the content container */
   margin: 0 auto; /* Center the content horizontally */

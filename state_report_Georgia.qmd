@@ -45,11 +45,15 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligi
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_demographics.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_ageyrend.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sentlgth.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
 
 # Releases Tab --------------------------------------------------
@@ -127,6 +131,8 @@ br()
 div(id = "visualization", state_stackedbar_pe_type)
 ```
 
+<div class="transparentdivider"></div>
+
 ### Demographics
 
 `r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
@@ -140,6 +146,8 @@ div(
   div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
 )
 ```
+
+<div class="transparentdivider"></div>
 
 ### Criminal Offenses
 
@@ -160,6 +168,7 @@ div(
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
+<div class="transparentdivider"></div>
 
 ### Original Sentence Lengths
 
@@ -205,6 +214,8 @@ div(id = "visualization", state_line_population_by_year)
 
 ## Demographics
 
+`r paste(state_sentence_population_demographics, collapse = ", ")`
+
 ```{r state_waffle_population_demographics}
 div(
   id = "grid-container",
@@ -222,6 +233,8 @@ div(
 
 ## Criminal Offenses
 
+`r paste(state_sentence_population_fbi_index, collapse = ", ")`
+
 ```{r state_bar_population_fbi_index}
 div(id = "visualization", state_bar_population_fbi_index)
 ```
@@ -231,6 +244,8 @@ div(id = "visualization", state_bar_population_fbi_index)
 <div class="divider"></div>
 
 ## Sentence Lengths
+
+`r paste(state_sentence_population_sentlgth, collapse = ", ")`
 
 ```{r state_bar_population_sentlgth}
 div(id = "visualization", state_bar_population_sentlgth)

@@ -246,6 +246,36 @@ if (state_for_report %in% names(all_bar_population_sentlgth)) {
   state_bar_population_sentlgth <- no_data_text
 }
 
+# SENTENCE: The demographics of people in prison reveal notable proportions
+#           among Black, non-Hispanic and White, non-Hispanic people. By gender,
+#           there were more males than females. Age-wise, the majority of people
+#           were 25-34 years and 35-44 years old.
+if (state_for_report %in% names(all_sentence_population_demographics)) {
+  state_sentence_population_demographics <-
+    all_sentence_population_demographics[[state_for_report]]
+} else {
+  state_sentence_population_demographics <- ""
+}
+
+# SENTENCE: In 2020, 69% of people in prison were incarcerated for violent offenses.
+#           The breakdown of criminal offenses reveals a more varied landscape,
+#           with the majority of people incarcerated for murder and non-negligent
+#           manslaughter (17%) and rape or sexual assault (15%) offenses.
+if (state_for_report %in% names(all_sentence_population_fbi_index)) {
+  state_sentence_population_fbi_index <-
+    all_sentence_population_fbi_index[[state_for_report]]
+} else {
+  state_sentence_population_fbi_index <- ""
+}
+
+# SENTENCE: In 2020, the majority of people in prison had original sentence
+#           lengths between 10 to 24.9 years representing 41%.
+if (state_for_report %in% names(all_sentence_population_sentlgth)) {
+  state_sentence_population_sentlgth <-
+    all_sentence_population_sentlgth[[state_for_report]]
+} else {
+  state_sentence_population_sentlgth <- ""
+}
 
 
 

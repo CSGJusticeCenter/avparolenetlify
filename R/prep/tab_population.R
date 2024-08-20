@@ -241,7 +241,8 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
     hc_plotOptions(series = list(
       colorByPoint = TRUE
     )) %>%
-    hc_colors(df1$color)
+    hc_colors(df1$color) |>
+    hc_chart(marginLeft = 100)
   return(highcharts)
 })
 all_bar_population_fbi_index <- setNames(all_bar_population_fbi_index, states)
@@ -309,8 +310,8 @@ all_bar_population_sentlgth$`New Hampshire`
 #------ BJS Data - Prison Population by Race, Ethnicity, Age, and Gender ------#
 
 # Prepare the data for race
-current_pop_race <- bjs_prison_pop_by_race_2022
-current_pop_race <- current_pop_race |> arrange(desc(n))
+current_population_race <- bjs_prison_pop_by_race_2022
+current_population_race <- current_population_race |> arrange(desc(n))
 
 # Colors for race
 colors_race <- c(color1, color2, color3, color4)
@@ -319,9 +320,183 @@ colors_race <- c(color1, color2, color3, color4)
 accessibility_text_race <- "TBD"
 
 # Create the charts for race
-all_waffle_population_race <- fnc_hc_waffle(current_pop_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+all_waffle_population_race <- fnc_hc_waffle(current_population_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
 all_waffle_population_race$Georgia
 
+
+
+
+
+
+# Generate graph for each state
+states <- unique(current_population_race$state)
+all_sentence_population_demographics <- map(.x = states,  .f = function(x) {
+
+  # Race demographics
+  df_race <- current_population_race  |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check for missing race data
+  if (nrow(df_race) < 2 || any(is.na(df_race$prop[1:2]))) {
+    race_sentence <- "Data on race and ethnicity is incomplete or missing."
+  } else {
+    # race_sentence <- paste0("notable proportions among ",
+    #                         df_race$race[1], " (", round(df_race$prop[1] * 100, 0), "%) and ",
+    #                         tolower(df_race$race[2]), " (", round(df_race$prop[2] * 100, 0), "%) people.")
+    race_sentence <- paste0("notable proportions among ",
+                            df_race$race[1], " and ",
+                            df_race$race[2], " people.")
+  }
+
+  # Gender distribution
+  df_sex <- current_population_sex  |>
+    filter(state == x)
+
+  # Check for missing sex data
+  if (nrow(df_sex) < 2 || any(is.na(df_sex$prop))) {
+    sex_sentence <- "Gender distribution data is incomplete or missing."
+  } else {
+    if (df_sex$prop[df_sex$sex == "Male"] > df_sex$prop[df_sex$sex == "Female"]) {
+      sex_sentence <- "By gender, there were more males than females."
+    } else if (df_sex$prop[df_sex$sex == "Female"] > df_sex$prop[df_sex$sex == "Male"]) {
+      sex_sentence <- "By gender, there were more females than males"
+    } else {
+      sex_sentence <- "By gender, there were equal proportions of males and females."
+    }
+  }
+
+  # Age distribution
+  df_ageyrend <- current_population_ageyrend  |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check for missing ageyrend data
+  if (nrow(df_ageyrend) < 2 || any(is.na(df_ageyrend$prop[1:2]))) {
+    age_sentence <- "Age distribution data is incomplete or missing."
+  } else {
+    # age_sentence <- paste0("Age-wise, the majority of people were ",
+    #                        df_ageyrend$ageyrend[1], " (", round(df_ageyrend$prop[1] * 100, 0), "%) and ",
+    #                        df_ageyrend$ageyrend[2], " (", round(df_ageyrend$prop[2] * 100, 0), "%) old.")
+    age_sentence <- paste0("Age-wise, the majority of people were ",
+                           df_ageyrend$ageyrend[1], " and ",
+                           df_ageyrend$ageyrend[2], " old.")
+  }
+
+  # Combine the sentences
+  sentences <- paste0("The demographics of people in prison reveal ",
+                      race_sentence, " ", sex_sentence, " ", age_sentence)
+
+  return(sentences)
+})
+
+all_sentence_population_demographics <- setNames(all_sentence_population_demographics, states)
+all_sentence_population_demographics$Georgia
+
+
+
+# Get proportion of offenses that were violent and non-violent
+current_population_offense_group <- ncrp_yearendpop |>
+  filter(rptyear == select_year) |>
+  mutate(group = case_when(
+    fbi_index %in% c("Murder and Non-negligent Manslaughter",
+                     "Rape or Sexual Assault",
+                     "Robbery",
+                     "Aggravated or Simple Assault",
+                     "Other Violent Offenses") ~ "Violent",
+    fbi_index %in% c("Drugs", "Public order", "Property") ~ "Non-Violent",
+    TRUE ~ "Other or Unknown"
+  )) |>
+  group_by(state) |>
+  count(group) |>
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
+  ) |>
+  ungroup() |>
+  mutate(tooltip = paste0("<b>", state, " - ",
+                          group, "</b><br>",
+                          "Number of People: ", n_label, "<br>",
+                          "Percentage of People: ", prop_label, "<br>"),
+         color = case_when(
+           group == "Violent" ~ color3,
+           group == "Non-Violent" ~ color2,
+           group == "Other or Unknown" ~ darkgray
+         )) |>
+  mutate(group = ifelse(group == "Other or Unknown", "Other<br>or Unknown", group))
+
+
+# Generate sentence for each state
+states <- unique(current_population_fbi_index$state)
+all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
+
+  # Get the top group
+  df1 <- current_population_offense_group  |>
+    filter(state == x) |>
+    arrange(-prop)
+
+  # Check if there's missing data in df1
+  if (nrow(df1) < 2 || any(is.na(df1$prop[1:2]))) {
+    return(paste0("Data for ", x, " is incomplete or missing for the top offense groups."))
+  }
+
+  # Check if the top two groups have equal proportions
+  if (length(unique(df1$prop[1:2])) == 1) {
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison were incarcerated for ",
+                             tolower(df1$group[1]), " offenses and ",
+                             round(df1$prop[2] * 100, 0), "% for ",
+                             tolower(df1$group[2]), " offenses.")
+  } else {
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison were incarcerated for ",
+                             tolower(df1$group[1]), " offenses.")
+  }
+
+  # Get the top two FBI index categories
+  df2 <- current_population_fbi_index |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1:2)
+
+  # Check if there's missing data in df2
+  if (nrow(df2) < 2 || any(is.na(df2$prop[1:2]))) {
+    return(paste0("Data for ", x, " is incomplete or missing."))
+  }
+
+  # Construct the sentence for the FBI index breakdown
+  fbi_sentence <- paste0("The breakdown of criminal offenses reveals a more varied landscape, with the majority of people incarcerated for ",
+                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1] * 100, 0), "%) and ",
+                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2] * 100, 0), "%) offenses.")
+
+  # Combine the sentences
+  sentences <- paste0("In ", select_year, ", ", group_sentence, " ", fbi_sentence)
+
+  return(sentences)
+})
+
+all_sentence_population_fbi_index <- setNames(all_sentence_population_fbi_index, states)
+all_sentence_population_fbi_index$Georgia
+
+
+
+# Generate sentence for each state
+states <- unique(current_population_sentlgth$state)
+all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- current_population_sentlgth |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+  df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
+  sentences <- paste0("In ", select_year, ", the majority of people in prison had original sentence lengths between ",
+                      df1$sentlgth, " representing ", round(df1$prop*100, 0), "%.")
+  return(sentences)
+})
+
+all_sentence_population_sentlgth <- setNames(all_sentence_population_sentlgth, states)
+all_sentence_population_sentlgth$Georgia
 
 
 
@@ -331,18 +506,20 @@ all_waffle_population_race$Georgia
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(all_line_population_by_year,    file = file.path(folder, "all_line_population_by_year.rds"))
-  save(all_sentence_population,        file = file.path(folder, "all_sentence_population.rds"))
-  save(all_waffle_population_race,     file = file.path(folder, "all_waffle_population_race.rds"))
-  save(all_waffle_population_sex,      file = file.path(folder, "all_waffle_population_sex.rds"))
-  save(all_waffle_population_ageyrend, file = file.path(folder, "all_waffle_population_ageyrend.rds"))
-  save(all_bar_population_sentlgth,    file = file.path(folder, "all_bar_population_sentlgth.rds"))
-  save(all_bar_population_fbi_index,   file = file.path(folder, "all_bar_population_fbi_index.rds"))
+  save(all_line_population_by_year,          file = file.path(folder, "all_line_population_by_year.rds"))
+  save(all_sentence_population,              file = file.path(folder, "all_sentence_population.rds"))
+
+  save(all_sentence_population_demographics, file = file.path(folder, "all_sentence_population_demographics.rds"))
+  save(all_waffle_population_race,           file = file.path(folder, "all_waffle_population_race.rds"))
+  save(all_waffle_population_sex,            file = file.path(folder, "all_waffle_population_sex.rds"))
+  save(all_waffle_population_ageyrend,       file = file.path(folder, "all_waffle_population_ageyrend.rds"))
+
+  save(all_sentence_population_sentlgth,     file = file.path(folder, "all_sentence_population_sentlgth.rds"))
+  save(all_bar_population_sentlgth,          file = file.path(folder, "all_bar_population_sentlgth.rds"))
+
+  save(all_sentence_population_fbi_index,    file = file.path(folder, "all_sentence_population_fbi_index.rds"))
+  save(all_bar_population_fbi_index,         file = file.path(folder, "all_bar_population_fbi_index.rds"))
 }
-
-
-
-
 
 
 
