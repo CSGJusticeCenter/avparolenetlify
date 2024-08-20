@@ -452,7 +452,7 @@ In progress. Same type of graph as race and ethnicity tab.
 # br()
 ```
 
-Hispanic faced the longest average time served in prison in 2020, with an average of 3.8 years. White, non-Hispanic people experienced shorter prison stays, averaging 2.3 years.
+Hispanic people faced the longest average time served in prison in 2020, with an average of 3.8 years. White, non-Hispanic people experienced shorter prison stays, averaging 2.3 years.
 
 ```{r state_lollipop_los_race}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
