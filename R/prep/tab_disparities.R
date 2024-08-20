@@ -90,7 +90,7 @@ all_sentence_rri <- map(.x = states, .f = function(x) {
     final_sentence <- paste0("In ", x, ", ", paste(higher_rates, collapse = " and "),
                              " than White, non-Hispanic people, when accounting for population sizes in the community.")
   } else {
-    final_sentence <- paste0("In ", x, ", there are no disparities in prison incarceration rates compared to White, non-Hispanic individuals.")
+    final_sentence <- paste0("In ", x, ", there are no disparities in prison incarceration rates compared to White, non-Hispanic people.")
   }
 
   return(final_sentence)
@@ -821,13 +821,19 @@ all_lollipop_los_race$Georgia
 
 
 
-states <- unique(ncrp_race_los$state)
 
 # Generate sentence for each state
+states <- unique(ncrp_race_los$state)
 all_sentence_los_race <- map(.x = states, .f = function(x) {
 
   df1 <- ncrp_race_los |>
     ungroup() |>
+    mutate(race = case_when(
+      race == "White, non-Hispanic" ~ "White",
+      race == "Black, non-Hispanic" ~ "Black",
+      race == "Hispanic, any race" ~ "Hispanic",
+      race == "Other race(s), non-Hispanic" ~ "Other races"
+    )) |>
     filter(state == x)
 
   # Handling missing data
@@ -835,24 +841,28 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
     return(paste0("No data available for ", x))
   }
 
-  # Find the race with the longest and shortest average time served
-  longest_los <- df1 |> filter(average_los == max(average_los)) |> slice(1)
-  shortest_los <- df1 |> filter(average_los == min(average_los)) |> slice(1)
+  # Focus on comparisons with White people
+  df_white <- df1 |> filter(race == "White")
 
-  # Extract necessary values
-  race_longest <- as.character(longest_los$race)
-  race_shortest <- as.character(shortest_los$race)
+  # Generate sentences for Black and Hispanic comparisons
+  sentence <- ""
+  for (race_group in c("Black", "Hispanic")) {
+    df_race <- df1 |> filter(race == race_group)
+    if (nrow(df_race) > 0 && nrow(df_white) > 0) {
+      los_diff <- df_race$average_los - df_white$average_los
+      if (los_diff > 0) {
+        sentence <- paste0(sentence,
+                           race_group, " people faced ", round(los_diff, 1),
+                           " more years on average compared to White people in ", df_race$rptyear[1], ". "
+        )
+      }
+    }
+  }
 
-  # Extract LOS and year
-  los_longest <- longest_los$average_los
-  los_shortest <- shortest_los$average_los
-  year <- longest_los$rptyear
-
-  # Construct the sentence
-  sentence <- paste0(
-    race_longest, " individuals faced the longest average time served in prison in ", year, ", with an average of ", round(los_longest, 1), " years. ",
-    race_shortest, " individuals experienced shorter prison stays, averaging ", round(los_shortest, 1), " years."
-  )
+  # If no disparities are found, return a different message
+  if (sentence == "") {
+    sentence <- paste0("No significant disparities compared to White people found for ", x)
+  }
 
   return(sentence)
 })
@@ -868,66 +878,8 @@ all_sentence_los_race$Georgia
 
 
 
-states <- unique(ncrp_race_los_by_offense_type$state)
 
-# Generate sentence for each state
-all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_race_los_by_offense_type |>
-    filter(state == x)
-
-  # Handling missing data
-  if (nrow(df1) == 0) {
-    return(paste0("No data available for ", x))
-  }
-
-  # Calculate the difference in average LOS between the races for each offense type
-  df_disparity <- df1 %>%
-    group_by(fbi_index) %>%
-    reframe(
-      max_los = max(average_los),
-      min_los = min(average_los),
-      diff_los = max_los - min_los,
-      race_longest = race[which.max(average_los)],
-      race_shortest = race[which.min(average_los)]
-    ) %>%
-    arrange(desc(diff_los))
-
-  # Filter out disparities where White individuals have the longest LOS
-  df_disparity_filtered <- df_disparity %>% filter(race_longest != "White, non-Hispanic")
-
-  # If no non-White disparities exist, return a message
-  if (nrow(df_disparity_filtered) == 0) {
-    return(paste0("No significant disparities involving non-White individuals found for ", x))
-  }
-
-  # Get the largest non-White disparity
-  largest_disparity <- df_disparity_filtered %>% slice(1)
-
-  # Extract values for the sentence
-  offense_type <- largest_disparity$fbi_index
-  race_longest <- largest_disparity$race_longest
-  los_longest <- round(largest_disparity$max_los, 2)
-  race_shortest <- largest_disparity$race_shortest
-  los_shortest <- round(largest_disparity$min_los, 2)
-  disparity_diff <- round(largest_disparity$diff_los, 2)
-
-  # Construct the sentence
-  sentence <- paste0(
-    "By offense type, disparities were observed in time served by race and ethnicity. ",
-    "For ", tolower(offense_type), " offenses, ", race_longest,
-    " individuals had ", disparity_diff, " more years on average compared to ",
-    race_shortest, " individuals, who had the shortest time served for these offenses."
-  )
-
-  return(sentence)
-})
-
-# Set names for the list elements
-all_sentence_los_race_offense <- setNames(all_sentence_los_race_offense, states)
-
-# Check the sentence for Georgia
-all_sentence_los_race_offense$Georgia
 
 
 
@@ -954,6 +906,5 @@ for (folder in theseFOLDERS){
   save(all_scatter_los_race_offense,   file = file.path(folder, "all_scatter_los_race_offense.rds"))
 
   save(all_rri_data ,                  file = file.path(folder, "all_rri_data.rds"))
-
 }
 

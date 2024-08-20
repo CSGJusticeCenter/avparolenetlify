@@ -294,10 +294,10 @@ all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(
   if (nrow(df_ageyrend) < 2 || any(is.na(df_ageyrend$prop[1:2]))) {
     age_sentence <- "Age distribution data is incomplete or missing."
   } else {
-    # age_sentence <- paste0("Age-wise, the majority of people were ",
+    # age_sentence <- paste0("Age-wise, most people were ",
     #                        df_ageyrend$ageyrend[1], " (", round(df_ageyrend$prop[1] * 100, 0), "%) and ",
     #                        df_ageyrend$ageyrend[2], " (", round(df_ageyrend$prop[2] * 100, 0), "%) old.")
-    age_sentence <- paste0("Age-wise, the majority of people were ",
+    age_sentence <- paste0("Age-wise, most people were ",
                            df_ageyrend$ageyrend[1], " and ",
                            df_ageyrend$ageyrend[2], " old.")
   }
@@ -534,7 +534,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
   }
 
   # Construct the sentence for the FBI index breakdown
-  fbi_sentence <- paste0("The breakdown of criminal offenses reveals a more varied landscape, with the majority of people incarcerated for ",
+  fbi_sentence <- paste0("The breakdown of criminal offenses reveals a more varied landscape, with most people incarcerated for ",
                          tolower(df2$fbi_index[1]), " (", round(df2$prop[1] * 100, 0), "%) and ",
                          tolower(df2$fbi_index[2]), " (", round(df2$prop[2] * 100, 0), "%) offenses.")
 
@@ -598,7 +598,7 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", the majority of people in prison past their parole eligibility year had original sentence lengths between ",
+  sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility year had original sentence lengths between ",
                       df1$sentlgth, " representing ", round(df1$prop*100, 0), "% of those eligible for parole.")
   return(sentences)
 })

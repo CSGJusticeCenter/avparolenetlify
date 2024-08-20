@@ -365,7 +365,7 @@ df1 <- all_parole_release_disparities |>
 if (!all(is.na(df1$total_years))) {
   
   message <- HTML(paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
-                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups."))
+                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole."))
   
   cat(message)
   

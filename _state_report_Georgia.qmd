@@ -365,7 +365,7 @@ df1 <- all_parole_release_disparities |>
 if (!all(is.na(df1$total_years))) {
   
   message <- HTML(paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
-                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups."))
+                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole."))
   
   cat(message)
   
@@ -452,14 +452,14 @@ In progress. Same type of graph as race and ethnicity tab.
 # br()
 ```
 
-`r paste(state_sentence_los_race, collapse = ", ")`
+Hispanic faced the longest average time served in prison in 2020, with an average of 3.8 years. White, non-Hispanic people experienced shorter prison stays, averaging 2.3 years.
 
 ```{r state_lollipop_los_race}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
-`r paste(state_sentence_los_race_offense, collapse = ", ")`
+By offense type, disparities were observed in time served by race and ethnicity. For example, for robbery offenses, Hispanic people had 3.6 more years on average compared to White people. 
 
 ```{r state_scatter_los_race_offense}
 div(id = "visualization", state_scatter_los_race_offense)

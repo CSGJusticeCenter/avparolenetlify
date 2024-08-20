@@ -384,11 +384,11 @@ all_sentence_releases_demographics <- map(.x = states,  .f = function(x) {
     sex_sentence <- "Gender distribution data is incomplete or missing."
   } else {
     if (df_sex$prop[df_sex$sex == "Male"] > df_sex$prop[df_sex$sex == "Female"]) {
-      sex_sentence <- "Gender distribution indicates a predominance of males over females."
+      sex_sentence <- "By gender, there were more males than females."
     } else if (df_sex$prop[df_sex$sex == "Female"] > df_sex$prop[df_sex$sex == "Male"]) {
-      sex_sentence <- "Gender distribution indicates a predominance of females over males."
+      sex_sentence <- "By gender, there were more females than males."
     } else {
-      sex_sentence <- "Gender distribution indicates an equal number of males and females."
+      sex_sentence <- "By gender, there were equal proportions of males and females."
     }
   }
 
@@ -402,10 +402,10 @@ all_sentence_releases_demographics <- map(.x = states,  .f = function(x) {
   if (nrow(df_agerlse) < 2 || any(is.na(df_agerlse$prop[1:2]))) {
     age_sentence <- "Age distribution data is incomplete or missing."
   } else {
-    # age_sentence <- paste0("Age-wise, the majority of people were ",
+    # age_sentence <- paste0("Age-wise, most people were ",
     #                        df_agerlse$agerlse[1], " (", round(df_agerlse$prop[1] * 100, 0), "%) and ",
     #                        df_agerlse$agerlse[2], " (", round(df_agerlse$prop[2] * 100, 0), "%) old.")
-    age_sentence <- paste0("Age-wise, the majority of people were ",
+    age_sentence <- paste0("Age-wise, most people were ",
                            df_agerlse$agerlse[1], " and ",
                            df_agerlse$agerlse[2],
                            " old. These findings provide insights into the populations transitioning back into the community.")
