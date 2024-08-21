@@ -105,8 +105,8 @@ div(
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Consideration Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Consideration Year")),
   div(id = "bold-text", style = "text-align: center;", HTML("Parole Board<br>Members"))
 )
 br()
@@ -123,7 +123,7 @@ br()
 <br>
 <div class="divider"></div>
 
-## In Prison Past Their Parole Eligibility Year
+## In Prison Past Their Parole Consideration Year
 
 `r paste(state_sentence_parole_eligibility_population, collapse = ", ")`
 
@@ -364,7 +364,7 @@ df1 <- all_parole_release_disparities |>
 # Check if all total_years are NA
 if (!all(is.na(df1$total_years))) {
   
-  message <- HTML(paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
+  message <- HTML(paste0("In ", select_year, ", people in prison past their parole consideration year collectively spent a total of ",
                    comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole."))
   
   cat(message)
@@ -417,7 +417,7 @@ In progress. Same type of graph as race and ethnicity tab.
 
 ### Race and Ethnicity
 
-The timing of release for individuals after their parole eligibility year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
+The timing of release for individuals after their parole consideration year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
 
 ```{r state_bubble_race_ped_release}
 div(id = "visualization", state_bubble_race_ped_release)

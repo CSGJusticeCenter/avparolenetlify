@@ -111,9 +111,9 @@ if (state_for_report %in% names(all_scatter_race_ped_release)) {
   state_scatter_race_ped_release <- no_data_text
 }
 
-# SENTENCE: In 2020, 61% of people in prison past their parole eligibility date
+# SENTENCE: In 2020, 61% of people in prison past their parole consideration year
 #           were in prison for violent offenses. The breakdown of criminal
-#           offenses of people in prison past their parole eligibility year
+#           offenses of people in prison past their parole consideration year
 #           reveals a varied landscape, with the majority of people incarcerated
 #           for aggravated or simple assault (26%) and property (19%) offenses."
 if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
@@ -131,7 +131,7 @@ if (state_for_report %in% names(all_bubble_ped_offense_group)) {
   state_bubble_ped_offense_group <- no_data_text
 }
 
-# # TITLE: Offense Breakdown for People in Prison Past Their Parole Eligibility Date
+# # TITLE: Offense Breakdown for People in Prison Past Their Parole Consideration Date
 # if (state_for_report %in% names(all_bubble_ped_fbi_index)) {
 #   state_bubble_ped_fbi_index <-
 #     all_bubble_ped_fbi_index[[state_for_report]] |>
@@ -140,7 +140,7 @@ if (state_for_report %in% names(all_bubble_ped_offense_group)) {
 #   state_bubble_ped_fbi_index <- no_data_text
 # }
 
-# TITLE: OPTION 2 = Offense Breakdown for People in Prison Past Their Parole Eligibility Date
+# TITLE: OPTION 2 = Offense Breakdown for People in Prison Past Their Parole Consideration Date
 if (state_for_report %in% names(all_bar_ped_fbi_index)) {
   state_bar_ped_fbi_index <-
     all_bar_ped_fbi_index[[state_for_report]] |>
@@ -149,7 +149,7 @@ if (state_for_report %in% names(all_bar_ped_fbi_index)) {
   state_bar_ped_fbi_index <- no_data_text
 }
 
-# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Date
+# TITLE: Sentence Lengths for People in Prison Past Their Parole Consideration Year
 if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
   state_bar_parole_eligibility_sentlgth <-
     all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
@@ -460,7 +460,7 @@ if (state_for_report %in% names(all_bubble_race_ped_release)) {
   state_bubble_race_ped_release <-
     all_bubble_race_ped_release[[state_for_report]] |>
     hc_size(height = 650)|>
-    hc_title(text = "How Soon People Are Released After Their Parole Eligibility Year")
+    hc_title(text = "How Soon People Are Released After Their Parole Consideration Year")
 } else {
   state_bubble_race_ped_release <- no_data_text
 }

@@ -412,7 +412,7 @@ all_sentence_releases_demographics <- map(.x = states,  .f = function(x) {
   }
 
   # Combine the sentences
-  sentences <- paste0("The demographics of people released from prison reveal ",
+  sentences <- paste0("The demographics of people released from prison are mostly ",
                       race_sentence, " ", sex_sentence, " ", age_sentence)
 
   return(sentences)

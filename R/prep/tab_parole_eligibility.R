@@ -28,7 +28,7 @@ ncrp_pop <- ncrp_yearendpop |>
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
 # Total prison population for new crimes/sentence lengths between 1-25 years by state and year
-# In essence, who is in prison past their parole eligibility year?
+# In essence, who is in prison past their parole consideration year?
 ncrp_pes_subset <- ncrp_yearendpop|>
   filter(admtype == "New court commitment") |>
   filter(sentlgth == "1-1.9 years" |
@@ -183,7 +183,7 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
              rptyear == select_year)
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people in prison past their parole eligibility year. This group made up ",
+                      " people in prison past their parole consideration year. This group made up ",
                       df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
   return(sentences)
 })
@@ -303,7 +303,7 @@ all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(
   }
 
   # Combine the sentences
-  sentences <- paste0("The demographics of people in prison past their parole eligibility year reveal ",
+  sentences <- paste0("The demographics of people in prison past their parole consideration year are mostly ",
                       race_sentence, " ", sex_sentence, " ", age_sentence)
 
   return(sentences)
@@ -318,7 +318,7 @@ all_sentence_parole_eligibility_demographics$Georgia
 
 # ------------------------ PE Prison Population by Offense Type ------------------------ #
 
-# Get number and proportion of people in prison past their parole eligibility year
+# Get number and proportion of people in prison past their parole consideration year
 # by offense
 current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
 current_ped_fbi_index <- current_ped_fbi_index |>
@@ -360,7 +360,7 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
                   return this.value + '%';
                 }")
              )) |>
-    hc_title(text = "Offense Types for People in Prison Past Their Parole Eligibility Year") |>
+    hc_title(text = "Offense Types for People in Prison Past Their Parole Consideration Year") |>
     hc_tooltip(pointFormat = "{point.tooltip}") |>
     hc_plotOptions(series = list(
       colorByPoint = TRUE
@@ -513,12 +513,12 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
   # Check if the top two groups have equal proportions
   if (length(unique(df1$prop[1:2])) == 1) {
-    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility year were in prison for ",
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole consideration year were in prison for ",
                              tolower(df1$group[1]), " offenses and ",
                              round(df1$prop[2] * 100, 0), "% for ",
                              tolower(df1$group[2]), " offenses.")
   } else {
-    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility year were in prison for ",
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole consideration year were in prison for ",
                              tolower(df1$group[1]), " offenses.")
   }
 
@@ -582,7 +582,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility Year") |>
+    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Consideration Year") |>
     hc_exporting(enabled = TRUE)
   return(highcharts)
 })
@@ -598,7 +598,7 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility year had original sentence lengths between ",
+  sentences <- paste0("In ", select_year, ", most people in prison past their parole consideration year had original sentence lengths between ",
                       df1$sentlgth, " representing ", round(df1$prop*100, 0), "% of those eligible for parole.")
   return(sentences)
 })

@@ -385,7 +385,7 @@ all_sentence_population_demographics <- map(.x = states,  .f = function(x) {
   }
 
   # Combine the sentences
-  sentences <- paste0("The demographics of people in prison reveal ",
+  sentences <- paste0("The demographics of people in prison are mostly ",
                       race_sentence, " ", sex_sentence, " ", age_sentence)
 
   return(sentences)
