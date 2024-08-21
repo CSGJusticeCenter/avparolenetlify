@@ -9,12 +9,12 @@
 # Save working directory
 wd <- getwd()
 
-# Get list of 50 states
-states <- state.name
-states <- c()#"Georgia"
+# Get list of states where parol eligibility is the focus
+states <- parole_eligibility_table |> filter(abolished_discretionary_parole == "No") |>
+  pull(state)
 
 # Read in original qmd
-orig_qmd <- read_lines("_new_state_report_template.qmd")
+orig_qmd <- read_lines("_state_report_template.qmd")
 
 # Replace state name
 states_qmd <- as.character(states)

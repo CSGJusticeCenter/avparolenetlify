@@ -79,7 +79,7 @@ div(
 <div class="divider"></div>
 <br>
 <div id="map-section">
-```{r}
+```{r map}
 map_percent |> 
     hc_size(height = 690) |> 
     hc_exporting(enabled = TRUE,
@@ -118,7 +118,7 @@ VISUALIZATION?
 
 This table provides a comprehensive overview of state-level prison populations*, highlighting the percentage and number of people in prison past their parole consideration year, alongside details about whether the state has abolished discretionary parole and the number of parole board members.
 
-```{r}
+```{r table}
 # Custom function to create data bars with NA handling
 data_bars_custom <- function(value) {
   if (is.na(value)) {
@@ -141,6 +141,51 @@ style_cells <- function(value, color) {
 parole_eligibility_table$filtered_total_pop <- as.numeric(parole_eligibility_table$filtered_total_pop)
 
 # https://kcuilla.github.io/reactablefmtr/articles/data_bars.html
+# reactable(
+#   parole_eligibility_table,
+#   pagination = FALSE,
+#   searchable = TRUE,
+#   defaultSortOrder = "desc",
+#   defaultSorted = "current_perc",
+#   defaultColDef = colDef(
+#     headerStyle = list(fontWeight = "normal"),
+#     sortable = TRUE,
+#     na = "-" 
+#   ),
+#   columns = list(
+#     state = colDef(name = "State", 
+#                    align = "left", 
+#                    width = 175,
+#                     cell = function(value) {
+#         url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
+#         tags$a(href = url, target = "_blank", style = "color:black;", value)
+#       }),
+#     current_perc = colDef(
+#       name = "Pct. of People in Prison",
+#       align = "left",
+#       width = 150,
+#       cell = data_bars_custom
+#     ),
+#     current_count = colDef(name = "Number of People", 
+#                            align = "right",
+#                            format = colFormat(separators = TRUE)),
+#     filtered_total_pop = colDef(name = "Prison Population*", 
+#                                 align = "right",
+#                                 format = colFormat(separators = TRUE)                           ),
+#     abolished_discretionary_parole = colDef(name = "Abolished Discretionary Parole", 
+#                                             align = "right"
+#                                             ),
+#     parole_board_members = colDef(name = "Parole Board Members", 
+#                                   align = "right"
+#                                   ),
+#     ratio = colDef(show = F, name = "Ratio", 
+#                    align = "center")
+#   ),
+#   columnGroups = list(
+#     colGroup(name = "In Prison Past Their Parole Consideration Year", columns = c("current_perc", "current_count"))
+#   )
+# )
+# 
 reactable(
   parole_eligibility_table,
   pagination = FALSE,
@@ -153,40 +198,57 @@ reactable(
     na = "-" 
   ),
   columns = list(
-    state = colDef(name = "State", 
-                   align = "left", 
-                   width = 175,
-                    cell = function(value) {
-        url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
-        tags$a(href = url, target = "_blank", style = "color:black;", value)
-      }),
+    state = colDef(
+      name = "State", 
+      align = "left", 
+      width = 175,
+      cell = function(value, index) {
+        # Use index to reference the correct row
+        if (parole_eligibility_table$abolished_discretionary_parole[index] == "No") {
+          url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
+          tags$a(href = url, target = "_blank", style = "color:black;", value)
+        } else {
+          return(value)
+        }
+      }
+    ),
     current_perc = colDef(
       name = "Pct. of People in Prison",
       align = "left",
       width = 150,
       cell = data_bars_custom
     ),
-    current_count = colDef(name = "Number of People", 
-                           align = "right",
-                           format = colFormat(separators = TRUE)),
-    filtered_total_pop = colDef(name = "Prison Population*", 
-                                align = "right",
-                                format = colFormat(separators = TRUE)                           ),
-    abolished_discretionary_parole = colDef(name = "Abolished Discretionary Parole", 
-                                            align = "right"
-                                            ),
-    parole_board_members = colDef(name = "Parole Board Members", 
-                                  align = "right"
-                                  ),
-    ratio = colDef(show = F, name = "Ratio", 
-                   align = "center")
+    current_count = colDef(
+      name = "Number of People", 
+      align = "right",
+      format = colFormat(separators = TRUE)
+    ),
+    filtered_total_pop = colDef(
+      name = "Prison Population*", 
+      align = "right",
+      format = colFormat(separators = TRUE)
+    ),
+    abolished_discretionary_parole = colDef(
+      name = "Abolished Discretionary Parole", 
+      align = "right"
+    ),
+    parole_board_members = colDef(
+      name = "Parole Board Members", 
+      align = "right"
+    ),
+    ratio = colDef(
+      show = F, 
+      name = "Ratio", 
+      align = "center"
+    )
   ),
   columnGroups = list(
-    colGroup(name = "In Prison Past Their Parole Consideration Year", columns = c("current_perc", "current_count"))
+    colGroup(
+      name = "In Prison Past Their Parole Consideration Year", 
+      columns = c("current_perc", "current_count")
+    )
   )
 )
-
-
 ```
 
 <div id="footnotes-text"><br>*Includes people in prison for new crimes and with original sentence lengths between 1 to 25 years. Does not include people in prison for parole revocations or sentence lengths less than one year or more than 25 years.<br></div>

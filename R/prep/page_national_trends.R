@@ -163,7 +163,6 @@ all_states <- state.name
 
 # Define the gradient colors for categories
 gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)
-# gradient_colors <- c(colors$red1, colors$red2, colors$red3, colors$red4)
 
 # Prepare data for national maps
 map_data <- filtered_parole_elig_table_analysis_year |>
@@ -193,13 +192,11 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
       all_na == TRUE & abolished_discretionary_parole == "Yes" ~
         paste0("<b>", state, "</b><br>",
-               state, " abolished discretionary parole.<br>",
-               "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>"),
+               state, " abolished discretionary parole.<br>"),
 
       all_na == FALSE & abolished_discretionary_parole == "Yes" ~
         paste0("<b>", state, "</b><br>",
-               state, " abolished discretionary parole.<br>",
-               "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>"),
+               state, " abolished discretionary parole.<br>"),
 
       all_na == FALSE & abolished_discretionary_parole == "No" ~
         paste0("<b>", state, "</b><br>",
@@ -238,10 +235,14 @@ map_data_breaks <- map_data |>
     gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
     current_perc = round(current_perc, 0)
-  )|>
+  ) |>
   mutate(color = case_when(abolished_discretionary_parole == "Yes" ~ colors$yellow))
 
-map_data_breaks$url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", map_data_breaks$state)))
+# URL generation to exclude states with abolished discretionary parole
+map_data_breaks <- map_data_breaks |>
+  mutate(url = ifelse(abolished_discretionary_parole == "Yes", NA,
+                      paste0("https://avparoleproject.netlify.app/state_report_",
+                             tolower(gsub(" ", "_", map_data_breaks$state)))))
 
 # Adding a dummy column for value in the abolished discretionary parole series
 map_data_breaks <- map_data_breaks |>
@@ -284,11 +285,27 @@ map_percent <- highchart() |>
       enabled = TRUE,
       keyboardNavigation = list(enabled = TRUE),
       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}")),
-    point = list(events = list(
-      click = JS("function() { window.location.assign(this.url); }")
-    )
-    )
-  ) |>
+  #  point = list(events = list(
+  #     click = JS("function() { window.location.assign(this.url); }")
+  #   )
+  #   )
+  # ) |>
+  #     click = JS("function() {
+  #                 if (this.abolished_discretionary_parole === 'Yes') {
+  #                   window.location.assign(this.url);
+  #                 } else {
+  #                 }
+  #               }")
+  #   ))
+  # ) |>
+      point = list(events = list(
+        click = JS("function() {
+                  if (this.url) {  // Only allow click if URL is not NA
+                    window.location.assign(this.url);
+                  }
+                }")
+      ))
+    ) |>
 
   hc_add_theme(hc_theme_map) |>
 
@@ -298,15 +315,6 @@ map_percent <- highchart() |>
                  formatter = JS("function() { return this.value + '%'; }")
                )) |>
 
-  # hc_legend(align = "left",
-  #           verticalAlign = "top",
-  #           layout = "horizontal",
-  #           symbolWidth = 250,
-  #           x = -7,
-  #           title = list(text = "Pct. of People in Prison Past Their Parole Consideration Year",
-  #                        style = list(fontWeight = "regular",
-  #                          fontSize = "12px"))
-  # ) |>
   hc_legend(align = "left",
             x = -8,
             verticalAlign = "top",

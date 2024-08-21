@@ -6,6 +6,7 @@ format:
     code-fold: true
     page-layout: full
     fig_caption: yes
+    anchor-sections: false 
 ---
 
 ```{r setup, include=FALSE}
@@ -44,11 +45,15 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligi
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_demographics.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_population_ageyrend.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sentlgth.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
 
 # Releases Tab --------------------------------------------------
@@ -126,6 +131,8 @@ br()
 div(id = "visualization", state_stackedbar_pe_type)
 ```
 
+<div class="transparentdivider"></div>
+
 ### Demographics
 
 `r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
@@ -139,6 +146,8 @@ div(
   div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
 )
 ```
+
+<div class="transparentdivider"></div>
 
 ### Criminal Offenses
 
@@ -159,6 +168,7 @@ div(
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
+<div class="transparentdivider"></div>
 
 ### Original Sentence Lengths
 
@@ -204,6 +214,8 @@ div(id = "visualization", state_line_population_by_year)
 
 ## Demographics
 
+`r paste(state_sentence_population_demographics, collapse = ", ")`
+
 ```{r state_waffle_population_demographics}
 div(
   id = "grid-container",
@@ -221,6 +233,8 @@ div(
 
 ## Criminal Offenses
 
+`r paste(state_sentence_population_fbi_index, collapse = ", ")`
+
 ```{r state_bar_population_fbi_index}
 div(id = "visualization", state_bar_population_fbi_index)
 ```
@@ -230,6 +244,8 @@ div(id = "visualization", state_bar_population_fbi_index)
 <div class="divider"></div>
 
 ## Sentence Lengths
+
+`r paste(state_sentence_population_sentlgth, collapse = ", ")`
 
 ```{r state_bar_population_sentlgth}
 div(id = "visualization", state_bar_population_sentlgth)
@@ -349,7 +365,7 @@ df1 <- all_parole_release_disparities |>
 if (!all(is.na(df1$total_years))) {
   
   message <- HTML(paste0("In ", select_year, ", people in prison past their parole eligibility year collectively spent a total of ",
-                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole. This extended incarceration varied across different racial and ethnic groups."))
+                   comma(sum(df1$total_years, na.rm = TRUE)), " years behind bars instead of supervised in the community on parole."))
   
   cat(message)
   
@@ -385,6 +401,8 @@ div(id = "visualization", state_scatter_race_ped_release)
 
 ### Gender
 
+In progress. Same type of graph as race and ethnicity tab.
+
 :::
 
 <br>
@@ -406,6 +424,8 @@ div(id = "visualization", state_bubble_race_ped_release)
 ```
 
 ### Gender
+
+In progress. Same type of graph as race and ethnicity tab.
 
 :::
 
@@ -436,6 +456,7 @@ div(id = "visualization", state_bubble_race_ped_release)
 
 ```{r state_lollipop_los_race}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
+# div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
@@ -445,6 +466,8 @@ div(id = "visualization", state_scatter_los_race_offense)
 ```
 
 ### Gender 
+
+In progress. Same type of graph as race and ethnicity tab.
 
 :::
 
