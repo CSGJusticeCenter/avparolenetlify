@@ -33,7 +33,7 @@ num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 <div id="body-section">
 State leaders across the United States are grappling with multiple public safety challenges, including shortages in the correctional workforce, limited access to behavioral health services, and the ongoing task of supporting successful reentry for individuals returning from incarceration. Parole release discretion plays a pivotal role in addressing these challenges within 34 state justice systems.
 
-In 2020, there were 88,661 people in prison past their parole consideration year, highlighting the critical role that parole boards play in determining the timing of release. These delays underscore the importance of timely and appropriate parole decisions, which are crucial for managing prison capacity and ensuring that correctional systems can operate effectively amid staffing and resource constraints.  
+In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. The accumulation of people who are eligible but not released underscores the importance of timely and appropriate parole decisions, which are crucial for managing prison capacity and ensuring that correctional systems can operate effectively amid staffing and resource constraints.   
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -58,8 +58,8 @@ div(
   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Consideration Year<br><br>")),
-  div(id = "bold-text", HTML("1 in 3 Incarcerated People Are In Prison Past Their Parole Consideration Year")),
+  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year<br><br>")),
+  div(id = "bold-text", HTML("1 in 3 Incarcerated People Are In Prison Past Their Parole Eligibility Year")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole<br><br>"))
 )
 # div(
@@ -69,8 +69,8 @@ div(
 #   # div(id = "national-highlight", national_percentage),
 #   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
 #   div(id = "national-highlight", "34"),
-#   div(id = "bold-text", HTML("In Prison Past Their<br>Parole Consideration Year")),
-#   div(id = "bold-text", HTML("1 in 3 People Are In Prison Past<br>Their Parole Consideration Year")),
+#   div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year")),
+#   div(id = "bold-text", HTML("1 in 3 People Are In Prison Past<br>Their Parole Eligibility Year")),
 #   div(id = "bold-text", HTML("States With<br>Discretionary Parole"))
 # )
 ```
@@ -95,28 +95,9 @@ map_percent |>
 
 <div id="body-section">
 <div class="divider"></div>
-
-## The Power of Parole Boards
-
-Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
-
-VISUALIZATION?
-
-```{r}
-# <div id="grid-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
-#   <p><br>
-#     Despite the critical role they play, parole boards are often composed of a small number of individuals. In many states, just 5-10 parole board members are responsible for decisions affecting thousands of people awaiting parole.<br><br>Parole board members must balance a range of factors, including public safety, the rehabilitation progress of incarcerated people, and the perspectives of victims and their families. These boards often work with limited resources and under significant public and political pressure.
-#   </p>
-#   ![](square_dot_parole_graphic.png)
-# </div>
-```
-
-
-
-<div class="divider"></div>
 ## Parole Eligibility by State
 
-This table provides a comprehensive overview of state-level prison populations*, highlighting the percentage and number of people in prison past their parole consideration year, alongside details about whether the state has abolished discretionary parole and the number of parole board members.
+This table provides a comprehensive overview of state-level prison populations*, highlighting the percentage and number of people in prison past their parole eligibility year, alongside details about whether the state has abolished discretionary parole and the number of parole board members.
 
 ```{r table}
 # Custom function to create data bars with NA handling
@@ -182,7 +163,7 @@ parole_eligibility_table$filtered_total_pop <- as.numeric(parole_eligibility_tab
 #                    align = "center")
 #   ),
 #   columnGroups = list(
-#     colGroup(name = "In Prison Past Their Parole Consideration Year", columns = c("current_perc", "current_count"))
+#     colGroup(name = "In Prison Past Their Parole Eligibility Year", columns = c("current_perc", "current_count"))
 #   )
 # )
 # 
@@ -244,7 +225,7 @@ reactable(
   ),
   columnGroups = list(
     colGroup(
-      name = "In Prison Past Their Parole Consideration Year", 
+      name = "In Prison Past Their Parole Eligibility Year", 
       columns = c("current_perc", "current_count")
     )
   )
@@ -256,30 +237,7 @@ reactable(
 <a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About This Data</a>
 <a href="" style="font-size: 0.7em; color: gray;">Download Table</a>
 
-
-
 <br>
-<div class="divider"></div>
-## Disparities 
-
-Here we can show national disparities in incarceration rates and release after parole consideration year.   
-
-Would you prefer this information to be displayed in this section or on the landing page? Should the policy paper be linked here?
-["Learn More About Disparities Here."]
-
-<br>
-<div class="divider"></div>
-## Economic Impact of Parole
-
-Is it of interest to show costs? For instance, we could show potential cost savings, such as savings from timely release after parole eligibility. How much did it cost states on average to incarcerate people past their parole consideration year?
-
-Would you prefer this information to be displayed in this section or on the landing page?
-
-
-
-<br>
-
-
 </div>
 <br>
 
