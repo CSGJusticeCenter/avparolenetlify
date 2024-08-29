@@ -30,9 +30,9 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_demographics.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_waffle_parole_eligibility_ageyrend.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_ageyrend.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_offense_group.rds"))
@@ -105,12 +105,16 @@ div(
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Eligibility Year")),
+  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year*")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Eligibility Year*")),
   div(id = "bold-text", style = "text-align: center;", HTML("Parole Board<br>Members"))
 )
-br()
 ```
+
+<br>
+<div style="font-size: 0.8em; color: black; text-align: center;">
+*Only includes people in prison for new offenses and sentence lengths between 1 to 25 years.
+</div>
 
 ::: {.panel-tabset .nav-pills}
 
@@ -137,14 +141,17 @@ div(id = "visualization", state_stackedbar_pe_type)
 
 `r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
 
-```{r state_waffle_parole_eligibility_demographics}
-div(
-  id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
-  div(id = "small-visualization", state_waffle_parole_eligibility_race),
-  div(id = "small-visualization", state_waffle_parole_eligibility_sex),
-  div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
-)
+```{r state_stacked_bar_pe_race}
+# div(
+#   id = "grid-container",
+#   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
+#   div(id = "small-visualization", state_waffle_parole_eligibility_race),
+#   div(id = "small-visualization", state_waffle_parole_eligibility_sex),
+#   div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
+# )
+div(id = "visualization", state_stacked_bar_pe_race)
+div(id = "visualization", state_stacked_bar_pe_sex)
+div(id = "visualization", state_stacked_bar_pe_ageyrend)
 ```
 
 <div class="transparentdivider"></div>
@@ -337,10 +344,10 @@ div(id = "visualization", state_lollipop_offense_los)
 `r paste(state_sentence_rri, collapse = ", ")`
 
 ```{r state_hc_waffle_rri_demographics}
-div(id = "visualization", state_hc_waffle_rri_black)
-div(id = "visualization", state_hc_waffle_rri_white)
-div(id = "visualization", state_hc_waffle_rri_hispanic)
-div(id = "visualization", state_hc_waffle_rri_other)
+# div(id = "visualization", state_hc_waffle_rri_black)
+# div(id = "visualization", state_hc_waffle_rri_white)
+# div(id = "visualization", state_hc_waffle_rri_hispanic)
+# div(id = "visualization", state_hc_waffle_rri_other)
 ```
 
 
@@ -396,7 +403,7 @@ if (!all(is.na(df1$total_years))) {
 ```
 
 ```{r state_scatter_race_ped_release}
-div(id = "visualization", state_scatter_race_ped_release)
+# div(id = "visualization", state_scatter_race_ped_release)
 ```
 
 ### Gender
@@ -420,7 +427,7 @@ In progress. Same type of graph as race and ethnicity tab.
 The timing of release for individuals after their parole eligibility year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
 
 ```{r state_bubble_race_ped_release}
-div(id = "visualization", state_bubble_race_ped_release)
+# div(id = "visualization", state_bubble_race_ped_release)
 ```
 
 ### Gender

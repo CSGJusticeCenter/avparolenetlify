@@ -98,14 +98,14 @@ fnc_create_parelig_status <- function(df) {
     mutate(
       parelig_status = case_when(
         parelig_year <= rptyear ~ "Current",
-        parelig_year > rptyear & time_between_ped_rptyear <= 5 ~ "Future 1-5 Years",
-        parelig_year > rptyear & time_between_ped_rptyear > 5 ~ "Future 6+ Years",
+        # parelig_year > rptyear & time_between_ped_rptyear <= 5 ~ "Future 1-5 Years",
+        # parelig_year > rptyear & time_between_ped_rptyear > 5 ~ "Future 6+ Years",
+        parelig_year > rptyear ~ "Future",
         is.na(parelig_year) ~ "Missing"
       ),
       parelig_status = factor(parelig_status,
                               levels = c("Current",
-                                         "Future 1-5 Years",
-                                         "Future 6+ Years",
+                                         "Future",
                                          "Missing"))
     )
   return(df)
@@ -554,8 +554,7 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
 
 
 
-# Prepare data for a simple bar graph
-#' Prepare PE Data
+#' # Prepare data for a simple bar graphPrepare PE Data
 #'
 #' This function prepares the data for a simple bar graph, filtering for "Current" parole eligibility status and specific sentence lengths.
 #'
@@ -682,55 +681,55 @@ encode_icon <- function(color) {
 #' @param accessibility_text A string representing the accessibility text for the chart.
 #' @return A list of Highcharts objects for each state.
 #' @export
-fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
-  data <- data |>
-    mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
-           prop = prop * 100,
-           prop = round(prop, 0))
-
-  states <- unique(data$state)
-
-  charts <- map(.x = states, .f = function(x) {
-    state_data <- data |>
-      filter(state == x)
-
-    hc_accessibility_text <- sprintf(accessibility_text, category, select_year, x)
-
-    highcharts <- highchart() |>
-      hc_chart(type = "item", marginTop = 140) |>
-      hc_title(text = title) |>
-      hc_xAxis(categories = state_data[[category]]) |>
-      hc_yAxis(title = list(text = "Percentage"), max = 100) |>
-      hc_series(
-        list(
-          name = "Percentage",
-          data = lapply(1:nrow(state_data), function(i) {
-            list(
-              y = state_data$prop[i],
-              name = state_data[[category]][i],
-              color = colors[i],
-              marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors[i])))
-            )
-          }),
-          type = "item",
-          size = '100%',
-          itemMargin = 10,
-          rows = 10
-        )
-      ) |>
-      hc_exporting(enabled = TRUE) |>
-      hc_tooltip(
-        formatter = JS("function() {
-          return '<b>' + this.point.name + ':</b> ' + this.y + '%';
-        }")
-      ) |>
-      hc_add_theme(base_hc_theme)
-
-    return(highcharts)
-  })
-
-  setNames(charts, states)
-}
+# fnc_hc_waffle <- function(data, category, colors, title, accessibility_text) {
+#   data <- data |>
+#     mutate(prop_label = paste0("<b>", prop_label, "</b> (", n_label, ")"),
+#            prop = prop * 100,
+#            prop = round(prop, 0))
+#
+#   states <- unique(data$state)
+#
+#   charts <- map(.x = states, .f = function(x) {
+#     state_data <- data |>
+#       filter(state == x)
+#
+#     hc_accessibility_text <- sprintf(accessibility_text, category, select_year, x)
+#
+#     highcharts <- highchart() |>
+#       hc_chart(type = "item", marginTop = 140) |>
+#       hc_title(text = title) |>
+#       hc_xAxis(categories = state_data[[category]]) |>
+#       hc_yAxis(title = list(text = "Percentage"), max = 100) |>
+#       hc_series(
+#         list(
+#           name = "Percentage",
+#           data = lapply(1:nrow(state_data), function(i) {
+#             list(
+#               y = state_data$prop[i],
+#               name = state_data[[category]][i],
+#               color = colors[i],
+#               marker = list(symbol = sprintf("url(data:image/svg+xml;base64,%s)", encode_icon(colors[i])))
+#             )
+#           }),
+#           type = "item",
+#           size = '100%',
+#           itemMargin = 10,
+#           rows = 10
+#         )
+#       ) |>
+#       hc_exporting(enabled = TRUE) |>
+#       hc_tooltip(
+#         formatter = JS("function() {
+#           return '<b>' + this.point.name + ':</b> ' + this.y + '%';
+#         }")
+#       ) |>
+#       hc_add_theme(base_hc_theme)
+#
+#     return(highcharts)
+#   })
+#
+#   setNames(charts, states)
+# }
 
 # Calculate n, prop, and create labels and tooltips
 #' Create Tooltip

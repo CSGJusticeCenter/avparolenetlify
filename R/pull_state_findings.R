@@ -70,36 +70,30 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_demographics)) {
 }
 
 # TITLE: Race and Ethnicity
-if (state_for_report %in% names(all_waffle_parole_eligibility_race)) {
-  state_waffle_parole_eligibility_race <-
-    all_waffle_parole_eligibility_race[[state_for_report]]|>
-    hc_size(height = 350)|>
-    hc_title(text = paste0("Race and Ethnicity"))|>
-    hc_exporting(enabled = FALSE)
+if (state_for_report %in% names(all_stacked_bar_pe_race)) {
+  state_stacked_bar_pe_race <-
+    all_stacked_bar_pe_race[[state_for_report]]|>
+    hc_size(height = 350)
 } else {
-  state_waffle_parole_eligibility_race <- no_data_text
+  state_stacked_bar_pe_race <- no_data_text
 }
 
 # TITLE: Gender
-if (state_for_report %in% names(all_waffle_parole_eligibility_sex)) {
-  state_waffle_parole_eligibility_sex <-
-    all_waffle_parole_eligibility_sex[[state_for_report]]|>
-    hc_size(height = 350)|>
-    hc_title(text = paste0("Gender"))|>
-    hc_exporting(enabled = FALSE)
+if (state_for_report %in% names(all_stacked_bar_pe_sex)) {
+  state_stacked_bar_pe_sex <-
+    all_stacked_bar_pe_sex[[state_for_report]]|>
+    hc_size(height = 200)
 } else {
-  state_waffle_parole_eligibility_sex <- no_data_text
+  state_stacked_bar_pe_sex <- no_data_text
 }
 
 # TITLE: Age
-if (state_for_report %in% names(all_waffle_parole_eligibility_ageyrend)) {
-  state_waffle_parole_eligibility_ageyrend <-
-    all_waffle_parole_eligibility_ageyrend[[state_for_report]]|>
-    hc_size(height = 350)|>
-    hc_title(text = paste0("Age"))|>
-    hc_exporting(enabled = FALSE)
+if (state_for_report %in% names(all_stacked_bar_pe_ageyrend)) {
+  state_stacked_bar_pe_ageyrend <-
+    all_stacked_bar_pe_ageyrend[[state_for_report]]|>
+    hc_size(height = 350)
 } else {
-  state_waffle_parole_eligibility_ageyrend <- no_data_text
+  state_stacked_bar_pe_ageyrend <- no_data_text
 }
 
 # TITLE: Years Spent in Prison After Parole Eligibility

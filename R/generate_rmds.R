@@ -1,5 +1,5 @@
 
-# source("R/config.R")
+source("R/config.R")
 # source("R/prep/page_national_trends.R")
 # source("R/prep/tab_parole_eligibility.R")
 # source("R/prep/tab_population.R")
@@ -10,8 +10,9 @@
 wd <- getwd()
 
 # Get list of states where parol eligibility is the focus
-states <- parole_eligibility_table |> filter(abolished_discretionary_parole == "No") |>
-  pull(state)
+states <- "Georgia"
+  # parole_eligibility_table |> filter(abolished_discretionary_parole == "No") |>
+  # pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

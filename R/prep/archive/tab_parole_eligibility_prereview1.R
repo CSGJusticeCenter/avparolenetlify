@@ -64,7 +64,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
              # marginLeft = 10,
              # marginBottom = -30,
              # marginTop = 10
-             ) |>
+    ) |>
     hc_title(text = "Pct. of Prison Population by Parole Eligibility Status") |>
     hc_add_theme(base_hc_theme) |>
     hc_xAxis(title = list(text = NULL),
@@ -86,8 +86,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
     hc_tooltip(formatter = JS("function () {
     return this.point.tooltip;
   }")) |>
-    hc_add_series(name = "Missing",
-                  data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
+    hc_add_series(name = "Missing or Not Parole-Eligible",
+                  data = list(list(y = df1$prop[4], tooltip = df1$tooltip[4], label = df1$prop_label[4])),
                   stack = "a",
                   color = darkgray,
                   dataLabels = list(
@@ -182,8 +182,8 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
              rptyear == select_year)
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people* in prison past their parole eligibility year. This group made up ",
-                      df1$prop_label, " of people in prison.")
+                      " people in prison past their parole eligibility year. This group made up ",
+                      df1$prop_label, " of people in prison for new crimes and with sentence lengths between 1 to 25 years.")
   return(sentences)
 })
 
@@ -194,132 +194,55 @@ all_sentence_parole_eligibility_population$Georgia
 
 # ------------------------ PE Prison Population by Demographics ------------------------ #
 
-states <- unique(ncrp_pes_subset$state)
-
-all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
-
-  data <- ncrp_yearendpop|>
-    filter(rptyear == select_year) |>
-    filter(state == x) |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
-    # mutate(parelig_status =
-    #          case_when(parelig_status == "Future" | parelig_status == "Missing" ~ "Other Population",
-    #                    TRUE ~ parelig_status)) |>
-    filter(race != "Unknown") |>
-    group_by(race) |>
-    count(parelig_status) |>
-    mutate(
-      prop = n/sum(n),
-      yearendpop_ped = sum(n),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0)
-    ) |>
-    ungroup() |>
-    mutate(tooltip = paste0("<b>Race:</b> ", race, "<br>",
-                            "<b>Population:</b> ", parelig_status, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop*100, 0), "%")) |>
-    arrange(desc(n))
-
-  accessibility_text <- "TBD"
-
-  # Create the highchart
-  highcharts <- highchart() |>
-    hc_chart(type = "bar", marginLeft = 200) |>
-    hc_title(text = "Race and Ethnicity") |>
-    hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
-    hc_xAxis(categories = unique(data$race)) |>
-    hc_yAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) |>
-    hc_plotOptions(series = list(stacking = "normal")) |>
-    hc_tooltip(formatter = JS("function() { return this.point.tooltip; }")) |>
-    hc_add_series(data = data |> filter(parelig_status == "Current") |>
-                    select(race, prop, tooltip) |>
-                    rename(y = prop),
-                  name = "Current",
-                  color = color4) |>
-    hc_add_series(data = data |> filter(parelig_status == "Future") |>
-                    select(race, prop, tooltip) |>
-                    rename(y = prop),
-                  name = "Future",
-                  color = color2) |>
-    hc_add_series(data = data |> filter(parelig_status == "Missing") |>
-                    select(race, prop, tooltip) |>
-                    rename(y = prop),
-                  name = "Missing",
-                  color = darkgray) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
-    hc_legend(enabled = TRUE) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 2,
-                                 minPointLength = 4,
-                                 pointWidth = 50),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
-
-  return(highcharts)
-
-})
-
-all_stacked_bar_pe_race <- setNames(all_stacked_bar_pe_race, states)
-all_stacked_bar_pe_race$Georgia
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Prepare the data for race
 current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
+current_ped_race <- current_ped_race |> arrange(desc(n))
+
+# Colors for race
+colors_race <- c(color1, color2, color3, color4)
+
+# Accessibility text for race
+accessibility_text_race <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by race and ethnicity"
+
+# Create the charts for race
+all_waffle_parole_eligibility_race <- fnc_hc_waffle(current_ped_race, "race", colors_race, "Race and Ethnicity", accessibility_text_race)
+all_waffle_parole_eligibility_race$Georgia
 
 # Prepare the data for sex
 current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 
+# Colors for sex
+colors_sex <- c(color1, color3)
+
+# Accessibility text for sex
+accessibility_text_sex <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by sex."
+
+# Create the charts for sex
+all_waffle_parole_eligibility_sex <- fnc_hc_waffle(current_ped_sex, "sex", colors_sex, "Sex", accessibility_text_sex)
+
 # Prepare the data for age
-current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
+current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend) |>
+  arrange(state, desc(ageyrend))
+current_ped_ageyrend$ageyrend <- factor(current_ped_ageyrend$ageyrend,
+                                        levels = c("18-24 years",
+                                                   "25-34 years",
+                                                   "35-44 years",
+                                                   "45-54 years",
+                                                   "55+ years"))
+
+# Colors for age
+colors_age <- c(color1, color2, color3, color5, color4)
+
+# Accessibility text for age
+accessibility_text_age <- "This graph shows the proportion of the prison population who are currently eligible for parole but not yet released by age."
+
+# Create the charts for age
+all_waffle_parole_eligibility_ageyrend <- fnc_hc_waffle(current_ped_ageyrend, "ageyrend", colors_age, "Current Age", accessibility_text_age)
+
+# Display the chart for Georgia as an example
+all_waffle_parole_eligibility_race$Georgia
+all_waffle_parole_eligibility_sex$Georgia
+all_waffle_parole_eligibility_ageyrend$Georgia
 
 # Generate graph for each state
 states <- unique(current_ped_race$state)
@@ -417,9 +340,9 @@ states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
   df1 <- current_ped_fbi_index |>
     mutate(fbi_index = case_when(fbi_index == "Murder and Non-negligent Manslaughter" ~
-                              "Murder and Non-negligent<br>Manslaughter",
-                              fbi_index == "Aggravated or Simple Assault" ~ "Aggravated or<br>Simple Assault",
-                              TRUE ~ fbi_index)) |>
+                                   "Murder and Non-negligent<br>Manslaughter",
+                                 fbi_index == "Aggravated or Simple Assault" ~ "Aggravated or<br>Simple Assault",
+                                 TRUE ~ fbi_index)) |>
     filter(state == x) |>
     mutate(prop = prop * 100,
            tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
@@ -643,8 +566,8 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     mutate(prop = prop*100,
            tooltip = paste0("<b>Sentence Length:</b> ", sentlgth, "<br>",
-                     "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                     "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
@@ -705,9 +628,9 @@ for (folder in theseFOLDERS){
   save(all_stackedbar_pe_type,                       file = file.path(folder, "all_stackedbar_pe_type.rds"))
   save(all_sentence_parole_eligibility_population,   file = file.path(folder, "all_sentence_parole_eligibility_population.rds"))
   save(all_sentence_parole_eligibility_demographics, file = file.path(folder, "all_sentence_parole_eligibility_demographics.rds"))
-  save(all_stacked_bar_pe_race,                      file = file.path(folder, "all_stacked_bar_pe_race.rds"))
-  save(all_stacked_bar_pe_sex,                       file = file.path(folder, "all_stacked_bar_pe_sex.rds"))
-  save(all_stacked_bar_pe_ageyrend,                  file = file.path(folder, "all_stacked_bar_pe_ageyrend.rds"))
+  save(all_waffle_parole_eligibility_race,           file = file.path(folder, "all_waffle_parole_eligibility_race.rds"))
+  save(all_waffle_parole_eligibility_sex,            file = file.path(folder, "all_waffle_parole_eligibility_sex.rds"))
+  save(all_waffle_parole_eligibility_ageyrend,       file = file.path(folder, "all_waffle_parole_eligibility_ageyrend.rds"))
   save(all_sentence_parole_eligibility_fbi_index,    file = file.path(folder, "all_sentence_parole_eligibility_fbi_index.rds"))
   save(all_bar_ped_fbi_index,                        file = file.path(folder, "all_bar_ped_fbi_index.rds"))
   save(all_bar_parole_eligibility_sentlgth,          file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))

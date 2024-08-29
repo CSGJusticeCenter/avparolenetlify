@@ -421,8 +421,8 @@ for (folder in theseFOLDERS){
   save(bjs_prison_pop_by_rptyear,          file = file.path(folder, "bjs_prison_pop_by_rptyear.rds"))
 
   save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))
-  save(robinadefinitions,                  file = file.path(folder, "robinadefinitions.rds"))
-  save(robinainfo,                         file = file.path(folder, "robinainfo.rds"))
+  # save(robinadefinitions,                  file = file.path(folder, "robinadefinitions.rds"))
+  # save(robinainfo,                         file = file.path(folder, "robinainfo.rds"))
   save(carl_state_notes,                   file = file.path(folder, "carl_state_notes.rds"))
   save(parole_info_by_state,               file = file.path(folder, "parole_info_by_state.rds"))
 
