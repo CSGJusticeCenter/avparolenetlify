@@ -243,7 +243,8 @@ all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
                   color = color4) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
-    hc_legend(enabled = TRUE) |>
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) |>
     hc_exporting(enabled = TRUE) |>
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
@@ -326,7 +327,8 @@ all_stacked_bar_pe_sex <- map(.x = states,  .f = function(x) {
                   color = color4) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
-    hc_legend(enabled = TRUE) |>
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) |>
     hc_exporting(enabled = TRUE) |>
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
@@ -408,7 +410,8 @@ all_stacked_bar_pe_ageyrend <- map(.x = states,  .f = function(x) {
                   color = color4) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
-    hc_legend(enabled = TRUE) |>
+    hc_legend(enabled = TRUE,
+              reversed = TRUE) |>
     hc_exporting(enabled = TRUE) |>
     hc_plotOptions(series = list(animation = FALSE,
                                  cursor = "pointer",
