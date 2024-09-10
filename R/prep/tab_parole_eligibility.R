@@ -56,7 +56,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 
   hc_accessibility_text <-
     paste0("This graph shows the proportion of the prison population by parole eligibility status in ",
-           select_year, " in the state of ", x, ". Parole eligibility statuses include the new court commitment popultion currently eligible,
+           select_year, " in the state of ", x, ". Parole eligibility statuses include the new court commitment population currently eligible,
       new court commitment population eligible in the future, and population with missing parole eligibility data.")
 
   highcharts <- highchart() |>
@@ -83,9 +83,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                                  pointWidth = 40,
                                  borderWidth = 3,  # Adjust this to increase outline size
                                  borderColor = "#FFFFFF")) |>
-    hc_tooltip(formatter = JS("function () {
-    return this.point.tooltip;
-  }")) |>
+    hc_tooltip(formatter = JS("function () {return this.point.tooltip;}")) |>
     hc_add_series(name = "Missing",
                   data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
                   stack = "a",
@@ -102,22 +100,6 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                     y = 60,
                     style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
-    # hc_add_series(name = "Future 6+ Years",
-    #               data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
-    #               stack = "a",
-    #               color = color3,
-    #               dataLabels = list(
-    #                 enabled = TRUE,
-    #                 formatter = JS("function() {
-    #               if (this.y > 0.00) {
-    #                 return this.point.label;
-    #               }
-    #               return null;
-    #             }"),
-    #                 x = 0,
-    #                 y = 60,
-    #                 style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
-    #               )) |>
     hc_add_series(name = "Future",
                   data = list(list(y = df1$prop[2], tooltip = df1$tooltip[2], label = df1$prop_label[2])),
                   stack = "a",
@@ -183,7 +165,7 @@ all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x)
 
   sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
                       " people* in prison past their parole eligibility year. This group made up ",
-                      df1$prop_label, " of people in prison.")
+                      df1$prop_label, " of people* in prison.")
   return(sentences)
 })
 
@@ -206,9 +188,6 @@ all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
              sentlgth == "2-4.9 years" |
              sentlgth == "5-9.9 years" |
              sentlgth == "10-24.9 years") |>
-    # mutate(parelig_status =
-    #          case_when(parelig_status == "Future" | parelig_status == "Missing" ~ "Other Population",
-    #                    TRUE ~ parelig_status)) |>
     filter(race != "Unknown") |>
     group_by(race) |>
     count(parelig_status) |>
@@ -222,37 +201,47 @@ all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
     mutate(tooltip = paste0("<b>Race:</b> ", race, "<br>",
                             "<b>Population:</b> ", parelig_status, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop*100, 0), "%")) |>
-    arrange(desc(n))
+                            "<b>Percentage of People:</b> ", round(prop*100, 0), "%"))|>
+    arrange(desc(race))
 
   accessibility_text <- "TBD"
 
   # Create the highchart
   highcharts <- highchart() |>
-    hc_chart(type = "bar", marginLeft = 200) |>
+    hc_chart(type = "column"#, marginLeft = 190
+             ) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
     hc_xAxis(categories = unique(data$race)) |>
-    hc_yAxis(title = list(text = ""),
-             labels = list(enabled = FALSE)) |>
+    # hc_yAxis(title = list(text = "")
+    #          #labels = list(enabled = FALSE)
+    #          ) |>
+    hc_yAxis(
+      title = list(text = ""),
+      min = 0,
+      max = 1,  # Proportions are between 0 and 1
+      labels = list(
+        formatter = JS("function () { return Math.round(this.value * 100) + '%'; }")  # Format y-axis labels as percentages
+      )
+    ) |>
     hc_plotOptions(series = list(stacking = "normal")) |>
     hc_tooltip(formatter = JS("function() { return this.point.tooltip; }")) |>
-    hc_add_series(data = data |> filter(parelig_status == "Current") |>
-                    select(race, prop, tooltip) |>
-                    rename(y = prop),
-                  name = "Current",
-                  color = color4) |>
-    hc_add_series(data = data |> filter(parelig_status == "Future") |>
-                    select(race, prop, tooltip) |>
-                    rename(y = prop),
-                  name = "Future",
-                  color = color2) |>
     hc_add_series(data = data |> filter(parelig_status == "Missing") |>
                     select(race, prop, tooltip) |>
                     rename(y = prop),
                   name = "Missing",
                   color = darkgray) |>
-    hc_add_theme(base_hc_theme) |>
+    hc_add_series(data = data |> filter(parelig_status == "Future") |>
+                    select(race, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Future",
+                  color = color2) |>
+    hc_add_series(data = data |> filter(parelig_status == "Current") |>
+                    select(race, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Current",
+                  color = color4) |>
+    hc_add_theme(hc_theme_with_line) |>
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
     hc_legend(enabled = TRUE) |>
     hc_exporting(enabled = TRUE) |>
@@ -260,7 +249,7 @@ all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
                                  cursor = "pointer",
                                  borderWidth = 2,
                                  minPointLength = 4,
-                                 pointWidth = 50),
+                                 pointWidth = 40),
                    accessibility = list(enabled = TRUE,
                                         keyboardNavigation = list(enabled = TRUE),
                                         linkedDescription = accessibility_text,
@@ -275,51 +264,181 @@ all_stacked_bar_pe_race <- setNames(all_stacked_bar_pe_race, states)
 all_stacked_bar_pe_race$Georgia
 
 
+all_stacked_bar_pe_sex <- map(.x = states,  .f = function(x) {
+
+  data <- ncrp_yearendpop|>
+    filter(rptyear == select_year) |>
+    filter(state == x) |>
+    filter(admtype == "New court commitment") |>
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years") |>
+    filter(sex != "Unknown") |>
+    group_by(sex) |>
+    count(parelig_status) |>
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) |>
+    ungroup() |>
+    mutate(tooltip = paste0("<b>Sex:</b> ", sex, "<br>",
+                            "<b>Population:</b> ", parelig_status, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop*100, 0), "%")) |>
+    arrange(desc(sex))
+
+  accessibility_text <- "TBD"
+
+  # Create the highchart
+  highcharts <- highchart() |>
+    hc_chart(type = "column"#, marginLeft = 190
+             ) |>
+    hc_title(text = "Sex") |>
+    hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
+    hc_xAxis(categories = unique(data$sex)) |>
+    hc_yAxis(
+      title = list(text = ""),
+      min = 0,
+      max = 1,  # Proportions are between 0 and 1
+      labels = list(
+        formatter = JS("function () { return Math.round(this.value * 100) + '%'; }")  # Format y-axis labels as percentages
+      )
+    ) |>
+    hc_plotOptions(series = list(stacking = "normal")) |>
+    hc_tooltip(formatter = JS("function() { return this.point.tooltip; }")) |>
+    hc_add_series(data = data |> filter(parelig_status == "Missing") |>
+                    select(sex, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Missing",
+                  color = darkgray) |>
+    hc_add_series(data = data |> filter(parelig_status == "Future") |>
+                    select(sex, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Future",
+                  color = color2) |>
+    hc_add_series(data = data |> filter(parelig_status == "Current") |>
+                    select(sex, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Current",
+                  color = color4) |>
+    hc_add_theme(hc_theme_with_line) |>
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
+    hc_legend(enabled = TRUE) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 2,
+                                 minPointLength = 4,
+                                 pointWidth = 40),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+})
+
+all_stacked_bar_pe_sex <- setNames(all_stacked_bar_pe_sex, states)
+all_stacked_bar_pe_sex$Georgia
+
+all_stacked_bar_pe_ageyrend <- map(.x = states,  .f = function(x) {
+
+  data <- ncrp_yearendpop|>
+    filter(rptyear == select_year) |>
+    filter(state == x) |>
+    filter(admtype == "New court commitment") |>
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years") |>
+    filter(ageyrend != "Unknown") |>
+    group_by(ageyrend) |>
+    count(parelig_status) |>
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) |>
+    ungroup() |>
+    mutate(tooltip = paste0("<b>Age:</b> ", ageyrend, "<br>",
+                            "<b>Population:</b> ", parelig_status, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop*100, 0), "%")) |>
+    arrange(desc(ageyrend))
+
+  accessibility_text <- "TBD"
+
+  # Create the highchart
+  highcharts <- highchart() |>
+    hc_chart(type = "column"#, marginLeft = 190
+             ) |>
+    hc_title(text = "Age") |>
+    hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
+    hc_xAxis(categories = unique(data$ageyrend)) |>
+    hc_yAxis(
+      title = list(text = ""),
+      min = 0,
+      max = 1,  # Proportions are between 0 and 1
+      labels = list(
+        formatter = JS("function () { return Math.round(this.value * 100) + '%'; }")  # Format y-axis labels as percentages
+      )
+    ) |>
+    hc_plotOptions(series = list(stacking = "normal")) |>
+    hc_tooltip(formatter = JS("function() { return this.point.tooltip; }")) |>
+    hc_add_series(data = data |> filter(parelig_status == "Missing") |>
+                    select(ageyrend, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Missing",
+                  color = darkgray) |>
+    hc_add_series(data = data |> filter(parelig_status == "Future") |>
+                    select(ageyrend, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Future",
+                  color = color2) |>
+    hc_add_series(data = data |> filter(parelig_status == "Current") |>
+                    select(ageyrend, prop, tooltip) |>
+                    rename(y = prop),
+                  name = "Current",
+                  color = color4) |>
+    hc_add_theme(hc_theme_with_line) |>
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
+    hc_legend(enabled = TRUE) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 2,
+                                 minPointLength = 4,
+                                 pointWidth = 40),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+
+})
+
+all_stacked_bar_pe_ageyrend <- setNames(all_stacked_bar_pe_ageyrend, states)
+all_stacked_bar_pe_ageyrend$Georgia
+# # Prepare the data for race
+# current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
+#
+# # Prepare the data for sex
+# current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
+#
+# # Prepare the data for age
+# current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Prepare the data for race
-current_ped_race <- fnc_prepare_pe_data(ncrp_yearendpop, race)
-
-# Prepare the data for sex
-current_ped_sex <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
-
-# Prepare the data for age
-current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
 # Generate graph for each state
 states <- unique(current_ped_race$state)

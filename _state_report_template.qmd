@@ -105,8 +105,8 @@ div(
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
   div(id = "highlight-text", paste0(round(num_people_current_perc*100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility Year*")),
-  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Eligibility Year*")),
+  div(id = "bold-text", style = "text-align: center;", HTML("In Prison Past Their<br>Parole Eligibility*")),
+  div(id = "bold-text", style = "text-align: center;", HTML("Prison Population Incarcerated Past Their Parole Eligibility*")),
   div(id = "bold-text", style = "text-align: center;", HTML("Parole Board<br>Members"))
 )
 ```
@@ -127,7 +127,7 @@ div(
 <br>
 <div class="divider"></div>
 
-## In Prison Past Their Parole Eligibility Year
+## In Prison Past Their Parole Eligibility
 
 `r paste(state_sentence_parole_eligibility_population, collapse = ", ")`
 
@@ -139,9 +139,10 @@ div(id = "visualization", state_stackedbar_pe_type)
 
 ### Demographics
 
-`r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
+The charts below illustrate the demographics of people* in prison based on their parole eligibility status, categorized as currently eligible for parole, eligible in the future, and those with missing parole eligibility information.
 
 ```{r state_stacked_bar_pe_race}
+# `r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
 # div(
 #   id = "grid-container",
 #   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
@@ -149,9 +150,9 @@ div(id = "visualization", state_stackedbar_pe_type)
 #   div(id = "small-visualization", state_waffle_parole_eligibility_sex),
 #   div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
 # )
-div(id = "visualization", state_stacked_bar_pe_race)
-div(id = "visualization", state_stacked_bar_pe_sex)
-div(id = "visualization", state_stacked_bar_pe_ageyrend)
+div(id = "small-visualization", state_stacked_bar_pe_race)
+div(id = "small-visualization", state_stacked_bar_pe_sex)
+div(id = "small-visualization", state_stacked_bar_pe_ageyrend)
 ```
 
 <div class="transparentdivider"></div>

@@ -73,7 +73,8 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_demographics)) {
 if (state_for_report %in% names(all_stacked_bar_pe_race)) {
   state_stacked_bar_pe_race <-
     all_stacked_bar_pe_race[[state_for_report]]|>
-    hc_size(height = 350)
+    hc_chart(backgroundColor = "white") |>
+    hc_size(height = 400)
 } else {
   state_stacked_bar_pe_race <- no_data_text
 }
@@ -82,8 +83,9 @@ if (state_for_report %in% names(all_stacked_bar_pe_race)) {
 if (state_for_report %in% names(all_stacked_bar_pe_sex)) {
   state_stacked_bar_pe_sex <-
     all_stacked_bar_pe_sex[[state_for_report]]|>
-    hc_size(height = 200)
-} else {
+    hc_chart(backgroundColor = "white") |>
+    hc_size(height = 400)
+  } else {
   state_stacked_bar_pe_sex <- no_data_text
 }
 
@@ -91,8 +93,9 @@ if (state_for_report %in% names(all_stacked_bar_pe_sex)) {
 if (state_for_report %in% names(all_stacked_bar_pe_ageyrend)) {
   state_stacked_bar_pe_ageyrend <-
     all_stacked_bar_pe_ageyrend[[state_for_report]]|>
-    hc_size(height = 350)
-} else {
+    hc_chart(backgroundColor = "white") |>
+    hc_size(height = 400)
+  } else {
   state_stacked_bar_pe_ageyrend <- no_data_text
 }
 

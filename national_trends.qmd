@@ -33,7 +33,7 @@ num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 <div id="body-section">
 State leaders across the United States are grappling with multiple public safety challenges, including shortages in the correctional workforce, limited access to behavioral health services, and the ongoing task of supporting successful reentry for individuals returning from incarceration. Parole release discretion plays a pivotal role in addressing these challenges within 34 state justice systems.
 
-In 2020, there were 88,661 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. The accumulation of people who are eligible but not released underscores the importance of timely and appropriate parole decisions, which are crucial for managing prison capacity and ensuring that correctional systems can operate effectively amid staffing and resource constraints.   
+In 2020, there were 88,000 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. The accumulation of people who are eligible but not released underscores the importance of timely and appropriate parole decisions, which are crucial for managing prison capacity and ensuring that correctional systems can operate effectively amid staffing and resource constraints.   
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -58,8 +58,8 @@ div(
   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year<br><br>")),
-  div(id = "bold-text", HTML("1 in 3 Incarcerated People Are In Prison Past Their Parole Eligibility Year")),
+  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility<br><br>")),
+  div(id = "bold-text", HTML("1 in 3 Incarcerated People Are In Prison Past Their Parole Eligibility")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole<br><br>"))
 )
 # div(
