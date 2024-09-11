@@ -36,10 +36,10 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_a
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_ped_offense_group.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_fbi_index.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_sentlgth.rds"))
 
 # Population Tab --------------------------------------------------
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
@@ -132,7 +132,7 @@ div(
 `r paste(state_sentence_parole_eligibility_population, collapse = ", ")`
 
 ```{r state_stackedbar_pe_type}
-div(id = "visualization", state_stackedbar_pe_type)
+div(id = "small-visualization", state_stackedbar_pe_type)
 ```
 
 <div class="transparentdivider"></div>
@@ -143,13 +143,6 @@ The charts below illustrate the demographics of people* in prison based on their
 
 ```{r state_stacked_bar_pe_race}
 # `r paste(state_sentence_parole_eligibility_demographics, collapse = ", ")`
-# div(
-#   id = "grid-container",
-#   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 20px;",
-#   div(id = "small-visualization", state_waffle_parole_eligibility_race),
-#   div(id = "small-visualization", state_waffle_parole_eligibility_sex),
-#   div(id = "small-visualization", state_waffle_parole_eligibility_ageyrend),
-# )
 div(id = "small-visualization", state_stacked_bar_pe_race)
 div(id = "small-visualization", state_stacked_bar_pe_sex)
 div(id = "small-visualization", state_stacked_bar_pe_ageyrend)
@@ -171,9 +164,9 @@ div(id = "small-visualization", state_stacked_bar_pe_ageyrend)
 
 `r paste(state_sentence_parole_eligibility_fbi_index, collapse = ", ")`
 
-```{r state_bar_ped_fbi_index}
+```{r state_stacked_bar_pe_fbi_index}
 # div(id = "visualization", state_bubble_ped_offense_group)
-div(id = "visualization", state_bar_ped_fbi_index)
+div(id = "visualization", state_stacked_bar_pe_fbi_index)
 ```
 
 <div class="transparentdivider"></div>
@@ -182,8 +175,8 @@ div(id = "visualization", state_bar_ped_fbi_index)
 
 `r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
 
-```{r state_bar_parole_eligibility_sentlgth}
-div(id = "visualization", state_bar_parole_eligibility_sentlgth)
+```{r state_stacked_bar_pe_sentlgth}
+div(id = "small-visualization", state_stacked_bar_pe_sentlgth)
 ```
 
 <br>

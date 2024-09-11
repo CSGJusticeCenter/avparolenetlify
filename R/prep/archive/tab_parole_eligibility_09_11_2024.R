@@ -17,18 +17,28 @@
 # Total prison population by state and year
 # Only interested in people in prison for new court commitments and
 # with sentence lengths between 1-25 years
-# Example usage:
-ncrp_pop <- filter_population_criteria(ncrp_yearendpop) |>
+ncrp_pop <- ncrp_yearendpop |>
+  filter(admtype == "New court commitment") |>
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years") |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n())
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
 # Total prison population for new crimes/sentence lengths between 1-25 years by state and year
 # In essence, who is in prison past their parole eligibility year?
-ncrp_pes_subset <- filter_population_criteria(ncrp_yearendpop) |>
+ncrp_pes_subset <- ncrp_yearendpop|>
+  filter(admtype == "New court commitment") |>
+  filter(sentlgth == "1-1.9 years" |
+           sentlgth == "2-4.9 years" |
+           sentlgth == "5-9.9 years" |
+           sentlgth == "10-24.9 years") |>
   group_by(state, rptyear) |>
   count(parelig_status) |>
-  left_join(ncrp_pop, by = c("state", "rptyear")) |>
+  left_join(ncrp_pop,
+            by = c("state", "rptyear")) |>
   mutate(prop = n / yearendpop,
          tooltip = paste0("<b>Parole Eligibility Status:</b> ", parelig_status, "<br>",
                           "<b>People:</b> ", formattable::comma(n, 0), "<br>",
@@ -50,7 +60,11 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
       new court commitment population eligible in the future, and population with missing parole eligibility data.")
 
   highcharts <- highchart() |>
-    hc_chart(type = "bar") |>
+    hc_chart(type = "bar"
+             # marginLeft = 10,
+             # marginBottom = -30,
+             # marginTop = 10
+    ) |>
     hc_title(text = "Pct. of Prison Population by Parole Eligibility Status") |>
     hc_add_theme(base_hc_theme) |>
     hc_xAxis(title = list(text = NULL),
@@ -139,9 +153,9 @@ all_stackedbar_pe_type$Georgia
 #           new crimes and sentence lengths between 1-25 years.
 
 # Get list of states
+states <- unique(ncrp_pes_subset$state)
 
 # Generate sentence for each state
-states <- unique(ncrp_pes_subset$state)
 all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x) {
 
   df1 <- ncrp_pes_subset |>
@@ -163,6 +177,7 @@ all_sentence_parole_eligibility_population$Georgia
 # ------------------------ PE Prison Population by Demographics ------------------------ #
 
 states <- unique(ncrp_pes_subset$state)
+
 all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
 
   data <- ncrp_yearendpop|>
@@ -194,7 +209,7 @@ all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
   # Create the highchart
   highcharts <- highchart() |>
     hc_chart(type = "column"#, marginLeft = 190
-             ) |>
+    ) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
     hc_xAxis(categories = unique(data$race)) |>
@@ -281,7 +296,7 @@ all_stacked_bar_pe_sex <- map(.x = states,  .f = function(x) {
   # Create the highchart
   highcharts <- highchart() |>
     hc_chart(type = "column"#, marginLeft = 190
-             ) |>
+    ) |>
     hc_title(text = "Sex") |>
     hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
     hc_xAxis(categories = unique(data$sex)) |>
@@ -364,7 +379,7 @@ all_stacked_bar_pe_ageyrend <- map(.x = states,  .f = function(x) {
   # Create the highchart
   highcharts <- highchart() |>
     hc_chart(type = "column"#, marginLeft = 190
-             ) |>
+    ) |>
     hc_title(text = "Age") |>
     hc_subtitle(text = "Prison Population by Parole Eligibility Status") |>
     hc_xAxis(categories = unique(data$ageyrend)) |>
@@ -511,7 +526,7 @@ all_sentence_parole_eligibility_demographics$Georgia
 #
 # # Generate graph for each state
 # states <- unique(current_ped_fbi_index$state)
-# all_stacked_bar_pe_fbi_index <- map(.x = states, .f = function(x) {
+# all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 #   df1 <- current_ped_fbi_index |>
 #     mutate(fbi_index = case_when(fbi_index == "Murder and Non-negligent Manslaughter" ~
 #                               "Murder and Non-negligent<br>Manslaughter",
@@ -542,8 +557,8 @@ all_sentence_parole_eligibility_demographics$Georgia
 #   return(highcharts)
 # })
 #
-# all_stacked_bar_pe_fbi_index <- setNames(all_stacked_bar_pe_fbi_index, states)
-# all_stacked_bar_pe_fbi_index$Georgia
+# all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
+# all_bar_ped_fbi_index$Georgia
 all_stacked_bar_pe_fbi_index <- map(.x = states,  .f = function(x) {
 
   data <- ncrp_yearendpop|>
@@ -813,7 +828,7 @@ all_sentence_parole_eligibility_fbi_index$Georgia
 #
 # # Generate graph for each state
 # states <- unique(current_ped_sentlgth$state)
-# all_stacked_bar_pe_sentlgth <- map(.x = states,  .f = function(x) {
+# all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 #   df1 <- current_ped_sentlgth |>
 #     filter(state == x) |>
 #     mutate(prop = prop*100,
@@ -836,8 +851,8 @@ all_sentence_parole_eligibility_fbi_index$Georgia
 #     hc_exporting(enabled = TRUE)
 #   return(highcharts)
 # })
-# all_stacked_bar_pe_sentlgth <- setNames(all_stacked_bar_pe_sentlgth, states)
-# all_stacked_bar_pe_sentlgth$Georgia
+# all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
+# all_bar_parole_eligibility_sentlgth$Georgia
 all_stacked_bar_pe_sentlgth <- map(.x = states,  .f = function(x) {
 
   data <- ncrp_yearendpop|>
@@ -965,8 +980,8 @@ for (folder in theseFOLDERS){
   save(all_stacked_bar_pe_sex,                       file = file.path(folder, "all_stacked_bar_pe_sex.rds"))
   save(all_stacked_bar_pe_ageyrend,                  file = file.path(folder, "all_stacked_bar_pe_ageyrend.rds"))
   save(all_sentence_parole_eligibility_fbi_index,    file = file.path(folder, "all_sentence_parole_eligibility_fbi_index.rds"))
-  save(all_stacked_bar_pe_fbi_index,                        file = file.path(folder, "all_stacked_bar_pe_fbi_index.rds"))
-  save(all_stacked_bar_pe_sentlgth,                  file = file.path(folder, "all_stacked_bar_pe_sentlgth.rds"))
+  save(all_bar_ped_fbi_index,                        file = file.path(folder, "all_bar_ped_fbi_index.rds"))
+  save(all_bar_parole_eligibility_sentlgth,          file = file.path(folder, "all_bar_parole_eligibility_sentlgth.rds"))
   save(all_sentence_parole_eligibility_sentlgth,     file = file.path(folder, "all_sentence_parole_eligibility_sentlgth.rds"))
 }
 
