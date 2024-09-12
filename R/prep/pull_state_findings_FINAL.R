@@ -39,6 +39,13 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_ty
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_ageyrend.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_ageyrend.rds"))
+
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
@@ -56,6 +63,8 @@ if (state_for_report %in% names(all_sentence_pe_type)) {
 } else {
   state_sentence_pe_type <- ""
 }
+
+# PAROLE ELIGIBILITY TRENDS ------------------
 
 # TITLE: Pct. of Prison Population by Parole Eligibility Status
 # Stacked bar chart showing the  proportion of parole eligibility types
@@ -87,7 +96,47 @@ if (state_for_report %in% names(all_stackedbar_pop_pe_by_year)) {
 
 # DEMOGRAPHICS ------------------
 
+if (state_for_report %in% names(all_sentence_parole_eligibility_race)) {
+  state_sentence_parole_eligibility_race <-
+    all_sentence_parole_eligibility_race[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_race <- ""
+}
 
+if (state_for_report %in% names(all_bar_parole_eligibility_race)) {
+  state_bar_parole_eligibility_race <-
+    all_bar_parole_eligibility_race[[state_for_report]]
+} else {
+  state_bar_parole_eligibility_race <- ""
+}
+
+if (state_for_report %in% names(all_sentence_parole_eligibility_sex)) {
+  state_sentence_parole_eligibility_sex <-
+    all_sentence_parole_eligibility_sex[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_sex <- ""
+}
+
+if (state_for_report %in% names(all_bar_parole_eligibility_sex)) {
+  state_bar_parole_eligibility_sex <-
+    all_bar_parole_eligibility_sex[[state_for_report]]
+} else {
+  state_bar_parole_eligibility_sex <- ""
+}
+
+if (state_for_report %in% names(all_sentence_parole_eligibility_ageyrend)) {
+  state_sentence_parole_eligibility_ageyrend <-
+    all_sentence_parole_eligibility_ageyrend[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_ageyrend <- ""
+}
+
+if (state_for_report %in% names(all_bar_parole_eligibility_ageyrend)) {
+  state_bar_parole_eligibility_ageyrend <-
+    all_bar_parole_eligibility_ageyrend[[state_for_report]]
+} else {
+  state_bar_parole_eligibility_ageyrend <- ""
+}
 
 
 
@@ -95,26 +144,27 @@ if (state_for_report %in% names(all_stackedbar_pop_pe_by_year)) {
 
 # OFFENSE TYPE ------------------
 
+# SENTENCE: In 2020, 61% of people in prison past their parole consideration year
+#           were in prison for violent offenses. The breakdown of criminal
+#           offenses of people in prison past their parole consideration year
+#           reveals a varied landscape, with the majority of people incarcerated
+#           for aggravated or simple assault (26%) and property (19%) offenses."
+if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
+  state_sentence_parole_eligibility_fbi_index <-
+    all_sentence_parole_eligibility_fbi_index[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_fbi_index <- ""
+}
+
 # TITLE:  Offense Breakdown for People in Prison Past Their Parole Eligibility Year
 if (state_for_report %in% names(all_bar_ped_fbi_index)) {
   state_bar_ped_fbi_index <-
     all_bar_ped_fbi_index[[state_for_report]] |>
     hc_size(height = 400) |>
-    hc_colors(c(color1))
+    hc_colors(c(color4))
 } else {
   state_bar_ped_fbi_index <- no_data_text
 }
-
-# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Year
-if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
-  state_bar_parole_eligibility_sentlgth <-
-    all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
-    hc_size(height = 400) |>
-    hc_colors(c(color5))
-} else {
-  state_bar_parole_eligibility_sentlgth <- no_data_text
-}
-
 
 # SENTENCE LENGTH ------------------
 
@@ -128,17 +178,19 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
   state_sentence_parole_eligibility_sentlgth <- ""
 }
 
-# SENTENCE: In 2020, 61% of people in prison past their parole consideration year
-#           were in prison for violent offenses. The breakdown of criminal
-#           offenses of people in prison past their parole consideration year
-#           reveals a varied landscape, with the majority of people incarcerated
-#           for aggravated or simple assault (26%) and property (19%) offenses."
-if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
-  state_sentence_parole_eligibility_fbi_index <-
-    all_sentence_parole_eligibility_fbi_index[[state_for_report]]
+# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Year
+if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
+  state_bar_parole_eligibility_sentlgth <-
+    all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
+    hc_size(height = 400) |>
+    hc_colors(c(color4))
 } else {
-  state_sentence_parole_eligibility_fbi_index <- ""
+  state_bar_parole_eligibility_sentlgth <- no_data_text
 }
+
+
+
+
 
 
 

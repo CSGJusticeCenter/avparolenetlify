@@ -108,11 +108,21 @@ red <- "#d97d68"
 purple <- "#938ebf"
 brown     = "#9e6c10"
 
-color1 <- teal
+# color1 <- teal
+# color2 <- blue
+# color3 <- yellow
+# color4 <- red
+# color5 <- purple
+# color6 <- lightteal
+# darkgray <- "#969696"
+# lightgray <- "#d7d7d7"
+
+color1 <- red
 color2 <- blue
 color3 <- yellow
-color4 <- red
+color4 <- teal
 color5 <- purple
 color6 <- lightteal
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
+
