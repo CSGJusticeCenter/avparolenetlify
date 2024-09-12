@@ -18,7 +18,7 @@
 #    - **Offense Type Analysis**: Breaks down the parole eligibility population by offense types (e.g., violent, non-violent) to see what
 #      percentage of people are in prison past their eligibility date based on the crimes committed.
 #
-#    - **Sentence Length Distribution**: Examines parole eligibility status by sentence length for individuals in prison past their parole eligibility year,
+#    - **Sentence Length Distribution**:  Breaks down the parole eligibility population by sentence length for individuals in prison past their parole eligibility year,
 #      with a focus on people sentenced to 1-24.9 years.
 #
 #    For each of these components, the script generates both **visualizations** (e.g., stacked bar charts, column charts) and **descriptive sentences**
@@ -30,6 +30,7 @@
 # pes = parole eligibility status
 # pop = population
 # ncrp = NCRP data
+# bjs == BJS data
 
 # ---------------------------------------------------------------------------- #
 # PE Prison Population Trends
@@ -41,8 +42,6 @@
 ncrp_yearendpop_filtered <- filter_population_criteria(ncrp_yearendpop)
 
 # Get number of people currently eligible (PCE) for parole and incarcerated
-# By state and year
-# Filtered to people in prison for new offenses and sentence lengths between 1-25 years
 current_pe_pop <- ncrp_yearendpop_filtered |>
   filter(parelig_status == "Current") |>
   group_by(state, rptyear) |>
@@ -50,46 +49,143 @@ current_pe_pop <- ncrp_yearendpop_filtered |>
   mutate(type = "Current")
 
 # Get total population by state and year
-# Filtered to people in prison for new offenses and sentence lengths between 1-25 years
 ncrp_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
-  summarise(n = n()) |>
+  summarise(total_n = n()) |>
   mutate(type = "Total Population")
 
-ncrp_current_pe_pop <- rbind(current_pe_pop, ncrp_pop)
+# Merge the two datasets to get the proportion of PCE by year
+ncrp_proportion_pe_pop <- current_pe_pop |>
+  left_join(ncrp_pop, by = c("state", "rptyear")) |>
+  mutate(proportion = n / total_n)
 
-# VISUALIZATION: Line graph showing change in PCE population and total prison population
-# Generate graph for each state
-states <- unique(ncrp_current_pe_pop$state)
-all_line_pop_pe_by_year <- map(.x = states, .f = function(x) {
+# Generate sentence for each state
+states <- unique(ncrp_proportion_pe_pop$state)
+all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
 
-  df_state_current <- ncrp_current_pe_pop |>
-    filter(state == x, type == "Current") |>
+  # Filter data for the current state
+  df <- ncrp_proportion_pe_pop |>
+    filter(state == x) |>
     filter(rptyear >= 2010)
-  df_state_total <- ncrp_current_pe_pop |>
-    filter(state == x, type == "Total Population") |>
-    filter(rptyear >= 2010)
+
+  # Get the earliest and latest years
+  earliest_year <- min(df$rptyear)
+  latest_year <- max(df$rptyear)
+
+  # Get the proportion of people past parole eligibility for the earliest and latest years
+  proportion_earliest <- df |>
+    filter(rptyear == earliest_year) |>
+    pull(proportion) * 100
+
+  proportion_latest <- df |>
+    filter(rptyear == latest_year) |>
+    pull(proportion) * 100
+
+  # Calculate the change in proportion
+  change <- proportion_latest - proportion_earliest
+
+  # Determine if it increased, decreased, or stayed the same
+  direction <- ifelse(change > 0, "increased", ifelse(change < 0, "decreased", "stayed the same"))
+
+  # Generate the sentence
+  sentence <- paste0(
+    "From ", earliest_year, " to ", latest_year,
+    ", the percentage of people* in prison past parole eligibility ", direction,
+    " by ", abs(round(change, 0)), " percent."
+  )
+
+  return(sentence)
+})
+
+# Assign names to each state's sentence
+all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
+all_sentence_pop_pe_by_year$Georgia
+
+# VISUALIZATION: Stacked bar chart showing percentage of PCE population and total prison population
+states <- unique(ncrp_proportion_pe_pop$state)
+all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
+
+  df_state <- ncrp_proportion_pe_pop |>
+    filter(state == x) |>
+    filter(rptyear >= 2010) |>
+    mutate(rptyear_fac = factor(rptyear))
 
   highcharts <- highchart() |>
-    hc_title(text = "Population Trends") |>
-    hc_xAxis(categories = df_state_current$rptyear) |>
-    hc_yAxis(title = list(text = "")) |>
+    hc_title(text = paste0("Pct. of Prison Population In Prison Past Parole Eligibility, ", min(df_state$rptyear), "-", max(df_state$rptyear))) |>
+    hc_xAxis(categories = df_state$rptyear_fac) |>
+    hc_yAxis(
+      title = list(text = ""),
+      max = 100, # Y-axis set to max 100%
+      labels = list(format = "{value}%")
+    ) |>
 
-    # Add series for Current Population
-    hc_add_series(name = "In Prison Past Parole Eligiblity", data = df_state_current$n, type = "line") |>
+    # Stacked bar chart for Remaining Population (Total Population - In Prison Past Parole Eligibility) as percentage
+    hc_add_series(
+      name = "Total Population (Remaining)",
+      data = (1 - df_state$proportion) * 100, # Remaining percentage
+      type = "column",
+      stacking = "percent"
+    ) |>
 
-    # Add series for Total Population
-    hc_add_series(name = "Total Population", data = df_state_total$n, type = "line") |>
+    # Stacked bar chart for Proportion of people past parole eligibility (as percentage)
+    hc_add_series(
+      name = "In Prison Past Parole Eligibility",
+      data = df_state$proportion * 100, # Convert to percentage
+      type = "column",
+      stacking = "percent"
+    ) |>
 
-    hc_tooltip(pointFormat = '{series.name}: <b>{point.y}</b>') |>
+    hc_tooltip(pointFormat = '{series.name}: <b>{point.y:.0f}%</b>') |>
 
-    hc_add_theme(hc_theme_with_line)
+    hc_add_theme(hc_theme_with_line) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color3, color4)) |>
+    hc_legend(reversed = TRUE)
 
   return(highcharts)
 })
 
-all_line_pop_pe_by_year <- setNames(all_line_pop_pe_by_year, states)
-all_line_pop_pe_by_year$Georgia
+all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
+all_stackedbar_pop_pe_by_year$Georgia
+
+
+
+
+
+# ncrp_current_pe_pop <- rbind(current_pe_pop, ncrp_pop)
+# # VISUALIZATION: Line graph showing change in PCE population and total prison population
+# # Generate graph for each state
+# states <- unique(ncrp_current_pe_pop$state)
+# all_line_pop_pe_by_year <- map(.x = states, .f = function(x) {
+#
+#   df_state_current <- ncrp_current_pe_pop |>
+#     filter(state == x, type == "Current") |>
+#     filter(rptyear >= 2010)
+#   df_state_total <- ncrp_current_pe_pop |>
+#     filter(state == x, type == "Total Population") |>
+#     filter(rptyear >= 2010)
+#
+#   highcharts <- highchart() |>
+#     hc_title(text = "Population Trends") |>
+#     hc_xAxis(categories = df_state_current$rptyear) |>
+#     hc_yAxis(title = list(text = "")) |>
+#
+#     # Add series for Current Population
+#     hc_add_series(name = "In Prison Past Parole Eligiblity", data = df_state_current$n, type = "line") |>
+#
+#     # Add series for Total Population
+#     hc_add_series(name = "Total Population", data = df_state_total$n, type = "line") |>
+#
+#     hc_tooltip(pointFormat = '{series.name}: <b>{point.y}</b>') |>
+#
+#     hc_add_theme(hc_theme_with_line) |>
+#     hc_exporting(enabled = TRUE)
+#
+#   return(highcharts)
+# })
+#
+# all_line_pop_pe_by_year <- setNames(all_line_pop_pe_by_year, states)
+# all_line_pop_pe_by_year$Georgia
 
 
 # ---------------------------------------------------------------------------- #
@@ -597,8 +693,8 @@ all_sentence_parole_eligibility_sentlgth$Georgia
 save(all_sentence_pe_type,                         file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_pe_type.rds"))
 save(all_stackedbar_pe_type,                       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_stackedbar_pe_type.rds"))
 
-# SENTENCE NEEDED ###############################################################
-save(all_line_pop_pe_by_year,                      file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_line_pop_pe_by_year.rds"))
+save(all_sentence_pop_pe_by_year,                  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_pop_pe_by_year.rds"))
+save(all_stackedbar_pop_pe_by_year,                file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_stackedbar_pop_pe_by_year.rds"))
 
 save(all_sentence_parole_eligibility_fbi_index,    file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_fbi_index.rds"))
 save(all_bar_ped_fbi_index,                        file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_ped_fbi_index.rds"))

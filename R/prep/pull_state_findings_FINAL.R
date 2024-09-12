@@ -36,7 +36,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/carl_state_notes.rds
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_pop_pe_by_year.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
@@ -66,18 +67,21 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
   state_stackedbar_pe_type <- no_data_text
 }
 
-
-# SENTENCE NEEDED:&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+# SENTENCE: From X to X, the proportion of people in prison past parole eligibility increased/decreased by X percent/or stayed the same.
+if (state_for_report %in% names(all_sentence_pop_pe_by_year)) {
+  state_sentence_pop_pe_by_year <-
+    all_sentence_pop_pe_by_year[[state_for_report]]
+} else {
+  state_sentence_pop_pe_by_year <- ""
+}
 
 # TITLE: Line chart
-if (state_for_report %in% names(all_line_pop_pe_by_year)) {
-  state_line_pop_pe_by_year <-
-    all_line_pop_pe_by_year[[state_for_report]] |>
-    hc_title(text = "Prison Populations: Total and Past Parole Eligibility, 2010-2020") |>  #&&&&&&&&&&&&&&&NEED TO DYNAMICALLY CHANGE TITLE
-    hc_size(height = 400) |>
-    hc_colors(c(color4, color2))
+if (state_for_report %in% names(all_stackedbar_pop_pe_by_year)) {
+  state_stackedbar_pop_pe_by_year <-
+    all_stackedbar_pop_pe_by_year[[state_for_report]] |>
+    hc_size(height = 400)
 } else {
-  state_line_pop_pe_by_year <- no_data_text
+  state_stackedbar_pop_pe_by_year <- no_data_text
 }
 
 

@@ -63,10 +63,10 @@ div(
 div(id = "small-visualization", state_stackedbar_pe_type)
 ```
 
-Change this to a area graph showing proportion of people in prison past parole eligibility by year.
-Add sentence describing the change.  
+`r paste(state_sentence_pop_pe_by_year, collapse = ", ")`
+
 ```{r}
-div(id = "visualization", state_line_pop_pe_by_year)
+div(id = "visualization", state_stackedbar_pop_pe_by_year)
 ```
 
 <div class="transparentdivider"></div>
