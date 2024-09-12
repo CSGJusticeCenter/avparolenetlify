@@ -67,7 +67,7 @@ div(id = "small-visualization", state_stackedbar_pe_type)
 
 ### Demographics
 
-TBD barcharts of race, ethnicity, age, and sex<br>
+TBD barcharts of race, ethnicity, age, and sex of people in prison past their parole eligibility.<br>
 
 
 
@@ -197,6 +197,9 @@ div(id = "visualization", state_pie_release_type)
 ## Demographics
 
 TBD
+Barcharts of people released by demographics?    
+Barcharts of people released on their parole eligibility year by demographics?    
+Stacked barcharts showing the proportion of parole-eligible people released by demographics?  
 
 <br>
 <div class="divider"></div>
@@ -226,6 +229,10 @@ Feedback: Not useful, potentially show  "Average Expected Parole Release Year" v
 ## Incarceration Rates
 
 `r paste(state_sentence_rri, collapse = ", ")`
+
+TBD: People infographics will go here. Will use BJS data for incarceration rates.
+Sex?
+In Prison Past Parole Eligibility?
 
 <br>
 <div class="divider"></div>
@@ -278,6 +285,8 @@ if (!all(is.na(df1$total_years))) {
 }
 ```
 
+TBD: Graph showing average time spent in prison past parole eligibility by race and ethnicity.
+
 ### Gender
 
 In progress. Same type of graph as race and ethnicity tab.
@@ -297,6 +306,8 @@ In progress. Same type of graph as race and ethnicity tab.
 ### Race and Ethnicity
 
 The timing of release for individuals after their parole eligibility year varied by offense type and demographic group, with many remaining in prison for several years beyond their eligibility date. 
+
+TBD: Graph showing average time spent in prison past parole eligibility by race and ethnicity, and offense type.
 
 ### Gender
 
