@@ -63,18 +63,26 @@ div(
 div(id = "small-visualization", state_stackedbar_pe_type)
 ```
 
+Change this to a area graph showing proportion of people in prison past parole eligibility by year.
+Add sentence describing the change.  
+```{r}
+div(id = "visualization", state_line_pop_pe_by_year)
+```
+
 <div class="transparentdivider"></div>
 
 ### Demographics
 
-TBD barcharts of race, ethnicity, age, and sex of people in prison past their parole eligibility.<br>
+The following charts illustrate the proportion of people in prison past their parole eligibility in 2020 by race, ethnicity, sex, and age.  
+
+
 
 
 
 
 <div class="transparentdivider"></div>
 
-### Offense Type
+### Offense Types
 
 `r paste(state_sentence_parole_eligibility_fbi_index, collapse = ", ")`
 
@@ -84,7 +92,7 @@ div(id = "visualization", state_bar_ped_fbi_index)
 
 <div class="transparentdivider"></div>
 
-### Sentence Length
+### Sentence Lengths
 
 `r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
 
@@ -113,41 +121,29 @@ div(id = "visualization", state_bar_parole_eligibility_sentlgth)
 
 ## Prison Population Trends
 
-```{r}
-div(id = "visualization", state_line_pop_pe_by_year)
+`r paste(state_sentence_population, collapse = ", ")`
+
+```{r state_line_population_by_year}
+div(id = "visualization", state_line_population_by_year)
 ```
+
+<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
 
 <br><div class="divider"></div>
 
 ## Demographics
 
-The charts below illustrate the demographics of people* in prison based on their parole eligibility status, categorized as currently eligible for parole, eligible in the future, and those with missing parole eligibility information.  
 
-```{r state_stackedbar_pe_demographics}
-div(id = "small-visualization", state_stacked_bar_pe_race)
-div(id = "small-visualization", state_stacked_bar_pe_sex)
-div(id = "small-visualization", state_stacked_bar_pe_ageyrend)
-```
+<div class="transparentdivider"></div>
 
-<div class="divider"></div>
+## Offense Types
 
-## Offense Type
 
-The charts below illustrate the most serious sentenced offenses of people* in prison based on their parole eligibility status, categorized as currently eligible for parole, eligible in the future, and those with missing parole eligibility information.
+<div class="transparentdivider"></div>
 
-```{r state_stacked_bar_pe_fbi_index}
-div(id = "visualization", state_stacked_bar_pe_fbi_index)
-```
+## Sentence Lengths
 
-<div class="divider"></div>
 
-## Sentence Length
-
-The charts below illustrate the sentence lengths of people* in prison based on their parole eligibility status, categorized as currently eligible for parole, eligible in the future, and those with missing parole eligibility information.
-
-```{r state_stacked_bar_pe_sentlgth}
-div(id = "small-visualization", state_stacked_bar_pe_sentlgth)
-```
 
 <br><br><br>
 
@@ -196,10 +192,7 @@ div(id = "visualization", state_pie_release_type)
 
 ## Demographics
 
-TBD
-Barcharts of people released by demographics?    
-Barcharts of people released on their parole eligibility year by demographics?    
-Stacked barcharts showing the proportion of parole-eligible people released by demographics?  
+The following charts illustrate the proportion of people released from prison in 2020 by race, ethnicity, sex, and age.  
 
 <br>
 <div class="divider"></div>
@@ -207,7 +200,7 @@ Stacked barcharts showing the proportion of parole-eligible people released by d
 ## Time-Served by Offense
 
 Feedback: Not useful, potentially show  "Average Expected Parole Release Year" versus "Average Actual Time Served."
-<br>
+<br><br><br>
 
 
 
