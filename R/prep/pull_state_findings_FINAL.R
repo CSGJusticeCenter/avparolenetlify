@@ -197,9 +197,56 @@ if (state_for_report %in% names(all_stacked_bar_pe_sentlgth)) {
 # Releases Tab (tab_releases.R)
 #------------------------------------------------------------------------------#
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
 
+# SENTENCE: "From YEAR to YEAR, prison releases decreased/increased X percent."
+if (state_for_report %in% names(all_sentence_releases)) {
+  state_sentence_releases <-
+    all_sentence_releases[[state_for_report]]
+} else {
+  state_sentence_releases <- ""
+}
 
+# TITLE: Prison Releases by Year
+if (state_for_report %in% names(all_line_releases_by_year)) {
+  state_line_releases_by_year <-
+    all_line_releases_by_year[[state_for_report]] |>
+    hc_size(height = 300)
+} else {
+  state_line_releases_by_year <- no_data_text
+}
+
+# SENTENCE: In 2020, 40% of people eligible for parole were released during
+#           their eligibility year. This represents a 3% decrease compared to 2010.
+if (state_for_report %in% names(all_sentence_pe_proportion_released)) {
+  state_sentence_pe_proportion_released <-
+    all_sentence_pe_proportion_released[[state_for_report]]
+} else {
+  state_sentence_pe_proportion_released <- ""
+}
+
+# TITLE: Parole-Eligible Prison Population Released by Year
+if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
+  state_stackedbar_parole_eligibility_release <-
+    all_stackedbar_parole_eligibility_release[[state_for_report]] |>
+    hc_size(height = 400)
+} else {
+  state_stackedbar_parole_eligibility_release <- no_data_text
+}
+
+# TITLE: Proportion of Conditional vs Unconditional Releases
+if (state_for_report %in% names(all_pie_release_type)) {
+  state_pie_release_type <-
+    all_pie_release_type[[state_for_report]] |>
+    hc_size(height = 225)
+} else {
+  state_pie_release_type <- no_data_text
+}
 
 
 

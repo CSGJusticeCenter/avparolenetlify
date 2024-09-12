@@ -67,6 +67,11 @@ div(id = "small-visualization", state_stackedbar_pe_type)
 
 ### Demographics
 
+TBD barcharts of race, ethnicity, age, and sex<br>
+
+
+
+
 <div class="transparentdivider"></div>
 
 ### Offense Type
@@ -159,6 +164,43 @@ div(id = "small-visualization", state_stacked_bar_pe_sentlgth)
 
 
 # Prison Releases
+
+## Prison Release Trends
+
+`r paste(state_sentence_releases, collapse = ", ")`
+
+```{r state_line_releases_by_year}
+div(id = "visualization", state_line_releases_by_year)
+```
+<br>
+
+`r paste(state_sentence_pe_proportion_released, collapse = ", ")`
+
+```{r state_stackedbar_parole_eligibility_release}
+div(id = "visualization", state_stackedbar_parole_eligibility_release)
+```
+
+<br>
+<div class="divider"></div>
+
+## Conditional Releases
+
+Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. 
+
+```{r state_pie_release_type}
+div(id = "visualization", state_pie_release_type)
+```
+
+<br>
+<div class="divider"></div>
+
+## Demographics
+
+TBD
+
+<br>
+<div class="divider"></div>
+<br>
 
 
 
