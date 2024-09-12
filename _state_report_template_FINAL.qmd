@@ -200,9 +200,14 @@ TBD
 
 <br>
 <div class="divider"></div>
+
+## Time-Served by Offense
+
+Feedback: Not useful, potentially show  "Average Expected Parole Release Year" versus "Average Actual Time Served."
 <br>
 
 
+# Disparities
 
 
 
