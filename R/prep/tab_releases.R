@@ -505,16 +505,16 @@ all_lollipop_offense_los <- map(.x = states, .f = function(x) {
       hcaes(x = value, y = fbi_index_num, group = rptyear, name = fbi_index),
       tooltip = list(pointFormat = "{point.tooltip_text}")
     ) |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = fbi_index_num, group = fbi_index),
-      lineWidth = 1,
-      color = darkgray,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
+    # hc_add_series(
+    #   df_lines,
+    #   type = 'line',
+    #   hcaes(x = value, y = fbi_index_num, group = fbi_index),
+    #   lineWidth = 1,
+    #   color = darkgray,
+    #   marker = list(enabled = FALSE),
+    #   enableMouseTracking = FALSE,
+    #   showInLegend = FALSE
+    # ) |>
     hc_yAxis(
       title = list(text = ""),
       categories = y_labels

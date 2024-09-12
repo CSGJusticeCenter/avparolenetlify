@@ -617,7 +617,6 @@ ncrp_race_los_by_offense_type <- ncrp_releases |>
 
 # Get unique states
 states <- unique(ncrp_race_los_by_offense_type$state)
-
 all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
   df1 <- ncrp_race_los_by_offense_type |>
@@ -638,18 +637,18 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
     gather(key = "point", value = "value", start_x, end_x)
 
   highcharts <- highchart() |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = fbi_index_num, group = fbi_index),
-      lineWidth = 1,
-      color = "black",
-      dashStyle = "solid",
-      opacity = 1,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
+    # hc_add_series(
+    #   df_lines,
+    #   type = 'line',
+    #   hcaes(x = value, y = fbi_index_num, group = fbi_index),
+    #   lineWidth = 1,
+    #   color = "black",
+    #   dashStyle = "solid",
+    #   opacity = 1,
+    #   marker = list(enabled = FALSE),
+    #   enableMouseTracking = FALSE,
+    #   showInLegend = FALSE
+    # ) |>
     hc_add_series(
       df1,
       type = 'scatter',

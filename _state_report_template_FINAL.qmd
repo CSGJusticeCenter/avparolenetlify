@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 source("R/prep/config.R")
 
-state_for_report <- "Georgia"
+state_for_report <- "change_me"
 
 source("R/prep/pull_state_findings_FINAL.R")
 ```

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: September 11, 2024 (MAR)
+# Date last updated: June 27, 2024 (MAR)
 # Description:
 #    Import NCRP data (admissions, population, year end population)
 #    Import BJS Prisoners data
@@ -60,6 +60,18 @@ ncrp_term_records <- ncrp_data$term_records |>
 
 
 
+#------ Prepare NCRP Admissions -----------------------------------------------#
+
+ncrp_admissions <- ncrp_data$admissions |>
+  clean_names() |>
+  mutate(across(c(state), ~ str_sub(., 6, -1))) |>
+  mutate(across(c(sex, education, admtype, offgeneral, offdetail, race,
+                  sentlgth, ageadmit), ~ str_sub(., 5, -1))) |>
+  mutate(offdetail = trimws(offdetail)) |>
+  fnc_create_admtype()
+
+
+
 #------ Prepare NCRP Releases -------------------------------------------------#
 
 ncrp_releases <- ncrp_data$releases |>
@@ -68,13 +80,27 @@ ncrp_releases <- ncrp_data$releases |>
   mutate(across(c(offgeneral, offdetail, admtype, race, sex, ageadmit,
                   agerlse, sentlgth, reltype, timesrvd_rel, education), ~ str_sub(., 5, -1))) |>
   mutate(offdetail = trimws(offdetail)) |>
-  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
   fnc_create_parelig_status() |>
   fnc_create_fbi_index() |>
-  fnc_create_admtype() |>
   mutate(
     time_between_admisson_release = relyr - admityr,
-    time_between_ped_release = relyr - parelig_year,
+    time_between_ped_release = relyr - parelig_year
+    # time_between_ped_release_category = case_when(
+    #   time_between_ped_release < 0    ~ "Released before Parole Eligibility Year",
+    #   time_between_ped_release == 0   ~ "Released on Parole Eligibility Year",
+    #   time_between_ped_release <= 5 &
+    #     time_between_ped_release > 0  ~ "Released 1 to 5 Years After Parole Eligibility Year",
+    #   time_between_ped_release > 5    ~ "Released more than 5 Years After Parole Eligibility Year",
+    #   is.na(time_between_ped_release) ~ "Missing Parole Eligibility Year") |>
+    #   factor(levels = c("Released before Parole Eligibility Year",
+    #                     "Released on Parole Eligibility Year",
+    #                     "Released 1 to 5 Years After Parole Eligibility Year",
+    #                     "Released more than 5 Years After Parole Eligibility Year",
+    #                     "Missing Parole Eligibility Year"))
+  ) |>
+  fnc_create_admtype() |>
+  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
+  mutate(
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",
@@ -100,9 +126,15 @@ ncrp_releases <- ncrp_data$releases |>
 ncrp_yearendpop <- ncrp_data$yearendpop |>
   clean_names() |>
   mutate(across(c(state), ~ str_sub(., 6, -1))) |>
-  mutate(across(c(offgeneral, offdetail, race, education, admtype, sex,
-                  sentlgth, ageadmit, ageyrend, timesrvd_yrend), ~ str_sub(., 5, -1))) |>
-  mutate(offdetail = trimws(offdetail)) |>
+  mutate(across(c(offgeneral, offdetail, race, education, admtype, sex, sentlgth, ageadmit, ageyrend, timesrvd_yrend), ~ str_sub(., 5, -1))) |>
+  mutate(
+    offdetail = trimws(offdetail),
+    offgeneral = case_when(
+      is.na(offgeneral) ~ "Other or Unknown",
+      offgeneral == "Other/unspecified" ~ "Other or Unknown",
+      TRUE ~ offgeneral
+    )
+  ) |>
   fnc_create_fbi_index() |>
   fnc_create_parelig_status() |>
   fnc_create_admtype() |>
@@ -135,7 +167,7 @@ ncrp_yearendpop <- ncrp_data$yearendpop |>
 
 
 
-#------ Import and Prepare BJS Race, Ethnicity, Sex Data -------------------#
+#------ Import and Prepare BJS Race, Ethnicity, Gender Data -------------------#
 
 bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
                                                      "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
@@ -275,9 +307,9 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   mutate(state = str_replace(state, "/.*", ""))
 
 
-bjs_prison_pop_by_sex_2022_raw <- read_csv("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/BJS Prison Pop/p22st/p22stt02.csv")
+bjs_prison_pop_by_gender_2022_raw <- read_csv("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/BJS Prison Pop/p22st/p22stt02.csv")
 
-bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
+bjs_prison_pop_by_gender_2022 <- bjs_prison_pop_by_gender_2022_raw  |>
   clean_names() |>
   select(state = x2, male = x8, female = x9) |>
   mutate(state = str_replace(state, "/.*", "")) %>%
@@ -294,7 +326,7 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   mutate(male = as.numeric(male)) |>
   mutate(female = str_replace_all(female, "[^\\d]", "")) |>
   mutate(female = as.numeric(female)) |>
-  pivot_longer(cols = c(male, female), names_to = "sex", values_to = "population") |>
+  pivot_longer(cols = c(male, female), names_to = "gender", values_to = "population") |>
   group_by(state) |>
   mutate(
     n = population,
@@ -305,11 +337,11 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   ) |>
   ungroup() |>
   mutate(tooltip = paste0("<b>", state, " - ",
-                          sex, "</b><br>",
+                          gender, "</b><br>",
                           prop_label, "<br>")) |>
-  mutate(sex = case_when(sex == "male" ~ "Male",
-                            sex == "female" ~ "Female",
-                            TRUE ~ sex))
+  mutate(gender = case_when(gender == "male" ~ "Male",
+                            gender == "female" ~ "Female",
+                            TRUE ~ gender))
 
 
 #------ Save Data ------#
@@ -319,14 +351,18 @@ theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app
 for (folder in theseFOLDERS){
 
   save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
+  save(ncrp_admissions,                    file = file.path(folder, "ncrp_admissions.rds"))
   save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
+  #save(aps_parole_by_rptyear,              file = file.path(folder, "aps_parole_by_rptyear.rds"))
   save(bjs_prison_pop_by_race_2020,        file = file.path(folder, "bjs_prison_pop_by_race_2020.rds"))
   save(bjs_prison_pop_by_race_2022,        file = file.path(folder, "bjs_prison_pop_by_race_2022.rds"))
-  save(bjs_prison_pop_by_sex_2022,         file = file.path(folder, "bjs_prison_pop_by_sex_2022.rds"))
+  save(bjs_prison_pop_by_gender_2022,      file = file.path(folder, "bjs_prison_pop_by_gender_2022.rds"))
   save(bjs_prison_pop_by_rptyear,          file = file.path(folder, "bjs_prison_pop_by_rptyear.rds"))
 
   save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))
+  # save(robinadefinitions,                  file = file.path(folder, "robinadefinitions.rds"))
+  # save(robinainfo,                         file = file.path(folder, "robinainfo.rds"))
   save(carl_state_notes,                   file = file.path(folder, "carl_state_notes.rds"))
   save(parole_info_by_state,               file = file.path(folder, "parole_info_by_state.rds"))
 

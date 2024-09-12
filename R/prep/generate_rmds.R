@@ -1,5 +1,5 @@
 
-source("R/config.R")
+source("R/prep/config.R")
 # source("R/prep/page_national_trends.R")
 # source("R/prep/tab_parole_eligibility.R")
 # source("R/prep/tab_population.R")
@@ -15,7 +15,7 @@ states <- "Georgia"
   # pull(state)
 
 # Read in original qmd
-orig_qmd <- read_lines("_state_report_template.qmd")
+orig_qmd <- read_lines("_state_report_template_FINAL.qmd")
 
 # Replace state name
 states_qmd <- as.character(states)

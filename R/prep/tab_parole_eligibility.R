@@ -4,7 +4,27 @@
 # Authors: Mari Roberts
 # Date last updated: July 15, 2024 (MAR)
 # Description:
-#    Parole eligibility visualizations for tab on state reports
+#    This script generates parole eligibility visualizations and related summaries
+#    for the "Parole Eligibility" tab in state reports.
+#
+#    Key Components:
+#    - **Prison Population by Parole Eligibility Status**: Filters the NCRP prison population data by specific criteria,
+#      including new court commitments and sentence lengths of 1-25 years, to analyze people in prison past their parole eligibility date.
+#      It then visualizes the proportion of individuals in different parole eligibility statuses.
+#
+#    - **Demographic Breakdown**: Analyzes and visualizes parole eligibility status by demographic factors such as race, sex, and age for
+#      people in prison with new court commitments and sentence lengths between 1 and 25 years.
+#
+#    - **Offense Type Analysis**: Breaks down the parole eligibility population by offense types (e.g., violent, non-violent) to see what
+#      percentage of people are in prison past their eligibility date based on the crimes committed.
+#
+#    - **Sentence Length Distribution**: Examines parole eligibility status by sentence length for individuals in prison past their parole eligibility year,
+#      with a focus on people sentenced to 1-24.9 years.
+#
+#    For each of these components, the script generates both **visualizations** (e.g., stacked bar charts, column charts) and **descriptive sentences**
+#    to summarize the findings for each state.
+#
+#    Finally, the output data and visualizations are saved as `.rds` files for later use in the interactive tool.
 #######################################
 
 # pes = parole eligibility status
@@ -14,18 +34,23 @@
 
 # ------------------------ Prison Population by PE Status ------------------------ #
 
+# Create a dataframe with our filtered criteria
+# Only interested in people in prison for new court commitments and
+# with sentence lengths between 1-25 years
+ncrp_yearendpop_filtered <- filter_population_criteria(ncrp_yearendpop)
+
 # Total prison population by state and year
 # Only interested in people in prison for new court commitments and
 # with sentence lengths between 1-25 years
 # Example usage:
-ncrp_pop <- filter_population_criteria(ncrp_yearendpop) |>
+ncrp_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n())
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
 # Total prison population for new crimes/sentence lengths between 1-25 years by state and year
 # In essence, who is in prison past their parole eligibility year?
-ncrp_pes_subset <- filter_population_criteria(ncrp_yearendpop) |>
+ncrp_pes_subset <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   count(parelig_status) |>
   left_join(ncrp_pop, by = c("state", "rptyear")) |>
@@ -33,7 +58,10 @@ ncrp_pes_subset <- filter_population_criteria(ncrp_yearendpop) |>
          tooltip = paste0("<b>Parole Eligibility Status:</b> ", parelig_status, "<br>",
                           "<b>People:</b> ", formattable::comma(n, 0), "<br>",
                           "<b>Percentage of People:</b> ", round(prop*100, 0), "%"),
-         prop_label = paste0(round(prop*100, 0), "%"))
+         prop_label = paste0(
+           "<div style='text-align: center;'><b>", parelig_status, "</b><br>",  # Center the label
+           round(prop * 100, 0), "%</div>"  # Keep the number normal
+         ))
 
 # VISUALIZATION: Pct. of Prison Population by Parole Eligibility Status
 # Horizontal stacked bar chart showing prison population by parole eligibility status
@@ -50,7 +78,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
       new court commitment population eligible in the future, and population with missing parole eligibility data.")
 
   highcharts <- highchart() |>
-    hc_chart(type = "bar") |>
+    hc_chart(type = "bar",
+             marginTop = -20) |>
     hc_title(text = "Pct. of Prison Population by Parole Eligibility Status") |>
     hc_add_theme(base_hc_theme) |>
     hc_xAxis(title = list(text = NULL),
@@ -76,14 +105,11 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   color = darkgray,
                   dataLabels = list(
                     enabled = TRUE,
-                    formatter = JS("function() {
-                  if (this.y > 0.00) {
-                    return this.point.label;
-                  }
-                  return null;
-                }"),
+                    align = "center",
+                    formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
+                    useHTML = TRUE,
                     x = 0,
-                    y = 60,
+                    y = 50,
                     style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Future",
@@ -92,14 +118,11 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   color = color2,
                   dataLabels = list(
                     enabled = TRUE,
-                    formatter = JS("function() {
-                  if (this.y > 0.00) {
-                    return this.point.label;
-                  }
-                  return null;
-                }"),
+                    align = "center",
+                    formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
+                    useHTML = TRUE,
                     x = 0,
-                    y = 60,
+                    y = 50,
                     style = list(fontSize = "12px", fontWeight = "normal", color = "#000000", textOutline = "none")
                   )) |>
     hc_add_series(name = "Current",
@@ -108,22 +131,14 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                   stack = "a",
                   dataLabels = list(
                     enabled = TRUE,
-                    formatter = JS("function() {
-                  if (this.y > 0.00) {
-                    return this.point.label;
-                  }
-                  return null;
-                }"),
-                    reversed = TRUE,
+                    align = "center",
+                    formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
+                    useHTML = TRUE,
                     x = 0,
-                    y = 60,
+                    y = 50,
                     style = list(fontSize = "12px", fontWeight = "regular", color = "#000000", textOutline = "none")
                   )) |>
-    hc_legend(align = "left",
-              verticalAlign = "top",
-              layout = "horizontal",
-              reversed = TRUE,
-              title = list(style = list(fontWeight = "regular", fontSize = "12px"))) |>
+    hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE)
 
   return(highcharts)
@@ -135,12 +150,7 @@ all_stackedbar_pe_type$Georgia
 
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
-#           eligibility date. This group made up X% of the people in prison for
-#           new crimes and sentence lengths between 1-25 years.
-
-# Get list of states
-
-# Generate sentence for each state
+#           eligibility date. This group made up X% of the people in prison.
 states <- unique(ncrp_pes_subset$state)
 all_sentence_parole_eligibility_population <- map(.x = states,  .f = function(x) {
 
@@ -165,14 +175,9 @@ all_sentence_parole_eligibility_population$Georgia
 states <- unique(ncrp_pes_subset$state)
 all_stacked_bar_pe_race <- map(.x = states,  .f = function(x) {
 
-  data <- ncrp_yearendpop|>
+  data <- ncrp_yearendpop_filtered |>
     filter(rptyear == select_year) |>
     filter(state == x) |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
     filter(race != "Unknown") |>
     group_by(race) |>
     count(parelig_status) |>
@@ -252,14 +257,9 @@ all_stacked_bar_pe_race$Georgia
 
 all_stacked_bar_pe_sex <- map(.x = states,  .f = function(x) {
 
-  data <- ncrp_yearendpop|>
+  data <- ncrp_yearendpop_filtered |>
     filter(rptyear == select_year) |>
     filter(state == x) |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
     filter(sex != "Unknown") |>
     group_by(sex) |>
     count(parelig_status) |>
@@ -335,14 +335,9 @@ all_stacked_bar_pe_sex$Georgia
 
 all_stacked_bar_pe_ageyrend <- map(.x = states,  .f = function(x) {
 
-  data <- ncrp_yearendpop|>
+  data <- ncrp_yearendpop_filtered |>
     filter(rptyear == select_year) |>
     filter(state == x) |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
     filter(ageyrend != "Unknown") |>
     group_by(ageyrend) |>
     count(parelig_status) |>
@@ -475,8 +470,9 @@ all_sentence_parole_eligibility_demographics <- map(.x = states,  .f = function(
   }
 
   # Combine the sentences
-  sentences <- paste0("The demographics of people in prison past their parole eligibility were mostly ",
-                      race_sentence, " ", sex_sentence, " ", age_sentence)
+  # sentences <- paste0("The demographics of people in prison past their parole eligibility were mostly ",
+  #                     race_sentence, " ", sex_sentence, " ", age_sentence)
+  sentences <- "The charts below illustrate the demographics of people* in prison based on their parole eligibility status, categorized as currently eligible for parole, eligible in the future, and those with missing parole eligibility information."
 
   return(sentences)
 })
@@ -546,11 +542,9 @@ all_sentence_parole_eligibility_demographics$Georgia
 # all_stacked_bar_pe_fbi_index$Georgia
 all_stacked_bar_pe_fbi_index <- map(.x = states,  .f = function(x) {
 
-  data <- ncrp_yearendpop|>
+  data <- ncrp_yearendpop_filtered |>
     filter(rptyear == select_year) |>
     filter(state == x) |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth %in% c("1-1.9 years", "2-4.9 years", "5-9.9 years", "10-24.9 years")) |>
     filter(fbi_index != "Unknown") |>
     group_by(fbi_index) |>
     count(parelig_status) |>
@@ -624,14 +618,9 @@ all_stacked_bar_pe_fbi_index <- setNames(all_stacked_bar_pe_fbi_index, states)
 all_stacked_bar_pe_fbi_index$Georgia
 
 # Get proportion of offenses that were violent and non-violent
-current_ped_offense_group <- ncrp_yearendpop |>
+current_ped_offense_group <- ncrp_yearendpop_filtered |>
   filter(rptyear == select_year &
            parelig_status == "Current") |>
-  filter(admtype == "New court commitment") |>
-  filter(sentlgth == "1-1.9 years" |
-           sentlgth == "2-4.9 years" |
-           sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years") |>
   mutate(group = case_when(
     fbi_index %in% c("Murder and Non-negligent Manslaughter",
                      "Rape or Sexual Assault",
@@ -840,14 +829,9 @@ all_sentence_parole_eligibility_fbi_index$Georgia
 # all_stacked_bar_pe_sentlgth$Georgia
 all_stacked_bar_pe_sentlgth <- map(.x = states,  .f = function(x) {
 
-  data <- ncrp_yearendpop|>
+  data <- ncrp_yearendpop_filtered |>
     filter(rptyear == select_year) |>
     filter(state == x) |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
     filter(sentlgth != "Unknown") |>
     group_by(sentlgth) |>
     count(parelig_status) |>

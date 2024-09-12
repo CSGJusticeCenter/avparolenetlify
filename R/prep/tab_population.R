@@ -385,8 +385,9 @@ all_sentence_population_demographics <- map(.x = states,  .f = function(x) {
   }
 
   # Combine the sentences
-  sentences <- paste0("The demographics of people in prison are mostly ",
-                      race_sentence, " ", sex_sentence, " ", age_sentence)
+  # sentences <- paste0("The demographics of people in prison are mostly ",
+  #                     race_sentence, " ", sex_sentence, " ", age_sentence)
+  sentences <- "The charts below illustrate the demographics of people in prison."
 
   return(sentences)
 })
@@ -509,9 +510,6 @@ for (folder in theseFOLDERS){
   save(all_sentence_population,              file = file.path(folder, "all_sentence_population.rds"))
 
   save(all_sentence_population_demographics, file = file.path(folder, "all_sentence_population_demographics.rds"))
-  save(all_waffle_population_race,           file = file.path(folder, "all_waffle_population_race.rds"))
-  save(all_waffle_population_sex,            file = file.path(folder, "all_waffle_population_sex.rds"))
-  save(all_waffle_population_ageyrend,       file = file.path(folder, "all_waffle_population_ageyrend.rds"))
 
   save(all_sentence_population_sentlgth,     file = file.path(folder, "all_sentence_population_sentlgth.rds"))
   save(all_bar_population_sentlgth,          file = file.path(folder, "all_bar_population_sentlgth.rds"))

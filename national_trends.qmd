@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
-source("R/config.R")
+source("R/prep/config.R")
 
 parole_elig_txt <- "Parole eligibility is a critical milestone in the criminal justice system, marking the point at which incarcerated individuals become eligible for conditional release. This eligibility is determined by several factors including the nature of the crime, the length of the sentence, behavior while incarcerated, and state-specific guidelines.<br>"
 

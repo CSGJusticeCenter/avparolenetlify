@@ -579,7 +579,7 @@ fnc_prepare_pe_data <- function(df, count_column){
       prop_label = paste0(round(prop*100, 0), "%"),
       n_label = formattable::comma(n, 0)
     ) |>
-    ungroup()
+    ungroup() |>
   return(df1)
 }
 

@@ -66,11 +66,9 @@ config <- list(
 )
 
 # Most recent year of NCRP data
-analysis_year <- 2020
 select_year <- 2020
 
 alignment <- "center"
-
 #------ Fonts ------#
 
 # Add custom fonts
@@ -86,30 +84,16 @@ options(highcharter.lang = hcoptslang)
 
 #------ Colors ------#
 
-# Michael colors
-colors <- list(
-  lightgray = "#d7d7d7",
-  darkgray  = "#969696",
-  purple    = "#938ebf", # primary color
-  red       = "#d97d68", # primary color
-  blue      = "#55b4e5", # primary color
-  yellow    = "#decf64", # primary color
-  green1    = "#b1d4d5",
-  green2    = "#49a7a1",
-  green3    = "#176f6d", # primary color
-  green4    = "#104040",
-  brown     = "#9e6c10"  # primary color
-)
-
+# # Michael colors
 # colors <- list(
 #   lightgray = "#d7d7d7",
 #   darkgray  = "#969696",
 #   purple    = "#938ebf", # primary color
-#   red       = "#de663e", # primary color
-#   blue      = "#3f8bca", # primary color
-#   yellow    = "#f4b811", # primary color
+#   red       = "#d97d68", # primary color
+#   blue      = "#55b4e5", # primary color
+#   yellow    = "#decf64", # primary color
 #   green1    = "#b1d4d5",
-#   green2    = "#00bdb2",
+#   green2    = "#49a7a1",
 #   green3    = "#176f6d", # primary color
 #   green4    = "#104040",
 #   brown     = "#9e6c10"  # primary color
@@ -132,33 +116,3 @@ color5 <- purple
 color6 <- lightteal
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
-
-# blue <- "#3f8bca"
-# teal <- "#00bdb2"
-# lightteal <- "#a1e1da"
-# yellow <- "#f4b811"
-# red <- "#de663e"
-# orange <- "#ff912b"
-# beige <- "#fbf0e3"
-# lightorange <- "#fce2c5"
-
-# color1 <- teal
-# color2 <- blue
-# color3 <- yellow
-# color4 <- red
-# color5 <- lightteal
-# color6 <- lightorange
-# color6 <- orange
-# darkgray <- "#969696"
-# lightgray <- "#d7d7d7"
-
-
-# Custom SVG icon with color placeholder
-iconSVG <- "
-<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'>
-  <path fill='%s' d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/>
-</svg>"
-
-# Usage Example:
-# ggplot(data, aes(x, y)) +
-#   geom_line(color = colors$blue)
