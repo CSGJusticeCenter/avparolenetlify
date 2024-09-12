@@ -885,12 +885,12 @@ save(all_stackedbar_pe_type,                       file = file.path(paste0(confi
 save(all_sentence_pop_pe_by_year,                  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_pop_pe_by_year.rds"))
 save(all_stackedbar_pop_pe_by_year,                file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_stackedbar_pop_pe_by_year.rds"))
 
-save(all_sentence_parole_eligibility_race,        file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_race.rds"))
-save(all_sentence_parole_eligibility_sex,         file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_sex.rds"))
-save(all_sentence_parole_eligibility_ageyrend,    file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_ageyrend.rds"))
-save(all_bar_parole_eligibility_race,             file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_race.rds"))
-save(all_bar_parole_eligibility_sex,              file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_sex.rds"))
-save(all_bar_parole_eligibility_ageyrend,         file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_ageyrend.rds"))
+save(all_sentence_parole_eligibility_race,         file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_race.rds"))
+save(all_sentence_parole_eligibility_sex,          file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_sex.rds"))
+save(all_sentence_parole_eligibility_ageyrend,     file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_ageyrend.rds"))
+save(all_bar_parole_eligibility_race,              file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_race.rds"))
+save(all_bar_parole_eligibility_sex,               file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_sex.rds"))
+save(all_bar_parole_eligibility_ageyrend,          file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_ageyrend.rds"))
 
 
 save(all_sentence_parole_eligibility_fbi_index,    file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_fbi_index.rds"))
