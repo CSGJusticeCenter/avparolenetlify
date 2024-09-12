@@ -37,11 +37,10 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_ageyrend.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_fbi_index.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_sentlgth.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
 
 
 # TITLE: How is Parole Eligibility Determined?
@@ -68,6 +67,80 @@ if (state_for_report %in% names(all_sentence_pe_type)) {
   state_sentence_pe_type <- ""
 }
 
+
+
+
+
+
+
+
+
+
+# SENTENCE: In 2020, 61% of people in prison past their parole consideration year
+#           were in prison for violent offenses. The breakdown of criminal
+#           offenses of people in prison past their parole consideration year
+#           reveals a varied landscape, with the majority of people incarcerated
+#           for aggravated or simple assault (26%) and property (19%) offenses."
+if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
+  state_sentence_parole_eligibility_fbi_index <-
+    all_sentence_parole_eligibility_fbi_index[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_fbi_index <- ""
+}
+
+# SENTENCE: In YEAR, among the prison population eligible for parole but not yet
+#           released, people with sentences between X years constituted
+#           the majority, representing X percent.
+if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
+  state_sentence_parole_eligibility_sentlgth <-
+    all_sentence_parole_eligibility_sentlgth[[state_for_report]]
+} else {
+  state_sentence_parole_eligibility_sentlgth <- ""
+}
+
+# TITLE:  Offense Breakdown for People in Prison Past Their Parole Eligibility Year
+if (state_for_report %in% names(all_bar_ped_fbi_index)) {
+  state_bar_ped_fbi_index <-
+    all_bar_ped_fbi_index[[state_for_report]] |>
+    hc_size(height = 400) |>
+    hc_colors(c(color1))
+} else {
+  state_bar_ped_fbi_index <- no_data_text
+}
+
+# TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Year
+if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
+  state_bar_parole_eligibility_sentlgth <-
+    all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
+    hc_size(height = 400) |>
+    hc_colors(c(color5))
+} else {
+  state_bar_parole_eligibility_sentlgth <- no_data_text
+}
+
+
+#------------------------------------------------------------------------------#
+# Population Tab (tab_population.R)
+#------------------------------------------------------------------------------#
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_ageyrend.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stacked_bar_pe_sentlgth.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_pop_pe_by_year.rds"))
+
+# TITLE: Line chart
+if (state_for_report %in% names(all_line_pop_pe_by_year)) {
+  state_line_pop_pe_by_year <-
+    all_line_pop_pe_by_year[[state_for_report]] |>
+    hc_title(text = "Prison Population Trends") |>
+    hc_size(height = 400) |>
+    hc_colors(c(color4, color2))
+} else {
+  state_line_pop_pe_by_year <- no_data_text
+}
 
 # TITLE: Race and Ethnicity
 if (state_for_report %in% names(all_stacked_bar_pe_race)) {
@@ -117,22 +190,7 @@ if (state_for_report %in% names(all_stacked_bar_pe_sentlgth)) {
   state_stacked_bar_pe_sentlgth <- no_data_text
 }
 
-#------------------------------------------------------------------------------#
-# Population Tab (tab_population.R)
-#------------------------------------------------------------------------------#
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_pop_pe_by_year.rds"))
-
-# TITLE: Line chart
-if (state_for_report %in% names(all_line_pop_pe_by_year)) {
-  state_line_pop_pe_by_year <-
-    all_line_pop_pe_by_year[[state_for_report]] |>
-    hc_title(text = "Prison Population Trends") |>
-    hc_size(height = 400) |>
-    hc_colors(c(color4, color2))
-} else {
-  state_line_pop_pe_by_year <- no_data_text
-}
 
 
 #------------------------------------------------------------------------------#

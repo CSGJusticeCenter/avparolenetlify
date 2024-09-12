@@ -71,11 +71,23 @@ div(id = "small-visualization", state_stackedbar_pe_type)
 
 ### Offense Type
 
+`r paste(state_sentence_parole_eligibility_fbi_index, collapse = ", ")`
+
+```{r state_bar_ped_fbi_index}
+div(id = "visualization", state_bar_ped_fbi_index)
+```
+
 <div class="transparentdivider"></div>
 
 ### Sentence Length
 
-<div class="divider"></div>
+`r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
+
+```{r state_bar_parole_eligibility_sentlgth}
+div(id = "visualization", state_bar_parole_eligibility_sentlgth)
+```
+
+<br><div class="divider"></div>
 
 ## State Notes
 
