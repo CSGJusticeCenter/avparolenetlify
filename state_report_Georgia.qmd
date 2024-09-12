@@ -73,7 +73,33 @@ div(id = "visualization", state_stackedbar_pop_pe_by_year)
 
 ### Demographics
 
-The following charts illustrate the proportion of people in prison past their parole eligibility in 2020 by race, ethnicity, sex, and age.  
+::: {.panel-tabset .custom-tabs}
+
+#### Race and Ethnicity
+
+`r paste(state_sentence_parole_eligibility_race, collapse = ", ")`
+
+```{r}
+div(id = "visualization", state_bar_parole_eligibility_race)
+```
+
+#### Sex
+
+`r paste(state_sentence_parole_eligibility_sex, collapse = ", ")`
+
+```{r}
+div(id = "small-visualization", state_bar_parole_eligibility_sex)
+```
+
+#### Age
+
+`r paste(state_sentence_parole_eligibility_ageyrend, collapse = ", ")`
+
+```{r}
+div(id = "visualization", state_bar_parole_eligibility_ageyrend)
+```
+
+:::
 
 
 
@@ -133,6 +159,27 @@ div(id = "visualization", state_line_population_by_year)
 
 ## Demographics
 
+::: {.panel-tabset .custom-tabs}
+
+#### Race and Ethnicity
+
+
+```{r}
+```
+
+#### Sex
+
+
+```{r}
+```
+
+#### Age
+
+
+```{r}
+```
+
+:::
 
 <br><div class="divider"></div>
 
@@ -192,7 +239,27 @@ div(id = "visualization", state_pie_release_type)
 
 ## Demographics
 
-The following charts illustrate the proportion of people released from prison in 2020 by race, ethnicity, sex, and age.  
+::: {.panel-tabset .custom-tabs}
+
+#### Race and Ethnicity
+
+
+```{r}
+```
+
+#### Sex
+
+
+```{r}
+```
+
+#### Age
+
+
+```{r}
+```
+
+:::
 
 <br>
 <div class="divider"></div>

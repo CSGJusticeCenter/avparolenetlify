@@ -105,7 +105,8 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_race)) {
 
 if (state_for_report %in% names(all_bar_parole_eligibility_race)) {
   state_bar_parole_eligibility_race <-
-    all_bar_parole_eligibility_race[[state_for_report]]
+    all_bar_parole_eligibility_race[[state_for_report]] |>
+    hc_size(height = 300)
 } else {
   state_bar_parole_eligibility_race <- ""
 }
@@ -119,7 +120,8 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sex)) {
 
 if (state_for_report %in% names(all_bar_parole_eligibility_sex)) {
   state_bar_parole_eligibility_sex <-
-    all_bar_parole_eligibility_sex[[state_for_report]]
+    all_bar_parole_eligibility_sex[[state_for_report]] |>
+    hc_size(height = 300)
 } else {
   state_bar_parole_eligibility_sex <- ""
 }
@@ -133,7 +135,8 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_ageyrend)) {
 
 if (state_for_report %in% names(all_bar_parole_eligibility_ageyrend)) {
   state_bar_parole_eligibility_ageyrend <-
-    all_bar_parole_eligibility_ageyrend[[state_for_report]]
+    all_bar_parole_eligibility_ageyrend[[state_for_report]] |>
+    hc_size(height = 300)
 } else {
   state_bar_parole_eligibility_ageyrend <- ""
 }

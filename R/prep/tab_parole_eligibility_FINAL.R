@@ -440,7 +440,6 @@ all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  df1$race <- gsub("-", " to ", df1$race)
   sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility were ",
                       df1$race, " people, representing ", round(df1$prop*100, 0), " percent of people in prison past parole eligibility.")
   return(sentences)
@@ -487,7 +486,6 @@ all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  df1$sex <- gsub("-", " to ", df1$sex)
   sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility were ",
                       tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of people in prison past parole eligibility.")
   return(sentences)
