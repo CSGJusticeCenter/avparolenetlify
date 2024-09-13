@@ -240,7 +240,7 @@ all_sentence_population_sex$Georgia
 
 
 
-
+load("C:/Users/mroberts/Downloads/ICPSR_38871-V1/ICPSR_38871/DS0001/38871-0001-Data.rda")
 
 
 
