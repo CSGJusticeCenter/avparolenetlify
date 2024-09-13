@@ -80,7 +80,7 @@ div(id = "visualization", state_stackedbar_pop_pe_by_year)
 `r paste(state_sentence_parole_eligibility_race, collapse = ", ")`
 
 ```{r}
-div(id = "visualization", state_bar_parole_eligibility_race)
+div(id = "small-visualization", state_bar_parole_eligibility_race)
 ```
 
 #### Sex
@@ -96,7 +96,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_sex)
 `r paste(state_sentence_parole_eligibility_ageyrend, collapse = ", ")`
 
 ```{r}
-div(id = "visualization", state_bar_parole_eligibility_ageyrend)
+div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 ```
 
 :::
@@ -163,21 +163,33 @@ div(id = "visualization", state_line_population_by_year)
 
 #### Race and Ethnicity
 
+`r paste(state_sentence_population_race, collapse = ", ")`
 
 ```{r}
+div(id = "small-visualization", state_bar_population_race)
 ```
+
+<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
 
 #### Sex
 
+`r paste(state_sentence_population_sex, collapse = ", ")`
 
 ```{r}
+div(id = "small-visualization", state_bar_population_sex)
 ```
+
+<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
 
 #### Age
 
+TBD
+
+<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
 
 ```{r}
 ```
+
 
 :::
 

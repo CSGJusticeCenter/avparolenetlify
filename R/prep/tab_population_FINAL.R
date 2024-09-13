@@ -44,7 +44,7 @@ all_sentence_population <- map(.x = states, .f = function(x) {
   percent_change_abs <- abs(round(percent_change, 0))
 
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the prison population ",
-                      change_type, " ", percent_change_abs, "%, changing from ",
+                      change_type, " ", percent_change_abs, " percent, changing from ",
                       format(earliest_year_population, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_population, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
@@ -108,6 +108,145 @@ all_line_population_by_year$Georgia
 
 
 
+#------------------------------------------------------------------------------#
+# DEMOGRAPHICS
+#------------------------------------------------------------------------------#
+
+
+
+
+# Generate graph for each state
+states <- unique(bjs_prison_pop_by_race_2022$state)
+all_bar_population_race <- map(.x = states,  .f = function(x) {
+  df1 <- bjs_prison_pop_by_race_2022 |>
+    filter(state == x) |>
+    mutate(prop = prop*100,
+           tooltip = paste0("<b>Race:</b> ", race, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    arrange(desc(prop))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race and ethnicity in 2022 in the state of ",
+                                  x, ".")
+  highcharts <- fnc_hc_columnchart(df1, "race", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = "Race and Ethnicity") |>
+    hc_subtitle(text = "Prison Population, 2022") |>
+    hc_exporting(enabled = TRUE)
+  return(highcharts)
+})
+all_bar_population_race <- setNames(all_bar_population_race, states)
+all_bar_population_race$Georgia
+
+
+# Generate sentence for each state
+states <- unique(bjs_prison_pop_by_race_2022$state)
+all_sentence_population_race <- map(.x = states,  .f = function(x) {
+  df1 <- bjs_prison_pop_by_race_2022 |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+  sentences <- paste0("In 2022, most people in prison were ",
+                      df1$race, " people, representing ", round(df1$prop*100, 0), " percent of people in prison.")
+  return(sentences)
+})
+
+all_sentence_population_race <- setNames(all_sentence_population_race, states)
+all_sentence_population_race$Georgia
+
+
+
+
+# Generate graph for each state
+states <- unique(bjs_prison_pop_by_sex_2022$state)
+all_bar_population_sex <- map(.x = states,  .f = function(x) {
+  df1 <- bjs_prison_pop_by_sex_2022 |>
+    filter(state == x) |>
+    mutate(prop = prop*100,
+           tooltip = paste0("<b>Sex:</b> ", sex, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    arrange(desc(prop))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by sex in 2022 in the state of ",
+                                  x, ".")
+  highcharts <- fnc_hc_columnchart(df1, "sex", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = "Sex") |>
+    hc_subtitle(text = "Prison Population, 2022") |>
+    hc_exporting(enabled = TRUE)
+  return(highcharts)
+})
+all_bar_population_sex <- setNames(all_bar_population_sex, states)
+all_bar_population_sex$Georgia
+
+
+# Generate sentence for each state
+states <- unique(bjs_prison_pop_by_sex_2022$state)
+all_sentence_population_sex <- map(.x = states,  .f = function(x) {
+  df1 <- bjs_prison_pop_by_sex_2022 |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+  sentences <- paste0("In 2022, most people in prison were ",
+                      tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of people in prison.")
+  return(sentences)
+})
+
+all_sentence_population_sex <- setNames(all_sentence_population_sex, states)
+all_sentence_population_sex$Georgia
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------#
+# OFFENSE TYPES
+#------------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------#
+# SENTENCE LENGTHS
+#------------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -116,8 +255,13 @@ all_line_population_by_year$Georgia
 #------------------------------------------------------------------------------#
 
 save(all_sentence_population,      file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population.rds"))
-save(all_line_population_by_year, file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_line_population_by_year.rds"))
+save(all_line_population_by_year,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_line_population_by_year.rds"))
 
+save(all_sentence_population_race, file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population_race.rds"))
+save(all_bar_population_race,      file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_population_race.rds"))
+
+save(all_sentence_population_sex,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population_sex.rds"))
+save(all_bar_population_sex,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_population_sex.rds"))
 
 
 

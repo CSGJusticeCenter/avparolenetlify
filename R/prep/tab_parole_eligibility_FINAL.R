@@ -440,8 +440,8 @@ all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility were ",
-                      df1$race, " people, representing ", round(df1$prop*100, 0), " percent of people in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility were ",
+                      df1$race, " people, representing ", round(df1$prop*100, 0), " percent of people* in prison past parole eligibility.")
   return(sentences)
 })
 
@@ -486,8 +486,8 @@ all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility were ",
-                      tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of people in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility were ",
+                      tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of people* in prison past parole eligibility.")
   return(sentences)
 })
 
@@ -533,8 +533,8 @@ all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$ageyrend <- gsub("-", " to ", df1$ageyrend)
-  sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility were between the ages of ",
-                      df1$ageyrend, " old, representing ", round(df1$prop*100, 0), " percent of people in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility were between the ages of ",
+                      df1$ageyrend, " old, representing ", round(df1$prop*100, 0), " percent of people* in prison past parole eligibility.")
   return(sentences)
 })
 
@@ -767,12 +767,12 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
   # Check if the top two groups have equal proportions
   if (length(unique(df1$prop[1:2])) == 1) {
-    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility were in prison for ",
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), " percent of people* in prison past their parole eligibility were in prison for ",
                              tolower(df1$group[1]), " offenses and ",
-                             round(df1$prop[2] * 100, 0), "% for ",
+                             round(df1$prop[2] * 100, 0), " percent for ",
                              tolower(df1$group[2]), " offenses.")
   } else {
-    group_sentence <- paste0(round(df1$prop[1] * 100, 0), "% of people in prison past their parole eligibility were in prison for ",
+    group_sentence <- paste0(round(df1$prop[1] * 100, 0), " percent of people* in prison past their parole eligibility were in prison for ",
                              tolower(df1$group[1]), " offenses.")
   }
 
@@ -853,8 +853,8 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", most people in prison past their parole eligibility had original sentence lengths between ",
-                      df1$sentlgth, ", representing ", round(df1$prop*100, 0), "% of in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility had original sentence lengths between ",
+                      df1$sentlgth, ", representing ", round(df1$prop*100, 0), " percent of in prison past parole eligibility.")
   return(sentences)
 })
 
@@ -872,6 +872,9 @@ all_sentence_parole_eligibility_sentlgth$Georgia
 
 
 
+# ---------------------------------------------------------------------------- #
+# STATE NOTES
+# ---------------------------------------------------------------------------- #
 
 
 

@@ -35,7 +35,7 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
   percent_change_abs <- abs(round(percent_change, 0))
 
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", prison releases ",
-                      change_type, " ", percent_change_abs, "%, dropping from ",
+                      change_type, " ", percent_change_abs, " percent, dropping from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
@@ -207,7 +207,7 @@ all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
     latest_value <- df1$proportion_released[1]
     sentence <- paste0(
       "In ", latest_year, ", ", round(latest_value, 1),
-      "% of people eligible for parole were released during their eligibility year."
+      " percent of people eligible for parole were released during their eligibility year."
     )
     return(sentence)
   }
@@ -234,8 +234,8 @@ all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
   # Construct the sentence
   sentence <- paste0(
     "In ", latest_year, ", ", round(latest_value, 0),
-    "% of people eligible for parole were released during their eligibility year. ",
-    "This represents a ", round(abs(percentage_change), 0), "% ", change_type,
+    " percent of people eligible for parole were released during their eligibility year. ",
+    "This represents a ", round(abs(percentage_change), 0), " percent ", change_type,
     " compared to ", earliest_year, "."
   )
 

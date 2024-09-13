@@ -215,6 +215,11 @@ if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sex.rds"))
+
 # SENTENCE: "From YEAR to YEAR, the prison population decreased/increased X percent."
 if (state_for_report %in% names(all_sentence_population)) {
   state_sentence_population <-
@@ -231,6 +236,43 @@ if (state_for_report %in% names(all_line_population_by_year)) {
 } else {
   state_line_population_by_year <- no_data_text
 }
+
+
+# DEMOGRAPHICS ------------------
+
+if (state_for_report %in% names(all_sentence_population_race)) {
+  state_sentence_population_race <-
+    all_sentence_population_race[[state_for_report]]
+} else {
+  state_sentence_population_race <- ""
+}
+
+if (state_for_report %in% names(all_bar_population_race)) {
+  state_bar_population_race <-
+    all_bar_population_race[[state_for_report]] |>
+    hc_size(height = 300) |>
+    hc_colors(c(color2))
+} else {
+  state_bar_population_race <- ""
+}
+
+if (state_for_report %in% names(all_sentence_population_sex)) {
+  state_sentence_population_sex <-
+    all_sentence_population_sex[[state_for_report]]
+} else {
+  state_sentence_population_sex <- ""
+}
+
+if (state_for_report %in% names(all_bar_population_sex)) {
+  state_bar_population_sex <-
+    all_bar_population_sex[[state_for_report]] |>
+    hc_size(height = 300) |>
+    hc_colors(c(color2))
+} else {
+  state_bar_population_sex <- ""
+}
+
+
 
 
 
