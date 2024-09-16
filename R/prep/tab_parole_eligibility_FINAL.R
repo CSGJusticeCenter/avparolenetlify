@@ -111,7 +111,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
     mutate(rptyear_fac = factor(rptyear))
 
   highcharts <- highchart() |>
-    hc_title(text = paste0("Pct. of Prison Population In Prison Past Parole Eligibility, ", min(df_state$rptyear), "-", max(df_state$rptyear))) |>
+    hc_title(text = paste0("Pct. of Prison Population Incarcerated Past Parole Eligibility, ", min(df_state$rptyear), "-", max(df_state$rptyear))) |>
     hc_xAxis(categories = df_state$rptyear_fac) |>
     hc_yAxis(
       title = list(text = ""),
@@ -217,7 +217,7 @@ ncrp_pes_subset <- ncrp_yearendpop_filtered |>
            round(prop * 100, 0), "%</div>"  # Keep the number normal
          ))
 
-# VISUALIZATION: Pct. of Prison Population by Parole Eligibility Status
+# VISUALIZATION: Prison Population by Parole Eligibility Status
 # Horizontal stacked bar chart showing prison population by parole eligibility status
 states <- unique(ncrp_pes_subset$state)
 all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
@@ -234,7 +234,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
   highcharts <- highchart() |>
     hc_chart(type = "bar",
              marginTop = -20) |>
-    hc_title(text = "Pct. of Prison Population by Parole Eligibility Status") |>
+    hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |>
     hc_add_theme(base_hc_theme) |>
     hc_xAxis(title = list(text = NULL),
              lineWidth = 0,
@@ -408,7 +408,7 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_race |>
     filter(state == x) |>
     mutate(prop = prop*100,
-           tooltip = paste0("<b>Race:</b> ", race, "<br>",
+           tooltip = paste0("<b>Race and Ethnicity:</b> ", race, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",
                             "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
     arrange(desc(prop))
@@ -425,7 +425,7 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Race and Ethnicity") |>
-    hc_subtitle(text = "People in Prison Past Their Parole Eligibility") |>
+    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_exporting(enabled = TRUE)
   return(highcharts)
 })
@@ -471,7 +471,7 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Sex") |>
-    hc_subtitle(text = "People in Prison Past Their Parole Eligibility") |>
+    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_exporting(enabled = TRUE)
   return(highcharts)
 })
@@ -500,7 +500,7 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
   df1 <- current_ped_ageyrend |>
     filter(state == x) |>
     mutate(prop = prop*100,
-           tooltip = paste0("<b>ageyrend:</b> ", ageyrend, "<br>",
+           tooltip = paste0("<b>Age:</b> ", ageyrend, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",
                             "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
     arrange(desc(ageyrend))
@@ -517,7 +517,7 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Age") |>
-    hc_subtitle(text = "People in Prison Past Their Parole Eligibility") |>
+    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_exporting(enabled = TRUE)
   return(highcharts)
 })
@@ -608,13 +608,14 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
   hc_accessibility_text <- paste0("TBD")
 
   highcharts <- fnc_hc_columnchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
-    hc_yAxis(max = max(df1$prop) * 1.5,
+    hc_yAxis(max = 100,#max(df1$prop) * 1.5,
              labels = list(
                formatter = JS("function() {
                   return this.value + '%';
                 }")
              )) |>
-    hc_title(text = "Offense Types for People in Prison Past Their Parole Eligibility") |>
+    hc_title(text = "Offense Type") |>
+    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_tooltip(pointFormat = "{point.tooltip}") |>
     hc_plotOptions(series = list(
       colorByPoint = TRUE
@@ -837,7 +838,8 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = "Sentence Lengths for People in Prison Past Their Parole Eligibility") |>
+    hc_title(text = "Sentence Length") |>
+    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_exporting(enabled = TRUE)
   return(highcharts)
 })

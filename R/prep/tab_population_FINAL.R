@@ -206,7 +206,61 @@ all_sentence_population_sex <- map(.x = states,  .f = function(x) {
 all_sentence_population_sex <- setNames(all_sentence_population_sex, states)
 all_sentence_population_sex$Georgia
 
+population_ageyrend <- ncrp_yearendpop |>
+  filter(rptyear == select_year) |>
+  group_by(state) |>
+  filter(!is.na(ageyrend)& ageyrend != "Unknown") |>
+  count(ageyrend) |>
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
+  ) |>
+  ungroup()
 
+# Generate graph for each state
+states <- unique(population_ageyrend$state)
+all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
+  df1 <- population_ageyrend |>
+    filter(state == x) |>
+    mutate(prop = prop*100,
+           tooltip = paste0("<b>Age:</b> ", ageyrend, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    arrange(desc(ageyrend))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by age in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_hc_columnchart(df1, "ageyrend", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = paste0("Prison Population by Age, ", select_year)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color2))
+  return(highcharts)
+})
+all_bar_population_ageyrend <- setNames(all_bar_population_ageyrend, states)
+all_bar_population_ageyrend$Georgia
+
+# Generate sentence for each state
+states <- unique(population_ageyrend$state)
+all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
+  df1 <- population_ageyrend |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+  sentences <- paste0("In ", select_year, ", most people in prion were between ",
+                      df1$ageyrend, " old, representing ", round(df1$prop*100, 0), " percent of people.")
+  return(sentences)
+})
+
+all_sentence_population_ageyrend <- setNames(all_sentence_population_ageyrend, states)
+all_sentence_population_ageyrend$Georgia
 
 
 
@@ -219,6 +273,60 @@ all_sentence_population_sex$Georgia
 # OFFENSE TYPES
 #------------------------------------------------------------------------------#
 
+population_fbi_index <- ncrp_yearendpop |>
+  filter(rptyear == select_year) |>
+  group_by(state) |>
+  filter(!is.na(fbi_index)& fbi_index != "Unknown") |>
+  count(fbi_index) |>
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
+  ) |>
+  ungroup()
+
+# Generate graph for each state
+states <- unique(population_fbi_index$state)
+all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
+  df1 <- population_fbi_index |>
+    filter(state == x) |>
+    mutate(prop = prop*100,
+           tooltip = paste0("<b>Offense Type:</b> ", fbi_index, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by offense type in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_hc_columnchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = paste0("Prison Population by Offense Type, ", select_year)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color2))
+  return(highcharts)
+})
+all_bar_population_fbi_index <- setNames(all_bar_population_fbi_index, states)
+all_bar_population_fbi_index$Georgia
+
+# Generate sentence for each state
+states <- unique(population_fbi_index$state)
+all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
+  df1 <- population_fbi_index |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+  sentences <- paste0("In ", select_year, ", most people in prion were incarcerated for ",
+                      tolower(df1$fbi_index), ", representing ", round(df1$prop*100, 0), " percent of people.")
+  return(sentences)
+})
+
+all_sentence_population_fbi_index <- setNames(all_sentence_population_fbi_index, states)
+all_sentence_population_fbi_index$Georgia
 
 
 
@@ -235,14 +343,60 @@ all_sentence_population_sex$Georgia
 # SENTENCE LENGTHS
 #------------------------------------------------------------------------------#
 
+population_sentlgth <- ncrp_yearendpop |>
+  filter(rptyear == select_year) |>
+  group_by(state) |>
+  filter(!is.na(sentlgth)& sentlgth != "Unknown") |>
+  count(sentlgth) |>
+  mutate(
+    prop = n/sum(n),
+    yearendpop_ped = sum(n),
+    prop_label = paste0(round(prop*100, 0), "%"),
+    n_label = formattable::comma(n, 0)
+  ) |>
+  ungroup()
 
+# Generate graph for each state
+states <- unique(population_sentlgth$state)
+all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- population_sentlgth |>
+    filter(state == x) |>
+    mutate(prop = prop*100,
+           tooltip = paste0("<b>Sentence Length:</b> ", sentlgth, "<br>",
+                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
 
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by sentence length in ",
+                                  select_year, " in the state of ", x, ".")
+  highcharts <- fnc_hc_columnchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+        return this.value + '%';
+      }")
+             )) |>
+    hc_title(text = paste0("Prison Population by Sentence Length, ", select_year)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color2))
+  return(highcharts)
+})
+all_bar_population_sentlgth <- setNames(all_bar_population_sentlgth, states)
+all_bar_population_sentlgth$Georgia
 
+# Generate sentence for each state
+states <- unique(population_sentlgth$state)
+all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
+  df1 <- population_sentlgth |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+  sentences <- paste0("In ", select_year, ", most people in prion had sentence lengths between ",
+                      df1$sentlgth, ", representing ", round(df1$prop*100, 0), " percent of people.")
+  return(sentences)
+})
 
-
-load("C:/Users/mroberts/Downloads/ICPSR_38871-V1/ICPSR_38871/DS0001/38871-0001-Data.rda")
-
-
+all_sentence_population_sentlgth <- setNames(all_sentence_population_sentlgth, states)
+all_sentence_population_sentlgth$Georgia
 
 
 
@@ -263,6 +417,14 @@ save(all_bar_population_race,      file = file.path(paste0(config$sp_data_path, 
 save(all_sentence_population_sex,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population_sex.rds"))
 save(all_bar_population_sex,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_population_sex.rds"))
 
+save(all_sentence_population_ageyrend,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population_ageyrend.rds"))
+save(all_bar_population_ageyrend,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_population_ageyrend.rds"))
+
+save(all_sentence_population_fbi_index,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population_fbi_index.rds"))
+save(all_bar_population_fbi_index,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_population_fbi_index.rds"))
+
+save(all_sentence_population_sentlgth,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_population_sentlgth.rds"))
+save(all_bar_population_sentlgth,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_population_sentlgth.rds"))
 
 
 # # Create a dataframe with our filtered criteria

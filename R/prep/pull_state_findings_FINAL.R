@@ -185,7 +185,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
 if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
   state_bar_parole_eligibility_sentlgth <-
     all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
-    hc_size(height = 400) |>
+    hc_size(height = 300) |>
     hc_colors(c(color4))
 } else {
   state_bar_parole_eligibility_sentlgth <- no_data_text
@@ -219,6 +219,14 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_populat
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_ageyrend.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_ageyrend.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_fbi_index.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sentlgth.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
 
 # SENTENCE: "From YEAR to YEAR, the prison population decreased/increased X percent."
 if (state_for_report %in% names(all_sentence_population)) {
@@ -272,6 +280,57 @@ if (state_for_report %in% names(all_bar_population_sex)) {
   state_bar_population_sex <- ""
 }
 
+if (state_for_report %in% names(all_sentence_population_ageyrend)) {
+  state_sentence_population_ageyrend <-
+    all_sentence_population_ageyrend[[state_for_report]]
+} else {
+  state_sentence_population_ageyrend <- ""
+}
+
+if (state_for_report %in% names(all_bar_population_ageyrend)) {
+  state_bar_population_ageyrend <-
+    all_bar_population_ageyrend[[state_for_report]] |>
+    hc_size(height = 300) |>
+    hc_colors(c(color2))
+} else {
+  state_bar_population_ageyrend <- ""
+}
+
+# OFFENSE TYPE ------------------
+
+if (state_for_report %in% names(all_sentence_population_fbi_index)) {
+  state_sentence_population_fbi_index <-
+    all_sentence_population_fbi_index[[state_for_report]]
+} else {
+  state_sentence_population_fbi_index <- ""
+}
+
+if (state_for_report %in% names(all_bar_population_fbi_index)) {
+  state_bar_population_fbi_index <-
+    all_bar_population_fbi_index[[state_for_report]] |>
+    hc_size(height = 300) |>
+    hc_colors(c(color2))
+} else {
+  state_bar_population_fbi_index <- ""
+}
+
+# SENTENCE LENGTH ------------------
+
+if (state_for_report %in% names(all_sentence_population_sentlgth)) {
+  state_sentence_population_sentlgth <-
+    all_sentence_population_sentlgth[[state_for_report]]
+} else {
+  state_sentence_population_sentlgth <- ""
+}
+
+if (state_for_report %in% names(all_bar_population_sentlgth)) {
+  state_bar_population_sentlgth <-
+    all_bar_population_sentlgth[[state_for_report]] |>
+    hc_size(height = 300) |>
+    hc_colors(c(color2))
+} else {
+  state_bar_population_sentlgth <- ""
+}
 
 
 

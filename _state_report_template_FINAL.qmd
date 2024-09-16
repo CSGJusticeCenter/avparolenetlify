@@ -69,7 +69,7 @@ div(id = "small-visualization", state_stackedbar_pe_type)
 div(id = "visualization", state_stackedbar_pop_pe_by_year)
 ```
 
-<br><div class="divider"></div>
+<br><div class="transparentdivider"></div>
 
 ### Demographics
 
@@ -101,12 +101,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 
 :::
 
-
-
-
-
-
-<br><div class="divider"></div>
+<br><div class="transparentdivider"></div>
 
 ### Offense Types
 
@@ -116,14 +111,14 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
-<br><div class="divider"></div>
+<br><div class="transparentdivider"></div>
 
 ### Sentence Lengths
 
 `r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
 
 ```{r state_bar_parole_eligibility_sentlgth}
-div(id = "visualization", state_bar_parole_eligibility_sentlgth)
+div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 ```
 
 <br><div class="divider"></div>
@@ -183,13 +178,13 @@ div(id = "small-visualization", state_bar_population_sex)
 
 #### Age
 
-TBD
-
-<a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
+`r paste(state_sentence_population_ageyrend, collapse = ", ")`
 
 ```{r}
+div(id = "small-visualization", state_bar_population_ageyrend)
 ```
 
+<a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">Source: NCRP</a>
 
 :::
 
@@ -197,12 +192,21 @@ TBD
 
 ## Offense Types
 
+`r paste(state_sentence_population_fbi_index, collapse = ", ")`
+
+```{r}
+div(id = "visualization", state_bar_population_fbi_index)
+```
 
 <br><div class="divider"></div>
 
 ## Sentence Lengths
 
+`r paste(state_sentence_population_sentlgth, collapse = ", ")`
 
+```{r}
+div(id = "visualization", state_bar_population_sentlgth)
+```
 
 <br><br><br>
 
