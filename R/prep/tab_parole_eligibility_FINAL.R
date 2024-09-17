@@ -327,64 +327,6 @@ all_sentence_pe_type$Georgia
 # FUNCTIONS
 # ---------------------------------------------------------------------------- #
 
-fnc_prepare_pe_data2 <- function(df, count_column){
-  df1 <- df |>
-    filter(rptyear == select_year &
-             parelig_status == "Current") |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
-    group_by(state) |>
-    filter(!is.na({{ count_column }})) |>
-    count({{ count_column }}) |>
-    mutate(
-      prop = n/sum(n),
-      yearendpop_ped = sum(n),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0)
-    ) |>
-    ungroup()
-  return(df1)
-}
-
-fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
-
-  xaxis_order <- df[[x_var]]
-
-  highcharts <- highchart() |>
-    hc_add_series(df,
-                  type = "column",
-                  hcaes(x = !!sym(x_var),
-                        y = !!sym(y_var)),
-                  dataLabels = list(enabled = TRUE,
-                                    format = "{point.prop_label}",
-                                    style = list(fontWeight = "regular",
-                                                 fontSize = "1em",
-                                                 fontFamily = "Graphik",
-                                                 textOutline = 0))) |>
-    hc_xAxis(categories = xaxis_order) |>
-    hc_yAxis(labels = list(enabled = TRUE),
-             title = list(text = "")
-    ) |>
-    hc_add_theme(hc_theme_with_line) |>
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
-    hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = accessibility_text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
-
-  return(highcharts)
-}
-
 
 
 
@@ -426,7 +368,8 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color4))
   return(highcharts)
 })
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
@@ -472,7 +415,8 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = "Sex") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color4))
   return(highcharts)
 })
 all_bar_parole_eligibility_sex <- setNames(all_bar_parole_eligibility_sex, states)
@@ -518,7 +462,8 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = "Age") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color4))
   return(highcharts)
 })
 all_bar_parole_eligibility_ageyrend <- setNames(all_bar_parole_eligibility_ageyrend, states)
@@ -620,7 +565,8 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
     hc_plotOptions(series = list(
       colorByPoint = TRUE
     )) |>
-    hc_colors(df1$color)
+    # hc_colors(df1$color)
+    hc_colors(c(color4))
 
   return(highcharts)
 })
@@ -840,7 +786,8 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = "Sentence Length") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color4))
   return(highcharts)
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
@@ -896,7 +843,6 @@ save(all_sentence_parole_eligibility_ageyrend,     file = file.path(paste0(confi
 save(all_bar_parole_eligibility_race,              file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_race.rds"))
 save(all_bar_parole_eligibility_sex,               file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_sex.rds"))
 save(all_bar_parole_eligibility_ageyrend,          file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_parole_eligibility_ageyrend.rds"))
-
 
 save(all_sentence_parole_eligibility_fbi_index,    file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_parole_eligibility_fbi_index.rds"))
 save(all_bar_ped_fbi_index,                        file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_ped_fbi_index.rds"))

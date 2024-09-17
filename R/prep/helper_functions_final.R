@@ -374,3 +374,137 @@ fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, c
 
   return(highcharts)
 }
+
+fnc_prepare_pe_data2 <- function(df, count_column){
+  df1 <- df |>
+    filter(rptyear == select_year &
+             parelig_status == "Current") |>
+    filter(admtype == "New court commitment") |>
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years") |>
+    group_by(state) |>
+    filter(!is.na({{ count_column }})) |>
+    count({{ count_column }}) |>
+    mutate(
+      prop = n/sum(n),
+      yearendpop_ped = sum(n),
+      prop_label = paste0(round(prop*100, 0), "%"),
+      n_label = formattable::comma(n, 0)
+    ) |>
+    ungroup()
+  return(df1)
+}
+
+fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
+
+  xaxis_order <- df[[x_var]]
+
+  highcharts <- highchart() |>
+    hc_add_series(df,
+                  type = "column",
+                  hcaes(x = !!sym(x_var),
+                        y = !!sym(y_var)),
+                  dataLabels = list(enabled = TRUE,
+                                    format = "{point.prop_label}",
+                                    style = list(fontWeight = "regular",
+                                                 fontSize = "1em",
+                                                 fontFamily = "Graphik",
+                                                 textOutline = 0))) |>
+    # hc_xAxis(categories = xaxis_order) |>
+    # hc_xAxis(categories = xaxis_order,
+    #          labels = list(style = list(fontSize = '12px', fontFamily = 'Graphik'),
+    #                        useHTML = TRUE, rotation = -45, align = 'right',
+    #                        formatter = JS("function () {
+    #                            return this.value.split(' ').reduce(function (acc, word, index) {
+    #                              return acc + (index && !(index % 3) ? '<br/>' : ' ') + word;
+    #                            }, '');
+    #                          }"))
+    # ) |>
+    # hc_xAxis(categories = xaxis_order,
+    #          labels = list(style = list(fontSize = '12px', fontFamily = 'Graphik'),
+    #                        useHTML = TRUE, align = 'center',
+    #                        formatter = JS("function () {
+    #                            return this.value.split(/(?<=\\S{12})\\s+/).join('<br/>');
+    #                          }"))
+    # ) |>
+    hc_xAxis(categories = xaxis_order,
+             labels = list(
+               formatter = JS(
+                 "function() {
+                    var label = this.value;
+                    var maxLength = 25;
+                    if (label.length > maxLength) {
+                      var words = label.split(' ');
+                      var result = [];
+                      var line = [];
+                      var lineLength = 0;
+
+                      words.forEach(function(word) {
+                        if (lineLength + word.length > maxLength) {
+                          result.push(line.join(' '));
+                          line = [];
+                          lineLength = 0;
+                        }
+                        line.push(word);
+                        lineLength += word.length + 1;
+                      });
+                      if (line.length > 0) {
+                        result.push(line.join(' '));
+                      }
+                      return result.join('<br>');
+                    } else {
+                      return label;
+                    }
+                  }"
+               ),
+               style = list(fontSize = "1em", fontFamily = "Graphik")
+             )) |>
+    hc_yAxis(labels = list(enabled = TRUE),
+             title = list(text = "")
+    ) |>
+    hc_add_theme(hc_theme_with_line) |>
+    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
+    hc_legend(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_plotOptions(series = list(animation = FALSE,
+                                 cursor = "pointer",
+                                 borderWidth = 3,
+                                 minPointLength = 4),
+                   accessibility = list(enabled = TRUE,
+                                        keyboardNavigation = list(enabled = TRUE),
+                                        linkedDescription = accessibility_text,
+                                        landmarkVerbosity = "one"),
+                   area = list(accessibility = list(description = accessibility_text)))
+
+  return(highcharts)
+}
+
+
+
+# Retrieve and process census data for a given state
+fnc_get_census_data <- function(state) {
+  df <-
+    tidycensus::get_decennial(
+      geography = "state",
+      state = state,
+      variables = race_vars,
+      summary_var = "P3_001N",
+      year = select_year,
+      geometry = FALSE) %>%
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race = case_when(
+        variable %in% c("estimate_american_indian",
+                        "estimate_asian",
+                        "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    )
+  return(df)
+}

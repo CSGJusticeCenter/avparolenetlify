@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: config.R
 # Authors: Mari Roberts
-# Date last updated: June 27, 2024 (MAR)
+# Date last updated: September 17, 2024 (MAR)
 # Description:
 #    This script is responsible for setting up the environment for the AV Parole project.
 #    It includes the following tasks:
@@ -44,7 +44,7 @@ required_packages <- c(
   "reactable", "reactablefmtr", "sysfonts", "extrafont", "showtext", "htmlwidgets",
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
-  "ggtext", "scales", "base64enc", "glue"
+  "ggtext", "scales", "base64enc", "glue", "haven"
 )
 
 lapply(required_packages, library, character.only = TRUE)

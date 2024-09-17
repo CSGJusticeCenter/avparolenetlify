@@ -10,9 +10,15 @@
 #    Prepares files for analysis
 #######################################
 
-#------------------------------------------------------------------------------#
-# MAP
-#------------------------------------------------------------------------------#
+#------ Background Info About States ------------------------------------------#
+
+parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
+                                         "/background/app/Parole Info by State.xlsx"),
+                                  sheet = "Overall") |>
+  clean_names()
+
+
+#------ Shapefile for Map -----------------------------------------------------#
 
 hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
   select(state_abb = iso3166_2) |>
@@ -23,58 +29,113 @@ hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_he
 
 
 
-#------------------------------------------------------------------------------#
-# Robina Institute/Carl Notes
-#------------------------------------------------------------------------------#
+#------ Robina Institute/Carl Notes -------------------------------------------#
 
 carl_state_notes <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
   clean_names()
 
-parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
-                                         "/background/app/Parole Info by State.xlsx"),
-                                  sheet = "Overall") |>
-  clean_names()
+
+
+#------ NCRP Data -------------------------------------------------------------#
+
+ncrp_files <- list(
+  term_records = "1",
+  admissions = "2",
+  releases = "3",
+  yearendpop = "4"
+)
+
+ncrp_data <- lapply(ncrp_files, fnc_load_ncrp_data)
+names(ncrp_data) <- names(ncrp_files)
+
+
+#------ Prepare NCRP Term Records ---------------------------------------------#
+
+# Takes a couple minutes to run
+ncrp_term_records <- ncrp_data$term_records |>
+  clean_names() |>
+  mutate(across(c(state), ~ str_sub(., 6, -1))) |>
+  mutate(across(sex:reltype, ~ str_sub(., 5, -1))) |>
+  mutate(across(everything(), trimws))
 
 
 
-#------------------------------------------------------------------------------#
-# NCRP
-#------------------------------------------------------------------------------#
+#------ Prepare NCRP Releases -------------------------------------------------#
 
-# Define file paths (update paths to your actual locations)
-release_files <- list.files(path = paste0(config$sp_data_path, "/data/analysis/clean_files/cleaning_processing"),
-                            pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
-yearendpop_files <- list.files(path = paste0(config$sp_data_path, "/data/analysis/clean_files/cleaning_processing"),
-                               pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
+ncrp_releases <- ncrp_data$releases |>
+  clean_names() |>
+  mutate(across(c(state), ~ str_sub(., 6, -1))) |>
+  mutate(across(c(offgeneral, offdetail, admtype, race, sex, ageadmit,
+                  agerlse, sentlgth, reltype, timesrvd_rel, education), ~ str_sub(., 5, -1))) |>
+  mutate(offdetail = trimws(offdetail)) |>
+  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
+  fnc_create_parelig_status() |>
+  fnc_create_fbi_index() |>
+  fnc_create_admtype() |>
+  mutate(
+    time_between_admisson_release = relyr - admityr,
+    time_between_ped_release = relyr - parelig_year,
+    race = factor(race, levels = c("Unknown",
+                                   "Other race(s), non-Hispanic",
+                                   "White, non-Hispanic",
+                                   "Hispanic, any race",
+                                   "Black, non-Hispanic")),
+    agerlse = factor(agerlse, levels = c("55+ years",
+                                         "45-54 years",
+                                         "35-44 years",
+                                         "25-34 years",
+                                         "18-24 years")),
+    sentlgth = factor(sentlgth, levels = c("< 1 year",
+                                           "1-1.9 years",
+                                           "2-4.9 years",
+                                           "5-9.9 years",
+                                           "10-24.9 years",
+                                           ">=25 years",
+                                           "Life, LWOP, Life plus additional years, Death",
+                                           "Unknown")))
 
-# Modify the function to remove labels from state_encoded
-read_and_add_year <- function(file_path) {
-  data <- read_dta(file_path)
 
-  # Extract year from file name
-  year <- sub(".*_(\\d{4})_.*", "\\1", file_path)
+#------ Prepare NCRP Year End Pop ------#
 
-  # Add rptyear column
-  data <- data %>% mutate(rptyear = as.numeric(year))
+ncrp_yearendpop <- ncrp_data$yearendpop |>
+  clean_names() |>
+  mutate(across(c(state), ~ str_sub(., 6, -1))) |>
+  mutate(across(c(offgeneral, offdetail, race, education, admtype, sex,
+                  sentlgth, ageadmit, ageyrend, timesrvd_yrend), ~ str_sub(., 5, -1))) |>
+  mutate(offdetail = trimws(offdetail)) |>
+  fnc_create_fbi_index() |>
+  fnc_create_parelig_status() |>
+  fnc_create_admtype() |>
+  mutate(across(c(race, ageyrend, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
+  mutate(
+    race = factor(race,
+                  levels = c("Unknown",
+                             "Other race(s), non-Hispanic",
+                             "White, non-Hispanic",
+                             "Hispanic, any race",
+                             "Black, non-Hispanic")),
+    ageyrend = factor(ageyrend,
+                      levels = c("55+ years",
+                                 "45-54 years",
+                                 "35-44 years",
+                                 "25-34 years",
+                                 "18-24 years")),
+    sentlgth = factor(sentlgth,
+                      levels = c(
+                        "< 1 year",
+                        "1-1.9 years",
+                        "2-4.9 years",
+                        "5-9.9 years",
+                        "10-24.9 years",
+                        ">=25 years",
+                        "Life, LWOP, Life plus additional years, Death",
+                        "Unknown")))
 
-  # Remove labels from state_encoded to avoid conflicts
-  if("state_encoded" %in% colnames(data)) {
-    data$state_encoded <- as.numeric(data$state_encoded)
-  }
-
-  return(data)
-}
-# Read and combine release files
-ncrp_releases <- bind_rows(lapply(release_files, read_and_add_year))
-
-# Read and combine yearendpop files
-ncrp_yearendpop <- bind_rows(lapply(yearendpop_files, read_and_add_year))
 
 
 
-#------------------------------------------------------------------------------#
-# BJS
-#------------------------------------------------------------------------------#
+
+#------ Import and Prepare BJS Race, Ethnicity, Sex Data -------------------#
 
 bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
                                                      "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
@@ -213,6 +274,7 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   select(-total)|>
   mutate(state = str_replace(state, "/.*", ""))
 
+
 bjs_prison_pop_by_sex_2022_raw <- read_csv("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/BJS Prison Pop/p22st/p22stt02.csv")
 
 bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
@@ -246,20 +308,18 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
                           sex, "</b><br>",
                           prop_label, "<br>")) |>
   mutate(sex = case_when(sex == "male" ~ "Male",
-                            sex == "female" ~ "Female",
-                            TRUE ~ sex))
+                         sex == "female" ~ "Female",
+                         TRUE ~ sex))
 
 
-
-#------------------------------------------------------------------------------#
-# Save Data
-#------------------------------------------------------------------------------#
+#------ Save Data ------#
 
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
 
   save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
+  save(ncrp_term_records,                  file = file.path(folder, "ncrp_term_records.rds"))
   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
   save(bjs_prison_pop_by_race_2020,        file = file.path(folder, "bjs_prison_pop_by_race_2020.rds"))
   save(bjs_prison_pop_by_race_2022,        file = file.path(folder, "bjs_prison_pop_by_race_2022.rds"))

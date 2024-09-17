@@ -308,7 +308,7 @@ if (state_for_report %in% names(all_sentence_population_fbi_index)) {
 if (state_for_report %in% names(all_bar_population_fbi_index)) {
   state_bar_population_fbi_index <-
     all_bar_population_fbi_index[[state_for_report]] |>
-    hc_size(height = 300) |>
+    hc_size(height = 400) |>
     hc_colors(c(color2))
 } else {
   state_bar_population_fbi_index <- ""
@@ -326,7 +326,7 @@ if (state_for_report %in% names(all_sentence_population_sentlgth)) {
 if (state_for_report %in% names(all_bar_population_sentlgth)) {
   state_bar_population_sentlgth <-
     all_bar_population_sentlgth[[state_for_report]] |>
-    hc_size(height = 300) |>
+    hc_size(height = 400) |>
     hc_colors(c(color2))
 } else {
   state_bar_population_sentlgth <- ""
@@ -459,7 +459,7 @@ if (state_for_report %in% names(all_sentence_releases_fbi_index)) {
 if (state_for_report %in% names(all_bar_releases_fbi_index)) {
   state_bar_releases_fbi_index <-
     all_bar_releases_fbi_index[[state_for_report]] |>
-    hc_size(height = 300)
+    hc_size(height = 400)
 } else {
   state_bar_releases_fbi_index <- ""
 }
@@ -476,7 +476,7 @@ if (state_for_report %in% names(all_bar_releases_fbi_index)) {
 
 ####################
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_parole_release_disparities.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pe_release_total_years_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_race_ped_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_rri_chart.rds"))

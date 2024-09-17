@@ -1,9 +1,9 @@
 
-# source("R/prep/config.R")
+source("R/prep/config.R")
 # source("R/prep/page_national_trends.R")
-# source("R/prep/tab_parole_eligibility.R")
-# source("R/prep/tab_population.R")
-# source("R/prep/tab_releases.R")
+# source("R/prep/tab_parole_eligibility_FINAL.R")
+# source("R/prep/tab_population_FINAL.R")
+# source("R/prep/tab_releases_FINAL.R")
 # source("R/prep/tab_disparities.R")
 
 # Save working directory
