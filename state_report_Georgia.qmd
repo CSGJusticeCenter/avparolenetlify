@@ -259,26 +259,42 @@ div(id = "visualization", state_pie_release_type)
 
 #### Race and Ethnicity
 
+`r paste(state_sentence_releases_race, collapse = ", ")`
 
 ```{r}
+div(id = "small-visualization", state_bar_releases_race)
 ```
-
+  
 #### Sex
-
+  
+`r paste(state_sentence_releases_sex, collapse = ", ")`
 
 ```{r}
+div(id = "small-visualization", state_bar_releases_sex)
 ```
-
+  
 #### Age
-
+  
+`r paste(state_sentence_releases_agerlse, collapse = ", ")`
 
 ```{r}
+div(id = "small-visualization", state_bar_releases_agerlse)
 ```
 
 :::
 
 <br>
 <div class="divider"></div>
+
+## Offense Types
+
+`r paste(state_sentence_releases_fbi_index, collapse = ", ")`
+
+```{r}
+div(id = "visualization", state_bar_releases_fbi_index)
+```
+
+<br><div class="divider"></div>
 
 ## Time-Served by Offense
 
