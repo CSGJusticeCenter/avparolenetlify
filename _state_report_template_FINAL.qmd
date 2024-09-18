@@ -321,7 +321,13 @@ Feedback: Not useful, potentially show  "Average Expected Parole Release Year" v
 
 # Disparities
 
-## Incarceration Rates
+## Disparities in Incarceration
+
+::: {.panel-tabset .custom-tabs}
+
+### Race and Ethnicity
+
+<br>
 
 ```{r}
 if (file.exists(rri_infographic_black)) {
@@ -343,8 +349,38 @@ if (file.exists(rri_infographic_hispanic)) {
 # }
 ```
 
+### Gender
+
+<br>
+
+:::
+
 <br>
 <div class="divider"></div>
+
+
+
+
+
+## Disparities in Parole Eligibility
+
+::: {.panel-tabset .custom-tabs}
+
+### Race and Ethnicity
+
+### Gender
+
+:::
+
+<br>
+<div class="divider"></div>
+
+
+
+
+
+
+
 
 ## Years Spent in Prison After Parole Eligibility
 
@@ -369,16 +405,18 @@ if (!all(is.na(df1$total_years))) {
     id = "grid-container",
     style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
     div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
+    div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
     div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
-    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
-    div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
+    div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
+    
     div(style = "color: #49a7a1; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-    div(style = "color: #55b4e5; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-    div(style = "color: #d97d68; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
     div(style = "color: #decf64; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    div(style = "color: #55b4e5; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    div(style = "color: #938ebf; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
+    
     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Black People")),
-    div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
+    div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
   )
   

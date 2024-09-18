@@ -566,7 +566,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       gridLineColor = lightgray       # Set grid line color
     ) |>
     hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
-    hc_colors(c(color1, color2, color4, color3)) |>
+    hc_colors(c(color4, color2, color5, color3)) |>
     hc_exporting(enabled = TRUE) |>
     hc_add_theme(base_hc_theme) |>
     hc_tooltip(
@@ -586,8 +586,6 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
 # Name the list of charts by state
 all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
-
-# Display the chart for Georgia as an example
 all_scatter_los_race_offense$Georgia
 
 
@@ -620,8 +618,8 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
     mutate(race_num = row_number(),
            color = case_when(
              race == "White, non-Hispanic" ~ color2,
-             race == "Black, non-Hispanic" ~ color1,
-             race == "Hispanic, any race" ~ color4,
+             race == "Black, non-Hispanic" ~ color4,
+             race == "Hispanic, any race" ~ color5,
              race == "Other race(s), non-Hispanic" ~ color3
            ))
 
@@ -704,8 +702,6 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
 
 # Name the list of charts by state
 all_lollipop_los_race <- setNames(all_lollipop_los_race, states)
-
-# Display the chart for Georgia as an example
 all_lollipop_los_race$Georgia
 
 
@@ -864,8 +860,6 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
 # Set names for the list elements
 all_sentence_los_race_offense <- setNames(all_sentence_los_race_offense, states)
-
-# Check the sentence for Georgia
 all_sentence_los_race_offense$Georgia
 
 
