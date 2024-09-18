@@ -47,6 +47,22 @@ h2 {
 }
 
 
+
+
+
+.black-non-hispanic {
+  color: #49a7a1; /* Replace with your desired color */
+  font-weight: bold;
+}
+
+.hispanic {
+  color: #d97d68; /* Replace with your desired color */
+  font-weight: bold;
+}
+
+
+
+
 body {
   max-width: 900px; /* Adjust the maximum width for the content container */
   margin: 0 auto; /* Center the content horizontally */

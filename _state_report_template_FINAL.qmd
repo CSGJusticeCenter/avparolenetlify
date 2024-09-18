@@ -21,7 +21,10 @@ source("R/prep/config.R")
 
 state_for_report <- "change_me"
 
-source("R/prep/pull_state_findings_FINAL.R")
+source("R/prep/pull_state_findings.R")
+
+rri_infographic_black <- paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_black_", state_for_report, ".png")
+rri_infographic_hispanic <- paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", state_for_report, ".png")
 ```
 
 <div id="state-body-section">
@@ -320,11 +323,25 @@ Feedback: Not useful, potentially show  "Average Expected Parole Release Year" v
 
 ## Incarceration Rates
 
+```{r}
+if (file.exists(rri_infographic_black)) {
+  knitr::include_graphics(rri_infographic_black)
+}
+# if (file.exists(rri_infographic_black)) {
+#   knitr::asis_output('<span class="black-non-hispanic">Black, Non-Hispanic</span>')
+# }
+```
+
 `r paste(state_sentence_rri, collapse = ", ")`
 
-TBD: People infographics will go here. Will use BJS data for incarceration rates.
-Sex?
-In Prison Past Parole Eligibility?
+```{r}
+if (file.exists(rri_infographic_hispanic)) {
+    knitr::include_graphics(rri_infographic_hispanic)
+}
+# if (file.exists(rri_infographic_hispanic)) {
+#   knitr::asis_output('<span class="hispanic">Hispanic, Any Race</span>')
+# }
+```
 
 <br>
 <div class="divider"></div>

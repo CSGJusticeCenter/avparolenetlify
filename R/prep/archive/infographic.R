@@ -7,18 +7,22 @@ library(reshape2)
 library(glue)
 
 # Set up colors
-mclc_dk_blue  <- color1
-mclc_lt_blue  <- darkgray
+dark_color  <- color1
+light_color  <- darkgray
 empty_color   <- "#FFFFFF"
 default_ncols <- 12
 
 # Image setup
-whichimage <- "person-2745706-bw"
+# whichimage <- "Person_icon_BLACK-01"
+# whichimage <- "Person_icon_BLACK-01"
 
 # Make sure you have the correct image path
-if (whichimage == "person-2745706-bw"){
+# if (whichimage == "Person_icon_BLACK-01"){
+if (whichimage == "Person_icon_BLACK-01"){
   px_h <- 521
   px_w <- 323
+  # px_h <- 751
+  # px_w <- 299
   ex_h <- 0.005
   ex_w <- 0.02
   img_ar_hw <- (px_h*(1+ex_h)) / (px_w*(1+ex_w))
@@ -38,7 +42,7 @@ blankitout <- function(){
 }
 
 # Create Plot list of empty, full, and partial icons
-icon_options <- function(partialval, empty = "#FFFFFF", fill = mclc_dk_blue, partial = mclc_lt_blue, bg = "#FFFFFF", fillHoriz = FALSE) {
+icon_options <- function(partialval, empty = "#FFFFFF", fill = dark_color, partial = light_color, bg = "#FFFFFF", fillHoriz = FALSE) {
   if (partialval < 0 | partialval >= 1) stop("partialval must be between 0 and 1")
 
   cols_lst <- list(
@@ -96,7 +100,7 @@ icon_options <- function(partialval, empty = "#FFFFFF", fill = mclc_dk_blue, par
 }
 
 # Create the icons
-create_icons <- function(rri_raw, rri_digits = 1, fillcolor = mclc_dk_blue, partialcolor = mclc_lt_blue, emptyhumans = TRUE, emptycolor = "white", infogs = default_ncols, infogs_ncol = default_ncols, fillHoriz = FALSE) {
+create_icons <- function(rri_raw, rri_digits = 1, fillcolor = dark_color, partialcolor = light_color, emptyhumans = TRUE, emptycolor = "white", infogs = default_ncols, infogs_ncol = default_ncols, fillHoriz = FALSE) {
   RRI <- round(rri_raw, digits = rri_digits)
   numfull <- floor(RRI)
   numremain <- RRI - numfull
@@ -137,8 +141,8 @@ create_infographic <- function(rri_raw) {
     rri_raw = rri_raw,
     infogs = default_ncols,
     infogs_ncol = default_ncols,
-    fillcolor = mclc_dk_blue,
-    partialcolor = mclc_lt_blue,
+    fillcolor = dark_color,
+    partialcolor = light_color,
     emptyhumans = TRUE,
     emptycolor = "white",
     fillHoriz = FALSE
@@ -148,4 +152,7 @@ create_infographic <- function(rri_raw) {
 }
 
 # Call the function to create the infographic
-create_infographic(3.5)
+create_infographic(3)
+
+# ggsave("high_res_infographic.png", plot = last_plot(), width = 8, height = 8, dpi = 300)
+
