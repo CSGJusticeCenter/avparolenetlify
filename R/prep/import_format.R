@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: September 11, 2024 (MAR)
+# Date last updated: September 18, 2024 (MAR)
 # Description:
 #    Import NCRP data (admissions, population, year end population)
 #    Import BJS Prisoners data
@@ -14,6 +14,7 @@
 # MAP
 #------------------------------------------------------------------------------#
 
+# Hex map for national trends page
 hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
   select(state_abb = iso3166_2) |>
   filter(state_abb != "DC") |>
@@ -27,9 +28,11 @@ hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_he
 # Robina Institute/Carl Notes
 #------------------------------------------------------------------------------#
 
+# Carl's state notes (parole eligibility information)
 carl_state_notes <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
   clean_names()
 
+# Parole information by state (number of parole board members, etc.)
 parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
                                          "/background/app/Parole Info by State.xlsx"),
                                   sheet = "Overall") |>
@@ -39,6 +42,7 @@ parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
 
 #------------------------------------------------------------------------------#
 # NCRP
+# Seba Guzman's Imputed Data
 #------------------------------------------------------------------------------#
 
 # Define file paths (update paths to your actual locations)
@@ -64,18 +68,85 @@ read_and_add_year <- function(file_path) {
 
   return(data)
 }
+
 # Read and combine release files
-ncrp_releases <- bind_rows(lapply(release_files, read_and_add_year))
+ncrp_releases_combined <- bind_rows(lapply(release_files, read_and_add_year))
 
 # Read and combine yearendpop files
-ncrp_yearendpop <- bind_rows(lapply(yearendpop_files, read_and_add_year))
+ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, read_and_add_year))
 
+# Rename variables to work in app
+ncrp_releases <- ncrp_releases_combined |>
+  mutate(time_between_ped_rptyear = years_to_estimated_pey,
+         time_between_admisson_release =  as.numeric(relyr) - admityr,
+         time_between_ped_release = as.numeric(relyr) - estimated_pey,
+         parelig_status = case_when(estimated_pey_status %in% c("past", "current") ~ "Current",
+                                    estimated_pey_status == "missing" ~ "Missing",
+                                    estimated_pey_status == "future" ~ "Future",
+                                    TRUE ~ estimated_pey_status)) |>
+  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
+  mutate(offdetail = trimws(offdetail)) |>
+  fnc_create_fbi_index() |>
+  fnc_create_admtype() |>
+  mutate(
+    race = factor(race, levels = c("Unknown",
+                                   "Other race(s), non-Hispanic",
+                                   "White, non-Hispanic",
+                                   "Hispanic, any race",
+                                   "Black, non-Hispanic")),
+    agerlse = factor(agerlse, levels = c("55+ years",
+                                         "45-54 years",
+                                         "35-44 years",
+                                         "25-34 years",
+                                         "18-24 years")),
+    sentlgth = factor(sentlgth, levels = c("< 1 year",
+                                           "1-1.9 years",
+                                           "2-4.9 years",
+                                           "5-9.9 years",
+                                           "10-24.9 years",
+                                           ">=25 years",
+                                           "Life, LWOP, Life plus additional years, Death",
+                                           "Unknown")))
 
+ncrp_yearendpop <- ncrp_yearendpop_combined |>
+  mutate(time_between_ped_rptyear = years_to_estimated_pey,
+         parelig_status = case_when(estimated_pey_status %in% c("past", "current") ~ "Current",
+                                    estimated_pey_status == "missing" ~ "Missing",
+                                    estimated_pey_status == "future" ~ "Future",
+                                    TRUE ~ estimated_pey_status)) |>
+  mutate(offdetail = trimws(offdetail)) |>
+  fnc_create_fbi_index() |>
+  fnc_create_admtype() |>
+  mutate(across(c(race, ageyrend, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
+  mutate(
+    race = factor(race,
+                  levels = c("Unknown",
+                             "Other race(s), non-Hispanic",
+                             "White, non-Hispanic",
+                             "Hispanic, any race",
+                             "Black, non-Hispanic")),
+    ageyrend = factor(ageyrend,
+                      levels = c("55+ years",
+                                 "45-54 years",
+                                 "35-44 years",
+                                 "25-34 years",
+                                 "18-24 years")),
+    sentlgth = factor(sentlgth,
+                      levels = c(
+                        "< 1 year",
+                        "1-1.9 years",
+                        "2-4.9 years",
+                        "5-9.9 years",
+                        "10-24.9 years",
+                        ">=25 years",
+                        "Life, LWOP, Life plus additional years, Death",
+                        "Unknown")))
 
 #------------------------------------------------------------------------------#
 # BJS
 #------------------------------------------------------------------------------#
 
+# Import BJS prisoners data for 2020 and 2022 (not sure which one I need yet)
 bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
                                                      "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
 bjs_prison_pop_by_race_state_2022 <- read.csv(paste0(config$sp_data_path,
@@ -258,7 +329,6 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-
   save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
   save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
   save(bjs_prison_pop_by_race_2020,        file = file.path(folder, "bjs_prison_pop_by_race_2020.rds"))
@@ -269,6 +339,5 @@ for (folder in theseFOLDERS){
   save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))
   save(carl_state_notes,                   file = file.path(folder, "carl_state_notes.rds"))
   save(parole_info_by_state,               file = file.path(folder, "parole_info_by_state.rds"))
-
 }
 

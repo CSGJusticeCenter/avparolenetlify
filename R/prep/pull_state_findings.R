@@ -33,7 +33,6 @@ num_parole_board_mem <- state_data |> filter(state == state_for_report) |> pull(
 #------------------------------------------------------------------------------#
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/carl_state_notes.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_info_by_state.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
@@ -480,7 +479,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pe_release_total
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_race_ped_release.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_rri_chart.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri_black.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
@@ -489,11 +488,11 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for
 #            population sizes in the community."
-if (state_for_report %in% names(all_sentence_rri)) {
-  state_sentence_rri <-
-    all_sentence_rri[[state_for_report]]
+if (state_for_report %in% names(all_sentence_rri_black)) {
+  state_sentence_rri_black <-
+    all_sentence_rri_black[[state_for_report]]
 } else {
-  state_sentence_rri <- ""
+  state_sentence_rri_black <- ""
 }
 
 # SENTENCE: "Hispanic, any race individuals faced the longest average time

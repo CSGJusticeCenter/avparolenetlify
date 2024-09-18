@@ -17,9 +17,7 @@ total_pop_by_year <- ncrp_yearendpop |>
 
 # Filter data to people in prison for a new court commitment 1-25 year sentence lengths
 # Not including people who are failing supervision (parole return/revocation)
-filtered_ncrp_yearendpop <- ncrp_yearendpop |>
-  filter(admtype == "New court commitment",
-         sentlgth %in% c("1-1.9 years", "2-4.9 years", "5-9.9 years", "10-24.9 years"))
+filtered_ncrp_yearendpop <- filter_population_criteria(ncrp_yearendpop)
 
 # Get total prison population for new court commitments and sentence length 1-25 years
 filtered_pop_by_year <- filtered_ncrp_yearendpop |>
@@ -47,11 +45,11 @@ filtered_parole_elig_table_by_year <- filtered_parole_status_by_year |>
 
 # Filter to select analysis year specified in the config file
 filtered_parole_elig_table_analysis_year_with_missing_states <- filtered_parole_elig_table_by_year |>
-  filter(rptyear == analysis_year)
+  filter(rptyear == select_year)
 
 # Find missing states and combine with the original dataframe
 missing_states <- tibble(state = setdiff(state.name, filtered_parole_elig_table_analysis_year_with_missing_states$state),
-                         rptyear = analysis_year)
+                         rptyear = select_year)
 
 # Add missing states to table so we have a complete table of 50 states
 filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_year_with_missing_states |>
@@ -60,7 +58,7 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
   left_join(filtered_pop_by_year, by = c("state", "rptyear")) |>
   arrange(state) |>
   select(state, rptyear, total_pop, filtered_total_pop,
-         contains("current"), contains("future_1_5_years"), contains("future_6_years"), contains("missing"))
+         contains("current"), contains("future"), contains("missing"))
 
 
 
@@ -77,63 +75,6 @@ parole_board_members_select_states <- parole_info_by_state |>
 
 parole_board_members <- parole_info_by_state |>
   select(state, parole_board_members)
-
-# Average number of parole board members
-avg_parole_board_members_select_states <- mean(parole_board_members_select_states$parole_board_members)
-parole_board_member_per_person <- sum(filtered_parole_elig_table_analysis_year$current_count, na.rm = TRUE)/sum(parole_board_members_select_states$parole_board_members)
-
-# Set the number of surrounding dots
-n <- round(parole_board_member_per_person, 0)
-
-# Calculate the number of rows and columns for the grid
-grid_size <- ceiling(sqrt(n))
-
-# Generate data for the surrounding dots using a grid pattern
-x <- rep(seq(-grid_size, grid_size, length.out = grid_size), grid_size)
-y <- rep(seq(-grid_size, grid_size, length.out = grid_size), each = grid_size)
-
-# Select the first n points
-x <- x[1:n]
-y <- y[1:n]
-
-# Normalize the coordinates to fit within a unit circle
-max_r <- max(sqrt(x^2 + y^2))
-x <- x / max_r
-y <- y / max_r
-
-# Create a data frame with the coordinates
-data <- data.frame(x = c(0, x), y = c(0, y), size = c(2, rep(1, n)),
-                   color = c(color4, rep(darkgray, n)),
-                   alpha = c(1, rep(0.5, n)))
-
-# Adjust the alpha column to apply transparency only to gray circles
-data$alpha[data$color == colors$red] <- 1
-
-# Plot the graphic
-square_dot_parole_graphic <- ggplot(data, aes(x, y, color = color, size = size, alpha = alpha)) +
-  geom_point(size = 9) +
-  scale_color_identity() +  # Use the color column directly
-  scale_size_identity() +   # Use the size column directly
-  scale_alpha_identity() +  # Use the alpha column directly
-  theme_void() +  # Remove axis and background
-  theme(
-    aspect.ratio = 1,  # Ensure the plot is square
-    plot.title = element_markdown(size = 16, face = "bold", hjust = 0.5)  # Center and format the title with ggtext
-  ) +
-  coord_fixed() +
-  labs(title = "<span style='color:#de663e;'>1 parole board member</span> per<br>362 people in prison<br>and eligible for parole")
-
-square_dot_parole_graphic
-
-# Save the combined map
-ggsave(filename =  "square_dot_parole_graphic.png", plot = square_dot_parole_graphic,
-       width  = 5, height = 5, dpi = 600)
-
-
-
-
-
-
 
 
 #------ Parole Eligibility Table ------#
@@ -176,12 +117,12 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   # Format data and create tooltip
   mutate(
     current_perc           = current_perc * 100,
-    future_1_5_years_perc  = future_1_5_years_perc * 100,
+    future_perc            = future_perc * 100,
     missing_perc           = missing_perc * 100,
 
     state_abb = state.abb[match(state, state.name)],
 
-    all_na = ifelse(is.na(current_count) & is.na(future_1_5_years_count) & is.na(missing_count), TRUE, FALSE),
+    all_na = ifelse(is.na(current_count) & is.na(future_count) & is.na(missing_count), TRUE, FALSE),
 
     # Create tooltips
     tooltip = case_when(
@@ -231,7 +172,7 @@ breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 map_data_breaks <- map_data |>
   mutate(
     all_na = ifelse(is.na(current_count) &
-                      is.na(future_1_5_years_count) & is.na(missing_count), TRUE, FALSE),
+                      is.na(future_count) & is.na(missing_count), TRUE, FALSE),
     gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
     current_perc = round(current_perc, 0)
@@ -379,7 +320,7 @@ map_percent <- highchart() |>
   ),
   area = list(accessibility = list(description = paste0("TEXT")))
   ) |>
-  hc_title(text = paste0("People in Prison Past Their Parole Consideration Year in ", analysis_year),
+  hc_title(text = paste0("People in Prison Past Their Parole Consideration Year in ", select_year),
            align = "left")
 map_percent
 

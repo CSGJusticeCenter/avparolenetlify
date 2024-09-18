@@ -508,3 +508,26 @@ fnc_get_census_data <- function(state) {
     )
   return(df)
 }
+
+#' Highcharts Theme for Maps
+#'
+#' This theme is specifically designed for maps.
+#' @export
+hc_theme_map <- hc_theme_merge(
+  hc_theme_smpl(),
+  base_hc_theme,
+  hc_theme(
+    chart = list(style = modifyList(common_chart_style, list(fontSize = "14px"))),
+    title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "22px"))),
+    plotOptions = list(
+      series = list(states = list(inactive = list(opacity = 1))),
+      line = list(marker = list(enabled = TRUE)),
+      spline = list(marker = list(enabled = TRUE)),
+      area = list(marker = list(enabled = TRUE)),
+      areaspline = list(marker = list(enabled = TRUE))
+    ),
+    legend = list(
+      itemStyle = modifyList(common_style, list(fontSize = "16px"))
+    )
+  )
+)
