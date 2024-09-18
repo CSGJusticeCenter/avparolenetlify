@@ -885,5 +885,5 @@ save(all_lollipop_los_race,           file = file.path(folder, "all_lollipop_los
 save(all_sentence_los_race_offense,   file = file.path(folder, "all_sentence_los_race_offense.rds"))
 save(all_scatter_los_race_offense,    file = file.path(folder, "all_scatter_los_race_offense.rds"))
 
-save(all_rri_data ,                   file = file.path(folder, "all_rri_data.rds"))
+save(all_rri_data,                    file = file.path(folder, "all_rri_data.rds"))
 
