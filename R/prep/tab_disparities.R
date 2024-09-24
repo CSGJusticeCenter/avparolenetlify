@@ -1,632 +1,29 @@
-
-
-# ---------------------------------------------------------------------------- #
-# RRIs
-# ---------------------------------------------------------------------------- #
-
-# These are the ids of race variables that we want to pull
-race_vars <- c(estimate_white              = "P4_005N",
-               estimate_black              = "P4_006N",
-               estimate_asian              = "P4_008N",
-               estimate_native_hawaiian_pi = "P4_009N",
-               estimate_hispanic           = "P4_002N",
-               estimate_american_indian    = "P4_007N",
-               estimate_more_than_one_race = "P4_011N")
-
-# Use lapply to retrieve and process data for each state
-states <- state.name
-census_state_race_population_list <- lapply(states, fnc_get_census_data)
-
-# Convert list into a dataframe
-census_state_race_population <- bind_rows(census_state_race_population_list)
-
-# Add "state" column
-census_state_race_population$state <- rep(states, each = nrow(census_state_race_population) / length(states))
-
-census_state_race_population <- census_state_race_population |>
-  group_by(state, race) |>
-  summarise(state_population = sum(value, na.rm = TRUE))
-
-# Merge census and prison data
-merged_data <- census_state_race_population %>%
-  inner_join(bjs_prison_pop_by_race_2020, by = c("state", "race")) |>
-  rename(prison_population = n)
-
-# Calculate incarceration rates
-merged_data <- merged_data %>%
-  mutate(incarceration_rate = prison_population / state_population * 100000) # per 100,000 people
-
-# Calculate RRI
-reference_rate <- merged_data %>%
-  filter(race == "White, non-Hispanic") %>%
-  select(state, incarceration_rate) %>%
-  rename(reference_rate = incarceration_rate)
-
-all_rri_data <- merged_data %>%
-  inner_join(reference_rate, by = "state") %>%
-  mutate(rri = incarceration_rate / reference_rate) %>%
-  select(state, race, rri, incarceration_rate) |>
-  mutate(incarceration_rate_10 = incarceration_rate/10)
-
-# Generate sentences dynamically
-states <- unique(all_rri_data$state)
-# all_sentence_rri_black <- map(.x = states, .f = function(x) {
-#
-#   df1 <- all_rri_data %>%
-#     filter(state == x)
-#
-#   higher_rates <- df1 %>%
-#     filter(rri > 1 & race != "White, non-Hispanic") %>%
-#     mutate(sentence = paste0(race, " people are incarcerated in state prison at a rate <b>",
-#                              round(rri, 1), " times</b> higher")) %>%
-#     pull(sentence)
-#
-#   if (length(higher_rates) > 0) {
-#     final_sentence <- paste0(paste(higher_rates, collapse = " and "),
-#                              " than White, non-Hispanic people, when accounting for population sizes in the community.")
-#   } else {
-#     final_sentence <- paste0("There are no disparities in prison incarceration rates compared to White, non-Hispanic people.")
-#   }
-#
-#   return(final_sentence)
-# })
-# Generate sentences dynamically
-all_sentence_rri_black <- map(.x = states, .f = function(x) {
-
-  df1 <- all_rri_data %>%
-    filter(state == x)
-
-  higher_rates <- df1 %>%
-    filter(rri > 1 & race != "White, non-Hispanic") %>%
-    mutate(sentence = case_when(
-      race == "Black, non-Hispanic" ~ paste0("<span style='color:#49a7a1; font-weight:bold;'>Black people</span> are incarcerated in state prison at a rate <span style='color:#49a7a1; font-weight:bold;'>",
-                                             round(rri, 1), " times</span> higher"),
-      race == "Hispanic, any race" ~ paste0("<span style='color:#d97d68; font-weight:bold;'>Hispanic people</span> are incarcerated in state prison at a rate <span style='color:#d97d68; font-weight:bold;'>",
-                                            round(rri, 1), " times</span> higher")
-    )) %>%
-    pull(sentence)
-
-  if (length(higher_rates) > 0) {
-    final_sentence <- paste0(paste(higher_rates, collapse = " and "),
-                             " than <span style='color:#55b4e5; font-weight:bold;'>White people</span>, when accounting for population sizes in the community.")
-  } else {
-    final_sentence <- paste0("There are no disparities in prison incarceration rates compared to White, non-Hispanic people.")
-  }
-
-  return(final_sentence)
-})
-
-# Set names of the list to states
-all_sentence_rri_black <- setNames(all_sentence_rri_black, states)
-all_sentence_rri_black$Georgia
-
-
+#######################################
+# Project: AV Parole
+# File: tab_disparities.R
+# Authors: Mari Roberts
+# Date last updated: September 24, 2024 (MAR)
+# Description:
+#    Prison disparities visualizations and findings for disparities tab
+#######################################
 
 # ---------------------------------------------------------------------------- #
-# PEOPLE INFOGRAPHICS FOR RRI's
+# LOS/Time Served by Race
 # ---------------------------------------------------------------------------- #
 
-# Image setup
-whichimage <- "person-2745706-bw"
-wd <- getwd()
-
-# Make sure you have the correct image path
-# if (whichimage == "Person_icon_BLACK-01"){
-if (whichimage == "person-2745706-bw"){
-  px_h <- 521
-  px_w <- 323
-  # px_h <- 751
-  # px_w <- 299
-  ex_h <- 0.005
-  ex_w <- 0.02
-  img_ar_hw <- (px_h*(1+ex_h)) / (px_w*(1+ex_w))
-  img_ar_wh <- (px_w*(1+ex_w)) / (px_h*(1+ex_h))
-  rawimg <- readPNG(file.path(wd, glue("img/{whichimage}.png")))
-  img <- ifelse(rawimg == 0, 1, 0)
-}
-
-# Plotting setup
-blankitout <- function(){
-  list(
-    theme_void(),
-    scale_x_continuous(expand = expansion(mult = ex_w, add = 0)),
-    scale_y_continuous(expand = expansion(mult = ex_h, add = 0)),
-    theme(legend.position = "none", aspect.ratio = img_ar_hw)
-  )
-}
-
-# Create Plot list of empty, full, and partial icons
-icon_options <- function(partialval, empty = "#FFFFFF", fill = dark_color, partial = light_color, bg = "#FFFFFF", fillHoriz = FALSE) {
-  if (partialval < 0 | partialval >= 1) stop("partialval must be between 0 and 1")
-
-  cols_lst <- list(
-    "empty" = c(bg, empty),
-    "full" = c(bg, fill),
-    "partial" = c(bg, partial, fill)
-  )
-  pcts_lst <- list(
-    "empty" = 0,
-    "full" = 100,
-    "partial" = partialval * 100
-  )
-  plot_lst <- list("empty" = NULL, "full" = NULL, "partial" = NULL)
-
-  if (fillHoriz == FALSE) {
-    pos1 <- which(apply(img[,,1], 2, function(y) any(y == 1)))
-    max <- max(pos1)
-  } else {
-    pos1 <- which(apply(img[,,1], 1, function(y) any(y == 1)))
-    max <- max(pos1)
-  }
-  h <- dim(img)[1]
-  w <- dim(img)[2]
-  min <- min(pos1)
-
-  for (j in names(plot_lst)) {
-    pcts <- pcts_lst[[j]]
-    pospct <- round((max - min) * pcts / 100 + min)
-    finalimg <- img[h:1,,1]
-    bkgr <- (finalimg == 1)
-    colfill <- matrix(rep(FALSE, h*w), nrow = h)
-
-    if (fillHoriz == FALSE) {
-      colfill[1:h, max:pospct] <- TRUE
-    } else {
-      colfill[max:pospct, 1:w] <- TRUE
-    }
-
-    finalimg[bkgr & colfill] <- 0.5
-    df <- reshape2::melt(finalimg)
-
-    if (j == "full") {
-      df[df$value == 0.5, ] <- 0
-    }
-
-    plot <- ggplot(df, aes(x = Var2, y = Var1, fill = factor(value))) +
-      geom_raster() +
-      scale_fill_manual(values = cols_lst[[j]]) +
-      blankitout()
-
-    plot_lst[[j]] <- plot
-  }
-
-  return(plot_lst)
-}
-
-# Create the icons
-create_icons <- function(rri_raw, rri_digits = 1, fillcolor = dark_color, partialcolor = light_color, emptyhumans = TRUE, emptycolor = "white", infogs = default_ncols, infogs_ncol = default_ncols, fillHoriz = FALSE) {
-  RRI <- round(rri_raw, digits = rri_digits)
-  numfull <- floor(RRI)
-  numremain <- RRI - numfull
-
-  plot_opts <- icon_options(partialval = numremain, empty = emptycolor, fill = fillcolor, partial = partialcolor, fillHoriz = fillHoriz)
-
-  plot_list <- list()
-
-  if (RRI > 1 & numremain != 0) {
-    for (i in 1:numfull) {
-      plot_list[[i]] <- plot_opts$full
-    }
-    plot_list[[numfull + 1]] <- plot_opts$partial
-  } else if (RRI > 1 & numremain == 0) {
-    for (i in 1:numfull) {
-      plot_list[[i]] <- plot_opts$full
-    }
-  } else if (RRI == 1) {
-    plot_list[[1]] <- plot_opts$full
-  } else if (RRI < 1) {
-    plot_list[[1]] <- plot_opts$partial
-  }
-
-  if (emptyhumans == TRUE & length(plot_list) != infogs) {
-    st_empty <- ifelse(numremain != 0, numfull + 2, numfull + 1)
-    for (i in st_empty:infogs) {
-      plot_list[[i]] <- plot_opts$empty
-    }
-  }
-
-  rows <- ifelse(infogs > infogs_ncol, ceiling(rri_raw / infogs_ncol), 1)
-  plot_grid(plotlist = plot_list, nrow = rows)
-}
-
-# Main function to create infographic
-# create_infographic <- function(rri_raw) {
-#   ggtemp_justpeople <- create_icons(
-#     rri_raw = rri_raw,
-#     infogs = default_ncols,
-#     infogs_ncol = default_ncols,
-#     fillcolor = dark_color,
-#     partialcolor = light_color,
-#     emptyhumans = TRUE,
-#     emptycolor = "white",
-#     fillHoriz = FALSE
-#   )
-#
-#   print(ggtemp_justpeople)
-# }
-
-# # Call the function to create the infographic
-# create_infographic(12)
-#
-# ggsave("high_res_infographic.png", plot = last_plot(), width = 8, height = 8, dpi = 300)
-
-rri_greater_than_1 <- all_rri_data |>
-  filter(race != "White, non-Hispanic" &
-         race != "Other race(s), non-Hispanic" &
-         rri > 1) |>
-  select(state, race, rri)
-
-rri_greater_than_1_black <- rri_greater_than_1 |>
-  filter(race == "Black, non-Hispanic")
-
-rri_greater_than_1_hispanic <- rri_greater_than_1 |>
-  filter(race == "Hispanic, any race")
-
-# Set up colors
-light_color  <- darkgray
-empty_color   <- "#FFFFFF"
-default_ncols <- 15
-
-# create_infographic <- function(rri_raw) {
-#   # Round the RRI value for display
-#   rri_text <- round(rri_raw, digits = 1)
-#
-#   # Create the people infographic
-#   ggtemp_justpeople <- create_icons(
-#     rri_raw = rri_raw,
-#     infogs = default_ncols,
-#     infogs_ncol = default_ncols,
-#     fillcolor = dark_color,
-#     partialcolor = light_color,
-#     emptyhumans = TRUE,
-#     emptycolor = "white",
-#     fillHoriz = FALSE
-#   )
-#
-#   # Create a base plot for the RRI number
-#   rri_label_plot <- ggplot() +
-#     annotate("text", x = 1, y = 1, label = rri_text, size = 10, hjust = 1) +
-#     theme_void()
-#
-#   # Combine the RRI label and the people infographic using patchwork or cowplot
-#   final_plot <- plot_grid(
-#     rri_label_plot, ggtemp_justpeople,
-#     nrow = 1, rel_widths = c(1, 6)  # Adjust the widths as needed
-#   )
-#
-#   print(final_plot)
-# }
-# create_infographic <- function(rri_raw) {
-#   # Round the RRI value and append "x" for display
-#   rri_text <- paste0(round(rri_raw, digits = 1), "x")
-#
-#   # Create the people infographic
-#   ggtemp_justpeople <- create_icons(
-#     rri_raw = rri_raw,
-#     infogs = default_ncols,
-#     infogs_ncol = default_ncols,
-#     fillcolor = dark_color,
-#     partialcolor = light_color,
-#     emptyhumans = TRUE,
-#     emptycolor = "white",
-#     fillHoriz = FALSE
-#   )
-#
-#   # Create a base plot for the RRI number
-#   rri_label_plot <- ggplot() +
-#     annotate("text", x = 1, y = 1, label = rri_text, size = 10, hjust = 1) +
-#     theme_void()
-#
-#   # Combine the RRI label and the people infographic using patchwork or cowplot
-#   final_plot <- plot_grid(
-#     rri_label_plot, ggtemp_justpeople,
-#     nrow = 1, rel_widths = c(1, 8)  # Adjust the widths as needed
-#   )
-#
-#   print(final_plot)
-# }
-# create_infographic(2.5)
-create_infographic <- function(rri_raw, infographic_color) {
-  # Round the RRI value and append "x" for display
-  rri_text <- paste0(round(rri_raw, digits = 1), "x")
-
-  # Create the people infographic
-  ggtemp_justpeople <- create_icons(
-    rri_raw = rri_raw,
-    infogs = default_ncols,
-    infogs_ncol = default_ncols,
-    fillcolor = infographic_color,
-    partialcolor = light_color,
-    emptyhumans = TRUE,
-    emptycolor = "white",
-    fillHoriz = FALSE
-  )
-
-  # Create a base plot for the RRI number with customized font and color
-  rri_label_plot <- ggplot() +
-    annotate("text", x = 1, y = 1, label = rri_text, size = 12, hjust = 0.5,
-             fontface = "bold",
-             color = infographic_color,
-             family = "Franklin Gothic Book") +
-    theme_void()
-
-  # Combine the RRI label and the people infographic using patchwork or cowplot
-  final_plot <- plot_grid(
-    rri_label_plot, ggtemp_justpeople,
-    nrow = 1, rel_widths = c(1, 6)  # Adjust the widths as needed
-  )
-
-  print(final_plot)
-}
-# create_infographic(2.5)
-
-# Create infographics and save them as PNGs for each state
-# Takes 5 minutes to run
-states <- unique(rri_greater_than_1_black$state)
-map(.x = states, .f = function(x) {
-  df_state <- rri_greater_than_1_black |>
-    filter(state == x)
-
-  create_infographic(df_state$rri, color4)
-
-  # Save the infographic
-  ggsave(paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_black_", x, ".png"), plot = last_plot(), width = 8, height = 6, dpi = 300)
-
-  # Load the saved image
-  img <- image_read(paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_black_", x, ".png"))
-
-  # Crop the image
-  img_cropped <- image_trim(img)
-
-  # Save the cropped image
-  image_write(img_cropped, paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_black_", x, ".png"))
-})
-
-# RRI for Hispanic
-# Create infographics and save them as PNGs for each state
-# Takes 5 minutes to run
-states <- unique(rri_greater_than_1_hispanic$state)
-map(.x = states, .f = function(x) {
-  df_state <- rri_greater_than_1_hispanic |>
-    filter(state == x)
-
-  create_infographic(df_state$rri, color1)
-
-  # Save the infographic
-  ggsave(paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", x, ".png"), plot = last_plot(), width = 8, height = 6, dpi = 300)
-
-  # Load the saved image
-  img <- image_read(paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", x, ".png"))
-
-  # Crop the image
-  img_cropped <- image_trim(img)
-
-  # Save the cropped image
-  image_write(img_cropped, paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", x, ".png"))
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ---------------------------------------------------------------------------- #
-# Years Spent in Prison After Parole Eligibility by Race and Ethnicity
-# ---------------------------------------------------------------------------- #
-
-# Filter and prepare the data
-ncrp_pe_release <- filter_population_criteria(ncrp_releases) |>
+# Calculate average length of stay by race and state
+ncrp_race_los <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
-  filter(!is.na(time_between_ped_rptyear) &
-           !is.na(estimated_pey) &
-           !is.na(relyr) &
-           !is.na(race) &
-           time_between_ped_release >= 0
-  ) |>
-  mutate(race = factor(race,
-                       levels = c("Black, non-Hispanic",
-                                  "White, non-Hispanic",
-                                  "Hispanic, any race",
-                                  "Other race(s), non-Hispanic")))
-
-ncrp_avg_pe_release_race <- ncrp_pe_release |>
-  filter(!is.na(race)) |>
+  filter(race != "Unknown") |>
   group_by(state, race) |>
-  summarise(avg_years = mean(time_between_ped_release, na.rm = TRUE),
-            people_released = n())
+  summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
+            .groups = "drop")
 
-states <- unique(ncrp_race_avg_pe_release$state)
-all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
+# Get states with data
+states <- unique(ncrp_race_los$state)
+all_sentence_los_race <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_race_avg_pe_release |>
-    ungroup() |>
-    filter(state == x) |>
-    arrange(desc(average_avg_pe_release)) |>
-    mutate(race_num = row_number(),
-           color = case_when(
-             race == "White, non-Hispanic" ~ color2,
-             race == "Black, non-Hispanic" ~ color4,
-             race == "Hispanic, any race" ~ color5,
-             race == "Other race(s), non-Hispanic" ~ color3
-           ))
-
-  max_avg_pe_release <- max(df1$average_avg_pe_release, na.rm = TRUE)
-
-  # Create a named vector for y-axis labels
-  y_labels <- setNames(as.character(df1$race), df1$race_num)
-
-  # Create the df_lines dataframe
-  df_lines <- df1 |>
-    mutate(start_x = 0, end_x = average_avg_pe_release) |>
-    select(race_num, start_x, end_x, race)
-
-  # Reshape df_lines for highcharter
-  df_lines <- df_lines |>
-    gather(key = "point", value = "value", start_x, end_x)
-
-  highcharts <- highchart() |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = race_num, group = race),
-      lineWidth = 1,
-      color = "black",
-      dashStyle = "solid",
-      opacity = 1,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_avg_pe_release, y = race_num, group = race, name = race, color = color),
-      dataLabels = list(
-        enabled = TRUE,
-        format = '{point.x:.1f} Years',
-        align = "left",
-        y = 9,
-        x = 8,
-        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
-      )
-    ) |>
-    hc_add_theme(base_hc_theme)|>
-    hc_yAxis(
-      labels = list(
-        style = list(
-          color = 'black',
-          fontWeight = "regular",
-          fontSize = "12px"
-        )
-      ),
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      title = list(text = ""),
-      labels = list(enabled = FALSE),
-      lineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickLength = 0,
-      gridLineColor = "transparent",
-      tickColor = "transparent",
-      max = max_avg_pe_release*1.5
-    ) |>
-    hc_exporting(enabled = FALSE) |>
-    hc_tooltip(enabled = FALSE) |>
-    hc_legend(enabled = FALSE) |>
-    hc_size(height = 150)
-
-  return(highcharts)
-})
-
-# Name the list of charts by state
-all_lollipop_avg_pe_release_race <- setNames(all_lollipop_avg_pe_release_race, states)
-all_lollipop_avg_pe_release_race$Georgia
-
-
-
-
-ncrp_avg_pe_release_race_offese <- ncrp_pe_release |>
-  filter(!is.na(race) & !is.na(fbi_index)) |>
-  group_by(state, race, fbi_index) |>
-  summarise(avg_years = mean(time_between_ped_release, na.rm = TRUE),
-            people_released = n())
-
-# Get unique states
-states <- unique(ncrp_avg_pe_release_race_offese$state)
-all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
-
-  df1 <- ncrp_avg_pe_release_race_offese |>
-    ungroup() |>
-    filter(state == x)|>
-    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
-
-  # Create a named vector for y-axis labels
-  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
-
-  # Create the df_lines dataframe
-  df_lines <- df1 |>
-    mutate(start_x = 0, end_x = avg_years) |>
-    select(fbi_index_num, start_x, end_x, race, fbi_index)
-
-  # Reshape df_lines for highcharter
-  df_lines <- df_lines |>
-    gather(key = "point", value = "value", start_x, end_x)
-
-  highcharts <- highchart() |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = avg_years, y = fbi_index_num, group = race, name = fbi_index)
-    ) |>
-    hc_yAxis(
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      lineColor = "black",
-      tickColor = "black",
-      title = list(text = "Average Time Incarcerated Past Parole Eligibility (Years)",
-                   style = list(color = "black")),
-      labels = list(style = list(color = "black")),
-      gridLineDashStyle = "Dash",  # Add dashed grid lines
-      gridLineWidth = 1,           # Ensure grid lines are visible
-      gridLineColor = lightgray       # Set grid line color
-    ) |>
-    hc_title(text = "Average Years Incarcerated Past Parole Eligibility<br>by Offense and Race and Ethnicity") |>
-    hc_colors(c(color4, color2, color5, color3)) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_tooltip(
-      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
-      pointFormat = paste0(
-        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
-        'Offense: {point.name}<br/>',
-        'Average LOS: {point.x: .1f} years<br/>',
-        'People Released: {point.people_released}<br/>'
-      )
-    ) |>
-    hc_legend(verticalAlign = "top",
-              layout = "horizontal")
-
-  return(highcharts)
-})
-
-# Name the list of charts by state
-all_scatter_avg_pe_release_race_offense <- setNames(all_scatter_avg_pe_release_race_offense, states)
-all_scatter_avg_pe_release_race_offense$Georgia
-
-
-# Generate sentence for each state
-states <- unique(ncrp_race_avg_pe_release$state)
-all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
-
-  df1 <- ncrp_race_avg_pe_release |>
+  df1 <- ncrp_race_los |>
     ungroup() |>
     mutate(race = case_when(
       race == "White, non-Hispanic" ~ "White",
@@ -644,216 +41,47 @@ all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
   # Focus on comparisons with White people
   df_white <- df1 |> filter(race == "White")
 
-  # Generate sentences for Black and Hispanic comparisons
-  sentence <- ""
-  for (race_group in c("Black", "Hispanic")) {
-    df_race <- df1 |> filter(race == race_group)
+  # Initialize variables to hold parts of the sentence
+  black_sentence <- ""
+  hispanic_sentence <- ""
 
-    if (nrow(df_race) > 0 && nrow(df_white) > 0) {
-      los_diff <- df_race$average_avg_pe_release - df_white$average_avg_pe_release
-
-      # Handle NA values
-      if (!is.na(los_diff) && los_diff > 0) {
-        sentence <- paste0(sentence,
-                           race_group, " people faced an average of ", round(los_diff, 1),
-                           " more years incarcerated past parole eligibility compared to White people in ", select_year, ". "
-        )
-      }
+  # Generate sentence for Black comparison
+  df_black <- df1 |> filter(race == "Black")
+  if (nrow(df_black) > 0 && nrow(df_white) > 0) {
+    los_diff_black <- df_black$average_los - df_white$average_los
+    if (!is.na(los_diff_black) && los_diff_black > 0) {
+      black_sentence <- paste0("On average, Black people spent ", round(los_diff_black, 1), " more years in prison")
     }
   }
 
-  # If no disparities are found, return a different message
-  if (sentence == "") {
-    sentence <- paste0("No significant disparities compared to White people found for ", x)
+  # Generate sentence for Hispanic comparison
+  df_hispanic <- df1 |> filter(race == "Hispanic")
+  if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
+    los_diff_hispanic <- df_hispanic$average_los - df_white$average_los
+    if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
+      hispanic_sentence <- paste0("Hispanic people spent ", round(los_diff_hispanic, 1), " more years in prison")
+    }
+  }
+
+  # Combine the sentences properly, with "and" when both exist
+  if (black_sentence != "" && hispanic_sentence != "") {
+    sentence <- paste0(black_sentence, " and ", hispanic_sentence, " compared to White people.")
+  } else if (black_sentence != "") {
+    sentence <- paste0(black_sentence, " compared to White people.")
+  } else if (hispanic_sentence != "") {
+    sentence <- paste0(hispanic_sentence, " compared to White people.")
+  } else {
+    # sentence <- paste0("No disparities compared to White people found for ", x, ".")
+    sentence <- ""
   }
 
   return(sentence)
 })
 
 # Set names for the list elements
-all_sentence_avg_pe_release_race <- setNames(all_sentence_avg_pe_release_race, states)
-all_sentence_avg_pe_release_race$Georgia
-
-
-
-# Generate sentence for each state
-all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
-
-  df1 <- ncrp_avg_pe_release_race_offese |>
-    filter(state == x)
-
-  # Handling missing data
-  if (nrow(df1) == 0) {
-    return(paste0("No data available for ", x))
-  }
-
-  # Calculate the difference in average LOS between the races for each offense type
-  df_disparity <- df1 %>%
-    group_by(fbi_index) %>%
-    reframe(
-      max_avg_pe_release = max(avg_years),
-      min_avg_pe_release = min(avg_years),
-      diff_avg_pe_release = max_avg_pe_release - min_avg_pe_release,
-      race_longest = race[which.max(avg_years)],
-      race_shortest = race[which.min(avg_years)]
-    ) %>%
-    arrange(desc(diff_avg_pe_release))
-
-  # Filter out disparities where White individuals have the longest LOS
-  df_disparity_filtered <- df_disparity %>% filter(race_longest != "White, non-Hispanic")
-
-  # If no non-White disparities exist, return a message
-  if (nrow(df_disparity_filtered) == 0) {
-    return(paste0("No significant disparities involving non-White individuals found for ", x))
-  }
-
-  # Get the largest non-White disparity
-  largest_disparity <- df_disparity_filtered %>% slice(1)
-
-  # Extract values for the sentence
-  offense_type <- largest_disparity$fbi_index
-  race_longest <- largest_disparity$race_longest
-  los_longest <- round(largest_disparity$max_avg_pe_release, 1)
-  race_shortest <- largest_disparity$race_shortest
-  los_shortest <- round(largest_disparity$min_avg_pe_release, 1)
-  disparity_diff <- round(largest_disparity$diff_avg_pe_release, 1)
-
-  # Construct the sentence
-  sentence <- paste0(
-    "By offense type, disparities were observed in the time incarcerated past parole eligibility by race and ethnicity. ",
-    "For ", offense_type, " offenses, ", race_longest,
-    " individuals had ", disparity_diff, " more years incarcerated past parole eligibility on average compared to ",
-    race_shortest, " individuals, who had the time served for these offenses."
-  )
-
-  return(sentence)
-})
-
-# Set names for the list elements
-all_sentence_avg_pe_release_race_offense <- setNames(all_sentence_avg_pe_release_race_offense, states)
-all_sentence_avg_pe_release_race_offense$Georgia
-
-
-
-
-# ---------------------------------------------------------------------------- #
-# Time Served by Offense Type - REDO THESE
-# ---------------------------------------------------------------------------- #
-
-# Calculate average length of stay by race and state
-ncrp_race_los <- ncrp_releases |>
-  filter(rptyear == select_year) |>
-  filter(race != "Unknown") |>
-  group_by(state, race) |>
-  summarise(
-    average_los = mean(time_between_admisson_release, na.rm = TRUE)) |>
-  pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
-  select(-type)
-
-df1 <- ncrp_race_los |> filter(state == "Georgia")
-
-
-# Calculate the average length of stay by race, state, and by offense type
-ncrp_race_los_by_offense_type <- ncrp_releases |>
-  filter(rptyear == select_year) |>
-  filter(race != "Unknown") |>
-  group_by(state, race, fbi_index) |>
-  summarise(
-    average_los = mean(time_between_admisson_release, na.rm = TRUE),
-    people_released = n()) |>
-  pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
-  select(-type) |>
-  mutate(race = factor(race, levels = c("Black, non-Hispanic", "White, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")))
-
-# Get unique states
-states <- unique(ncrp_race_los_by_offense_type$state)
-all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
-
-  df1 <- ncrp_race_los_by_offense_type |>
-    ungroup() |>
-    filter(state == x)|>
-    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
-
-  # Create a named vector for y-axis labels
-  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
-
-  # Create the df_lines dataframe
-  df_lines <- df1 |>
-    mutate(start_x = 0, end_x = average_los) |>
-    select(fbi_index_num, start_x, end_x, race, fbi_index)
-
-  # Reshape df_lines for highcharter
-  df_lines <- df_lines |>
-    gather(key = "point", value = "value", start_x, end_x)
-
-  highcharts <- highchart() |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_los, y = fbi_index_num, group = race, name = fbi_index)
-    ) |>
-    hc_yAxis(
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      lineColor = "black",
-      tickColor = "black",
-      title = list(text = "Average Length of Stay (Years)",
-                   style = list(color = "black")),
-      labels = list(style = list(color = "black")),
-      gridLineDashStyle = "Dash",  # Add dashed grid lines
-      gridLineWidth = 1,           # Ensure grid lines are visible
-      gridLineColor = lightgray       # Set grid line color
-    ) |>
-    hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
-    hc_colors(c(color4, color2, color5, color3)) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_tooltip(
-      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
-      pointFormat = paste0(
-        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
-        'Offense: {point.name}<br/>',
-        'Average LOS: {point.x: .1f} years<br/>',
-        'People Released: {point.people_released}<br/>'
-      )
-    ) |>
-    hc_legend(verticalAlign = "top",
-              layout = "horizontal")
-
-  return(highcharts)
-})
-
-# Name the list of charts by state
-all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
-all_scatter_los_race_offense$Georgia
-
-
-
-
-
-
-# Calculate average length of stay by race and state
-ncrp_race_los <- ncrp_releases |>
-  filter(rptyear == select_year) |>
-  filter(race != "Unknown") |>
-  group_by(state, race, rptyear) |>
-  summarise(
-    average_los = mean(time_between_admisson_release, na.rm = TRUE)) |>
-  pivot_longer(cols = c(average_los), names_to = "type", values_to = "average_los") |>
-  select(-type)  |>
-  droplevels()
-
-
-
+all_sentence_los_race <- setNames(all_sentence_los_race, states)
+all_sentence_los_race$Georgia
+##########################################################################################     SENTENCE     ################################
 
 states <- unique(ncrp_race_los$state)
 all_lollipop_los_race <- map(.x = states, .f = function(x) {
@@ -951,19 +179,23 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
 all_lollipop_los_race <- setNames(all_lollipop_los_race, states)
 all_lollipop_los_race$Georgia
 
+# ---------------------------------------------------------------------------- #
+# Time Served by Sex
+# ---------------------------------------------------------------------------- #
 
-# Generate sentence for each state
-states <- unique(ncrp_race_los$state)
-all_sentence_los_race <- map(.x = states, .f = function(x) {
+# Calculate average length of stay by sex and state
+ncrp_sex_los <- fnc_filter_population(ncrp_releases) |>
+  filter(rptyear == select_year) |>
+  filter(sex != "Unknown") |>
+  group_by(state, sex) |>
+  summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
+            .groups = "drop")
 
-  df1 <- ncrp_race_los |>
+states <- unique(ncrp_sex_los$state)
+all_sentence_los_sex <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_sex_los |>
     ungroup() |>
-    mutate(race = case_when(
-      race == "White, non-Hispanic" ~ "White",
-      race == "Black, non-Hispanic" ~ "Black",
-      race == "Hispanic, any race" ~ "Hispanic",
-      race == "Other race(s), non-Hispanic" ~ "Other races"
-    )) |>
     filter(state == x)
 
   # Handling missing data
@@ -971,42 +203,155 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
     return(paste0("No data available for ", x))
   }
 
-  # Focus on comparisons with White people
-  df_white <- df1 |> filter(race == "White")
+  # Focus on comparisons with males
+  df_male <- df1 |> filter(sex == "Male")
 
-  # Generate sentences for Black and Hispanic comparisons
-  sentence <- ""
-  for (race_group in c("Black", "Hispanic")) {
-    df_race <- df1 |> filter(race == race_group)
+  # Initialize variable to hold the sentence
+  female_sentence <- ""
 
-    if (nrow(df_race) > 0 && nrow(df_white) > 0) {
-      los_diff <- df_race$average_los - df_white$average_los
-
-      # Handle NA values
-      if (!is.na(los_diff) && los_diff > 0) {
-        sentence <- paste0(sentence,
-                           race_group, " people faced ", round(los_diff, 1),
-                           " more years on average compared to White people in ", df_race$rptyear[1], ". "
-        )
+  # Generate sentence for female comparison
+  df_female <- df1 |> filter(sex == "Female")
+  if (nrow(df_female) > 0 && nrow(df_male) > 0) {
+    los_diff_female <- df_female$average_los - df_male$average_los
+    if (!is.na(los_diff_female)) {
+      if (los_diff_female > 0) {
+        female_sentence <- paste0("On average, females spent ", round(los_diff_female, 1), " more years in prison compared to male in ", x, ".")
+      } else if (los_diff_female < 0) {
+        female_sentence <- paste0("On average, females spent ", round(abs(los_diff_female), 1), " fewer years in prison compared to males in ", x, ".")
       }
     }
   }
 
-  # If no disparities are found, return a different message
-  if (sentence == "") {
-    sentence <- paste0("No significant disparities compared to White people found for ", x)
+  # Return the sentence or a no disparity message
+  if (female_sentence != "") {
+    return(female_sentence)
+  } else {
+    return(paste0("On average, females and males spent the same number of years in prison in ", x, "."))
   }
-
-  return(sentence)
 })
 
 # Set names for the list elements
-all_sentence_los_race <- setNames(all_sentence_los_race, states)
-all_sentence_los_race$Georgia
+all_sentence_los_sex <- setNames(all_sentence_los_sex, states)
+all_sentence_los_sex$Georgia
+##########################################################################################     SENTENCE     ################################
 
 
+
+states <- unique(ncrp_sex_los$state)
+all_lollipop_los_sex <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_sex_los |>
+    ungroup() |>
+    filter(state == x) |>
+    arrange(desc(average_los)) |>
+    mutate(sex_num = row_number(),
+           color = case_when(
+             sex == "Male" ~ color2,
+             sex == "Female" ~ color4
+           ))
+
+  max_los <- max(df1$average_los, na.rm = TRUE)
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(as.character(df1$sex), df1$sex_num)
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_los) |>
+    select(sex_num, start_x, end_x, sex)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df_lines,
+      type = 'line',
+      hcaes(x = value, y = sex_num, group = sex),
+      lineWidth = 1,
+      color = "black",
+      dashStyle = "solid",
+      opacity = 1,
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE,
+      showInLegend = FALSE
+    ) |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_los, y = sex_num, group = sex, name = sex, color = color),
+      dataLabels = list(
+        enabled = TRUE,
+        format = '{point.x:.1f} Years',
+        align = "left",
+        y = 9,
+        x = 8,
+        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
+      )
+    ) |>
+    hc_add_theme(base_hc_theme)|>
+    hc_yAxis(
+      labels = list(
+        style = list(
+          color = 'black',
+          fontWeight = "regular",
+          fontSize = "12px"
+        )
+      ),
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      title = list(text = ""),
+      labels = list(enabled = FALSE),
+      lineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickLength = 0,
+      gridLineColor = "transparent",
+      tickColor = "transparent",
+      max = max_los*1.5
+    ) |>
+    hc_exporting(enabled = FALSE) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_legend(enabled = FALSE) |>
+    hc_size(height = 100)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_lollipop_los_sex <- setNames(all_lollipop_los_sex, states)
+all_lollipop_los_sex$Georgia
+
+# ---------------------------------------------------------------------------- #
+# Time Served by Offense and Race
+# ---------------------------------------------------------------------------- #
+
+# Calculate the average length of stay by race, state, and by offense type
+ncrp_race_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
+  filter(rptyear == select_year) |>
+  filter(race != "Unknown") |>
+  group_by(state, race, fbi_index) |>
+  summarise(
+    average_los = mean(time_between_admisson_release, na.rm = TRUE),
+    people_released = n(),
+    .groups = "drop") |>
+  mutate(race = factor(race,
+                       levels = c("Black, non-Hispanic",
+                                  "White, non-Hispanic",
+                                  "Hispanic, any race",
+                                  "Other race(s), non-Hispanic")))
 
 # Generate sentence for each state
+states <- unique(ncrp_race_los_by_offense_type$state)
 all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
   df1 <- ncrp_race_los_by_offense_type |>
@@ -1029,12 +374,32 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
     ) %>%
     arrange(desc(diff_los))
 
-  # Filter out disparities where White individuals have the longest LOS
-  df_disparity_filtered <- df_disparity %>% filter(race_longest != "White, non-Hispanic")
+  # Use case_when() to replace race descriptions directly
+  df_disparity <- df_disparity %>%
+    mutate(
+      race_longest = case_when(
+        race_longest == "Black, non-Hispanic" ~ "Black",
+        race_longest == "White, non-Hispanic" ~ "White",
+        race_longest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
+        race_longest == "Hispanic, any race" ~ "Hispanic",
+        TRUE ~ race_longest
+      ),
+      race_shortest = case_when(
+        race_shortest == "Black, non-Hispanic" ~ "Black",
+        race_shortest == "White, non-Hispanic" ~ "White",
+        race_shortest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
+        race_shortest == "Hispanic, any race" ~ "Hispanic",
+        TRUE ~ race_shortest
+      )
+    )
+
+  # Filter out disparities where White people have the longest LOS
+  df_disparity_filtered <- df_disparity %>% filter(race_longest != "White")
 
   # If no non-White disparities exist, return a message
   if (nrow(df_disparity_filtered) == 0) {
-    return(paste0("No significant disparities involving non-White individuals found for ", x))
+    # return(paste0("No disparities involving non-White people found for ", x))
+    return(paste0(""))
   }
 
   # Get the largest non-White disparity
@@ -1048,12 +413,16 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
   los_shortest <- round(largest_disparity$min_los, 1)
   disparity_diff <- round(largest_disparity$diff_los, 1)
 
-  # Construct the sentence
+  # Construct the sentence with special handling for "people of Other race(s)"
   sentence <- paste0(
-    "By offense type, disparities were observed in time served by race and ethnicity. ",
-    "For ", offense_type, " offenses, ", race_longest,
-    " individuals had ", disparity_diff, " more years on average compared to ",
-    race_shortest, " individuals, who had the shortest time served for these offenses."
+    "For ", tolower(offense_type), " offenses, ", race_longest,
+    " people spent ", disparity_diff, " more years in prison on average compared to ",
+    if (race_shortest == "people of Other race(s)") {
+      race_shortest
+    } else {
+      paste0(race_shortest, " people")
+    },
+    ", who had the shortest time served for these offenses."
   )
 
   return(sentence)
@@ -1062,10 +431,980 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 # Set names for the list elements
 all_sentence_los_race_offense <- setNames(all_sentence_los_race_offense, states)
 all_sentence_los_race_offense$Georgia
+##########################################################################################     SENTENCE     ################################
+
+# Get unique states
+states <- unique(ncrp_race_los_by_offense_type$state)
+all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_race_los_by_offense_type |>
+    ungroup() |>
+    filter(state == x)|>
+    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_los) |>
+    select(fbi_index_num, start_x, end_x, race, fbi_index)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_los, y = fbi_index_num, group = race, name = fbi_index)
+    ) |>
+    hc_yAxis(
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      lineColor = "black",
+      tickColor = "black",
+      title = list(text = "Average Length of Stay (Years)",
+                   style = list(color = "black")),
+      labels = list(style = list(color = "black")),
+      gridLineDashStyle = "Dash",  # Add dashed grid lines
+      gridLineWidth = 1,           # Ensure grid lines are visible
+      gridLineColor = lightgray       # Set grid line color
+    ) |>
+    hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
+    hc_colors(c(color4, color2, color5, color3)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_tooltip(
+      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
+      pointFormat = paste0(
+        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
+        'Offense: {point.name}<br/>',
+        'Average LOS: {point.x: .1f} years<br/>',
+        'People Released: {point.people_released}<br/>'
+      )
+    ) |>
+    hc_legend(verticalAlign = "top",
+              layout = "horizontal")
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
+all_scatter_los_race_offense$Georgia
+all_scatter_los_race_offense$Alabama
+all_scatter_los_race_offense$Idaho # no LOS?
+
+# ---------------------------------------------------------------------------- #
+# Time Served by Offense and Sex
+# ---------------------------------------------------------------------------- #
+
+# Calculate the average length of stay by sex, state, and offense type
+ncrp_sex_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
+  filter(rptyear == select_year) |>
+  filter(sex != "Unknown") |>
+  group_by(state, sex, fbi_index) |>
+  summarise(
+    average_los = mean(time_between_admisson_release, na.rm = TRUE),
+    people_released = n(),
+    .groups = "drop")
+
+# Generate sentence for each state
+states <- unique(ncrp_sex_los_by_offense_type$state)
+all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_sex_los_by_offense_type |>
+    filter(state == x)
+
+  # Handling missing data
+  if (nrow(df1) == 0) {
+    return(paste0("No data available for ", x))
+  }
+
+  # Calculate the difference in average LOS between the sexes for each offense type
+  df_disparity <- df1 %>%
+    group_by(fbi_index) %>%
+    reframe(
+      max_los = max(average_los),
+      min_los = min(average_los),
+      diff_los = max_los - min_los,
+      sex_longest = sex[which.max(average_los)],
+      sex_shortest = sex[which.min(average_los)]
+    ) %>%
+    arrange(desc(diff_los))
+
+  # If no disparities exist, return a message
+  if (nrow(df_disparity) == 0) {
+    # return(paste0("No disparities found for ", x))
+    return(paste0(""))
+  }
+
+  # Get the largest disparity
+  largest_disparity <- df_disparity %>% slice(1)
+
+  # Extract values for the sentence
+  offense_type <- largest_disparity$fbi_index
+  sex_longest <- largest_disparity$sex_longest
+  los_longest <- round(largest_disparity$max_los, 1)
+  sex_shortest <- largest_disparity$sex_shortest
+  los_shortest <- round(largest_disparity$min_los, 1)
+  disparity_diff <- round(largest_disparity$diff_los, 1)
+
+  # Construct the sentence
+  sentence <- paste0(
+    "For ", tolower(offense_type), " offenses, ", tolower(sex_longest),
+    "s spent ", disparity_diff, " more years in prison on average compared to ",
+    tolower(sex_shortest), "s."
+  )
+
+  return(sentence)
+})
+
+# Set names for the list elements
+all_sentence_los_sex_offense <- setNames(all_sentence_los_sex_offense, states)
+all_sentence_los_sex_offense$Georgia
+##########################################################################################     SENTENCE     ################################
+
+# Get unique states
+states <- unique(ncrp_sex_los_by_offense_type$state)
+all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_sex_los_by_offense_type |>
+    ungroup() |>
+    filter(state == x)|>
+    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_los) |>
+    select(fbi_index_num, start_x, end_x, sex, fbi_index)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_los, y = fbi_index_num, group = sex, name = fbi_index)
+    ) |>
+    hc_yAxis(
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      lineColor = "black",
+      tickColor = "black",
+      title = list(text = "Average Length of Stay (Years)",
+                   style = list(color = "black")),
+      labels = list(style = list(color = "black")),
+      gridLineDashStyle = "Dash",  # Add dashed grid lines
+      gridLineWidth = 1,           # Ensure grid lines are visible
+      gridLineColor = lightgray       # Set grid line color
+    ) |>
+    hc_title(text = "Average Length of Stay by Offense and Sex") |>
+    hc_colors(c(color2, color4)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_tooltip(
+      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
+      pointFormat = paste0(
+        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
+        'Offense: {point.name}<br/>',
+        'Average LOS: {point.x: .1f} years<br/>',
+        'People Released: {point.people_released}<br/>'
+      )
+    ) |>
+    hc_legend(verticalAlign = "top",
+              layout = "horizontal")
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_scatter_los_sex_offense <- setNames(all_scatter_los_sex_offense, states)
+all_scatter_los_sex_offense$Georgia
 
 
 
 
+
+
+
+
+
+######################################################################################################################################
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Race and Ethnicity
+# Visualizations
+# ---------------------------------------------------------------------------- #
+
+# Filter to states with parole systems
+# Remove missing data
+# Factor race
+ncrp_pe_release <- fnc_filter_pe_population_criteria(ncrp_releases) |>
+  filter(rptyear == select_year) |>
+  filter(!is.na(time_between_ped_rptyear) &
+           !is.na(estimated_pey) &
+           !is.na(relyr) &
+           !is.na(race) &
+           time_between_ped_release >= 0
+  ) |>
+  mutate(race = factor(race,
+                       levels = c("Black, non-Hispanic",
+                                  "White, non-Hispanic",
+                                  "Hispanic, any race",
+                                  "Other race(s), non-Hispanic")))
+
+# Get average time between PE and release by state and race
+ncrp_avg_pe_release_race <- ncrp_pe_release |>
+  filter(!is.na(race)) |>
+  group_by(state, race) |>
+  summarise(average_avg_pe_release = mean(time_between_ped_release, na.rm = TRUE),
+            people_released = n(),
+            .groups = "drop")
+
+# Get states with data
+states <- unique(ncrp_avg_pe_release_race$state)
+
+# Generate chart for each state
+all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_avg_pe_release_race |>
+    ungroup() |>
+    filter(state == x) |>
+    arrange(desc(average_avg_pe_release)) |>
+    mutate(race_num = row_number(),
+           color = case_when(
+             race == "White, non-Hispanic" ~ color2,
+             race == "Black, non-Hispanic" ~ color4,
+             race == "Hispanic, any race" ~ color5,
+             race == "Other race(s), non-Hispanic" ~ color3
+           ))
+
+  max_avg_pe_release <- max(df1$average_avg_pe_release, na.rm = TRUE)
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(as.character(df1$race), df1$race_num)
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_avg_pe_release) |>
+    select(race_num, start_x, end_x, race)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df_lines,
+      type = 'line',
+      hcaes(x = value, y = race_num, group = race),
+      lineWidth = 1,
+      color = "black",
+      dashStyle = "solid",
+      opacity = 1,
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE,
+      showInLegend = FALSE
+    ) |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_avg_pe_release, y = race_num, group = race, name = race, color = color),
+      dataLabels = list(
+        enabled = TRUE,
+        format = '{point.x:.1f} Years',
+        align = "left",
+        y = 9,
+        x = 8,
+        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
+      )
+    ) |>
+    hc_add_theme(base_hc_theme)|>
+    hc_yAxis(
+      labels = list(
+        style = list(
+          color = 'black',
+          fontWeight = "regular",
+          fontSize = "12px"
+        )
+      ),
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      title = list(text = ""),
+      labels = list(enabled = FALSE),
+      lineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickLength = 0,
+      gridLineColor = "transparent",
+      tickColor = "transparent",
+      max = max_avg_pe_release*1.5
+    ) |>
+    hc_exporting(enabled = FALSE) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_legend(enabled = FALSE) |>
+    hc_size(height = 150)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_lollipop_avg_pe_release_race <- setNames(all_lollipop_avg_pe_release_race, states)
+all_lollipop_avg_pe_release_race$Georgia
+
+# Get average time between PE and release by state and race and offense
+ncrp_avg_pe_release_race_offese <- ncrp_pe_release |>
+  filter(!is.na(race) & !is.na(fbi_index)) |>
+  group_by(state, race, fbi_index) |>
+  summarise(avg_years = mean(time_between_ped_release, na.rm = TRUE),
+            people_released = n(),
+            .groups = "drop")
+
+# Get unique states
+states <- unique(ncrp_avg_pe_release_race_offese$state)
+all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_avg_pe_release_race_offese |>
+    ungroup() |>
+    filter(state == x)|>
+    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = avg_years) |>
+    select(fbi_index_num, start_x, end_x, race, fbi_index)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = avg_years, y = fbi_index_num, group = race, name = fbi_index)
+    ) |>
+    hc_yAxis(
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      lineColor = "black",
+      tickColor = "black",
+      title = list(text = "Avg. Years In Prison Past Parole Eligibility",
+                   style = list(color = "black")),
+      labels = list(style = list(color = "black")),
+      gridLineDashStyle = "Dash",  # Add dashed grid lines
+      gridLineWidth = 1,           # Ensure grid lines are visible
+      gridLineColor = lightgray       # Set grid line color
+    ) |>
+    hc_title(text = "Avg. Years In Prison Past Parole Eligibility<br>by Offense and Race and Ethnicity") |>
+    hc_colors(c(color4, color2, color5, color3)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_tooltip(
+      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
+      pointFormat = paste0(
+        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
+        'Offense: {point.name}<br/>',
+        'Average LOS: {point.x: .1f} years<br/>',
+        'People Released: {point.people_released}<br/>'
+      )
+    ) |>
+    hc_legend(verticalAlign = "top",
+              layout = "horizontal")
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_scatter_avg_pe_release_race_offense <- setNames(all_scatter_avg_pe_release_race_offense, states)
+all_scatter_avg_pe_release_race_offense$Georgia
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Sex
+# Visualizations
+# ---------------------------------------------------------------------------- #
+
+# Filter to states with parole systems
+# Remove missing data
+# Factor sex
+ncrp_pe_release <- fnc_filter_pe_population_criteria(ncrp_releases) |>
+  filter(rptyear == select_year) |>
+  filter(!is.na(time_between_ped_rptyear) &
+           !is.na(estimated_pey) &
+           !is.na(relyr) &
+           !is.na(sex) &
+           time_between_ped_release >= 0
+  )
+
+# Get average time between PE and release by state and sex
+ncrp_avg_pe_release_sex <- ncrp_pe_release |>
+  filter(!is.na(sex)) |>
+  group_by(state, sex) |>
+  summarise(average_avg_pe_release = mean(time_between_ped_release, na.rm = TRUE),
+            people_released = n(),
+            .groups = "drop")
+
+# Get states with data
+states <- unique(ncrp_avg_pe_release_sex$state)
+
+# Generate chart for each state
+all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_avg_pe_release_sex |>
+    ungroup() |>
+    filter(state == x) |>
+    arrange(desc(average_avg_pe_release)) |>
+    mutate(sex_num = row_number(),
+           color = case_when(
+             sex == "Male" ~ color2,
+             sex == "Female" ~ color4
+           ))
+
+  max_avg_pe_release <- max(df1$average_avg_pe_release, na.rm = TRUE)
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(as.character(df1$sex), df1$sex_num)
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_avg_pe_release) |>
+    select(sex_num, start_x, end_x, sex)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df_lines,
+      type = 'line',
+      hcaes(x = value, y = sex_num, group = sex),
+      lineWidth = 1,
+      color = "black",
+      dashStyle = "solid",
+      opacity = 1,
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE,
+      showInLegend = FALSE
+    ) |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = average_avg_pe_release, y = sex_num, group = sex, name = sex, color = color),
+      dataLabels = list(
+        enabled = TRUE,
+        format = '{point.x:.1f} Years',
+        align = "left",
+        y = 9,
+        x = 8,
+        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
+      )
+    ) |>
+    hc_add_theme(base_hc_theme)|>
+    hc_yAxis(
+      labels = list(
+        style = list(
+          color = 'black',
+          fontWeight = "regular",
+          fontSize = "12px"
+        )
+      ),
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      title = list(text = ""),
+      labels = list(enabled = FALSE),
+      lineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickLength = 0,
+      gridLineColor = "transparent",
+      tickColor = "transparent",
+      max = max_avg_pe_release*1.5
+    ) |>
+    hc_exporting(enabled = FALSE) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_legend(enabled = FALSE) |>
+    hc_size(height = 100)
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_lollipop_avg_pe_release_sex <- setNames(all_lollipop_avg_pe_release_sex, states)
+all_lollipop_avg_pe_release_sex$Georgia
+
+# Get average time between PE and release by state, sex, and offense
+ncrp_avg_pe_release_sex_offense <- ncrp_pe_release |>
+  filter(!is.na(sex) & !is.na(fbi_index)) |>
+  group_by(state, sex, fbi_index) |>
+  summarise(avg_years = mean(time_between_ped_release, na.rm = TRUE),
+            people_released = n(),
+            .groups = "drop")
+
+# Get unique states
+states <- unique(ncrp_avg_pe_release_sex_offense$state)
+all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
+
+  df1 <- ncrp_avg_pe_release_sex_offense |>
+    ungroup() |>
+    filter(state == x)|>
+    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
+
+  # Create a named vector for y-axis labels
+  y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
+
+  # Create the df_lines dataframe
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = avg_years) |>
+    select(fbi_index_num, start_x, end_x, sex, fbi_index)
+
+  # Reshape df_lines for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  highcharts <- highchart() |>
+    hc_add_series(
+      df1,
+      type = 'scatter',
+      marker = list(symbol = "circle", radius = 5),
+      hcaes(x = avg_years, y = fbi_index_num, group = sex, name = fbi_index)
+    ) |>
+    hc_yAxis(
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      lineColor = "black",
+      tickColor = "black",
+      title = list(text = "Avg. Years In Prison Past Parole Eligibility",
+                   style = list(color = "black")),
+      labels = list(style = list(color = "black")),
+      gridLineDashStyle = "Dash",  # Add dashed grid lines
+      gridLineWidth = 1,           # Ensure grid lines are visible
+      gridLineColor = lightgray       # Set grid line color
+    ) |>
+    hc_title(text = "Avg. Years In Prison Past Parole Eligibility<br>by Offense and Sex") |>
+    hc_colors(c(color2, color4)) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_tooltip(
+      headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
+      pointFormat = paste0(
+        '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
+        'Offense: {point.name}<br/>',
+        'Average LOS: {point.x: .1f} years<br/>',
+        'People Released: {point.people_released}<br/>'
+      )
+    ) |>
+    hc_legend(verticalAlign = "top",
+              layout = "horizontal")
+
+  return(highcharts)
+})
+
+# Name the list of charts by state
+all_scatter_avg_pe_release_sex_offense <- setNames(all_scatter_avg_pe_release_sex_offense, states)
+all_scatter_avg_pe_release_sex_offense$Georgia
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Race and Ethnicity
+# The goal is to generate sentence summaries for each state comparing the years spent in prison
+# past parole eligibility by race and ethnicity.
+# Two main outputs are generated:
+# 1. Summary of disparities based on race (focus on Black and Hispanic groups compared to White).
+# 2. Disparities based on offense type (comparing longest vs shortest time spent in prison).
+# ---------------------------------------------------------------------------- #
+
+# Load unique states from the dataset to iterate over.
+states <- unique(ncrp_avg_pe_release_race$state)
+
+# Function to generate sentences summarizing racial disparities in time spent past parole eligibility.
+all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
+
+  # Data preparation: filter the dataset for the current state and rename race categories for clarity.
+  df1 <- ncrp_avg_pe_release_race |>
+    ungroup() |>
+    mutate(race = case_when(
+      race == "White, non-Hispanic" ~ "White",
+      race == "Black, non-Hispanic" ~ "Black",
+      race == "Hispanic, any race" ~ "Hispanic",
+      race == "Other race(s), non-Hispanic" ~ "Other races"
+    )) |>
+    filter(state == x)  # Filter dataset for the current state.
+
+  # Handle cases where no data is available for the selected state.
+  if (nrow(df1) == 0) {
+    return(paste0("No data available for ", x))
+  }
+
+  # Create a subset of the data for White individuals to use as the comparison group.
+  df_white <- df1 |> filter(race == "White")
+
+  # Initialize variables to hold parts of the sentence
+  black_sentence <- ""
+  hispanic_sentence <- ""
+
+  # Generate sentence for Black comparison
+  df_black <- df1 |> filter(race == "Black")
+  if (nrow(df_black) > 0 && nrow(df_white) > 0) {
+    los_diff_black <- df_black$average_avg_pe_release - df_white$average_avg_pe_release
+    if (!is.na(los_diff_black) && los_diff_black > 0) {
+      black_sentence <- paste0("Black people spent an average of ", round(los_diff_black, 1),
+                               " more years in prison past parole eligibility")
+    }
+  }
+
+  # Generate sentence for Hispanic comparison
+  df_hispanic <- df1 |> filter(race == "Hispanic")
+  if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
+    los_diff_hispanic <- df_hispanic$average_avg_pe_release - df_white$average_avg_pe_release
+    if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
+      hispanic_sentence <- paste0("Hispanic people spent an average of ", round(los_diff_hispanic, 1),
+                                  " more years in prison past parole eligibility")
+    }
+  }
+
+  # Combine the sentences properly, with "and" when both exist
+  if (black_sentence != "" && hispanic_sentence != "") {
+    sentence <- paste0(black_sentence, " and ", hispanic_sentence, " compared to White people.")
+  } else if (black_sentence != "") {
+    sentence <- paste0(black_sentence, " compared to White people.")
+  } else if (hispanic_sentence != "") {
+    sentence <- paste0(hispanic_sentence, " compared to White people.")
+  } else {
+    sentence <- paste0("No disparities compared to White people found for ", x, ".")
+  }
+
+  return(sentence)  # Return the generated sentence for the state.
+})
+
+# Set the names of the list elements to match the state names.
+all_sentence_avg_pe_release_race <- setNames(all_sentence_avg_pe_release_race, states)
+all_sentence_avg_pe_release_race$Georgia
+##########################################################################################     SENTENCE     ################################
+
+
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Race and Ethnicity by Offense Type
+# The goal here is to summarize racial disparities in time spent past parole eligibility for
+# specific offense types within each state.
+# ---------------------------------------------------------------------------- #
+
+# Iterate over states to generate offense-specific summaries.
+all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
+
+  # Filter the dataset for the current state.
+  df1 <- ncrp_avg_pe_release_race_offese |>
+    filter(state == x)
+
+  # Handle missing data for the state.
+  if (nrow(df1) == 0) {
+    return(paste0("No data available for ", x))
+  }
+
+  # Calculate the disparity in average years spent past parole eligibility across races for each offense.
+  df_disparity <- df1 %>%
+    group_by(fbi_index) %>%
+    reframe(
+      max_avg_pe_release = max(avg_years),  # Maximum years spent past parole eligibility.
+      min_avg_pe_release = min(avg_years),  # Minimum years spent past parole eligibility.
+      diff_avg_pe_release = max_avg_pe_release - min_avg_pe_release,  # Difference in years.
+      race_longest = race[which.max(avg_years)],  # Race group with longest average years.
+      race_shortest = race[which.min(avg_years)]  # Race group with shortest average years.
+    ) %>%
+    arrange(desc(diff_avg_pe_release))  # Sort by the magnitude of disparity.
+
+  # Filter out cases where White individuals had the longest time spent.
+  df_disparity_filtered <- df_disparity %>% filter(race_longest != "White, non-Hispanic")
+
+  # If no disparities involving non-White individuals are found, return a message.
+  if (nrow(df_disparity_filtered) == 0) {
+    return(paste0("No disparities involving non-White people found for ", x))
+  }
+
+  # Extract the largest disparity for non-White groups.
+  largest_disparity <- df_disparity_filtered %>% slice(1)
+
+  # Extract details for the generated sentence.
+  offense_type <- tolower(largest_disparity$fbi_index)  # Convert the offense type to lowercase.
+  race_longest <- largest_disparity$race_longest
+  los_longest <- round(largest_disparity$max_avg_pe_release, 1)
+  race_shortest <- largest_disparity$race_shortest
+  los_shortest <- round(largest_disparity$min_avg_pe_release, 1)
+  disparity_diff <- round(largest_disparity$diff_avg_pe_release, 1)
+
+  # Adjust wording for race categories for the sentence construction.
+  race_longest_adjusted <- case_when(
+    race_longest == "Hispanic, any race" ~ "Hispanic people",
+    race_longest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
+    TRUE ~ paste0("people of ", race_longest)
+  )
+  race_shortest_adjusted <- case_when(
+    race_shortest == "Hispanic, any race" ~ "Hispanic people",
+    race_shortest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
+    TRUE ~ paste0("people of ", race_shortest)
+  )
+
+  # Construct the sentence summarizing the disparity.
+  sentence <- paste0(
+    "For ", offense_type, " offenses, ", race_longest_adjusted,
+    " had ", disparity_diff, " more years in prison past parole eligibility on average compared to ",
+    race_shortest_adjusted, " people, who had the time served for these offenses."
+  )
+
+  return(sentence)  # Return the constructed sentence for the state.
+})
+
+# Set the names of the list elements to match the state names.
+all_sentence_avg_pe_release_race_offense <- setNames(all_sentence_avg_pe_release_race_offense, states)
+all_sentence_avg_pe_release_race_offense$Georgia
+##########################################################################################     SENTENCE     ################################
+
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Sex
+# The goal is to generate sentence summaries for each state comparing the years spent in prison
+# past parole eligibility by sex.
+# Two main outputs are generated:
+# 1. Summary of disparities based on sex (focus on Female vs. Male).
+# 2. Disparities based on offense type (comparing longest vs shortest time spent in prison).
+# ---------------------------------------------------------------------------- #
+
+states <- unique(ncrp_avg_pe_release_sex$state)
+
+# Function to generate sentences summarizing sex disparities in time spent past parole eligibility.
+all_sentence_avg_pe_release_sex <- map(.x = states, .f = function(x) {
+
+  # Data preparation: filter the dataset for the current state and rename sex categories for clarity.
+  df1 <- ncrp_avg_pe_release_sex |>
+    ungroup() |>
+    filter(state == x)  # Filter dataset for the current state.
+
+  # Handle cases where no data is available for the selected state.
+  if (nrow(df1) == 0) {
+    return(paste0("No data available for ", x))
+  }
+
+  # Create a subset of the data for Male individuals to use as the comparison group.
+  df_male <- df1 |> filter(sex == "Male")
+
+  # Initialize variables to hold parts of the sentence
+  female_sentence <- ""
+
+  # Generate sentence for Female comparison
+  df_female <- df1 |> filter(sex == "Female")
+  if (nrow(df_female) > 0 && nrow(df_male) > 0) {
+    los_diff_female <- df_female$average_avg_pe_release - df_male$average_avg_pe_release
+    if (!is.na(los_diff_female) && los_diff_female > 0) {
+      female_sentence <- paste0("Females spent an average of ", round(los_diff_female, 1),
+                                " more years in prison past parole eligibility compared to males.")
+    } else if (!is.na(los_diff_female) && los_diff_female < 0) {
+      female_sentence <- paste0("Females spent an average of ", round(abs(los_diff_female), 1),
+                                " fewer years in prison past parole eligibility compared to males.")
+    }
+  }
+
+  # Return the generated sentence for the state.
+  if (female_sentence != "") {
+    return(female_sentence)
+  } else {
+    return(paste0("No significant disparities found between males and females for ", x, "."))
+  }
+})
+
+# Set the names of the list elements to match the state names.
+all_sentence_avg_pe_release_sex <- setNames(all_sentence_avg_pe_release_sex, states)
+all_sentence_avg_pe_release_sex$Georgia
+##########################################################################################     SENTENCE     ################################
+
+
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Sex and Offense Type
+# The goal here is to summarize sex disparities in time spent past parole eligibility for
+# specific offense types within each state.
+# ---------------------------------------------------------------------------- #
+
+# # Iterate over states to generate offense-specific summaries.
+# all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
+#
+#   # Filter the dataset for the current state.
+#   df1 <- ncrp_avg_pe_release_sex_offense |>
+#     filter(state == x)
+#
+#   # Handle missing data for the state.
+#   if (nrow(df1) == 0) {
+#     return(paste0("No data available for ", x))
+#   }
+#
+#   # Calculate the disparity in average years spent past parole eligibility across sexes for each offense.
+#   df_disparity <- df1 %>%
+#     group_by(fbi_index) %>%
+#     reframe(
+#       max_avg_pe_release = max(avg_years),  # Maximum years spent past parole eligibility.
+#       min_avg_pe_release = min(avg_years),  # Minimum years spent past parole eligibility.
+#       diff_avg_pe_release = max_avg_pe_release - min_avg_pe_release,  # Difference in years.
+#       sex_longest = sex[which.max(avg_years)],  # Sex group with longest average years.
+#       sex_shortest = sex[which.min(avg_years)]  # Sex group with shortest average years.
+#     ) %>%
+#     arrange(desc(diff_avg_pe_release))  # Sort by the magnitude of disparity.
+#
+#   # If no disparities involving females are found, return a message.
+#   df_disparity_filtered <- df_disparity %>% filter(sex_longest != "Male")
+#
+#   if (nrow(df_disparity_filtered) == 0) {
+#     return(paste0("No disparities found between males and females for ", x ,"."))
+#   }
+#
+#   # Extract the largest disparity for females.
+#   largest_disparity <- df_disparity_filtered %>% slice(1)
+#
+#   # Extract details for the generated sentence.
+#   offense_type <- tolower(largest_disparity$fbi_index)  # Convert the offense type to lowercase.
+#   sex_longest <- largest_disparity$sex_longest
+#   los_longest <- round(largest_disparity$max_avg_pe_release, 1)
+#   sex_shortest <- largest_disparity$sex_shortest
+#   los_shortest <- round(largest_disparity$min_avg_pe_release, 1)
+#   disparity_diff <- round(largest_disparity$diff_avg_pe_release, 1)
+#
+#   # Construct the sentence summarizing the disparity.
+#   sentence <- paste0(
+#     "For ", offense_type, " offenses, females had ", disparity_diff,
+#     " more years in prison past parole eligibility on average compared to males, who had the shortest time served for these offenses."
+#   )
+#
+#   return(sentence)  # Return the constructed sentence for the state.
+# })
+#
+# # Set the names of the list elements to match the state names.
+# all_sentence_avg_pe_release_sex_offense <- setNames(all_sentence_avg_pe_release_sex_offense, states)
+# all_sentence_avg_pe_release_sex_offense$Georgia
+##########################################################################################     SENTENCE     ################################
+# Iterate over states to generate offense-specific summaries.
+states <- unique(ncrp_avg_pe_release_sex_offense$state)
+all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
+
+  # Filter the dataset for the current state.
+  df1 <- ncrp_avg_pe_release_sex_offense |>
+    filter(state == x)
+
+  # Handle missing data for the state.
+  if (nrow(df1) == 0) {
+    return(paste0("No data available for ", x, "."))
+  }
+
+  # Calculate the disparity in average years spent past parole eligibility between sexes for each offense.
+  df_disparity <- df1 %>%
+    group_by(fbi_index) %>%
+    reframe(
+      avg_male = avg_years[sex == "Male"],     # Average years for males
+      avg_female = avg_years[sex == "Female"], # Average years for females
+      diff_avg_pe_release = avg_male - avg_female # Difference in average years
+    ) %>%
+    arrange(desc(abs(diff_avg_pe_release)))  # Sort by the absolute magnitude of disparity
+
+  # If no comparison between males and females is possible, return a message.
+  if (nrow(df_disparity) == 0) {
+    return(paste0("No disparities found between males and females for ", x, "."))
+  }
+
+  # Extract the largest disparity.
+  largest_disparity <- df_disparity %>% slice(1)
+
+  # Extract details for the generated sentence.
+  offense_type <- tolower(largest_disparity$fbi_index)  # Convert the offense type to lowercase.
+  avg_male <- round(largest_disparity$avg_male, 1)
+  avg_female <- round(largest_disparity$avg_female, 1)
+  disparity_diff <- round(abs(largest_disparity$diff_avg_pe_release), 1)
+
+  # Construct the sentence summarizing the disparity.
+  if (largest_disparity$diff_avg_pe_release > 0) {
+    # Males spent longer
+    sentence <- paste0(
+      "For ", offense_type, " offenses, males spent ", disparity_diff,
+      " more years in prison past parole eligibility on average compared to females."
+    )
+  } else {
+    # Females spent longer
+    sentence <- paste0(
+      "For ", offense_type, " offenses, females spent ", disparity_diff,
+      " more years in prison past parole eligibility on average compared to males."
+    )
+  }
+
+  return(sentence)  # Return the constructed sentence for the state.
+})
+
+# Set the names of the list elements to match the state names.
+all_sentence_avg_pe_release_sex_offense <- setNames(all_sentence_avg_pe_release_sex_offense, states)
+all_sentence_avg_pe_release_sex_offense$Georgia
 
 
 
@@ -1074,23 +1413,30 @@ all_sentence_los_race_offense$Georgia
 # Save Data
 # ---------------------------------------------------------------------------- #
 
-save(all_pe_release_total_years_race, file = file.path(folder, "all_pe_release_total_years_race.rds"))
-save(all_scatter_race_ped_release,    file = file.path(folder, "all_scatter_race_ped_release.rds"))
-save(all_bubble_race_ped_release,     file = file.path(folder, "all_bubble_race_ped_release.rds"))
+save(all_sentence_los_race,                    file = file.path(app_folder, "all_sentence_los_race.rds"))
+save(all_lollipop_los_race,                    file = file.path(app_folder, "all_lollipop_los_race.rds"))
 
-save(all_sentence_rri_black,          file = file.path(folder, "all_sentence_rri_black.rds"))
+save(all_sentence_los_race_offense,            file = file.path(app_folder, "all_sentence_los_race_offense.rds"))
+save(all_scatter_los_race_offense,             file = file.path(app_folder, "all_scatter_los_race_offense.rds"))
 
-save(all_sentence_los_race,           file = file.path(folder, "all_sentence_los_race.rds"))
-save(all_lollipop_los_race,           file = file.path(folder, "all_lollipop_los_race.rds"))
+save(all_sentence_avg_pe_release_race,         file = file.path(app_folder, "all_sentence_avg_pe_release_race.rds"))
+save(all_lollipop_avg_pe_release_race,         file = file.path(app_folder, "all_lollipop_avg_pe_release_race.rds"))
 
-save(all_sentence_los_race_offense,   file = file.path(folder, "all_sentence_los_race_offense.rds"))
-save(all_scatter_los_race_offense,    file = file.path(folder, "all_scatter_los_race_offense.rds"))
+save(all_sentence_avg_pe_release_race_offense, file = file.path(app_folder, "all_sentence_avg_pe_release_race_offense.rds"))
+save(all_scatter_avg_pe_release_race_offense,  file = file.path(app_folder, "all_scatter_avg_pe_release_race_offense.rds"))
 
-save(all_sentence_avg_pe_release_race, file = file.path(folder, "all_sentence_avg_pe_release_race.rds"))
-save(all_lollipop_avg_pe_release_race,        file = file.path(folder, "all_lollipop_avg_pe_release_race.rds"))
+save(ncrp_avg_pe_release_race,                 file = file.path(app_folder, "ncrp_avg_pe_release_race.rds"))
 
-save(all_sentence_avg_pe_release_race_offense, file = file.path(folder, "all_sentence_avg_pe_release_race_offense.rds"))
-save(all_scatter_avg_pe_release_race_offense, file = file.path(folder, "all_scatter_avg_pe_release_race_offense.rds"))
+save(all_sentence_los_sex,                     file = file.path(app_folder, "all_sentence_los_sex.rds"))
+save(all_lollipop_los_sex,                     file = file.path(app_folder, "all_lollipop_los_sex.rds"))
 
-save(all_rri_data,                    file = file.path(folder, "all_rri_data.rds"))
+save(all_sentence_los_sex_offense,             file = file.path(app_folder, "all_sentence_los_sex_offense.rds"))
+save(all_scatter_los_sex_offense,              file = file.path(app_folder, "all_scatter_los_sex_offense.rds"))
 
+save(all_sentence_avg_pe_release_sex,          file = file.path(app_folder, "all_sentence_avg_pe_release_sex.rds"))
+save(all_lollipop_avg_pe_release_sex,          file = file.path(app_folder, "all_lollipop_avg_pe_release_sex.rds"))
+
+save(all_sentence_avg_pe_release_sex_offense,  file = file.path(app_folder, "all_sentence_avg_pe_release_sex_offense.rds"))
+save(all_scatter_avg_pe_release_sex_offense,   file = file.path(app_folder, "all_scatter_avg_pe_release_sex_offense.rds"))
+
+save(ncrp_avg_pe_release_sex,                  file = file.path(app_folder, "ncrp_avg_pe_release_sex.rds"))

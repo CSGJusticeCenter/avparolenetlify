@@ -2,11 +2,10 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: September 18, 2024 (MAR)
+# Date last updated: September 24, 2024 (MAR)
 # Description:
 #    Import NCRP data (admissions, population, year end population)
 #    Import BJS Prisoners data
-#    Import Annual Parole Survey data
 #    Prepares files for analysis
 #######################################
 
@@ -15,7 +14,9 @@
 #------------------------------------------------------------------------------#
 
 # Hex map for national trends page
-hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
+# Load hexgrid shapefile and select only the 'state_abb' column
+# Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
+hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
   select(state_abb = iso3166_2) |>
   filter(state_abb != "DC") |>
   st_transform(3857) |>
@@ -24,19 +25,22 @@ hex_gj <- read_sf(paste0(config$sp_data_path, "/data/raw/Shapefiles/us_states_he
 
 
 
+
 #------------------------------------------------------------------------------#
 # Robina Institute/Carl Notes
 #------------------------------------------------------------------------------#
 
-# Carl's state notes (parole eligibility information)
+# Load Carl's state notes, which contains parole eligibility information for each state
 carl_state_notes <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
   clean_names()
 
-# Parole information by state (number of parole board members, etc.)
+# Load additional parole information by state from an Excel sheet
+# Contains details such as the number of parole board members
 parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
                                          "/background/app/Parole Info by State.xlsx"),
                                   sheet = "Overall") |>
   clean_names()
+
 
 
 
@@ -51,31 +55,15 @@ release_files <- list.files(path = paste0(config$sp_data_path, "/data/analysis/c
 yearendpop_files <- list.files(path = paste0(config$sp_data_path, "/data/analysis/clean_files/cleaning_processing"),
                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
 
-# Modify the function to remove labels from state_encoded
-read_and_add_year <- function(file_path) {
-  data <- read_dta(file_path)
-
-  # Extract year from file name
-  year <- sub(".*_(\\d{4})_.*", "\\1", file_path)
-
-  # Add rptyear column
-  data <- data %>% mutate(rptyear = as.numeric(year))
-
-  # Remove labels from state_encoded to avoid conflicts
-  if("state_encoded" %in% colnames(data)) {
-    data$state_encoded <- as.numeric(data$state_encoded)
-  }
-
-  return(data)
-}
-
 # Read and combine release files
-ncrp_releases_combined <- bind_rows(lapply(release_files, read_and_add_year))
+ncrp_releases_combined <- bind_rows(lapply(release_files, fnc_read_and_add_year))
 
 # Read and combine yearendpop files
-ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, read_and_add_year))
+ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_year))
 
-# Rename variables to work in app
+# Transform the combined release data
+# Calculate PE metrics
+# Factor variables
 ncrp_releases <- ncrp_releases_combined |>
   mutate(time_between_ped_rptyear = years_to_estimated_pey,
          time_between_admisson_release =  as.numeric(relyr) - admityr,
@@ -108,6 +96,9 @@ ncrp_releases <- ncrp_releases_combined |>
                                            "Life, LWOP, Life plus additional years, Death",
                                            "Unknown")))
 
+# Similarly transform the year-end population data
+# Calculate PE metrics
+# Factor variables
 ncrp_yearendpop <- ncrp_yearendpop_combined |>
   mutate(time_between_ped_rptyear = years_to_estimated_pey,
          parelig_status = case_when(estimated_pey_status %in% c("past", "current") ~ "Current",
@@ -142,17 +133,22 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
                         "Life, LWOP, Life plus additional years, Death",
                         "Unknown")))
 
+
+
+
 #------------------------------------------------------------------------------#
 # BJS
 #------------------------------------------------------------------------------#
 
-# Import BJS prisoners data for 2020 and 2022 (not sure which one I need yet)
+# Import BJS prisoners data for 2020 and 2022 (not sure which one will be used yet).
+# Skipping the first 10 rows due to headers and metadata.
 bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
                                                      "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
 bjs_prison_pop_by_race_state_2022 <- read.csv(paste0(config$sp_data_path,
                                                      "/data/raw/BJS Prison Pop/p22st/p22stat01.csv"), skip = 10)
 
-# Define the list of filenames and corresponding column indices
+# Define a list of filenames for different years along with the specific column needed for the data.
+# The 'col' value in each list corresponds to the column that holds the relevant data in the CSV file.
 file_info <- list(
   "2010" = list(file = "p10/p10at01.csv", col = "x_3"),
   "2011" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_1"),
@@ -169,15 +165,16 @@ file_info <- list(
   "2022" = list(file = "p22st/p22stt02.csv", col = "x_1")
 )
 
-# Initialize an empty list to store the cleaned data
+# Initialize an empty list to store the cleaned data for each year.
 cleaned_data_list <- list()
 
-# Loop through the file information to read, process, and store the data
+# Loop through the years defined in file_info to read, process, and clean the data.
 for (year in names(file_info)) {
+  # Construct the file path and retrieve the column name for the specified year.
   file_path <- paste0(config$sp_data_path, "/data/raw/BJS Prison Pop/", file_info[[year]]$file)
   col_name <- file_info[[year]]$col
 
-  # Read and process the data
+  # Read the CSV file, clean the column names, and select relevant columns (state and prison population).
   df <- read.csv(file_path) |>
     clean_names() |>
     select(state = x, bjs_prison_population = !!sym(col_name)) |>
@@ -188,10 +185,10 @@ for (year in names(file_info)) {
   cleaned_data_list[[year]] <- df
 }
 
-# Combine all years' data into a single dataframe
+# Combine all the cleaned datasets from different years into a single dataframe.
 bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
 
-# Total pop in 2020
+# Calculate total BJS prison population for 2020. Clean the 'total' column by removing commas.
 total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
   clean_names() |>
   filter(jurisdiction == "") |>
@@ -200,7 +197,7 @@ total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
   mutate(total = str_replace_all(total, ",", ""),
          total = as.numeric(total))
 
-# Pop by Race and Ethnicity
+# Process BJS population by race and ethnicity for 2020
 # Warning OK - characters like '~' turned to NA
 bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
   clean_names() |>
@@ -209,6 +206,7 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
   rename(state = x) |>
   mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
   mutate(across(-state, as.numeric)) |>
+  # Pivot data from wide to long format to have race as a key variable and corresponding population as value.
   pivot_longer(cols = total:did_not_report,
                names_to = "race",
                values_to = "n") |>
@@ -237,7 +235,7 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
          population_type = "In Prison") |>
   select(-total)
 
-# Total pop in 2022
+# Similar to 2020, process total population and population by race and ethnicity for 2022.
 total_bjs_pop_2022 <- bjs_prison_pop_by_race_state_2022 |>
   clean_names() |>
   filter(jurisdiction == "") |>
@@ -284,6 +282,7 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   select(-total)|>
   mutate(state = str_replace(state, "/.*", ""))
 
+# Read and clean BJS population data by sex for 2022
 bjs_prison_pop_by_sex_2022_raw <- read_csv("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/BJS Prison Pop/p22st/p22stt02.csv")
 
 bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
@@ -322,22 +321,17 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 
 
 
+
 #------------------------------------------------------------------------------#
 # Save Data
 #------------------------------------------------------------------------------#
 
-theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
-
-for (folder in theseFOLDERS){
-  save(ncrp_yearendpop,                    file = file.path(folder, "ncrp_yearendpop.rds"))
-  save(ncrp_releases,                      file = file.path(folder, "ncrp_releases.rds"))
-  save(bjs_prison_pop_by_race_2020,        file = file.path(folder, "bjs_prison_pop_by_race_2020.rds"))
-  save(bjs_prison_pop_by_race_2022,        file = file.path(folder, "bjs_prison_pop_by_race_2022.rds"))
-  save(bjs_prison_pop_by_sex_2022,         file = file.path(folder, "bjs_prison_pop_by_sex_2022.rds"))
-  save(bjs_prison_pop_by_rptyear,          file = file.path(folder, "bjs_prison_pop_by_rptyear.rds"))
-
-  save(hex_gj,                             file = file.path(folder, "hex_gj.rds"))
-  save(carl_state_notes,                   file = file.path(folder, "carl_state_notes.rds"))
-  save(parole_info_by_state,               file = file.path(folder, "parole_info_by_state.rds"))
-}
-
+save(ncrp_yearendpop,             file = file.path(app_folder, "ncrp_yearendpop.rds"))
+save(ncrp_releases,               file = file.path(app_folder, "ncrp_releases.rds"))
+save(bjs_prison_pop_by_race_2020, file = file.path(app_folder, "bjs_prison_pop_by_race_2020.rds"))
+save(bjs_prison_pop_by_race_2022, file = file.path(app_folder, "bjs_prison_pop_by_race_2022.rds"))
+save(bjs_prison_pop_by_sex_2022,  file = file.path(app_folder, "bjs_prison_pop_by_sex_2022.rds"))
+save(bjs_prison_pop_by_rptyear,   file = file.path(app_folder, "bjs_prison_pop_by_rptyear.rds"))
+save(hex_gj,                      file = file.path(app_folder, "hex_gj.rds"))
+save(carl_state_notes,            file = file.path(app_folder, "carl_state_notes.rds"))
+save(parole_info_by_state,        file = file.path(app_folder, "parole_info_by_state.rds"))

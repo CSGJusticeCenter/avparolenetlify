@@ -2,9 +2,14 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Date last updated: August 5, 2024 (MAR)
+# Date last updated: September 24, 2024 (MAR)
 # Description:
-#    Prison releases visualizations and findings for releases tab
+#    This script is responsible for generating the visualizations and
+#    findings for the 'Releases' tab in the AV Parole web tool.
+#    It covers:
+#    - Trends in prison releases by year and state
+#    - Proportion of parole-eligible individuals released by year
+#    - Breakdown by release type, race, sex, age, and offense type
 #######################################
 
 
@@ -12,30 +17,37 @@
 # Prison Release Trends
 # ---------------------------------------------------------------------------- #
 
-# Prison releases by year
-ncrp_releases_by_year <- ncrp_releases |>
+# Filter the NCRP releases data to include only states with parole systems
+ncrp_releases_filtered <- fnc_filter_population(ncrp_releases)
+
+# Summarize total prison releases by state and year for data from 2010 onwards
+ncrp_releases_by_year <- ncrp_releases_filtered |>
   filter(rptyear >= 2010) |>
   group_by(state, rptyear) |>
-  summarise(total = n())
+  summarise(total = n(), .groups = "drop")
 
+# Create a list of unique states for which we have release data
 states <- unique(ncrp_releases_by_year$state)
 
-# Generate sentence for each state
+# Generate sentences summarizing the change in prison releases over time for each state
 all_sentence_releases <- map(.x = states, .f = function(x) {
-  # Filter data for the specific state
+  # Filter release data for the specific state
   df1 <- ncrp_releases_by_year %>% filter(state == x)
 
-  # Find the earliest and latest year prison releases
+  # Determine the earliest and latest years of available data
   earliest_year <- min(df1$rptyear)
   latest_year <- max(df1$rptyear)
+
+  # Get release totals for the earliest and latest years
   earliest_year_release <- df1$total[df1$rptyear == earliest_year]
   latest_year_release <- df1$total[df1$rptyear == latest_year]
 
-  # Calculate the percent change
+  # Calculate the percentage change between the two years
   percent_change <- (latest_year_release - earliest_year_release) / earliest_year_release * 100
   change_type <- ifelse(percent_change < 0, "decreased", "increased")
   percent_change_abs <- abs(round(percent_change, 0))
 
+  # Construct a sentence describing the trend in releases
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", prison releases ",
                       change_type, " ", percent_change_abs, " percent, dropping from ",
                       format(earliest_year_release, big.mark = ","), " in ",
@@ -43,15 +55,12 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
   return(sentences)
 })
 
-# Set names for the list elements
+# Assign state names as the names of the sentences list
 all_sentence_releases <- setNames(all_sentence_releases, states)
-
-# Check the sentence for Georgia
 all_sentence_releases$Georgia
 
 
-
-# Highchart by state since 2010
+# Generate line charts for each state showing the trend in prison releases since 2010
 states <- unique(ncrp_releases_by_year$state)
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_releases_by_year |>
@@ -94,6 +103,8 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
+
+# Assign state names as the names of the charts list
 all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
 all_line_releases_by_year$Georgia
 
@@ -103,84 +114,20 @@ all_line_releases_by_year$Georgia
 #   so, determine this below.
 
 # Calculate the number of parole eligible people released by state and year
-ncrp_pe_releases_by_year <- ncrp_releases |>
+ncrp_pe_releases_by_year <- ncrp_releases_filtered |>
   filter(rptyear >= 2010) |>
   filter(parelig_status == "Current") |>
   group_by(state, rptyear) |>
-  summarise(total_parole_eligible_releases = n())
+  summarise(total_parole_eligible_releases = n(), .groups = "drop")
 
 # Calculate the number of parole eligible people in prison by state and year
-ncrp_pe_population_not_released_by_year <- ncrp_yearendpop |>
+ncrp_pe_population_not_released_by_year <- fnc_filter_population(ncrp_yearendpop) |>
   filter(rptyear >= 2010) |>
   filter(parelig_status == "Current") |>
   group_by(state, rptyear) |>
-  summarise(total_parole_eligible_population_not_released = n())
+  summarise(total_parole_eligible_population_not_released = n(), .groups = "drop")
 
-# # Merge data together
-# ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
-#   left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
-#   mutate(total_parole_eligible_population =
-#            total_parole_eligible_releases + total_parole_eligible_population_not_released,
-#          prop_parole_elgible_released =
-#            total_parole_eligible_releases/total_parole_eligible_population) |>
-#   select(state, rptyear,
-#          total_parole_eligible_population_not_released,
-#          total_parole_eligible_releases) |>
-#   pivot_longer(
-#     cols = c(total_parole_eligible_population_not_released, total_parole_eligible_releases),
-#     names_to = "status",
-#     values_to = "n"
-#   ) |>
-#   mutate(status = case_when(
-#     status == "total_parole_eligible_population_not_released" ~ "Not Released",
-#     status == "total_parole_eligible_releases" ~ "Released"
-#   ))
-#
-#
-#
-# # Highchart stacked bar chart
-# states <- unique(ncrp_pe_proportion_released$state)
-# all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
-#   df1 <- ncrp_pe_proportion_released |>
-#     filter(state == x)
-#   jsFormatter <- JS("function() {
-#                    var total = this.point.stackTotal;
-#                    var percentage = Math.round((this.y / total) * 100);
-#                    return percentage + '%';
-#                   }")
-#   highcharts <- df1 |>
-#     hchart(
-#       type = "column",
-#       hcaes(x = rptyear, y = n, group = status)
-#     ) |>
-#     hc_yAxis(title = list(text = "")) |>
-#     hc_xAxis(categories = unique(df1$rptyear),
-#              title = "") |>
-#     hc_add_theme(hc_theme_with_line) |>
-#     hc_legend(enabled = TRUE) |>
-#     hc_exporting(enabled = TRUE) |>
-#     hc_plotOptions(series = list(stacking = "normal",
-#                                  animation = FALSE,
-#                                  cursor = "pointer",
-#                                  # dataLabels = list(enabled = TRUE,
-#                                  #                   style = list(textOutline = "none",
-#                                  #                                color = "white"),
-#                                  #                   formatter = jsFormatter),
-#                                  borderWidth = 3,
-#                                  minPointLength = 4),
-#                    accessibility = list(enabled = TRUE,
-#                                         keyboardNavigation = list(enabled = TRUE),
-#                                         linkedDescription = "TBD accessibility text",
-#                                         landmarkVerbosity = "one"),
-#                    area = list(accessibility = list(description = "TBD accessibility text"))) |>
-#     hc_title(text = "Proportion of Parole-Eligible People Released from Prison by Year") |>
-#     hc_colors(c(color3, color5))
-#   return(highcharts)
-# })
-# all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
-# all_stackedbar_parole_eligibility_release$Georgia
-
-# Merge data together
+# Calculate the number of parole-eligible people released and not released by state and year
 ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
   left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
   mutate(total_parole_eligible_population =
@@ -202,7 +149,7 @@ ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
     status == "prop_parole_eligible_released" ~ "Released"
   ))
 
-# Highchart stacked bar chart
+# Generate stacked bar charts for each state showing the proportion of parole-eligible people released and not released
 states <- unique(ncrp_pe_proportion_released$state)
 all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_pe_proportion_released |>
@@ -314,7 +261,6 @@ all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
 })
 
 all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
-all_sentence_pe_proportion_released$Arizona
 all_sentence_pe_proportion_released$Georgia
 
 
@@ -323,9 +269,9 @@ all_sentence_pe_proportion_released$Georgia
 # RELEASE TYPE
 # ---------------------------------------------------------------------------- #
 
-# Filter to people with release type information
+# Filter to include only conditional and unconditional releases, removing other release types
 # Remove "Other releases" - although Alabama has 30% other releases
-ncrp_release_type <- ncrp_releases |>
+ncrp_release_type <- ncrp_releases_filtered |>
   filter(rptyear == select_year) |>
   filter(reltype == "Conditional release" | reltype == "Unconditional release") |>
   mutate(reltype = case_when(reltype == "Conditional release" ~ "Conditional Release",
@@ -334,7 +280,7 @@ ncrp_release_type <- ncrp_releases |>
   group_by(state) |>
   count(reltype)
 
-# Highchart pie chart showing releases by release type
+# Generate pie charts for each state showing the proportion of conditional vs. unconditional releases
 states <- unique(ncrp_release_type$state)
 all_pie_release_type <- map(.x = states, .f = function(x) {
   df1 <- ncrp_release_type |>
@@ -367,6 +313,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_tooltip(pointFormat = 'Number of Releases: {point.y}<br>Percentage of Releases: {point.percentage:.0f}%')
   return(highcharts)
 })
+
+# Assign state names as the names of the charts list
 all_pie_release_type <- setNames(all_pie_release_type, states)
 all_pie_release_type$Georgia
 
@@ -378,8 +326,11 @@ all_pie_release_type$Georgia
 # DEMOGRAPHICS
 # ---------------------------------------------------------------------------- #
 
+# Generate bar charts and sentences describing prison releases by demographic categories (race, sex, age)
 
-prison_releases_race <- ncrp_releases |>
+# Race and Ethnicity
+# Filter releases for valid race data and generate visualizations and summary sentences
+prison_releases_race <- ncrp_releases_filtered |>
   filter(rptyear == select_year) |>
   group_by(state) |>
   filter(!is.na(race)& race != "Unknown") |>
@@ -392,7 +343,9 @@ prison_releases_race <- ncrp_releases |>
   ) |>
   ungroup()
 
-prison_releases_sex <- ncrp_releases |>
+# Sex
+# Filter releases for valid sex data and generate visualizations and summary sentences
+prison_releases_sex <- ncrp_releases_filtered |>
   filter(rptyear == select_year) |>
   group_by(state) |>
   filter(!is.na(sex)& sex != "Unknown") |>
@@ -405,7 +358,9 @@ prison_releases_sex <- ncrp_releases |>
   ) |>
   ungroup()
 
-prison_releases_agerlse <- ncrp_releases |>
+# Age
+# Filter releases for valid age data and generate visualizations and summary sentences
+prison_releases_agerlse <- ncrp_releases_filtered |>
   filter(rptyear == select_year) |>
   group_by(state) |>
   filter(!is.na(agerlse) & agerlse != "Unknown") |>
@@ -444,6 +399,8 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
     hc_colors(c(color5))
   return(highcharts)
 })
+
+# Assign state names as the names of the charts list
 all_bar_releases_race <- setNames(all_bar_releases_race, states)
 all_bar_releases_race$Georgia
 
@@ -460,6 +417,7 @@ all_sentence_releases_race <- map(.x = states,  .f = function(x) {
   return(sentences)
 })
 
+# Assign state names as the names of the charts list
 all_sentence_releases_race <- setNames(all_sentence_releases_race, states)
 all_sentence_releases_race$Georgia
 
@@ -489,6 +447,8 @@ all_bar_releases_sex <- map(.x = states,  .f = function(x) {
     hc_colors(c(color5))
   return(highcharts)
 })
+
+# Assign state names as the names of the charts list
 all_bar_releases_sex <- setNames(all_bar_releases_sex, states)
 all_bar_releases_sex$Georgia
 
@@ -505,6 +465,7 @@ all_sentence_releases_sex <- map(.x = states,  .f = function(x) {
   return(sentences)
 })
 
+# Assign state names as the names of the charts list
 all_sentence_releases_sex <- setNames(all_sentence_releases_sex, states)
 all_sentence_releases_sex$Georgia
 
@@ -534,6 +495,8 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
     hc_colors(c(color5))
   return(highcharts)
 })
+
+# Assign state names as the names of the charts list
 all_bar_releases_agerlse <- setNames(all_bar_releases_agerlse, states)
 all_bar_releases_agerlse$Georgia
 
@@ -551,6 +514,7 @@ all_sentence_releases_agerlse <- map(.x = states,  .f = function(x) {
   return(sentences)
 })
 
+# Assign state names as the names of the charts list
 all_sentence_releases_agerlse <- setNames(all_sentence_releases_agerlse, states)
 all_sentence_releases_agerlse$Georgia
 
@@ -565,7 +529,9 @@ all_sentence_releases_agerlse$Georgia
 # OFFENSE TYPE
 # ---------------------------------------------------------------------------- #
 
-releases_fbi_index <- ncrp_releases |>
+# Filter release data for the selected year and group by state and offense type (FBI index)
+# Remove cases where offense type is missing or unknown
+releases_fbi_index <- ncrp_releases_filtered |>
   filter(rptyear == select_year) |>
   group_by(state) |>
   filter(!is.na(fbi_index) & fbi_index != "Unknown") |>
@@ -578,7 +544,7 @@ releases_fbi_index <- ncrp_releases |>
   ) |>
   ungroup()
 
-# Generate graph for each state
+# Generate a bar chart for each state to visualize the proportion of releases by offense type
 states <- unique(releases_fbi_index$state)
 all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- releases_fbi_index |>
@@ -602,6 +568,8 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
     hc_colors(c(color5))
   return(highcharts)
 })
+
+# Assign state names as the names of the charts list
 all_bar_releases_fbi_index <- setNames(all_bar_releases_fbi_index, states)
 all_bar_releases_fbi_index$Georgia
 
@@ -617,14 +585,9 @@ all_sentence_releases_fbi_index <- map(.x = states,  .f = function(x) {
   return(sentences)
 })
 
+# Assign state names as the names of the charts list
 all_sentence_releases_fbi_index <- setNames(all_sentence_releases_fbi_index, states)
 all_sentence_releases_fbi_index$Georgia
-
-
-
-
-
-
 
 
 
@@ -634,25 +597,22 @@ all_sentence_releases_fbi_index$Georgia
 # SAVE DATA
 # ---------------------------------------------------------------------------- #
 
-theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
+save(all_sentence_releases,                     file = file.path(app_folder, "all_sentence_releases.rds"))
+save(all_line_releases_by_year,                 file = file.path(app_folder, "all_line_releases_by_year.rds"))
+save(all_sentence_pe_proportion_released,       file = file.path(app_folder, "all_sentence_pe_proportion_released.rds"))
+save(all_stackedbar_parole_eligibility_release, file = file.path(app_folder, "all_stackedbar_parole_eligibility_release.rds"))
+save(all_pie_release_type,                      file = file.path(app_folder, "all_pie_release_type.rds"))
 
-for (folder in theseFOLDERS){
-  save(all_sentence_releases,                     file = file.path(folder, "all_sentence_releases.rds"))
-  save(all_line_releases_by_year,                 file = file.path(folder, "all_line_releases_by_year.rds"))
-  save(all_sentence_pe_proportion_released,       file = file.path(folder, "all_sentence_pe_proportion_released.rds"))
-  save(all_stackedbar_parole_eligibility_release, file = file.path(folder, "all_stackedbar_parole_eligibility_release.rds"))
-  save(all_pie_release_type,                      file = file.path(folder, "all_pie_release_type.rds"))
+save(all_sentence_releases_race,                file = file.path(app_folder, "all_sentence_releases_race.rds"))
+save(all_bar_releases_race,                     file = file.path(app_folder, "all_bar_releases_race.rds"))
 
-  save(all_sentence_releases_race,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_releases_race.rds"))
-  save(all_bar_releases_race,            file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_releases_race.rds"))
+save(all_sentence_releases_sex,                 file = file.path(app_folder, "all_sentence_releases_sex.rds"))
+save(all_bar_releases_sex,                      file = file.path(app_folder, "all_bar_releases_sex.rds"))
 
-  save(all_sentence_releases_sex,        file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_releases_sex.rds"))
-  save(all_bar_releases_sex,             file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_releases_sex.rds"))
+save(all_sentence_releases_agerlse,             file = file.path(app_folder, "all_sentence_releases_agerlse.rds"))
+save(all_bar_releases_agerlse,                  file = file.path(app_folder, "all_bar_releases_agerlse.rds"))
 
-  save(all_sentence_releases_agerlse,    file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_releases_agerlse.rds"))
-  save(all_bar_releases_agerlse,         file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_releases_agerlse.rds"))
+save(all_sentence_releases_fbi_index,           file = file.path(app_folder, "all_sentence_releases_fbi_index.rds"))
+save(all_bar_releases_fbi_index,                file = file.path(app_folder, "all_bar_releases_fbi_index.rds"))
 
-  save(all_sentence_releases_fbi_index,  file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_sentence_releases_fbi_index.rds"))
-  save(all_bar_releases_fbi_index,       file = file.path(paste0(config$sp_data_path, "/data/analysis/app"), "all_bar_releases_fbi_index.rds"))
-}
 

@@ -475,22 +475,32 @@ if (state_for_report %in% names(all_bar_releases_fbi_index)) {
 
 ####################
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pe_release_total_years_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_race_ped_release.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bubble_race_ped_release.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_hc_rri_chart.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri_black.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri_hispanic.rds"))
+
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/ncrp_avg_pe_release_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_race.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_race_offense.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_sex_offense.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_sex_offense.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/ncrp_avg_pe_release_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_sex.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex_offense.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_sex_offense.rds"))
 
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for
@@ -500,6 +510,12 @@ if (state_for_report %in% names(all_sentence_rri_black)) {
     all_sentence_rri_black[[state_for_report]]
 } else {
   state_sentence_rri_black <- ""
+}
+if (state_for_report %in% names(all_sentence_rri_hispanic)) {
+  state_sentence_rri_hispanic <-
+    all_sentence_rri_hispanic[[state_for_report]]
+} else {
+  state_sentence_rri_hispanic <- ""
 }
 
 # SENTENCE: "Hispanic, any race individuals faced the longest average time
@@ -580,6 +596,86 @@ if (state_for_report %in% names(all_scatter_avg_pe_release_race_offense)) {
     hc_size(height = 600)
 } else {
   state_scatter_avg_pe_release_race_offense <- no_data_text
+}
+
+# SENTENCE: "Hispanic, any sex individuals faced the longest average time
+#            served in prison in 2020, with an average of 3.8 years.
+#            White, non-Hispanic individuals experienced shorter prison stays,
+#            averaging 2.3 years compared to their counterparts."
+if (state_for_report %in% names(all_sentence_los_sex)) {
+  state_sentence_los_sex <-
+    all_sentence_los_sex[[state_for_report]]
+} else {
+  state_sentence_los_sex <- ""
+}
+
+# TITLE: Average Length of Stay by sex, Ethnicity, and Offense Type
+if (state_for_report %in% names(all_lollipop_los_sex)) {
+  state_lollipop_los_sex <-
+    all_lollipop_los_sex[[state_for_report]] |>
+    hc_size(height = 100)
+} else {
+  state_lollipop_los_sex <- no_data_text
+}
+
+
+# SENTENCE: "By offense type, disparities were observed in time served by sex
+#            and ethnicity. For Robbery offenses, Hispanic, any sex individuals
+#            had 4.47 more years on average compared to Other sex(s), non-Hispanic
+#            individuals, who had the shortest time served for these offenses."
+if (state_for_report %in% names(all_sentence_los_sex_offense)) {
+  state_sentence_los_sex_offense <-
+    all_sentence_los_sex_offense[[state_for_report]]
+} else {
+  state_sentence_los_sex_offense <- ""
+}
+
+if (state_for_report %in% names(all_scatter_los_sex_offense)) {
+  state_scatter_los_sex_offense <-
+    all_scatter_los_sex_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_los_sex_offense <- no_data_text
+}
+
+
+
+
+
+
+
+
+if (state_for_report %in% names(all_sentence_avg_pe_release_sex)) {
+  state_sentence_avg_pe_release_sex <-
+    all_sentence_avg_pe_release_sex[[state_for_report]]
+} else {
+  state_sentence_avg_pe_release_sex <- ""
+}
+
+if (state_for_report %in% names(all_sentence_avg_pe_release_sex_offense)) {
+  state_sentence_avg_pe_release_sex_offense <-
+    all_sentence_avg_pe_release_sex_offense[[state_for_report]]
+} else {
+  state_sentence_avg_pe_release_sex_offense <- ""
+}
+
+
+
+
+if (state_for_report %in% names(all_lollipop_avg_pe_release_sex)) {
+  state_lollipop_avg_pe_release_sex <-
+    all_lollipop_avg_pe_release_sex[[state_for_report]] |>
+    hc_size(height = 100)
+} else {
+  state_lollipop_avg_pe_release_sex <- no_data_text
+}
+
+if (state_for_report %in% names(all_scatter_avg_pe_release_sex_offense)) {
+  state_scatter_avg_pe_release_sex_offense <-
+    all_scatter_avg_pe_release_sex_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_avg_pe_release_sex_offense <- no_data_text
 }
 
 

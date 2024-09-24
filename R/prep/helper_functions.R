@@ -1,71 +1,78 @@
-
 #-------------------------------------------------------------------------------
 # IMPORT FUNCTIONS
 #-------------------------------------------------------------------------------
 
-#' Helper to streamline the mutate transformations for common columns.
+#' Read Data and Add Year Column
 #'
-#' @param df A data frame.
-#' @param cols A character vector of column names to trim.
-#' @param prefix_length An integer for number of characters to remove from the start.
-#' @return A modified data frame with trimmed columns.
-apply_column_trims <- function(df, cols, prefix_length = 5) {
-  df |>
-    mutate(across(all_of(cols), ~ str_sub(., prefix_length, -1))) |>
-    mutate(across(everything(), trimws))
+#' This function reads in a Stata file, extracts the year from the file name,
+#' and adds a `rptyear` column with the extracted year. It also removes labels from the
+#' `state_encoded` column, if it exists, to avoid conflicts during analysis.
+#'
+#' @param file_path The file path of the Stata file to read.
+#' @return A data frame with the data from the Stata file, with an additional `rptyear` column,
+#' and the `state_encoded` column converted to numeric, if present.
+#' @examples
+#' \dontrun{
+#' fnc_read_and_add_year("path_to_file.dta")
+#' }
+fnc_read_and_add_year <- function(file_path) {
+  # Read the data from Stata file
+  data <- read_dta(file_path)
+
+  # Extract year from file name using regular expression
+  year <- sub(".*_(\\d{4})_.*", "\\1", file_path)
+
+  # Add extracted year as rptyear column
+  data <- data %>% mutate(rptyear = as.numeric(year))
+
+  # Remove labels from state_encoded, if it exists
+  if("state_encoded" %in% colnames(data)) {
+    data$state_encoded <- as.numeric(data$state_encoded)
+  }
+
+  return(data)
 }
 
-#' Factor transformation for categorical variables
+# Test: Ensure that 'rptyear' is added correctly and 'state_encoded' is numeric
+# test_df <- fnc_read_and_add_year("sample_2023_data.dta")
+# stopifnot("rptyear" %in% colnames(test_df))
+# stopifnot(is.numeric(test_df$state_encoded))
+
+#' Apply Factor Levels to a Column
 #'
-#' @param df A data frame containing categorical columns to be factored.
-#' @param col_name Column to be factored.
-#' @param levels Levels to apply to the factor.
-#' @return A data frame with factored columns.
-apply_factor_levels <- function(df, col_name, levels) {
+#' This function applies specific factor levels to a specified column in a data frame.
+#' It is useful for converting categorical variables into factors with specified levels.
+#'
+#' @param df A data frame containing the column to be factored.
+#' @param col_name The name of the column to be factored.
+#' @param levels The levels to apply to the factor.
+#' @return A data frame with the specified column transformed into a factor with the given levels.
+#' @examples
+#' df <- data.frame(var = c("A", "B", "C"))
+#' fnc_apply_factor_levels(df, var, c("A", "B", "C"))
+fnc_apply_factor_levels <- function(df, col_name, levels) {
   df |>
     mutate({{col_name}} := factor({{col_name}}, levels = levels))
 }
 
-#' Load NCRP Data with file validation
-fnc_load_ncrp_data <- function(file_id) {
-  file_path <- paste0(config$sp_data_path, "/data/raw/NCRP/ICPSR_38492-V1/ICPSR_38492/DS000", file_id, "/38492-000", file_id, "-Data.rda")
-  if (!file.exists(file_path)) {
-    warning(paste("File not found:", file_path))
-    return(NULL)
-  }
+# Test: Ensure the column is factored correctly with the specified levels
+# test_df <- data.frame(var = c("A", "B", "C"))
+# test_df <- fnc_apply_factor_levels(test_df, var, c("A", "B", "C"))
+# stopifnot(is.factor(test_df$var))
+# stopifnot(all(levels(test_df$var) == c("A", "B", "C")))
 
-  data_env <- new.env()
-  load(file_path, envir = data_env)
-  data_object <- ls(envir = data_env)[1]
-  get(data_object, envir = data_env)
-}
-
-#' Streamline Admission Type Recategorization
-fnc_create_admtype <- function(df) {
-  df |>
-    mutate(admtype = case_when(
-      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other or Unknown",
-      is.na(admtype) ~ "Other or Unknown",
-      TRUE ~ admtype
-    )) |>
-    apply_factor_levels(admtype, c("New court commitment", "Parole return/revocation", "Other or Unknown"))
-}
-
-#' Streamline Parole Eligibility Status
-fnc_create_parelig_status <- function(df) {
-  df |>
-    mutate(
-      time_between_ped_rptyear = parelig_year - rptyear,
-      parelig_status = case_when(
-        parelig_year <= rptyear ~ "Current",
-        parelig_year > rptyear ~ "Future",
-        is.na(parelig_year) ~ "Missing or Not Parole-Eligible"
-      )
-    ) |>
-    apply_factor_levels(parelig_status, c("Current", "Future", "Missing or Not Parole-Eligible"))
-}
-
-#' Streamline FBI Index Categorization
+#' Create FBI Index Category Column
+#'
+#' This function categorizes offenses into FBI index categories based on the `offdetail` column
+#' and applies factor levels to the resulting `fbi_index` column. It standardizes offense types
+#' into broader categories such as "Murder and Non-negligent Manslaughter", "Robbery", etc.
+#'
+#' @param df A data frame containing an `offdetail` column with specific offense details.
+#' @return A data frame with a new `fbi_index` column, categorized and factored into FBI index categories.
+#' @examples
+#' \dontrun{
+#' fnc_create_fbi_index(df)
+#' }
 fnc_create_fbi_index <- function(df) {
   df |>
     mutate(fbi_index = case_when(
@@ -79,24 +86,65 @@ fnc_create_fbi_index <- function(df) {
       is.na(offdetail) ~ "Other or Unknown",
       TRUE ~ offgeneral
     )) |>
-    apply_factor_levels(fbi_index, c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter",
+    fnc_apply_factor_levels(fbi_index, c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter",
                                      "Rape or Sexual Assault", "Robbery", "Aggravated or Simple Assault",
                                      "Other Violent Offenses", "Property", "Public order", "Drugs", "Other", "Unknown"))
 }
 
+# Test: Ensure that 'fbi_index' is correctly categorized and factored
+# test_df <- data.frame(offdetail = c("Aggravated or simple assault", "Murder (including non-negligent manslaughter)", NA))
+# test_df <- fnc_create_fbi_index(test_df)
+# stopifnot(all(levels(test_df$fbi_index) == c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter", "Rape or Sexual Assault",
+#                                              "Robbery", "Aggravated or Simple Assault", "Other Violent Offenses", "Property",
+#                                              "Public order", "Drugs", "Other", "Unknown")))
 
-#' Clean BJS Data
+#' Create Admission Type Categories
 #'
-#' This function cleans BJS data.
+#' This function standardizes the `admtype` column by recategorizing various admission types into
+#' simplified categories such as "New court commitment", "Parole return/revocation", and "Other or Unknown".
+#' It also applies factor levels to the `admtype` column.
 #'
-#' @param df A data frame containing BJS data.
-#' @return A cleaned data frame.
-#' @export
+#' @param df A data frame containing an `admtype` column.
+#' @return A data frame with the recategorized and factored `admtype` column.
+#' @examples
+#' \dontrun{
+#' fnc_create_admtype(df)
+#' }
+fnc_create_admtype <- function(df) {
+  df |>
+    mutate(admtype = case_when(
+      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other or Unknown",
+      is.na(admtype) ~ "Other or Unknown",
+      TRUE ~ admtype
+    )) |>
+    fnc_apply_factor_levels(admtype, c("New court commitment", "Parole return/revocation", "Other or Unknown"))
+}
+
+# Test: Ensure that 'admtype' is correctly categorized and factored
+# test_df <- data.frame(admtype = c("Other admission (including unsentenced, transfer, AWOL/escapee return)", NA))
+# test_df <- fnc_create_admtype(test_df)
+# stopifnot(all(levels(test_df$admtype) == c("New court commitment", "Parole return/revocation", "Other or Unknown")))
+
+#' Clean Bureau of Justice Statistics (BJS) Data
+#'
+#' This function cleans BJS data by removing or correcting invalid state names,
+#' filtering out unwanted rows, and cleaning the `bjs_prison_population` column by removing
+#' non-numeric characters and converting it to numeric.
+#'
+#' @param df A data frame containing the BJS data. It must have `state` and `bjs_prison_population` columns.
+#' @return A cleaned data frame with corrected state names and numeric prison population values.
+#' @examples
+#' \dontrun{
+#' df_cleaned <- fnc_clean_bjs_data(df)
+#' }
 fnc_clean_bjs_data <- function(df) {
   df <- df |>
+    # Remove anything after the state name in the `state` column
     mutate(state = str_replace(state, "/.*", "")) |>
+    # Correct specific misspelled state names
     mutate(state = str_replace(state, "Alaskab", "Alaska")) |>
     mutate(state = str_replace(state, "Utahc", "Utah")) |>
+    # Filter out invalid state names and totals
     filter(state != "" &
              state != "State" &
              state != "Federal" &
@@ -104,36 +152,103 @@ fnc_clean_bjs_data <- function(df) {
              state != "U.S. Total" &
              state != "U.S. total" &
              state != "U.S. tota") |>
+    # Remove non-numeric characters from `bjs_prison_population` and convert it to numeric
     mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) |>
     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
+
+  return(df)
+}
+
+# Test: Ensure that the function correctly cleans state names and converts prison population to numeric
+# test_df <- data.frame(state = c("Alaskab", "Utahc", "Federal", "U.S. Total", "California"),
+#                      bjs_prison_population = c("1,000", "2,000", "3,000", "4,000", "5,000"))
+# clean_df <- fnc_clean_bjs_data(test_df)
+# stopifnot(all(clean_df$state == c("Alaska", "Utah", "California")))
+# stopifnot(all(clean_df$bjs_prison_population == c(1000, 2000, 5000)))
+
+
+
+
+#-------------------------------------------------------------------------------
+# DATA ANALYSIS FUNCTIONS
+#-------------------------------------------------------------------------------
+
+#' Filter Population Based on Abolished Parole Status
+#'
+#' This function filters the input data to only include states that have not abolished parole.
+#' It references an external dataset (`carl_state_notes`) to determine which states have abolished parole.
+#'
+#' @param data A data frame containing the population data, which must include a `state` column.
+#'
+#' @return A filtered data frame that only contains data for states where parole has not been abolished.
+#' @export
+#'
+#' @examples
+#' # Example usage:
+#' filtered_data <- fnc_filter_population(population_data)
+fnc_filter_population <- function(data) {
+  # Get states that have not abolished parole
+  abolished <- carl_state_notes |>
+    filter(abolished_parole_16_total == "N") |>
+    pull(state)
+
+  # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
+  filtered_data <- data |>
+    filter(state %in% abolished)  # Only keep states that did not abolish parole
+
+  return(filtered_data)
+}
+
+#' Retrieve and Process Census Data for a Given State
+#'
+#' This function retrieves decennial census data for a specific state using the `tidycensus` package.
+#' It processes the data by cleaning column names and categorizing race variables into broader groups.
+#'
+#' @param state A string representing the state for which the census data is to be retrieved.
+#'
+#' @return A data frame containing census data for the specified state with processed race categories.
+#' @export
+#'
+#' @examples
+#' # Example usage:
+#' census_data <- fnc_get_census_data("NY")
+fnc_get_census_data <- function(state) {
+  df <-
+    tidycensus::get_decennial(
+      geography = "state",
+      state = state,
+      variables = race_vars,
+      summary_var = "P3_001N",
+      year = select_year,
+      geometry = FALSE) %>%
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race = case_when(
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    )
   return(df)
 }
 
 
-
-
-
-
-
-
-#-------------------------------------------------------------------------------
-# DATA PREPARATION
-#-------------------------------------------------------------------------------
-
-#' Filter prison population data by admtype and sentence length
+#' Filter Population Criteria for Analysis
 #'
-#' This function filters the prison population data to include only those with
-#' a specific admission type (e.g., "New court commitment") and sentence lengths
-#' between 1-25 years.
+#' This function filters a dataset of prison admissions based on specific criteria,
+#' including admission type, sentence lengths, and whether the state has abolished parole.
 #'
-#' @param data A dataframe containing the prison population data.
-#' @param admtype_filter A string indicating the admission type to filter by (default is "New court commitment").
-#' @param sentence_lengths A vector of strings indicating the sentence lengths to include (default includes "1-1.9 years", "2-4.9 years", "5-9.9 years", "10-24.9 years").
-#' @return A filtered dataframe with prison population data based on the given admission type and sentence lengths.
-#' @export
+#' @param data A data frame containing prison admissions data. It must have columns for `admtype`, `sentlgth`, and `state`.
+#' @param admtype_filter The type of admission to filter by. Defaults to "New court commitment".
+#' @param sentence_lengths A vector of sentence lengths to filter by. Defaults to c("1-1.9 years", "2-4.9 years", "5-9.9 years", "10-24.9 years").
+#' @return A filtered data frame based on the specified criteria.
 #' @examples
-#' ncrp_filtered <- filter_population_criteria(ncrp_yearendpop)
-filter_population_criteria <- function(data,
+#' \dontrun{
+#' filtered_data <- filter_population_criteria(prison_data)
+#' }
+fnc_filter_pe_population_criteria <- function(data,
                                        admtype_filter = "New court commitment",
                                        sentence_lengths = c("1-1.9 years",
                                                             "2-4.9 years",
@@ -153,52 +268,78 @@ filter_population_criteria <- function(data,
   return(filtered_data)
 }
 
-#' # Prepare data
-#'
-#' This function prepares the data for a simple bar graph, filtering for "Current" parole eligibility status and specific sentence lengths.
-#'
-#' @param df A data frame containing the data.
-#' @param count_column The column to count occurrences.
-#' @return A prepared data frame with necessary calculations.
-#' @export
-fnc_prepare_pe_data <- function(df, count_column) {
-  count_column_title <- deparse(substitute(count_column))
-  count_column_title <- case_when(count_column_title == "race"      ~ "Race and Ethnicity",
-                                  count_column_title == "sex"       ~ "Sex",
-                                  count_column_title == "ageyrend"  ~ "Age",
-                                  count_column_title == "sentlgth"  ~ "Sentence Length",
-                                  count_column_title == "fbi_index" ~ "Offense Type")
+# Test: Ensure the filtering works correctly
+# test_data <- data.frame(
+#   admtype = c("New court commitment", "Parole return/revocation"),
+#   sentlgth = c("1-1.9 years", "10-24.9 years"),
+#   state = c("California", "Texas")
+# )
+# carl_state_notes <- data.frame(
+#   state = c("California", "Texas"),
+#   abolished_parole_16_total = c("N", "Y")
+# )
+# filtered_df <- filter_population_criteria(test_data)
+# stopifnot(nrow(filtered_df) == 1)  # Only one row should remain after filtering
 
+
+#' Prepare Parole Eligibility Data for Visualization
+#'
+#' This function filters, groups, and aggregates data for parole eligibility based on specific conditions
+#' such as report year, admission type, and sentence length. It calculates the proportion of the
+#' population that is parole-eligible, and adds labels for visualization.
+#'
+#' @param df A data frame containing the parole eligibility data.
+#' It should include columns for `rptyear`, `parelig_status`, `admtype`, `sentlgth`, and `state`.
+#' @param count_column The name of the column to use for counting and grouping the data (e.g., parole eligibility).
+#' @return A data frame grouped by state with proportions and labeled columns for use in visualizations.
+#' @examples
+#' \dontrun{
+#' fnc_prepare_pe_data(df, count_column = "parole_eligibility_status")
+#' }
+fnc_prepare_pe_data <- function(df, count_column) {
   df1 <- df |>
-    filter(rptyear == select_year) |>
-    filter({{ count_column }} != "Unknown") |>
-    group_by(state, {{ count_column }}, parelig_status) |>
-    summarize(n = n(), .groups = "drop") |>
-    group_by(state, {{ count_column }}) |>
+    # Filter for the selected year and 'Current' parole eligibility status
+    filter(rptyear == select_year & parelig_status == "Current") |>
+    # Further filter for the "New court commitment" admission type
+    filter(admtype == "New court commitment") |>
+    # Filter for specific sentence lengths
+    filter(sentlgth == "1-1.9 years" |
+             sentlgth == "2-4.9 years" |
+             sentlgth == "5-9.9 years" |
+             sentlgth == "10-24.9 years") |>
+    # Group by state and count occurrences of the specified column
+    group_by(state) |>
+    filter(!is.na({{ count_column }})) |>
+    count({{ count_column }}) |>
+    # Calculate proportions and create labels for visualization
     mutate(
-      prop = n / sum(n),  # Make sure you're calculating proportions within each group
-      yearendpop_ped = sum(n),
-      prop_label = paste0(round(prop * 100, 0), "%"),
-      n_label = formattable::comma(n, 0)
+      prop = n/sum(n),                    # Calculate proportion
+      yearendpop_ped = sum(n),            # Calculate total population
+      prop_label = paste0(round(prop * 100, 0), "%"),  # Create proportion label as percentage
+      n_label = formattable::comma(n, 0)  # Format count labels with commas
     ) |>
-    ungroup() |>
-    mutate(tooltip = paste0("<b>", count_column_title, ":</b> ", {{ count_column }}, "<br>",
-                            "<b>Parole Eligibility Status:</b> ", parelig_status, "<br>",
-                            "<b>People:</b> ", n_label, "<br>",
-                            "<b>Percentage of People:</b> ", prop_label))
+    ungroup()
 
   return(df1)
 }
 
 
+
+
+
+
+
+
 #-------------------------------------------------------------------------------
-# VISUALIZATIONS
+# DATA VISUALIZATION FUNCTIONS
 #-------------------------------------------------------------------------------
 
 #' Common Style Elements
 #'
-#' This list defines the common style elements used across different themes.
-#' @return A list of common style elements.
+#' This list defines the common style elements used across different themes,
+#' including font family, color, font size, and font weight.
+#'
+#' @return A list of common style elements to maintain consistent appearance across visualizations.
 #' @export
 common_style <- list(
   fontFamily = "Graphik",
@@ -209,8 +350,10 @@ common_style <- list(
 
 #' Common Chart Style
 #'
-#' This list defines the common chart style elements used across different themes.
-#' @return A list of common chart style elements.
+#' This list defines the common chart style elements used across different themes,
+#' specifically for chart text formatting.
+#'
+#' @return A list of common chart style elements for Highcharts.
 #' @export
 common_chart_style <- list(
   fontFamily = "Graphik",
@@ -220,8 +363,10 @@ common_chart_style <- list(
 
 #' Common Title Style
 #'
-#' This list defines the common title style elements used across different themes.
-#' @return A list of common title style elements.
+#' This list defines the common title style elements, including the font family,
+#' weight, and color, ensuring consistency across chart titles.
+#'
+#' @return A list of common title style elements for charts.
 #' @export
 common_title_style <- list(
   fontFamily = "Graphik",
@@ -231,7 +376,9 @@ common_title_style <- list(
 
 #' Base Highcharts Theme
 #'
-#' This theme serves as the base for other themes.
+#' This theme serves as the base for other themes in Highcharts.
+#' It sets common styling elements like colors, chart layout, axis labels,
+#' legend positioning, and data label styling.
 #' @export
 base_hc_theme <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
@@ -272,6 +419,12 @@ base_hc_theme <- hc_theme(
     )
   )
 )
+
+#' Highcharts Theme with Line Marker
+#'
+#' This theme includes a Highcharts configuration with enabled markers for
+#' line, spline, area, and bubble charts, with custom styling.
+#' @export
 hc_theme_with_line <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
@@ -293,31 +446,31 @@ hc_theme_with_line <- hc_theme(
     line = list(
       marker = list(
         enabled = TRUE,
-        symbol = 'circle'  # This line ensures that the dots are circles
+        symbol = 'circle'
       )
     ),
     spline = list(
       marker = list(
         enabled = TRUE,
-        symbol = 'circle'  # Ensures that the dots are circles
+        symbol = 'circle'
       )
     ),
     area = list(
       marker = list(
         enabled = TRUE,
-        symbol = 'circle'  # Ensures that the dots are circles
+        symbol = 'circle'
       )
     ),
     areaspline = list(
       marker = list(
         enabled = TRUE,
-        symbol = 'circle'  # Ensures that the dots are circles
+        symbol = 'circle'
       )
     ),
     arearange = list(
       marker = list(
         enabled = TRUE,
-        symbol = 'circle'  # Ensures that the dots are circles
+        symbol = 'circle'
       )
     ),
     bubble = list(maxSize = "10%"),
@@ -329,16 +482,50 @@ hc_theme_with_line <- hc_theme(
   )
 )
 
+#' Highcharts Theme for Maps
+#'
+#' This theme is specifically designed for maps in Highcharts.
+#' It modifies the base theme to include larger titles and font sizes
+#' while adjusting the inactive series opacity for better clarity.
+#' @export
+hc_theme_map <- hc_theme_merge(
+  hc_theme_smpl(),
+  base_hc_theme,
+  hc_theme(
+    chart = list(style = modifyList(common_chart_style, list(fontSize = "14px"))),
+    title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "22px"))),
+    plotOptions = list(
+      series = list(states = list(inactive = list(opacity = 1))),
+      line = list(marker = list(enabled = TRUE)),
+      spline = list(marker = list(enabled = TRUE)),
+      area = list(marker = list(enabled = TRUE)),
+      areaspline = list(marker = list(enabled = TRUE))
+    ),
+    legend = list(
+      itemStyle = modifyList(common_style, list(fontSize = "16px"))
+    )
+  )
+)
 
-# Function to generate Highcharts stacked bar chart
+#' Generate Highcharts Stacked Bar Chart for Parole-Eligible Population
+#'
+#' This function generates a stacked bar chart in Highcharts representing
+#' parole-eligible population categories (Missing or Not Parole-Eligible, Future, and Current).
+#'
+#' @param df Dataframe containing the input data
+#' @param count_column Column name for the population count
+#' @param title Chart title
+#' @param subtitle Chart subtitle
+#' @param categories_col Column name for the chart categories
+#' @param colors Vector of colors for the different stacked series
+#'
+#' @return A Highcharts stacked bar chart object
+#' @export
 fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, categories_col, colors) {
-
-  # Filter and sort data for the chart
   data <- df |>
     filter(state == unique(df$state)) |>
     arrange(desc({{ count_column }}))
 
-  # Create highchart object
   highcharts <- highchart() |>
     hc_chart(type = "column") |>
     hc_title(text = title) |>
@@ -347,7 +534,7 @@ fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, c
     hc_yAxis(
       title = list(text = ""),
       min = 0,
-      max = 1,  # Ensure proportions are displayed between 0 and 1 (100%)
+      max = 1,
       labels = list(
         formatter = JS("function () { return Math.round(this.value * 100) + '%'; }")
       )
@@ -375,28 +562,18 @@ fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, c
   return(highcharts)
 }
 
-fnc_prepare_pe_data2 <- function(df, count_column){
-  df1 <- df |>
-    filter(rptyear == select_year &
-             parelig_status == "Current") |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
-    group_by(state) |>
-    filter(!is.na({{ count_column }})) |>
-    count({{ count_column }}) |>
-    mutate(
-      prop = n/sum(n),
-      yearendpop_ped = sum(n),
-      prop_label = paste0(round(prop*100, 0), "%"),
-      n_label = formattable::comma(n, 0)
-    ) |>
-    ungroup()
-  return(df1)
-}
-
+#' Generate Highcharts Column Chart
+#'
+#' This function generates a column chart in Highcharts with custom styling
+#' for the x and y axes, data labels, tooltips, and accessibility features.
+#'
+#' @param df Dataframe containing the input data
+#' @param x_var Column name for the x-axis variable
+#' @param y_var Column name for the y-axis variable
+#' @param accessibility_text Accessibility text description for the chart
+#'
+#' @return A Highcharts column chart object
+#' @export
 fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
 
   xaxis_order <- df[[x_var]]
@@ -412,23 +589,6 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
                                                  fontSize = "1em",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) |>
-    # hc_xAxis(categories = xaxis_order) |>
-    # hc_xAxis(categories = xaxis_order,
-    #          labels = list(style = list(fontSize = '12px', fontFamily = 'Graphik'),
-    #                        useHTML = TRUE, rotation = -45, align = 'right',
-    #                        formatter = JS("function () {
-    #                            return this.value.split(' ').reduce(function (acc, word, index) {
-    #                              return acc + (index && !(index % 3) ? '<br/>' : ' ') + word;
-    #                            }, '');
-    #                          }"))
-    # ) |>
-    # hc_xAxis(categories = xaxis_order,
-    #          labels = list(style = list(fontSize = '12px', fontFamily = 'Graphik'),
-    #                        useHTML = TRUE, align = 'center',
-    #                        formatter = JS("function () {
-    #                            return this.value.split(/(?<=\\S{12})\\s+/).join('<br/>');
-    #                          }"))
-    # ) |>
     hc_xAxis(categories = xaxis_order,
              labels = list(
                formatter = JS(
@@ -483,51 +643,20 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
 
 
 
-# Retrieve and process census data for a given state
-fnc_get_census_data <- function(state) {
-  df <-
-    tidycensus::get_decennial(
-      geography = "state",
-      state = state,
-      variables = race_vars,
-      summary_var = "P3_001N",
-      year = select_year,
-      geometry = FALSE) %>%
-    clean_names() %>%
-    select(-geoid) %>%
-    mutate(
-      race = case_when(
-        variable %in% c("estimate_american_indian",
-                        "estimate_asian",
-                        "estimate_native_hawaiian_pi") ~ "Other race(s), non-Hispanic",
-        variable == "estimate_black" ~ "Black, non-Hispanic",
-        variable == "estimate_hispanic" ~ "Hispanic, any race",
-        variable == "estimate_white" ~ "White, non-Hispanic",
-        TRUE ~ "NA"
-      )
-    )
-  return(df)
-}
 
-#' Highcharts Theme for Maps
-#'
-#' This theme is specifically designed for maps.
-#' @export
-hc_theme_map <- hc_theme_merge(
-  hc_theme_smpl(),
-  base_hc_theme,
-  hc_theme(
-    chart = list(style = modifyList(common_chart_style, list(fontSize = "14px"))),
-    title = list(align = alignment, style = modifyList(common_title_style, list(fontSize = "22px"))),
-    plotOptions = list(
-      series = list(states = list(inactive = list(opacity = 1))),
-      line = list(marker = list(enabled = TRUE)),
-      spline = list(marker = list(enabled = TRUE)),
-      area = list(marker = list(enabled = TRUE)),
-      areaspline = list(marker = list(enabled = TRUE))
-    ),
-    legend = list(
-      itemStyle = modifyList(common_style, list(fontSize = "16px"))
-    )
-  )
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

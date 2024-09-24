@@ -11,8 +11,8 @@ wd <- getwd()
 
 # Get list of states where parol eligibility is the focus
 states <- "Georgia"
-  # parole_eligibility_table |> filter(abolished_discretionary_parole == "No") |>
-  # pull(state)
+states <- carl_state_notes |> filter(abolished_parole_16_total == "N") |>
+  pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template_FINAL.qmd")

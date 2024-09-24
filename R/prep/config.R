@@ -63,6 +63,9 @@ config <- list(
   sp_data_path = csg_get_project_path("AVParole")
 )
 
+# Save Sharepoint data analysis folder
+app_folder <- paste0(config$sp_data_path, "/data/analysis/app")
+
 # Most recent year of NCRP data
 select_year <- 2020
 
