@@ -59,7 +59,7 @@ div(
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility<br><br>")),
-  div(id = "bold-text", HTML("1 in 3 Incarcerated People Are In Prison Past Their Parole Eligibility")),
+  div(id = "bold-text", HTML("1 in X Incarcerated People Are In Prison Past Their Parole Eligibility")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole<br><br>"))
 )
 # div(

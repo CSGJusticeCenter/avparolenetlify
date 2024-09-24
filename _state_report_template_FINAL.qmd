@@ -428,6 +428,18 @@ if (!all(is.na(df1$total_years))) {
 }
 ```
 
+`r paste(state_sentence_avg_pe_release_race, collapse = ", ")`
+
+```{r state_lollipop_avg_pe_release_race}
+div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_avg_pe_release_race)
+```
+
+`r paste(state_sentence_avg_pe_release_race_offense, collapse = ", ")`
+
+```{r state_scatter_avg_pe_release_race_offense}
+div(id = "visualization", state_scatter_avg_pe_release_race_offense)
+```
+
 ### Gender
 
 In progress. Same type of graph as race and ethnicity tab.

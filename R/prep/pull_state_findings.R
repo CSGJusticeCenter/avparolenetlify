@@ -485,6 +485,13 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_rac
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_race.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race_offense.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_race_offense.rds"))
+
+
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for
 #            population sizes in the community."
@@ -535,5 +542,44 @@ if (state_for_report %in% names(all_scatter_los_race_offense)) {
   state_scatter_los_race_offense <- no_data_text
 }
 
+
+
+
+
+
+
+
+if (state_for_report %in% names(all_sentence_avg_pe_release_race)) {
+  state_sentence_avg_pe_release_race <-
+    all_sentence_avg_pe_release_race[[state_for_report]]
+} else {
+  state_sentence_avg_pe_release_race <- ""
+}
+
+if (state_for_report %in% names(all_sentence_avg_pe_release_race_offense)) {
+  state_sentence_avg_pe_release_race_offense <-
+    all_sentence_avg_pe_release_race_offense[[state_for_report]]
+} else {
+  state_sentence_avg_pe_release_race_offense <- ""
+}
+
+
+
+
+if (state_for_report %in% names(all_lollipop_avg_pe_release_race)) {
+  state_lollipop_avg_pe_release_race <-
+    all_lollipop_avg_pe_release_race[[state_for_report]] |>
+    hc_size(height = 150)
+} else {
+  state_lollipop_avg_pe_release_race <- no_data_text
+}
+
+if (state_for_report %in% names(all_scatter_avg_pe_release_race_offense)) {
+  state_scatter_avg_pe_release_race_offense <-
+    all_scatter_avg_pe_release_race_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_avg_pe_release_race_offense <- no_data_text
+}
 
 
