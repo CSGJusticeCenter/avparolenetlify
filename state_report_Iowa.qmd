@@ -86,7 +86,7 @@ div(id = "visualization", state_stackedbar_pop_pe_by_year)
 div(id = "small-visualization", state_bar_parole_eligibility_race)
 ```
 
-#### Sex
+#### Gender
 
 `r paste(state_sentence_parole_eligibility_sex, collapse = ", ")`
 
@@ -166,7 +166,7 @@ div(id = "visualization", state_line_population_by_year)
 div(id = "small-visualization", state_bar_population_race)
 ```
 
-#### Sex
+#### Gender
 
 `r paste(state_sentence_population_sex, collapse = ", ")`
 
@@ -261,7 +261,7 @@ div(id = "visualization", state_pie_release_type)
 div(id = "small-visualization", state_bar_releases_race)
 ```
   
-#### Sex
+#### Gender
   
 `r paste(state_sentence_releases_sex, collapse = ", ")`
 
@@ -309,6 +309,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 ### Race and Ethnicity
 
+Racial and ethnic disparities in prison incarceration represents the accumulation of disparities across the system.  
 <br>
 
 ```{r}
@@ -332,6 +333,8 @@ if (file.exists(rri_infographic_hispanic)) {
 ```
 
 ### Gender
+
+Gender disparities in prison incarceration represents the accumulation of disparities across the system.  
 
 <br>
 
@@ -366,6 +369,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
+This chart shows th average length of stay for the most serious sentenced offense by race and ethnicity.
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
@@ -374,6 +378,7 @@ div(id = "visualization", state_scatter_los_race_offense)
 
 ### Gender 
 
+This chart shows th average length of stay for the most serious sentenced offense by sex.
 `r paste(state_sentence_los_sex, collapse = ", ")`
 
 ```{r state_lollipop_los_sex}

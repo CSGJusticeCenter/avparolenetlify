@@ -17,7 +17,7 @@ total_pop_by_year <- ncrp_yearendpop |>
 
 # Filter data to people in prison for a new court commitment 1-25 year sentence lengths
 # Not including people who are failing supervision (parole return/revocation)
-filtered_ncrp_yearendpop <- filter_population_criteria(ncrp_yearendpop)
+filtered_ncrp_yearendpop <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Get total prison population for new court commitments and sentence length 1-25 years
 filtered_pop_by_year <- filtered_ncrp_yearendpop |>

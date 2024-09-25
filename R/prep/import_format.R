@@ -68,7 +68,7 @@ ncrp_releases <- ncrp_releases_combined |>
   mutate(time_between_ped_rptyear = years_to_estimated_pey,
          time_between_admisson_release =  as.numeric(relyr) - admityr,
          time_between_ped_release = as.numeric(relyr) - estimated_pey,
-         parelig_status = case_when(estimated_pey_status %in% c("past", "current") ~ "Current",
+         parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>
@@ -101,7 +101,7 @@ ncrp_releases <- ncrp_releases_combined |>
 # Factor variables
 ncrp_yearendpop <- ncrp_yearendpop_combined |>
   mutate(time_between_ped_rptyear = years_to_estimated_pey,
-         parelig_status = case_when(estimated_pey_status %in% c("past", "current") ~ "Current",
+         parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>

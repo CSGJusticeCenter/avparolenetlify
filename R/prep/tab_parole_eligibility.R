@@ -33,18 +33,21 @@
 
 # Filter the population data to include only people in prison for new court commitments
 # with sentence lengths between 1-25 years, based on our criteria
-# Also only includes states with parole systems
+# Only includes states with parole systems
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Total prison population by state and year
-# Only interested in people in prison for new court commitments and
-# with sentence lengths between 1-25 years
+# Only people in prison for new court commitments
+# with sentence lengths between 1-25 years, based on our criteria
+# Only includes states with parole systems
 ncrp_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n(), .groups = "drop")
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
-# Total prison population for new crimes/sentence lengths between 1-25 years by state and year
+# Only people in prison for new court commitments
+# with sentence lengths between 1-25 years, based on our criteria
+# Only includes states with parole systems
 ncrp_pes_subset <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   count(parelig_status) |>
@@ -57,7 +60,7 @@ ncrp_pes_subset <- ncrp_yearendpop_filtered |>
                                       TRUE ~ parelig_status),
          prop_label = paste0(
            "<div style='text-align: center;'><b>", parelig_status_1, "</b><br>",  # Center the label
-           round(prop * 100, 0), "%</div>"
+           round(prop * 100, 1), "%</div>"
          ))
 
 # VISUALIZATION: Prison Population by Parole Eligibility Status
@@ -94,7 +97,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
     hc_plotOptions(series = list(stacking = "normal",
                                  pointWidth = 40,
                                  borderWidth = 3,  # Adjust this to increase outline size
-                                 borderColor = "#FFFFFF")) |>
+                                 borderColor = "#FFFFFF",
+                                 minPointLength = 5)) |>
     hc_tooltip(formatter = JS("function () {return this.point.tooltip;}")) |>
     hc_add_series(name = "Missing or Not Parole-Eligible",
                   data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
@@ -142,7 +146,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 })
 
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
-all_stackedbar_pe_type$Georgia
+all_stackedbar_pe_type$Alabama
 
 
 
@@ -280,6 +284,12 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
       stacking = "percent"  # Stack as percentage
     ) |>
 
+    hc_plotOptions(series = list(stacking = "normal",
+                                 pointWidth = 40,
+                                 borderWidth = 3,  # Adjust this to increase outline size
+                                 borderColor = "#FFFFFF",
+                                 minPointLength = 5)) |>
+
     hc_tooltip(pointFormat = '{series.name}: <b>{point.y:.0f}%</b>') |>
     hc_add_theme(hc_theme_with_line) |>
     hc_exporting(enabled = TRUE) |>
@@ -293,15 +303,6 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
 all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
 all_stackedbar_pop_pe_by_year$Georgia
 all_stackedbar_pop_pe_by_year$Hawaii
-
-
-
-
-
-
-
-
-
 
 
 
