@@ -141,7 +141,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
       all_na == FALSE & abolished_discretionary_parole == "No" ~
         paste0("<b>", state, "</b><br>",
-               "<b>People in Prison Past Their Parole Consideration Year</b><br>",
+               "<b>People in Prison Past Their Parole Eligibility</b><br>",
                "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
                "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Percentage of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
@@ -266,7 +266,7 @@ map_percent <- highchart() |>
             ),
             # Customizing the title for the gradient legend
             title = list(
-              text = "Pct. of People in Prison Past Their Parole Consideration Year",
+              text = "Pct. of People in Prison Past Their Parole Eligibility",
               style = list(fontWeight = "normal", fontSize = "14px")
             ),
             # Customizing the legend for abolished discretionary parole
@@ -315,12 +315,12 @@ map_percent <- highchart() |>
     enabled = TRUE,
     keyboardNavigation = list(enabled = TRUE),
     linkedDescription =
-      paste0("This map shows the proportion of people in prison who are past their parole consideration year."),
+      paste0("This map shows the proportion of people in prison who are past their parole eligibility year."),
     landmarkVerbosity = "one"
   ),
   area = list(accessibility = list(description = paste0("TEXT")))
   ) |>
-  hc_title(text = paste0("People in Prison Past Their Parole Consideration Year in ", select_year),
+  hc_title(text = paste0("People in Prison Past Their Parole Eligibility in ", select_year),
            align = "left")
 map_percent
 

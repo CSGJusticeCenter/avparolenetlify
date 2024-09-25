@@ -563,7 +563,7 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = paste0("Prison Population by Offense Type, ", select_year)) |>
+    hc_title(text = paste0("Prison Releases by Offense Type, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5))
   return(highcharts)

@@ -28,12 +28,14 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
 num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE) 
+
+# State leaders across the United States are grappling with multiple public safety challenges, including shortages in the correctional workforce, limited access to behavioral health services, and the ongoing task of supporting successful reentry for individuals returning from incarceration. Parole release discretion plays a pivotal role in addressing these challenges within 34 state justice systems.
+# 
+# In 2020, there were 88,000 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. The significant number of people who are parole-eligible but have not been released underscores the importance of timely and appropriate parole decisions. Effective parole decision-making is vital not only to managing prison capacity and addressing resource constraints but also to promoting successful reentry, improving public safety outcomes, and ensuring that correctional systems are aligned with best practices in public safety and rehabilitation.
 ```
 
 <div id="body-section">
-State leaders across the United States are grappling with multiple public safety challenges, including shortages in the correctional workforce, limited access to behavioral health services, and the ongoing task of supporting successful reentry for individuals returning from incarceration. Parole release discretion plays a pivotal role in addressing these challenges within 34 state justice systems.
 
-In 2020, there were 88,000 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. The accumulation of people who are eligible but not released underscores the importance of timely and appropriate parole decisions, which are crucial for managing prison capacity and ensuring that correctional systems can operate effectively amid staffing and resource constraints.   
 
 ```{r}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
@@ -58,8 +60,8 @@ div(
   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility<br><br>")),
-  div(id = "bold-text", HTML("1 in X Incarcerated People Are In Prison Past Their Parole Eligibility")),
+  div(id = "bold-text", HTML("People* Prison Past Their<br>Parole Eligibility<br><br>")),
+  div(id = "bold-text", HTML("1 in X Incarcerated People* Are In Prison Past Their Parole Eligibility")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole<br><br>"))
 )
 # div(
@@ -76,6 +78,11 @@ div(
 ```
 </div>
 <br>
+
+<div style="font-size: 0.8em; color: black; text-align: center;">
+*Only includes people in prison for new offenses and sentence lengths between 1 to 25 years.
+</div>
+
 <div class="divider"></div>
 <br>
 <div id="map-section">
@@ -90,8 +97,6 @@ map_percent |>
     hc_chart(marginTop = 0, marginBottom = -50, height = 740)
 ```
 </div>
-
-<a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About this data</a>
 
 <div id="body-section">
 <div class="divider"></div>
@@ -234,7 +239,6 @@ reactable(
 
 <div id="footnotes-text"><br>*Includes people in prison for new crimes and with original sentence lengths between 1 to 25 years. Does not include people in prison for parole revocations or sentence lengths less than one year or more than 25 years.<br></div>
 
-<a href="https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp" style="font-size: 0.7em; color: gray;">About This Data</a>
 <a href="" style="font-size: 0.7em; color: gray;">Download Table</a>
 
 <br>

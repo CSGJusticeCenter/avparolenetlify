@@ -11,7 +11,7 @@
 # LOS/Time Served by Race
 # ---------------------------------------------------------------------------- #
 
-# Calculate average length of stay by race and state
+# Calculate average time served by race and state
 ncrp_race_los <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(race != "Unknown") |>
@@ -183,7 +183,7 @@ all_lollipop_los_race$Georgia
 # Time Served by Sex
 # ---------------------------------------------------------------------------- #
 
-# Calculate average length of stay by sex and state
+# Calculate average time served by sex and state
 ncrp_sex_los <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(sex != "Unknown") |>
@@ -335,7 +335,7 @@ all_lollipop_los_sex$Georgia
 # Time Served by Offense and Race
 # ---------------------------------------------------------------------------- #
 
-# Calculate the average length of stay by race, state, and by offense type
+# Calculate the average time served by race, state, and by offense type
 ncrp_race_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(race != "Unknown") |>
@@ -415,7 +415,7 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
   # Construct the sentence with special handling for "people of Other race(s)"
   sentence <- paste0(
-    "For ", tolower(offense_type), " offenses, ", race_longest,
+    "The largest disparity was observed among ", tolower(offense_type), " offenses, where ", race_longest,
     " people spent ", disparity_diff, " more years in prison on average compared to ",
     if (race_shortest == "people of Other race(s)") {
       race_shortest
@@ -474,14 +474,14 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
     hc_xAxis(
       lineColor = "black",
       tickColor = "black",
-      title = list(text = "Average Length of Stay (Years)",
+      title = list(text = "Average Time Served (Years)",
                    style = list(color = "black")),
       labels = list(style = list(color = "black")),
       gridLineDashStyle = "Dash",  # Add dashed grid lines
       gridLineWidth = 1,           # Ensure grid lines are visible
       gridLineColor = lightgray       # Set grid line color
     ) |>
-    hc_title(text = "Average Length of Stay by Offense and Race and Ethnicity") |>
+    hc_title(text = "Average Time Served by Offense and Race and Ethnicity") |>
     hc_colors(c(color4, color2, color5, color3)) |>
     hc_exporting(enabled = TRUE) |>
     hc_add_theme(base_hc_theme) |>
@@ -510,7 +510,7 @@ all_scatter_los_race_offense$Idaho # no LOS?
 # Time Served by Offense and Sex
 # ---------------------------------------------------------------------------- #
 
-# Calculate the average length of stay by sex, state, and offense type
+# Calculate the average time served by sex, state, and offense type
 ncrp_sex_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(sex != "Unknown") |>
@@ -617,14 +617,14 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
     hc_xAxis(
       lineColor = "black",
       tickColor = "black",
-      title = list(text = "Average Length of Stay (Years)",
+      title = list(text = "Average Time Served (Years)",
                    style = list(color = "black")),
       labels = list(style = list(color = "black")),
       gridLineDashStyle = "Dash",  # Add dashed grid lines
       gridLineWidth = 1,           # Ensure grid lines are visible
       gridLineColor = lightgray       # Set grid line color
     ) |>
-    hc_title(text = "Average Length of Stay by Offense and Sex") |>
+    hc_title(text = "Average Time Served by Offense and Sex") |>
     hc_colors(c(color2, color4)) |>
     hc_exporting(enabled = TRUE) |>
     hc_add_theme(base_hc_theme) |>
@@ -1214,9 +1214,9 @@ all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   # Construct the sentence summarizing the disparity.
   sentence <- paste0(
-    "For ", offense_type, " offenses, ", race_longest_adjusted,
+    "The largest disparity observed was for ", offense_type, " offenses, where ", race_longest_adjusted,
     " had ", disparity_diff, " more years in prison past parole eligibility on average compared to ",
-    race_shortest_adjusted, " people, who had the time served for these offenses."
+    race_shortest_adjusted, " people, who had the shortest time in prison past parole eligibility for these offenses."
   )
 
   return(sentence)  # Return the constructed sentence for the state.

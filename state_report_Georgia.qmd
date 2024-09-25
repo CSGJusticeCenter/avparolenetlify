@@ -53,6 +53,8 @@ div(
 
 ## How Parole Eligibility is Determined
 
+Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
+
 `r paste(parole_eligibility_criteria, collapse = ", ")`
 
 <br>
@@ -135,8 +137,6 @@ div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 3) Missing data patterns"
 - Jess S.
 
-<br><br><br>
-
 
 
 
@@ -203,8 +203,6 @@ div(id = "visualization", state_bar_population_fbi_index)
 ```{r}
 div(id = "visualization", state_bar_population_sentlgth)
 ```
-
-<br><br><br>
 
 
 
@@ -290,8 +288,6 @@ div(id = "small-visualization", state_bar_releases_agerlse)
 div(id = "visualization", state_bar_releases_fbi_index)
 ```
 
-<br><div class="divider"></div>
-
 
 
 
@@ -369,7 +365,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
-This chart shows th average length of stay for the most serious sentenced offense by race and ethnicity.
+This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity. 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
@@ -378,7 +374,7 @@ div(id = "visualization", state_scatter_los_race_offense)
 
 ### Gender 
 
-This chart shows th average length of stay for the most serious sentenced offense by sex.
+This chart shows the average time served in prison for the most serious sentenced offense by gender. 
 `r paste(state_sentence_los_sex, collapse = ", ")`
 
 ```{r state_lollipop_los_sex}
@@ -554,8 +550,6 @@ div(id = "visualization", state_scatter_avg_pe_release_sex_offense)
 <div class="divider"></div>
 
 
-
-
 ## How Disparities Are Calculated
 
 While White, Black, and Hispanic are not the only race and ethnicity categories found in the U.S., NCRP only provides four categories: White, Black, Hispanic, and Other. Further categories will be added in future data collections by the CSG Justice Center. Additionally, the term Hispanic is used here to maintain consistency with the data source material.
@@ -564,21 +558,11 @@ State data broken down by race and ethnicity were pulled from National Correctio
 
 *States vary in how they collect and report information about race and ethnicity. Some states use the race or ethnicity recorded by intake officers, while other states allow individuals to identify their own race and ethnicity. Furthermore, some states combine race and ethnicity into one category, while others separate them into two distinct items. These differences can result in an incomplete count of Hispanic individuals and those of mixed race in state reports. The US Census allows individuals to self-identify their race and ethnicity separately. The variation in practices across states and between state and Federal data reporting systems may result in a deflated RRI for Hispanic individuals. These differences can result in an incomplete count of Hispanic individuals and those of mixed race in state reports. Conversely, it can result in an overcount of people of other races, especially non-Hispanic White people.*
 
-<br><br>
-
-
-
-
-
-
-
-
-
-
-
-
-
 :::
+
+<div class="divider"></div>
+
+## End Notes
 
 </div>
 

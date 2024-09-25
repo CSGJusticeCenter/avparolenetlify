@@ -1,3 +1,17 @@
+
+# Notes from Jess
+# I think we should handle missing differently from unknown.
+# Let's report 'Unknown" when it is a defined category.
+# Let's use valid percent for everything else and add an asterisk that reports
+# the % of missing data (or something like that)
+
+# I don't think we should include any state without eligibility data --
+# there is no reason to include the other tabs since the purpose of this
+# project is parole eligibility.  If there are data missing on one or two
+# metrics, I think we just say "Data Unavailable" in the place of those data
+# visualizations.  Happy to talk through specific examples if this general rule doesn't make sense!
+
+
 graph$Alabama             #
 graph$Alaska              #
 graph$Arkansas            #
