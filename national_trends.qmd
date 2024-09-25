@@ -1,5 +1,5 @@
 ---
-title: "The Discretionary Power of Parole" 
+title: "National Trends" 
 format:
   html:
     css: styles.css
@@ -60,7 +60,7 @@ div(
   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("People* Prison Past Their<br>Parole Eligibility<br><br>")),
+  div(id = "bold-text", HTML("People* In Prison Past Their<br>Parole Eligibility<br><br>")),
   div(id = "bold-text", HTML("1 in X Incarcerated People* Are In Prison Past Their Parole Eligibility")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole<br><br>"))
 )
@@ -97,10 +97,10 @@ map_percent |>
     hc_chart(marginTop = 0, marginBottom = -50, height = 740)
 ```
 </div>
-
+<br>
 <div id="body-section">
 <div class="divider"></div>
-## Parole Eligibility by State
+## Parole Eligibility Data by State
 
 This table provides a comprehensive overview of state-level prison populations*, highlighting the percentage and number of people in prison past their parole eligibility year, alongside details about whether the state has abolished discretionary parole and the number of parole board members.
 
