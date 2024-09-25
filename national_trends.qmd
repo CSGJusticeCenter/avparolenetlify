@@ -100,9 +100,10 @@ map_percent |>
 <br>
 <div id="body-section">
 <div class="divider"></div>
+
 ## Parole Eligibility Data by State
 
-This table provides a comprehensive overview of state-level prison populations*, highlighting the percentage and number of people in prison past their parole eligibility year, alongside details about whether the state has abolished discretionary parole and the number of parole board members.
+This table offers a detailed snapshot of state-level prison populations in 2020*, including the percentage and number of individuals incarcerated beyond their parole eligibility year. It also highlights whether the state has abolished discretionary parole and provides the number of parole board members for each state.
 
 ```{r table}
 # Custom function to create data bars with NA handling
