@@ -177,8 +177,7 @@ reactable(
   parole_eligibility_table,
   pagination = FALSE,
   searchable = TRUE,
-  defaultSortOrder = "desc",
-  defaultSorted = "current_perc",
+  defaultSorted = c("abolished_discretionary_parole", "current_perc"),
   defaultColDef = colDef(
     headerStyle = list(fontWeight = "normal"),
     sortable = TRUE,
@@ -203,7 +202,8 @@ reactable(
       name = "Pct. of People in Prison",
       align = "left",
       width = 150,
-      cell = data_bars_custom
+      cell = data_bars_custom,
+      defaultSortOrder = "desc"  # Sort descending
     ),
     current_count = colDef(
       name = "Number of People", 
@@ -217,7 +217,8 @@ reactable(
     ),
     abolished_discretionary_parole = colDef(
       name = "Abolished Discretionary Parole", 
-      align = "right"
+      align = "right",
+      defaultSortOrder = "asc"  # Sort ascending
     ),
     parole_board_members = colDef(
       name = "Parole Board Members", 
@@ -236,6 +237,7 @@ reactable(
     )
   )
 )
+
 ```
 
 <div id="footnotes-text"><br>*Includes people in prison for new crimes and with original sentence lengths between 1 to 25 years. Does not include people in prison for parole revocations or sentence lengths less than one year or more than 25 years.<br></div>
