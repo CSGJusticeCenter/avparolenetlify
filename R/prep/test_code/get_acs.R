@@ -61,10 +61,12 @@ get_acs_gender_pop <- function(year) {
 # Fetch race data for all states and bind rows
 census_state_race_population_list <- lapply(states, function(state) get_acs_race_pop(2019))
 census_state_race_population <- bind_rows(census_state_race_population_list)
+census_state_race_population <- census_state_race_population |> rename(state = name)
 
 # Fetch gender data for all states and bind rows
 census_state_gender_population_list <- lapply(states, function(state) get_acs_gender_pop(2019))
 census_state_gender_population <- bind_rows(census_state_gender_population_list)
+census_state_gender_population <- census_state_gender_population |> rename(state = name)
 
 # Process race data: group and summarize
 census_state_race_population <- census_state_race_population |>
@@ -83,7 +85,7 @@ merged_race_data <- census_state_race_population %>%
 
 # Merge gender population data with prison population data
 merged_gender_data <- census_state_gender_population %>%
-  inner_join(bjs_prison_pop_by_gender_2020, by = c("state", "gender")) %>%
+  inner_join(bjs_prison_pop_by_sex_2022, by = c("state", "gender" = "sex")) %>%   # CHANGE TO 2020 data ???????????????????????
   rename(prison_population = n)
 
 # Calculate incarceration rate per 100,000 for race

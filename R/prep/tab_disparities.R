@@ -789,7 +789,8 @@ all_lollipop_avg_pe_release_race$Georgia
 ncrp_avg_pe_release_race_offese <- ncrp_pe_release |>
   filter(!is.na(race) & !is.na(fbi_index)) |>
   group_by(state, race, fbi_index) |>
-  summarise(avg_years = mean(time_between_ped_release, na.rm = TRUE),
+  summarise(total_years = sum(time_between_ped_release, na.rm = TRUE),
+            avg_years = mean(time_between_ped_release, na.rm = TRUE),
             people_released = n(),
             .groups = "drop")
 

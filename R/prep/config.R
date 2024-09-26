@@ -7,12 +7,12 @@
 #    This script is responsible for setting up the environment for the AV Parole project.
 #    It includes the following tasks:
 #    1. Selecting the year for analysis.
-#    2. Setting the project path and data path.
+#    2. Setting the project path and data paths.
 #    3. Providing installation instructions for critical packages.
 #    4. Loading all necessary R packages.
-#    5. Adding custom fonts for visual consistency in plots.
+#    5. Adding custom fonts.
 #    6. Configuring Highcharter options for data visualization.
-#    7. Defining color schemes for consistent and visually appealing graphics.
+#    7. Defining color schemes.
 #
 #    Usage:
 #    - This script should be sourced at the beginning of your analysis scripts to ensure
@@ -63,13 +63,16 @@ config <- list(
   sp_data_path = csg_get_project_path("AVParole")
 )
 
-# Save Sharepoint data analysis folder
-app_folder <- paste0(config$sp_data_path, "/data/analysis/app")
+# Save Sharepoint data analysis and deliverables folder
+app_folder <- file.path(config$sp_data_path, "data", "analysis", "app")
+deliverables_folder <- file.path(config$sp_data_path, "data", "deliverables", "key_findings")
 
 # Most recent year of NCRP data
 select_year <- 2020
 
+# Choose alignment for content (left or center)
 alignment <- "center"
+
 #------ Fonts ------#
 
 # Add custom fonts

@@ -483,6 +483,9 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_rac
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
+
 load(file = paste0(config$sp_data_path, "/data/analysis/app/ncrp_avg_pe_release_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_race.rds"))
@@ -563,7 +566,18 @@ if (state_for_report %in% names(all_scatter_los_race_offense)) {
 
 
 
-
+if (state_for_report %in% names(all_sentence_pe_rri_black)) {
+  state_sentence_pe_rri_black <-
+    all_sentence_pe_rri_black[[state_for_report]]
+} else {
+  state_sentence_pe_rri_black <- ""
+}
+if (state_for_report %in% names(all_sentence_pe_rri_hispanic)) {
+  state_sentence_pe_rri_hispanic <-
+    all_sentence_pe_rri_hispanic[[state_for_report]]
+} else {
+  state_sentence_pe_rri_hispanic <- ""
+}
 
 if (state_for_report %in% names(all_sentence_avg_pe_release_race)) {
   state_sentence_avg_pe_release_race <-

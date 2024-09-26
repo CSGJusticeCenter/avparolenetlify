@@ -589,12 +589,16 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
                                                  fontSize = "1em",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) |>
+    # hc_xAxis(categories = xaxis_order,
+    #          labels = list(
+    #            style = list(fontSize = "1em", fontFamily = "Graphik")
+    #          )) |>
     hc_xAxis(categories = xaxis_order,
              labels = list(
                formatter = JS(
                  "function() {
                     var label = this.value;
-                    var maxLength = 25;
+                    var maxLength = 15;
                     if (label.length > maxLength) {
                       var words = label.split(' ');
                       var result = [];
@@ -621,9 +625,12 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
                ),
                style = list(fontSize = "1em", fontFamily = "Graphik")
              )) |>
-    hc_yAxis(labels = list(enabled = TRUE),
-             title = list(text = "")
-    ) |>
+    hc_yAxis(max = 100,
+             labels = list(
+               formatter = JS("function() {
+                  return this.value + '%';
+                }")
+             )) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
     hc_legend(enabled = FALSE) |>

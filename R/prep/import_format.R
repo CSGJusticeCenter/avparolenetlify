@@ -4,9 +4,15 @@
 # Authors: Mari Roberts
 # Date last updated: September 24, 2024 (MAR)
 # Description:
-#    Import NCRP data (admissions, population, year end population)
-#    Import BJS Prisoners data
-#    Prepares files for analysis
+#    This script is responsible for importing, cleaning, and preparing various datasets
+#    for the AV Parole project. It handles the following tasks:
+#    1. Import NCRP data (admissions, population, year-end population) and BJS Prisoners data.
+#    2. Process NCRP data by merging release and year-end files, calculating metrics,
+#       and transforming variables for analysis.
+#    3. Clean and structure BJS Prisoners data by race, ethnicity, and sex for different years.
+#    4. Import hex map for the National Trends page.
+#    5. Load external data from the Robina Institute and Carl Reynold's state notes on parole eligibility.
+#    6. Save cleaned and transformed datasets for use in downstream analyses and visualizations.
 #######################################
 
 #------------------------------------------------------------------------------#
@@ -16,13 +22,16 @@
 # Hex map for national trends page
 # Load hexgrid shapefile and select only the 'state_abb' column
 # Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
-hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
-  select(state_abb = iso3166_2) |>
-  filter(state_abb != "DC") |>
-  st_transform(3857) |>
-  sf_geojson() |>
-  fromJSON(simplifyVector = FALSE)
-
+hex_gj <- if (file.exists(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson"))) {
+  read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
+    select(state_abb = iso3166_2) |>
+    filter(state_abb != "DC") |>
+    st_transform(3857) |>
+    sf_geojson() |>
+    fromJSON(simplifyVector = FALSE)
+} else {
+  stop("File not found: Check file path")
+}
 
 
 
@@ -31,13 +40,11 @@ hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_
 #------------------------------------------------------------------------------#
 
 # Load Carl's state notes, which contains parole eligibility information for each state
-carl_state_notes <- read.xlsx(paste0(config$sp_data_path, "/data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
+carl_state_notes <- read.xlsx(file.path(config$sp_data_path, "data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
   clean_names()
 
-# Load additional parole information by state from an Excel sheet
-# Contains details such as the number of parole board members
-parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
-                                         "/background/app/Parole Info by State.xlsx"),
+# Load additional parole information by state from an Excel sheet (includes details such as the number of parole board members)
+parole_info_by_state <- read.xlsx(file.path(config$sp_data_path, "background/app/Parole Info by State.xlsx"),
                                   sheet = "Overall") |>
   clean_names()
 
@@ -49,11 +56,13 @@ parole_info_by_state <- read.xlsx(paste0(config$sp_data_path,
 # Seba Guzman's Imputed Data
 #------------------------------------------------------------------------------#
 
-# Define file paths (update paths to your actual locations)
-release_files <- list.files(path = paste0(config$sp_data_path, "/data/analysis/clean_files/cleaning_processing"),
+# Define file paths for release and year-end population files (update paths if necessary)
+release_files <- list.files(path = file.path(config$sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
-yearendpop_files <- list.files(path = paste0(config$sp_data_path, "/data/analysis/clean_files/cleaning_processing"),
+
+yearendpop_files <- list.files(path = file.path(config$sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
+
 
 # Read and combine release files
 ncrp_releases_combined <- bind_rows(lapply(release_files, fnc_read_and_add_year))
@@ -63,19 +72,27 @@ ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_
 
 # Transform the combined release data
 # Calculate PE metrics
+# Combine past and current to get all who are currently eligible
 # Factor variables
+# Warning OK - changes "NA" to actual NA
+        # Warning message:
+        #   There were 2 warnings in `mutate()`.
+        # The first warning was:
+        #   ℹ In argument: `time_between_admisson_release = as.numeric(relyr) - as.numeric(admityr)`.
+        # Caused by warning:
+        #   ! NAs introduced by coercion
 ncrp_releases <- ncrp_releases_combined |>
   mutate(time_between_ped_rptyear = years_to_estimated_pey,
-         time_between_admisson_release =  as.numeric(relyr) - admityr,
-         time_between_ped_release = as.numeric(relyr) - estimated_pey,
+         time_between_admisson_release =  as.numeric(relyr) - as.numeric(admityr),
+         time_between_ped_release = as.numeric(relyr) - as.numeric(estimated_pey),
          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>
-  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
+  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "NA", .))) |>
   mutate(offdetail = trimws(offdetail)) |>
-  fnc_create_fbi_index() |>
-  fnc_create_admtype() |>
+  fnc_create_fbi_index() |> # Redo offense types
+  fnc_create_admtype() |>   # Redo admission types
   mutate(
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
@@ -98,6 +115,7 @@ ncrp_releases <- ncrp_releases_combined |>
 
 # Similarly transform the year-end population data
 # Calculate PE metrics
+# Combine past and current to get all who are currently eligible
 # Factor variables
 ncrp_yearendpop <- ncrp_yearendpop_combined |>
   mutate(time_between_ped_rptyear = years_to_estimated_pey,
@@ -106,8 +124,8 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>
   mutate(offdetail = trimws(offdetail)) |>
-  fnc_create_fbi_index() |>
-  fnc_create_admtype() |>
+  fnc_create_fbi_index() |> # Redo offense types
+  fnc_create_admtype() |>   # Redo admission types
   mutate(across(c(race, ageyrend, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
   mutate(
     race = factor(race,
@@ -142,10 +160,14 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
 
 # Import BJS prisoners data for 2020 and 2022 (not sure which one will be used yet).
 # Skipping the first 10 rows due to headers and metadata.
-bjs_prison_pop_by_race_state_2020 <- read.csv(paste0(config$sp_data_path,
-                                                     "/data/raw/BJS Prison Pop/p20st/p20stat02.csv"), skip = 10)
-bjs_prison_pop_by_race_state_2022 <- read.csv(paste0(config$sp_data_path,
-                                                     "/data/raw/BJS Prison Pop/p22st/p22stat01.csv"), skip = 10)
+bjs_prison_pop_by_race_state_2020 <- read.csv(file.path(config$sp_data_path,
+                                                        "data/raw/BJS Prison Pop/p20st/p20stat02.csv"),
+                                              skip = 10)
+
+bjs_prison_pop_by_race_state_2022 <- read.csv(file.path(config$sp_data_path,
+                                                        "data/raw/BJS Prison Pop/p22st/p22stat01.csv"),
+                                              skip = 10)
+
 
 # Define a list of filenames for different years along with the specific column needed for the data.
 # The 'col' value in each list corresponds to the column that holds the relevant data in the CSV file.
@@ -282,8 +304,11 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   select(-total)|>
   mutate(state = str_replace(state, "/.*", ""))
 
-# Read and clean BJS population data by sex for 2022
-bjs_prison_pop_by_sex_2022_raw <- read_csv("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/BJS Prison Pop/p22st/p22stt02.csv")
+
+# Read and clean BJS population data by sex for 2022 ?????????????????????????????????????????????????????? CHECK IF I NEED THIS BEFORE DOING MORE WORK
+bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(config$sp_data_path,
+                                                        "data/raw/BJS Prison Pop/p22st/p22stt02.csv"),
+                                              skip = 10)
 
 bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   clean_names() |>

@@ -25,6 +25,8 @@ source("R/prep/pull_state_findings.R")
 
 rri_infographic_black <- paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_black_", state_for_report, ".png")
 rri_infographic_hispanic <- paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", state_for_report, ".png")
+pe_rri_infographic_black <- paste0(config$sp_data_path, "/data/analysis/app/pe_rri_infographic_black_", state_for_report, ".png")
+pe_rri_infographic_hispanic <- paste0(config$sp_data_path, "/data/analysis/app/pe_rri_infographic_hispanic_", state_for_report, ".png")
 ```
 
 <div id="state-body-section">
@@ -328,6 +330,8 @@ if (file.exists(rri_infographic_hispanic)) {
 # }
 ```
 
+`r paste(state_sentence_rri_hispanic, collapse = ", ")`
+
 ### Gender
 
 Gender disparities in prison incarceration represents the accumulation of disparities across the system.  
@@ -398,6 +402,24 @@ div(id = "visualization", state_scatter_los_sex_offense)
 ::: {.panel-tabset .custom-tabs}
 
 ### Race and Ethnicity
+
+<br>
+
+```{r}
+if (file.exists(pe_rri_infographic_black)) {
+  knitr::include_graphics(pe_rri_infographic_black)
+}
+```
+
+`r paste(state_sentence_pe_rri_black, collapse = ", ")`
+
+```{r}
+if (file.exists(pe_rri_infographic_hispanic)) {
+    knitr::include_graphics(pe_rri_infographic_hispanic)
+}
+```
+
+`r paste(state_sentence_pe_rri_hispanic, collapse = ", ")`
 
 ### Gender
 
@@ -563,6 +585,8 @@ State data broken down by race and ethnicity were pulled from National Correctio
 <div class="divider"></div>
 
 ## End Notes
+
+Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp; “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program.  
 
 </div>
 
