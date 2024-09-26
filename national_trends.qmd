@@ -1,5 +1,5 @@
 ---
-title: "National Trends" 
+title: "National Snapshot" 
 format:
   html:
     css: styles.css
@@ -218,6 +218,7 @@ reactable(
     abolished_discretionary_parole = colDef(
       name = "Abolished Discretionary Parole", 
       align = "right",
+      width = 150,
       defaultSortOrder = "asc"  # Sort ascending
     ),
     parole_board_members = colDef(
