@@ -12,7 +12,7 @@ website:
     left:
       - text: "Project Overview"
         href: index.html
-      - text: "National Trends"
+      - text: "National Snapshot"
         href: national_trends.html
       - text: "State Reports"
         href: state_report_links.html

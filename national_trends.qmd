@@ -1,5 +1,5 @@
 ---
-title: "National Snapshot" 
+title: "Parole Eligibility: 2023 Projections" 
 format:
   html:
     css: styles.css
@@ -21,23 +21,35 @@ knitr::opts_chunk$set(
 
 source("R/prep/config.R")
 
-parole_elig_txt <- "Parole eligibility is a critical milestone in the criminal justice system, marking the point at which incarcerated individuals become eligible for conditional release. This eligibility is determined by several factors including the nature of the crime, the length of the sentence, behavior while incarcerated, and state-specific guidelines.<br>"
-
 # Load prepared data
 load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
-num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE) 
+fnc_round_to_power <- function(x) {
+  # Check if the value is NA, and return NA if true
+  if (is.na(x)) {
+    return(NA)
+  }
+  
+  # Determine the number of digits in the number
+  digits <- nchar(floor(x))
+  
+  # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
+  if (digits >= 3) {
+    power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
+    floor(x / power) * power  # Use floor to always round down
+  } else {
+    round(x, -1)
+  }
+}
 
-# State leaders across the United States are grappling with multiple public safety challenges, including shortages in the correctional workforce, limited access to behavioral health services, and the ongoing task of supporting successful reentry for individuals returning from incarceration. Parole release discretion plays a pivotal role in addressing these challenges within 34 state justice systems.
-# 
-# In 2020, there were 88,000 people in prison past their parole eligibility year, highlighting the critical role that parole boards play in determining the timing of release. The significant number of people who are parole-eligible but have not been released underscores the importance of timely and appropriate parole decisions. Effective parole decision-making is vital not only to managing prison capacity and addressing resource constraints but also to promoting successful reentry, improving public safety outcomes, and ensuring that correctional systems are aligned with best practices in public safety and rehabilitation.
+num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
+num_people_current_rounded <- fnc_round_to_power(num_people_current)
 ```
 
 <div id="body-section">
 
-
-```{r}
+```{r highlights}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
 filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_discretionary_parole == "No", ]
 
@@ -57,7 +69,7 @@ div(
     grid-column-gap: 20px; 
     align-items: end;
   ",
-  div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
+  div(id = "national-highlight", formattable::comma(num_people_current_rounded, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("People* In Prison Past Their<br>Parole Eligibility<br><br>")),
@@ -80,21 +92,27 @@ div(
 <br>
 
 <div style="font-size: 0.8em; color: black; text-align: center;">
-*Only includes people in prison for new offenses and sentence lengths between 1 to 25 years.
+*Includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.
 </div>
 
 <div class="divider"></div>
 <br>
 <div id="map-section">
 ```{r map}
-map_percent |> 
-    hc_size(height = 690) |> 
+# map_percent |> 
+#     hc_size(height = 690) |> 
+#     hc_exporting(enabled = TRUE,
+#                  buttons = list(contextButton = list(align = 'right',
+#                                                      verticalAlign = 'top',
+#                                                      y = 0,
+#                                                      x = -5))) |> 
+#     hc_chart(marginTop = 0, marginBottom = -50, height = 740)
+map_percent |>
     hc_exporting(enabled = TRUE,
                  buttons = list(contextButton = list(align = 'right',
                                                      verticalAlign = 'top',
                                                      y = 0,
-                                                     x = -5))) |> 
-    hc_chart(marginTop = 0, marginBottom = -50, height = 740)
+                                                     x = -5)))
 ```
 </div>
 <br>
@@ -103,7 +121,7 @@ map_percent |>
 
 ## Parole Eligibility Data by State
 
-This table offers a detailed snapshot of state-level prison populations* in 2020, including the percentage and number of individuals incarcerated beyond their parole eligibility. It also highlights whether the state has abolished discretionary parole and provides the number of parole board members for each state.
+This table provides a detailed projection of the 2023 snapshot of state-level prison populations*, including the percentage and number of individuals incarcerated beyond their parole eligibility. It also highlights the number of parole board members for each state.
 
 ```{r table}
 # Custom function to create data bars with NA handling
@@ -127,52 +145,6 @@ style_cells <- function(value, color) {
 
 parole_eligibility_table$filtered_total_pop <- as.numeric(parole_eligibility_table$filtered_total_pop)
 
-# https://kcuilla.github.io/reactablefmtr/articles/data_bars.html
-# reactable(
-#   parole_eligibility_table,
-#   pagination = FALSE,
-#   searchable = TRUE,
-#   defaultSortOrder = "desc",
-#   defaultSorted = "current_perc",
-#   defaultColDef = colDef(
-#     headerStyle = list(fontWeight = "normal"),
-#     sortable = TRUE,
-#     na = "-" 
-#   ),
-#   columns = list(
-#     state = colDef(name = "State", 
-#                    align = "left", 
-#                    width = 175,
-#                     cell = function(value) {
-#         url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
-#         tags$a(href = url, target = "_blank", style = "color:black;", value)
-#       }),
-#     current_perc = colDef(
-#       name = "Pct. of People in Prison",
-#       align = "left",
-#       width = 150,
-#       cell = data_bars_custom
-#     ),
-#     current_count = colDef(name = "Number of People", 
-#                            align = "right",
-#                            format = colFormat(separators = TRUE)),
-#     filtered_total_pop = colDef(name = "Prison Population*", 
-#                                 align = "right",
-#                                 format = colFormat(separators = TRUE)                           ),
-#     abolished_discretionary_parole = colDef(name = "Abolished Discretionary Parole", 
-#                                             align = "right"
-#                                             ),
-#     parole_board_members = colDef(name = "Parole Board Members", 
-#                                   align = "right"
-#                                   ),
-#     ratio = colDef(show = F, name = "Ratio", 
-#                    align = "center")
-#   ),
-#   columnGroups = list(
-#     colGroup(name = "In Prison Past Their Parole Eligibility Year", columns = c("current_perc", "current_count"))
-#   )
-# )
-# 
 reactable(
   parole_eligibility_table,
   pagination = FALSE,
@@ -189,8 +161,8 @@ reactable(
       align = "left", 
       width = 175,
       cell = function(value, index) {
-        # Use index to reference the correct row
-        if (parole_eligibility_table$abolished_discretionary_parole[index] == "No") {
+        # Check if current_perc is NA or if discretionary parole is abolished
+        if (!is.na(parole_eligibility_table$current_perc[index])) {
           url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
           tags$a(href = url, target = "_blank", style = "color:black;", value)
         } else {
@@ -208,14 +180,27 @@ reactable(
     current_count = colDef(
       name = "Number of People", 
       align = "right",
-      format = colFormat(separators = TRUE)
-    ),
+      format = colFormat(separators = TRUE),
+       cell = function(value, index) {
+          # Check if the value is NA (no data)
+          if (is.na(value)) {
+            return("-")
+          }
+          # Otherwise, round the value using the custom function and add commas
+          else {
+            rounded_value <- fnc_round_to_power(value)
+            formatted_value <- format(rounded_value, big.mark = ",", scientific = FALSE)
+            return(formatted_value)
+          }
+        }
+      ),
     filtered_total_pop = colDef(
       name = "Prison Population*", 
       align = "right",
       format = colFormat(separators = TRUE)
     ),
     abolished_discretionary_parole = colDef(
+      show = F,
       name = "Abolished Discretionary Parole", 
       align = "right",
       width = 150,
@@ -239,17 +224,36 @@ reactable(
   )
 )
 
+
+#       cell = function(value, index) {
+#     # Check if discretionary parole is abolished
+#     if (parole_eligibility_table$abolished_discretionary_parole[index] == "Yes") {
+#       return("Abolished Parole")
+#     }
+#     # Check if the value is NA and parole is not abolished
+#     else if (is.na(value) && parole_eligibility_table$abolished_discretionary_parole[index] == "No") {
+#       return("Data not available")
+#     }
+#     # Otherwise, round the value using the custom function
+#     else {
+#       return(fnc_round_to_power(value))
+#     }
+#   }
+# )
 ```
 
-<div id="footnotes-text"><br>*Includes people in prison for new crimes and with original sentence lengths between 1 to 25 years. Does not include people in prison for parole revocations or sentence lengths less than one year or more than 25 years.<br></div>
-
+<div id="footnotes-text"><br>*Includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.<br>The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
 <a href="" style="font-size: 0.7em; color: gray;">Download Table</a>
-
 <br>
 </div>
+<div class="divider"></div>
 <br>
 
+## End Notes
 
+Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population of individuals who remain eligible for parole release under the previous system.
+
+Data analysis was conducted using information from the National Corrections Reporting Program. National Corrections Reporting Program (NCRP), accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp.
 
 
 

@@ -249,24 +249,39 @@ fnc_get_census_data <- function(state) {
 #' filtered_data <- filter_population_criteria(prison_data)
 #' }
 fnc_filter_pe_population_criteria <- function(data,
-                                       admtype_filter = "New court commitment",
-                                       sentence_lengths = c("1-1.9 years",
-                                                            "2-4.9 years",
-                                                            "5-9.9 years",
-                                                            "10-24.9 years")) {
+                                              admtype_filter = "New court commitment") {
   # Get states that have not abolished parole
   abolished <- carl_state_notes |>
     filter(abolished_parole_16_total == "N") |>
     pull(state)
 
-  # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
+  # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
   filtered_data <- data |>
     filter(admtype == admtype_filter) |>
-    filter(sentlgth %in% sentence_lengths) |>
+    filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
     filter(state %in% abolished)  # Only keep states that did not abolish parole
 
   return(filtered_data)
 }
+# fnc_filter_pe_population_criteria <- function(data,
+#                                        admtype_filter = "New court commitment",
+#                                        sentence_lengths = c("1-1.9 years",
+#                                                             "2-4.9 years",
+#                                                             "5-9.9 years",
+#                                                             "10-24.9 years")) {
+#   # Get states that have not abolished parole
+#   abolished <- carl_state_notes |>
+#     filter(abolished_parole_16_total == "N") |>
+#     pull(state)
+#
+#   # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
+#   filtered_data <- data |>
+#     filter(admtype == admtype_filter) |>
+#     filter(sentlgth %in% sentence_lengths) |>
+#     filter(state %in% abolished)  # Only keep states that did not abolish parole
+#
+#   return(filtered_data)
+# }
 
 # Test: Ensure the filtering works correctly
 # test_data <- data.frame(

@@ -12,11 +12,11 @@
 #    3. Clean and structure BJS Prisoners data by race, ethnicity, and sex for different years.
 #    4. Import hex map for the National Trends page.
 #    5. Load external data from the Robina Institute and Carl Reynold's state notes on parole eligibility.
-#    6. Save cleaned and transformed datasets for use in downstream analyses and visualizations.
+#    6. Save cleaned and transformed datasets for use in analyses and visualizations.
 #######################################
 
 #------------------------------------------------------------------------------#
-# MAP
+# MAP - National Trends Page
 #------------------------------------------------------------------------------#
 
 # Hex map for national trends page
@@ -306,13 +306,16 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
 
 
 # Read and clean BJS population data by sex for 2022 ?????????????????????????????????????????????????????? CHECK IF I NEED THIS BEFORE DOING MORE WORK
+# bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(config$sp_data_path,
+#                                                         "data/raw/BJS Prison Pop/p22st/p22stt02.csv"),
+#                                               skip = 10)
 bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(config$sp_data_path,
-                                                        "data/raw/BJS Prison Pop/p22st/p22stt02.csv"),
-                                              skip = 10)
+                                                     "data/raw/BJS Prison Pop/p22st/p22stt02.csv"))
+bjs_prison_pop_by_sex_2022_raw <- bjs_prison_pop_by_sex_2022_raw[-(1:10), ]
 
 bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   clean_names() |>
-  select(state = x2, male = x8, female = x9) |>
+  select(state = x, male = x_6, female = x_7) |>
   mutate(state = str_replace(state, "/.*", "")) %>%
   mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
   mutate(state = str_replace(state, "Utahc", "Utah")) %>%

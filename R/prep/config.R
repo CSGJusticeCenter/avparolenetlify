@@ -89,35 +89,52 @@ options(highcharter.lang = hcoptslang)
 #------ Colors ------#
 
 # Michael colors
-colors <- list(
-  lightgray = "#d7d7d7",
-  darkgray  = "#969696",
-  purple    = "#938ebf", # primary color
-  red       = "#d97d68", # primary color
-  blue      = "#55b4e5", # primary color
-  yellow    = "#decf64", # primary color
-  green1    = "#b1d4d5",
-  green2    = "#49a7a1",
-  green3    = "#176f6d", # primary color
-  green4    = "#104040",
-  brown     = "#9e6c10"  # primary color
-)
+# colors <- list(
+#   lightgray = "#d7d7d7",
+#   darkgray  = "#969696",
+#   purple    = "#938ebf", # primary color
+#   red       = "#d97d68", # primary color
+#   blue      = "#55b4e5", # primary color
+#   yellow    = "#decf64", # primary color
+#   green1    = "#b1d4d5",
+#   green2    = "#49a7a1",
+#   green3    = "#176f6d", # primary color
+#   green4    = "#104040",
+#   brown     = "#9e6c10"  # primary color
+# )
 
 # Colors for the groups
-blue <- "#55b4e5"
-teal <- "#49a7a1"
-lightteal <- "#b1d4d5"
+# blue <- "#55b4e5"
+# teal <- "#49a7a1"
+# lightteal <- "#b1d4d5"
+# yellow <-  "#decf64"
+# red <- "#d97d68"
+# purple <- "#938ebf"
+# brown <- "#9e6c10"
+# color1 <- red
+# color2 <- blue
+# color3 <- yellow
+# color4 <- teal
+# color5 <- purple
+# color6 <- lightteal
+
+teal <- "#176f6d"
 yellow <-  "#decf64"
-red <- "#d97d68"
-purple <- "#938ebf"
-brown     = "#9e6c10"
+brown <- "#9e6c10"
+blue <- "#2a5a99"
+red <- "#ac532f"
+purple <- "#948ebf"
+green1    = "#b1d4d5"
+green2    = "#49a7a1"
+green3    = "#176f6d"
+green4    = "#104040"
 
 color1 <- red
 color2 <- blue
-color3 <- yellow
+color3 <- brown
 color4 <- teal
 color5 <- purple
-color6 <- lightteal
+
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
 

@@ -15,11 +15,13 @@ total_pop_by_year <- ncrp_yearendpop |>
   group_by(state, rptyear) |>
   summarise(total_pop = n(), .groups = 'drop')
 
-# Filter data to people in prison for a new court commitment 1-25 year sentence lengths
+# Filter data to people in prison for a new court commitment with sentences 1+ years but not life
 # Not including people who are failing supervision (parole return/revocation)
-filtered_ncrp_yearendpop <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
+filtered_ncrp_yearendpop <- ncrp_yearendpop |>
+  filter(admtype == "New court commitment") |>
+  filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0)
 
-# Get total prison population for new court commitments and sentence length 1-25 years
+# Get total prison population for new court commitments and with sentences 1+ years but not life
 filtered_pop_by_year <- filtered_ncrp_yearendpop |>
   group_by(state, rptyear) |>
   summarise(filtered_total_pop = n(), .groups = 'drop')
@@ -54,11 +56,12 @@ missing_states <- tibble(state = setdiff(state.name, filtered_parole_elig_table_
 # Add missing states to table so we have a complete table of 50 states
 filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_year_with_missing_states |>
   bind_rows(missing_states) |>
-  left_join(total_pop_by_year, by = c("state", "rptyear")) |>
-  left_join(filtered_pop_by_year, by = c("state", "rptyear")) |>
+  full_join(total_pop_by_year, by = c("state", "rptyear")) |>
+  full_join(filtered_pop_by_year, by = c("state", "rptyear")) |>
   arrange(state) |>
   select(state, rptyear, total_pop, filtered_total_pop,
-         contains("current"), contains("future"), contains("missing"))
+         contains("current"), contains("future"), contains("missing")) |>
+  filter(rptyear == select_year)
 
 
 
@@ -82,9 +85,8 @@ parole_board_members <- parole_info_by_state |>
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
   left_join(parole_info_by_state_clean, by = "state") |>
   left_join(parole_board_members, by = "state") |>
-  mutate(ratio = paste0("1:", round(current_count/parole_board_members, 0))) |>
-  mutate(ratio = ifelse(ratio == "1:NA", NA, ratio)) |>
-  select(state, current_perc, current_count, filtered_total_pop, abolished_discretionary_parole, parole_board_members, ratio)
+  filter(abolished_discretionary_parole == "No" | state == "Louisiana") |>
+  select(state, current_perc, current_count, filtered_total_pop, abolished_discretionary_parole, parole_board_members)
 
 
 
@@ -103,7 +105,7 @@ parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
 all_states <- state.name
 
 # Define the gradient colors for categories
-gradient_colors <- c(colors$green1, colors$green2, colors$green3, colors$green4)
+gradient_colors <- c(green1, green2, green3, green4)
 
 # Prepare data for national maps
 map_data <- filtered_parole_elig_table_analysis_year |>
@@ -128,8 +130,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
     tooltip = case_when(
       all_na == TRUE & abolished_discretionary_parole == "No" ~
         paste0("<b>", state, "</b><br>",
-               "Parole eligibility data is not available.<br>",
-               "<span style='color: gray; font-weight: bold;'>Click on the state to view the state report.</span>"),
+               "Parole eligibility data is not available.<br>"),
 
       all_na == TRUE & abolished_discretionary_parole == "Yes" ~
         paste0("<b>", state, "</b><br>",
@@ -177,7 +178,7 @@ map_data_breaks <- map_data |>
     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
     current_perc = round(current_perc, 0)
   ) |>
-  mutate(color = case_when(abolished_discretionary_parole == "Yes" ~ colors$yellow))
+  mutate(color = case_when(abolished_discretionary_parole == "Yes" ~ yellow))
 
 # URL generation to exclude states with abolished discretionary parole
 map_data_breaks <- map_data_breaks |>
@@ -189,98 +190,226 @@ map_data_breaks <- map_data_breaks |>
 map_data_breaks <- map_data_breaks |>
   mutate(dummy_value = ifelse(abolished_discretionary_parole == "Yes", 1, NA))
 
-map_percent <- highchart() |>
+# map_percent <- highchart() |>
+#
+#   # # Series for states with abolished discretionary parole
+#   # hc_add_series_map(
+#   #   map = hex_gj,
+#   #   df = map_data_breaks |> filter(abolished_discretionary_parole == "Yes"),
+#   #   joinBy = "state_abb",
+#   #   value = "dummy_value",  # Using the dummy column as the value
+#   #   color = yellow,
+#   #   borderColor = "#FFFFFF",  # Ensuring the outline is white
+#   #   borderWidth = 2,  # Outline width
+#   #   showInLegend = TRUE,
+#   #   name = "Abolished Discretionary Parole",
+#   #   accessibility = list(
+#   #     enabled = TRUE,
+#   #     keyboardNavigation = list(enabled = TRUE),
+#   #     point = list(valueDescriptionFormat = "{point.state} has abolished discretionary parole.")
+#   #   )
+#   # ) |>
+#
+#   hc_add_series_map(
+#     map = hex_gj,
+#     df = map_data_breaks,
+#     joinBy = "state_abb",
+#     value = "current_perc",
+#     dataLabels = list(enabled = TRUE,
+#                       useHTML = TRUE,
+#                       formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+#                             '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
+#                             '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
+#     nullColor = lightgray,
+#     borderColor = "#FFFFFF",  # Set the outline color to white
+#     borderWidth = 2,  # Set the outline width
+#     accessibility = list(
+#       enabled = TRUE,
+#       keyboardNavigation = list(enabled = TRUE),
+#       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}")),
+#       point = list(events = list(
+#         click = JS("function() {
+#                   if (this.url) {  // Only allow click if URL is not NA
+#                     window.location.assign(this.url);
+#                   }
+#                 }")
+#       ))
+#     ) |>
+#
+#   hc_add_theme(hc_theme_map) |>
+#
+#   hc_colorAxis(min = 0, max = max(map_data_breaks$current_perc)*1.5,
+#                stops = color_stops(n = 5, colors = gradient_colors),
+#                labels = list(
+#                  formatter = JS("function() { return this.value + '%'; }")
+#                )) |>
+#
+#   hc_legend(
+#     align = "left",
+#     x = -8,
+#     itemMarginTop = 5, # increase space bet
+#     symbolWidth = 230,
+#     title = list(text = "Pct. of People in Prison Past Their Parole Eligibility<br><br>",
+#                  style = list(fontWeight = "normal", fontSize = "14px")
+#   )) |>
+#
+#
+#   # hc_legend(align = "left",
+#   #           x = -8,
+#   #           verticalAlign = "top",
+#   #           layout = "horizontal",
+#   #           itemStyle = list(
+#   #             fontWeight = "normal",
+#   #             fontSize = "12px"
+#   #           ),
+#   #           # Customizing the title for the gradient legend
+#   #           title = list(
+#   #             text = "Pct. of People in Prison Past Their Parole Eligibility",
+#   #             style = list(fontWeight = "normal", fontSize = "14px")
+#   #           ),
+#   #           # Customizing the legend for abolished discretionary parole
+#   #           useHTML = TRUE,
+#   #           labelFormatter = JS(paste0("
+#   #             function() {
+#   #               if (this.name === 'Abolished Discretionary Parole') {
+#   #                 return '<span style=\"background-color: white; font-weight: normal;", "; padding: 0 0px; border-radius: 3px;\">' + this.name + '</span>';
+#   #               } else {
+#   #                 return this.name;
+#   #               }
+#   #             }
+#   #           "))) |>
+#
+#   hc_xAxis(title = "") |>
+#   hc_yAxis(title = "") |>
+#
+#   hc_tooltip(
+#     borderWidth = 1,
+#     borderRadius = 0,
+#     backgroundColor = '#FFFFFF', # Fully opaque white background
+#     outside = TRUE, # Ensure tooltip is rendered outside
+#     useHTML = TRUE,
+#     formatter = JS("function() {
+#           return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+#           '<div style=\"text-align:left;\">' +
+#           '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+#           '</div></div>';
+#     }")
+#   ) |>
+#
+#   hc_plotOptions(series = list(
+#     animation = FALSE,
+#     cursor = "pointer",
+#     borderWidth = 3,
+#     accessibility = list(
+#       enabled = TRUE,
+#       keyboardNavigation = list(enabled = TRUE),
+#       pointDescriptionFormatter = JS("function(point) {
+#         return 'State: ' + point.state_abb + ', Percentage: ' + point.currentperclabel;
+#       }")
+#     )
+#   ),
+#   accessibility = list(
+#     enabled = TRUE,
+#     keyboardNavigation = list(enabled = TRUE),
+#     linkedDescription =
+#       paste0("This map shows the proportion of people in prison who are past their parole eligibility year."),
+#     landmarkVerbosity = "one"
+#   ),
+#   area = list(accessibility = list(description = paste0("TEXT")))
+#   ) |>
+#   hc_title(text = "People in Prison Past Their Parole Eligibility: 2023 Projections",
+#            align = "left")
+# map_percent
+map_data <- map_data_breaks |>
+  select(state, state_abb, current_perc, change_label, abolished_discretionary_parole, tooltip)
 
-  # Series for states with abolished discretionary parole
-  hc_add_series_map(
-    map = hex_gj,
-    df = map_data_breaks |> filter(abolished_discretionary_parole == "Yes"),
-    joinBy = "state_abb",
-    value = "dummy_value",  # Using the dummy column as the value
-    color = colors$yellow,
-    borderColor = "#FFFFFF",  # Ensuring the outline is white
-    borderWidth = 2,  # Outline width
-    showInLegend = TRUE,
-    name = "Abolished Discretionary Parole",
-    accessibility = list(
-      enabled = TRUE,
-      keyboardNavigation = list(enabled = TRUE),
-      point = list(valueDescriptionFormat = "{point.state} has abolished discretionary parole.")
-    )
+# Define the gradient colors for categories
+gradient_colors <- c(green1, green2, green3, green4, blue)
+
+# Calculate the breaks for the percent of people eligible for parole
+num_breaks <- length(gradient_colors) - 1
+breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+breaks[1] <- 0  # Set the first break to 0
+breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
+breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
+
+# Process map_data to include gradient color and data category
+map_data_breaks <- map_data |>
+  mutate(
+    gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+    gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
+    current_perc = round(current_perc, 0),
+    data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
   ) |>
+  group_by(gradient_color) |>
+  mutate(
+    data_category = case_when(
+      gradient_color == gradient_colors[1] ~ paste0(breaks[1], "% - ", breaks[2], "%"),
+      gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
+      gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
+      gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
+      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$current_perc, na.rm = TRUE), "%")
+    ),
+    data_category = case_when(
+      is.na(data_category) & abolished_discretionary_parole == "No" ~ "Missing Data",
+      is.na(data_category) & abolished_discretionary_parole == "Yes" ~ "Abolished Parole",
+      TRUE ~ data_category
+    ),
+    gradient_color = case_when(
+      is.na(gradient_color) & data_category == "Missing Data" ~ lightgray,
+      is.na(gradient_color) & data_category == "Abolished Parole" ~ yellow,
+      TRUE ~ gradient_color
+    ),
+    data_category_num = case_when(
+      is.na(data_category_num) & data_category == "Missing Data" ~ 6,
+      is.na(data_category_num) & data_category == "Abolished Parole" ~ 5,
+      TRUE ~ data_category_num
+    )
+  )
+
+# create hex map
+map_percent <- highchart(height = 600) |>
+
+  hc_chart(marginTop = 60,
+           marginBottom = 50,
+           marginRight = 50) |>
 
   hc_add_series_map(
     map = hex_gj,
     df = map_data_breaks,
     joinBy = "state_abb",
-    value = "current_perc",
+    value = "data_category_num",
     dataLabels = list(enabled = TRUE,
                       useHTML = TRUE,
                       formatter = JS("function() {return '<div style=\"text-align:center;\">' +
-                            '<span style=\"font-weight:bold; font-size: 14px;\">' + this.point.state_abb + '</span><br>' +
-                            '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.change_label + '</span>' + '</div>';}")),
-    nullColor = colors$lightgray,
-    borderColor = "#FFFFFF",  # Set the outline color to white
-    borderWidth = 2,  # Set the outline width
+                            '<span style=\"font-weight:bold; font-size: 14px; text-align:center;\">' + this.point.state_abb + '</span><br>' +
+                            '<span style=\"font-weight:normal; font-size: 14px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';}"),
+                      textOutline = "none",
+                      y = 0),
+    nullColor = lightgray,
+    borderColor = "#FFFFFF",
     accessibility = list(
       enabled = TRUE,
       keyboardNavigation = list(enabled = TRUE),
-      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}")),
-  #  point = list(events = list(
-  #     click = JS("function() { window.location.assign(this.url); }")
-  #   )
-  #   )
-  # ) |>
-  #     click = JS("function() {
-  #                 if (this.abolished_discretionary_parole === 'Yes') {
-  #                   window.location.assign(this.url);
-  #                 } else {
-  #                 }
-  #               }")
-  #   ))
-  # ) |>
-      point = list(events = list(
-        click = JS("function() {
-                  if (this.url) {  // Only allow click if URL is not NA
-                    window.location.assign(this.url);
-                  }
-                }")
-      ))
-    ) |>
+      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) |>
 
-  hc_add_theme(hc_theme_map) |>
-
-  hc_colorAxis(min = 0, max = max(map_data_breaks$current_perc)*1.2,
-               stops = color_stops(n = 5, colors = gradient_colors),
-               labels = list(
-                 formatter = JS("function() { return this.value + '%'; }")
+  hc_colorAxis(dataClassColor="category",
+               dataClasses = list(
+                 list(from = 1, to = 1, color = green1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
+                 list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
+                 list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
+                 list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
+                 list(from = 5, to = 5, color = yellow, name = "Abolished Parole"),
+                 list(from = 6, to = 6, color = lightgray, name = "Missing Data")
                )) |>
 
-  hc_legend(align = "left",
-            x = -8,
-            verticalAlign = "top",
-            layout = "horizontal",
-            itemStyle = list(
-              fontWeight = "normal",
-              fontSize = "12px"
-            ),
-            # Customizing the title for the gradient legend
-            title = list(
-              text = "Pct. of People in Prison Past Their Parole Eligibility",
-              style = list(fontWeight = "normal", fontSize = "14px")
-            ),
-            # Customizing the legend for abolished discretionary parole
-            useHTML = TRUE,
-            labelFormatter = JS(paste0("
-              function() {
-                if (this.name === 'Abolished Discretionary Parole') {
-                  return '<span style=\"background-color: white; font-weight: normal;", "; padding: 0 0px; border-radius: 3px;\">' + this.name + '</span>';
-                } else {
-                  return this.name;
-                }
-              }
-            "))
-  ) |>
+  hc_legend(align = "right",
+            verticalAlign = "bottom",
+            layout = "vertical",
+            symbolHeight = 15,
+            symbolWidth = 15,
+            x = 10,
+            y = -40) |>
 
   hc_xAxis(title = "") |>
   hc_yAxis(title = "") |>
@@ -288,16 +417,16 @@ map_percent <- highchart() |>
   hc_tooltip(
     borderWidth = 1,
     borderRadius = 0,
-    backgroundColor = '#FFFFFF', # Fully opaque white background
-    outside = TRUE, # Ensure tooltip is rendered outside
-    useHTML = TRUE,
+    backgroundColor = 'rgba(255, 255, 255, 1)',
     formatter = JS("function() {
           return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
-          '<div style=\"text-align:left;\">' +
-          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
-          '</div></div>';
-    }")
+          this.point.tooltip +
+          '</div>';}"
+    ),
+    useHTML = TRUE
   ) |>
+
+  hc_add_theme(hc_theme_map) |>
 
   hc_plotOptions(series = list(
     animation = FALSE,
@@ -320,10 +449,47 @@ map_percent <- highchart() |>
   ),
   area = list(accessibility = list(description = paste0("TEXT")))
   ) |>
-  hc_title(text = paste0("People in Prison Past Their Parole Eligibility in ", select_year),
-           align = "left")
-map_percent
 
+  hc_tooltip(
+    borderWidth = 1,
+    borderRadius = 0,
+    backgroundColor = '#FFFFFF', # Fully opaque white background
+    outside = TRUE, # Ensure tooltip is rendered outside
+    useHTML = TRUE,
+    formatter = JS("function() {
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+          '<div style=\"text-align:left;\">' +
+          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+          '</div></div>';
+    }")
+  ) |>
+
+  hc_title(text = "Pct. of People in Prison Past Parole Eligibility: 2023 Projections",
+           align = "left") |>
+
+  hc_exporting(
+    enabled = TRUE,
+    scale = 1,  # Ensure the exported image matches screen size exactly
+    sourceWidth = 800,  # Set the width same as screen
+    sourceHeight = 600,  # Set the height same as screen
+    chartOptions = list(
+      plotOptions = list(
+        series = list(
+          dataLabels = list(
+            align = "center",
+            verticalAlign = "middle",
+            style = list(
+              fontWeight = "bold",
+              fontSize = "14px",
+              textOutline = "none",
+              align = "center"
+            )
+          )
+        )
+      )
+    )
+  )
+map_percent
 
 
 #------ Save Data ------#
