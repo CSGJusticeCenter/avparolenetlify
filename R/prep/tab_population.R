@@ -63,6 +63,7 @@ all_sentence_population <- map(.x = states, .f = function(x) {
 
 # Name each entry in the list of sentences by state for easy reference
 all_sentence_population <- setNames(all_sentence_population, states)
+all_sentence_population$Georgia
 
 # Generate a line chart for the prison population by year for each state
 all_line_population_by_year <- map(.x = states, .f = function(x) {
@@ -157,7 +158,7 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
 })
 all_line_population_by_year <- setNames(all_line_population_by_year, states)
 all_line_population_by_year$Georgia
-
+rm(states)
 
 
 
@@ -211,15 +212,14 @@ all_sentence_population_race <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the race with the highest proportion
 
   # Generate a sentence summarizing the racial breakdown for the prison population
-  sentences <- paste0("In 2022, most people in prison were ",
-                      df1$race, " people, representing ", round(df1$prop*100, 0), " percent of people in prison.")
+  sentences <- paste0("In 2022, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, " people.")
   return(sentences)
 })
 
 # Name the sentence list for easy reference by state
 all_sentence_population_race <- setNames(all_sentence_population_race, states)
 all_sentence_population_race$Georgia
-
+rm(states)
 
 
 
@@ -273,14 +273,14 @@ all_sentence_population_sex <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the sex with the highest proportion
 
   # Generate a sentence summarizing the sex breakdown for the prison population
-  sentences <- paste0("In 2022, most people in prison were ", tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of people in prison.")
+  sentences <- paste0("In 2022, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), "s.")
   return(sentences)
 })
 
 # Name the sentence list for easy reference by state
 all_sentence_population_sex <- setNames(all_sentence_population_sex, states)
 all_sentence_population_sex$Georgia
-
+rm(states)
 
 
 
@@ -342,14 +342,14 @@ all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 
   df1$ageyrend <- gsub("-", " to ", df1$ageyrend)  # Format age range for readability
   # Generate a sentence summarizing the age breakdown for the prison population
-  sentences <- paste0("In ", select_year, ", most people in prison were between ", df1$ageyrend, " old, representing ", round(df1$prop*100, 0), " percent of people.")
+  sentences <- paste0("In 2022, ", round(df1$prop*100, 0), " percent of people in prison were between the ages of ", df1$ageyrend, " old.")
   return(sentences)
 })
 
 # Name the sentence list for easy reference by state
 all_sentence_population_ageyrend <- setNames(all_sentence_population_ageyrend, states)
 all_sentence_population_ageyrend$Georgia
-
+rm(states)
 
 
 
@@ -409,14 +409,14 @@ all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the offense type with the highest proportion
 
   # Generate a sentence summarizing the offense breakdown for the prison population
-  sentences <- paste0("In ", select_year, ", most people in prison were incarcerated for ", tolower(df1$fbi_index), ", representing ", round(df1$prop*100, 0), " percent of people.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people in prison were incarcerated for ", tolower(df1$fbi_index), " offenses.")
   return(sentences)
 })
 
 # Name the sentence list for easy reference by state
 all_sentence_population_fbi_index <- setNames(all_sentence_population_fbi_index, states)
 all_sentence_population_fbi_index$Georgia
-
+rm(states)
 
 
 
@@ -477,14 +477,14 @@ all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
 
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)  # Format sentence range for readability
   # Generate a sentence summarizing the sentence length breakdown for the prison population
-  sentences <- paste0("In ", select_year, ", most people in prison had sentence lengths between ", df1$sentlgth, ", representing ", round(df1$prop*100, 0), " percent of people.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people in prison had sentence lengths between ", tolower(df1$sentlgth), ".")
   return(sentences)
 })
 
 # Name the sentence list for easy reference by state
 all_sentence_population_sentlgth <- setNames(all_sentence_population_sentlgth, states)
 all_sentence_population_sentlgth$Georgia
-
+rm(states)
 
 #------------------------------------------------------------------------------#
 # SAVE DATA

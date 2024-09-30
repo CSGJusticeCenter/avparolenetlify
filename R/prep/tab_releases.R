@@ -58,7 +58,7 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
 # Assign state names as the names of the sentences list
 all_sentence_releases <- setNames(all_sentence_releases, states)
 all_sentence_releases$Georgia
-
+rm(states)
 
 # Generate line charts for each state showing the trend in prison releases since 2010
 states <- unique(ncrp_releases_by_year$state)
@@ -183,7 +183,7 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
 })
 all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
 all_stackedbar_parole_eligibility_release$Georgia
-
+rm(states)
 
 # SENTENCE: In 2020, X% of people eligible for parole were released during their eligibility
 #           year. This represents a X% decrease/increase compared YEAR.
@@ -262,7 +262,7 @@ all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
 
 all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
 all_sentence_pe_proportion_released$Georgia
-
+rm(states)
 
 
 # ---------------------------------------------------------------------------- #
@@ -297,7 +297,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_plotOptions(pie = list(
       dataLabels = list(
         enabled = TRUE,
-        format = '<span style="font-size:1em">{point.name}: </span><br><span style="font-size:2em"><b>{point.percentage:.0f}%</b></span>'
+        format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span><br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
       )
     )) |>
     hc_series(list(
@@ -317,7 +317,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
 # Assign state names as the names of the charts list
 all_pie_release_type <- setNames(all_pie_release_type, states)
 all_pie_release_type$Georgia
-
+rm(states)
 
 
 
@@ -403,7 +403,7 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
 # Assign state names as the names of the charts list
 all_bar_releases_race <- setNames(all_bar_releases_race, states)
 all_bar_releases_race$Georgia
-
+rm(states)
 
 # Generate sentence for each state
 states <- unique(prison_releases_race$state)
@@ -412,14 +412,14 @@ all_sentence_releases_race <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people released from prison were ",
-                      df1$race, " people, representing ", round(df1$prop*100, 0), " percent of prison releases.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", df1$race, " people.")
   return(sentences)
 })
 
 # Assign state names as the names of the charts list
 all_sentence_releases_race <- setNames(all_sentence_releases_race, states)
 all_sentence_releases_race$Georgia
+rm(states)
 
 # Generate graph for each state
 states <- unique(prison_releases_sex$state)
@@ -451,6 +451,7 @@ all_bar_releases_sex <- map(.x = states,  .f = function(x) {
 # Assign state names as the names of the charts list
 all_bar_releases_sex <- setNames(all_bar_releases_sex, states)
 all_bar_releases_sex$Georgia
+rm(states)
 
 
 # Generate sentence for each state
@@ -460,14 +461,14 @@ all_sentence_releases_sex <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people released from prison were ",
-                      tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of prison releases.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", tolower(df1$sex), "s.")
   return(sentences)
 })
 
 # Assign state names as the names of the charts list
 all_sentence_releases_sex <- setNames(all_sentence_releases_sex, states)
 all_sentence_releases_sex$Georgia
+rm(states)
 
 # Generate graph for each state
 states <- unique(prison_releases_agerlse$state)
@@ -499,6 +500,7 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
 # Assign state names as the names of the charts list
 all_bar_releases_agerlse <- setNames(all_bar_releases_agerlse, states)
 all_bar_releases_agerlse$Georgia
+rm(states)
 
 
 # Generate sentence for each state
@@ -509,15 +511,14 @@ all_sentence_releases_agerlse <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$agerlse <- gsub("-", " to ", df1$agerlse)
-  sentences <- paste0("In ", select_year, ", most releases from prison were people between ",
-                      tolower(df1$agerlse), " old, representing ", round(df1$prop*100, 0), " percent of prison releases.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were between the ages of ", df1$agerlse, " old.")
   return(sentences)
 })
 
 # Assign state names as the names of the charts list
 all_sentence_releases_agerlse <- setNames(all_sentence_releases_agerlse, states)
 all_sentence_releases_agerlse$Georgia
-
+rm(states)
 
 
 
@@ -572,6 +573,7 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
 # Assign state names as the names of the charts list
 all_bar_releases_fbi_index <- setNames(all_bar_releases_fbi_index, states)
 all_bar_releases_fbi_index$Georgia
+rm(states)
 
 # Generate sentence for each state
 states <- unique(releases_fbi_index$state)
@@ -580,14 +582,14 @@ all_sentence_releases_fbi_index <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people released from prison were incarcerated for ",
-                      tolower(df1$fbi_index), " offenses, representing ", round(df1$prop*100, 0), " percent of people.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were for people incarcerated for ", tolower(df1$fbi_index), " offenses.")
   return(sentences)
 })
 
 # Assign state names as the names of the charts list
 all_sentence_releases_fbi_index <- setNames(all_sentence_releases_fbi_index, states)
 all_sentence_releases_fbi_index$Georgia
+rm(states)
 
 
 

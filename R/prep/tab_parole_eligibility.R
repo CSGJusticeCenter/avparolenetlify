@@ -153,7 +153,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
 all_stackedbar_pe_type$Alabama
 all_stackedbar_pe_type$Georgia
-
+rm(states)
 
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
@@ -166,15 +166,15 @@ all_sentence_pe_type <- map(.x = states,  .f = function(x) {
              parelig_status == "Current"&
              rptyear == select_year)
 
-  sentences <- paste0("In ", select_year, ", there were ", formattable::comma(df1$n, digits = 0),
-                      " people* in prison past their parole eligibility. This group made up ",
-                      round(df1$prop*100, 0), " percent of people* in prison.")
+  sentences <- paste0("In ", select_year, ", ",
+                      round(df1$prop*100, 0),
+                      " percent of people in prison were in prison past their parole eligibility.")
   return(sentences)
 })
 
 all_sentence_pe_type <- setNames(all_sentence_pe_type, states)
 all_sentence_pe_type$Georgia
-
+rm(states)
 
 # ---------------------------------------------------------------------------- #
 # PE Prison Population Trends
@@ -239,7 +239,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
   # Generate the sentence
   sentence <- paste0(
     "From ", earliest_year, " to ", latest_year,
-    ", the percentage of people* in prison past parole eligibility ", direction, "."
+    ", the percent of people* in prison past parole eligibility ", direction, "."
   )
 
   return(sentence)
@@ -249,7 +249,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
 all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Georgia
 all_sentence_pop_pe_by_year$Hawaii
-
+rm(states)
 
 # VISUALIZATION: Create a stacked bar chart showing the percentage of people past parole eligibility (PCE)
 # and the remaining total prison population for each state over time
@@ -310,7 +310,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
 all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
 all_stackedbar_pop_pe_by_year$Georgia
 all_stackedbar_pop_pe_by_year$Hawaii
-
+rm(states)
 
 
 
@@ -348,7 +348,7 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 })
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
 all_bar_parole_eligibility_race$Georgia
-
+rm(states)
 
 # Generate sentence for each state
 states <- unique(current_ped_race$state)
@@ -357,14 +357,16 @@ all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility were ",
-                      df1$race, " people, representing ", round(df1$prop*100, 0),
-                      " percent of people* in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+                      " percent of people* in prison past parole eligibility were ",
+                      df1$race,
+                      " people.")
   return(sentences)
 })
 
 all_sentence_parole_eligibility_race <- setNames(all_sentence_parole_eligibility_race, states)
 all_sentence_parole_eligibility_race$Georgia
+rm(states)
 
 # Generate graph for each state
 states <- unique(current_ped_sex$state)
@@ -389,7 +391,7 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 })
 all_bar_parole_eligibility_sex <- setNames(all_bar_parole_eligibility_sex, states)
 all_bar_parole_eligibility_sex$Georgia
-
+rm(states)
 
 # Generate sentence for each state
 states <- unique(current_ped_sex$state)
@@ -398,13 +400,15 @@ all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility were ",
-                      tolower(df1$sex), "s, representing ", round(df1$prop*100, 0), " percent of people* in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+                      " percent of people* in prison past parole eligibility were ",
+                      tolower(df1$sex), "s.")
   return(sentences)
 })
 
 all_sentence_parole_eligibility_sex <- setNames(all_sentence_parole_eligibility_sex, states)
 all_sentence_parole_eligibility_sex$Georgia
+rm(states)
 
 # Generate graph for each state
 states <- unique(current_ped_ageyrend$state)
@@ -429,7 +433,7 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 })
 all_bar_parole_eligibility_ageyrend <- setNames(all_bar_parole_eligibility_ageyrend, states)
 all_bar_parole_eligibility_ageyrend$Georgia
-
+rm(states)
 
 # Generate sentence for each state
 states <- unique(current_ped_ageyrend$state)
@@ -439,14 +443,15 @@ all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$ageyrend <- gsub("-", " to ", df1$ageyrend)
-  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility were between the ages of ",
-                      df1$ageyrend, " old, representing ", round(df1$prop*100, 0), " percent of people* in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+                      " percent of people* in prison past parole eligibility were between the ages of ",
+                      df1$ageyrend, " old.")
   return(sentences)
 })
 
 all_sentence_parole_eligibility_ageyrend <- setNames(all_sentence_parole_eligibility_ageyrend, states)
 all_sentence_parole_eligibility_ageyrend$Georgia
-
+rm(states)
 
 
 
@@ -496,7 +501,7 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
-
+rm(states)
 
 
 
@@ -560,7 +565,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
   nonviolent_prop <- df1 |> filter(group == "Non-Violent") |> pull(prop) * 100
 
   group_sentence <- paste0("In ", select_year, ", ", round(violent_prop, 0),
-                           " percent of people* in prison past their parole eligibility were in prison for violent offenses and ",
+                           " percent of people* in prison past parole eligibility were in prison for violent offenses and ",
                            round(nonviolent_prop, 0), " percent for non-violent offenses.")
 
   # Get the top two FBI index categories
@@ -575,7 +580,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
   }
 
   # Construct the sentence for the FBI index breakdown
-  fbi_sentence <- paste0("Most people were incarcerated past parole eligibility were serving time for ",
+  fbi_sentence <- paste0("Most people who were incarcerated past parole eligibility were serving time for ",
                          tolower(df2$fbi_index[1]), " (", round(df2$prop[1] * 100, 0), "%) and ",
                          tolower(df2$fbi_index[2]), " (", round(df2$prop[2] * 100, 0), "%) offenses.")
 
@@ -587,7 +592,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
 all_sentence_parole_eligibility_fbi_index$Georgia
-
+rm(states)
 
 
 
@@ -615,7 +620,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
-                                  their original sentence length in ",
+                                  their sentence length in ",
                                   select_year, " in the state of ", x, ".")
   highcharts <- fnc_hc_columnchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
     hc_title(text = "Sentence Length") |>
@@ -625,6 +630,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
 all_bar_parole_eligibility_sentlgth$Georgia
+rm(states)
 
 
 # Generate sentence for each state
@@ -635,21 +641,15 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", most people* in prison past their parole eligibility had original sentence lengths between ",
-                      df1$sentlgth, ", representing ", round(df1$prop*100, 0), " percent of in prison past parole eligibility.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+                      " percent of people* in prison past parole eligibility had sentence lengths between ",
+                      df1$sentlgth, ".")
   return(sentences)
 })
 
 all_sentence_parole_eligibility_sentlgth <- setNames(all_sentence_parole_eligibility_sentlgth, states)
 all_sentence_parole_eligibility_sentlgth$Georgia
-
-
-
-
-
-
-
-
+rm(states)
 
 
 

@@ -1,10 +1,14 @@
 
-# source("R/prep/config.R")
+source("R/prep/config.R")
 # source("R/prep/page_national_trends.R")
 # source("R/prep/tab_parole_eligibility.R")
 # source("R/prep/tab_population.R")
 # source("R/prep/tab_releases.R")
 # source("R/prep/tab_disparities.R")
+
+# Load notes
+load(file = paste0(config$sp_data_path, "/data/analysis/app/carl_state_notes.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
 # Save working directory
 wd <- getwd()
@@ -13,6 +17,8 @@ wd <- getwd()
 states <- "Georgia"
 states <- carl_state_notes |>
   filter(abolished_parole_16_total == "N") |>
+  inner_join(parole_eligibility_table, by = "state") |>
+  filter(!is.na(current_perc)) |>
   pull(state)
 
 # Read in original qmd

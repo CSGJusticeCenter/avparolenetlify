@@ -104,36 +104,36 @@ options(highcharter.lang = hcoptslang)
 # )
 
 # Colors for the groups
-# blue <- "#55b4e5"
-# teal <- "#49a7a1"
-# lightteal <- "#b1d4d5"
-# yellow <-  "#decf64"
-# red <- "#d97d68"
-# purple <- "#938ebf"
-# brown <- "#9e6c10"
-# color1 <- red
-# color2 <- blue
-# color3 <- yellow
-# color4 <- teal
-# color5 <- purple
-# color6 <- lightteal
-
-teal <- "#176f6d"
+blue <- "#55b4e5"
+teal <- "#49a7a1"
+lightteal <- "#b1d4d5"
 yellow <-  "#decf64"
+red <- "#d97d68"
+purple <- "#938ebf"
 brown <- "#9e6c10"
-blue <- "#2a5a99"
-red <- "#ac532f"
-purple <- "#948ebf"
-green1    = "#b1d4d5"
-green2    = "#49a7a1"
-green3    = "#176f6d"
-green4    = "#104040"
-
 color1 <- red
 color2 <- blue
-color3 <- brown
+color3 <- yellow
 color4 <- teal
 color5 <- purple
+color6 <- lightteal
+
+# DARKER COLORS
+# teal <- "#176f6d"
+# yellow <-  "#decf64"
+# brown <- "#9e6c10"
+# blue <- "#2a5a99"
+# red <- "#ac532f"
+# purple <- "#948ebf"
+# green1    = "#b1d4d5"
+# green2    = "#49a7a1"
+# green3    = "#176f6d"
+# green4    = "#104040"
+# color1 <- red
+# color2 <- blue
+# color3 <- brown
+# color4 <- teal
+# color5 <- purple
 
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"

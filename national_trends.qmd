@@ -92,7 +92,7 @@ div(
 <br>
 
 <div style="font-size: 0.8em; color: black; text-align: center;">
-*Includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.
+*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year. Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population of individuals who remain eligible for parole release under the previous system.
 </div>
 
 <div class="divider"></div>
@@ -242,7 +242,7 @@ reactable(
 # )
 ```
 
-<div id="footnotes-text"><br>*Includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.<br>The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
+<div id="footnotes-text"><br>*Includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.<br>The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ. Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population of individuals who remain eligible for parole release under the previous system.<br></div>
 <a href="" style="font-size: 0.7em; color: gray;">Download Table</a>
 <br>
 </div>
@@ -250,8 +250,6 @@ reactable(
 <br>
 
 ## End Notes
-
-Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population of individuals who remain eligible for parole release under the previous system.
 
 Data analysis was conducted using information from the National Corrections Reporting Program. National Corrections Reporting Program (NCRP), accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp.
 
