@@ -271,19 +271,20 @@ rm(states)
 
 # Filter to include only conditional and unconditional releases, removing other release types
 # Remove "Other releases" - although Alabama has 30% other releases
-ncrp_release_type <- ncrp_releases_filtered |>
+release_types <- ncrp_releases_filtered |>
   filter(rptyear == select_year) |>
   filter(reltype == "Conditional release" | reltype == "Unconditional release") |>
   mutate(reltype = case_when(reltype == "Conditional release" ~ "Conditional Release",
                              reltype == "Unconditional release" ~ "Unconditional Release",
                              TRUE ~ reltype)) |>
   group_by(state) |>
-  count(reltype)
+  count(reltype) |>
+  mutate(prop = n/sum(n))
 
 # Generate pie charts for each state showing the proportion of conditional vs. unconditional releases
-states <- unique(ncrp_release_type$state)
+states <- unique(release_types$state)
 all_pie_release_type <- map(.x = states, .f = function(x) {
-  df1 <- ncrp_release_type |>
+  df1 <- release_types |>
     ungroup() |>
     filter(state == x)
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
@@ -319,6 +320,19 @@ all_pie_release_type <- setNames(all_pie_release_type, states)
 all_pie_release_type$Georgia
 rm(states)
 
+
+# Generate sentence for each state
+states <- unique(release_types$state)
+all_sentence_release_type <- map(.x = states,  .f = function(x) {
+  df1 <- release_types |>
+    filter(state == x & reltype == "Conditional Release")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", tolower(df1$reltype), "s.")
+  return(sentences)
+})
+# Assign state names as the names of the charts list
+all_sentence_release_type <- setNames(all_sentence_release_type, states)
+all_sentence_release_type$Georgia
+rm(states)
 
 
 
@@ -603,6 +617,8 @@ save(all_sentence_releases,                     file = file.path(app_folder, "al
 save(all_line_releases_by_year,                 file = file.path(app_folder, "all_line_releases_by_year.rds"))
 save(all_sentence_pe_proportion_released,       file = file.path(app_folder, "all_sentence_pe_proportion_released.rds"))
 save(all_stackedbar_parole_eligibility_release, file = file.path(app_folder, "all_stackedbar_parole_eligibility_release.rds"))
+
+save(all_sentence_release_type,                 file = file.path(app_folder, "all_sentence_release_type.rds"))
 save(all_pie_release_type,                      file = file.path(app_folder, "all_pie_release_type.rds"))
 
 save(all_sentence_releases_race,                file = file.path(app_folder, "all_sentence_releases_race.rds"))

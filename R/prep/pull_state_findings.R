@@ -340,6 +340,8 @@ if (state_for_report %in% names(all_bar_population_sentlgth)) {
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
+
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_release_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
@@ -388,6 +390,14 @@ if (state_for_report %in% names(all_stackedbar_parole_eligibility_release)) {
     hc_size(height = 400)
 } else {
   state_stackedbar_parole_eligibility_release <- no_data_text
+}
+
+# SENTENCE: "In YEAR, X percent of prison releases were conditional releases."
+if (state_for_report %in% names(all_sentence_release_type)) {
+  state_sentence_release_type <-
+    all_sentence_release_type[[state_for_report]]
+} else {
+  state_sentence_release_type <- ""
 }
 
 # TITLE: Proportion of Conditional vs Unconditional Releases
@@ -486,7 +496,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/ncrp_avg_pe_release_race.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/avg_pe_release_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_race.rds"))
 
@@ -498,7 +508,7 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_sex
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_sex_offense.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_sex_offense.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/ncrp_avg_pe_release_sex.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/avg_pe_release_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_sex.rds"))
 

@@ -1,6 +1,6 @@
 #######################################
 # Project: AV Parole
-# File: tab_disparities.R
+# File: tab_disparities_time_served.R
 # Authors: Mari Roberts
 # Date last updated: September 24, 2024 (MAR)
 # Description:
@@ -8,11 +8,11 @@
 #######################################
 
 # ---------------------------------------------------------------------------- #
-# LOS/Time Served by Race
+# Time Served by Race and Ethnicity
 # ---------------------------------------------------------------------------- #
 
-# Calculate average time served by race and state
-ncrp_race_los <- fnc_filter_population(ncrp_releases) |>
+# Calculate average time served by race, ethnicity, and state
+los_race <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(race != "Unknown") |>
   group_by(state, race) |>
@@ -20,10 +20,14 @@ ncrp_race_los <- fnc_filter_population(ncrp_releases) |>
             .groups = "drop")
 
 # Get states with data
-states <- unique(ncrp_race_los$state)
+states <- unique(los_race$state)
+
+# SENTENCE: "In YEAR, Black people spent X more years on average in prison, and Hispanic people
+# spent X more years on average in prison compared to White people."
+# Generate sentence for each state
 all_sentence_los_race <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_race_los |>
+  df1 <- los_race |>
     ungroup() |>
     mutate(race = case_when(
       race == "White, non-Hispanic" ~ "White",
@@ -50,7 +54,7 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
   if (nrow(df_black) > 0 && nrow(df_white) > 0) {
     los_diff_black <- df_black$average_los - df_white$average_los
     if (!is.na(los_diff_black) && los_diff_black > 0) {
-      black_sentence <- paste0("On average, Black people spent ", round(los_diff_black, 1), " more years in prison")
+      black_sentence <- paste0("In ", select_year, ", Black people spent ", round(los_diff_black, 1), " more years on average in prison")
     }
   }
 
@@ -59,19 +63,18 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
   if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
     los_diff_hispanic <- df_hispanic$average_los - df_white$average_los
     if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
-      hispanic_sentence <- paste0("Hispanic people spent ", round(los_diff_hispanic, 1), " more years in prison")
+      hispanic_sentence <- paste0("Hispanic people spent ", round(los_diff_hispanic, 1), " more years on average in prison")
     }
   }
 
-  # Combine the sentences properly, with "and" when both exist
+  # Combine the sentences properly, with commas and "and" when both exist
   if (black_sentence != "" && hispanic_sentence != "") {
-    sentence <- paste0(black_sentence, " and ", hispanic_sentence, " compared to White people.")
+    sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
   } else if (black_sentence != "") {
     sentence <- paste0(black_sentence, " compared to White people.")
   } else if (hispanic_sentence != "") {
     sentence <- paste0(hispanic_sentence, " compared to White people.")
   } else {
-    # sentence <- paste0("No disparities compared to White people found for ", x, ".")
     sentence <- ""
   }
 
@@ -81,21 +84,26 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
 # Set names for the list elements
 all_sentence_los_race <- setNames(all_sentence_los_race, states)
 all_sentence_los_race$Georgia
-##########################################################################################     SENTENCE     ################################
+rm(states) # remove states
 
-states <- unique(ncrp_race_los$state)
+# Get unique states with data
+states <- unique(los_race$state)
+
+# VISUALIZATION: Lollipop showing avg time served by race and ethnicity
+# Generate chart for each state
 all_lollipop_los_race <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_race_los |>
+  df1 <- los_race |>
     ungroup() |>
     filter(state == x) |>
     arrange(desc(average_los)) |>
+    mutate(value = average_los) |>
     mutate(race_num = row_number(),
            color = case_when(
-             race == "White, non-Hispanic" ~ color2,
+             race == "White, non-Hispanic" ~ color1,
              race == "Black, non-Hispanic" ~ color4,
-             race == "Hispanic, any race" ~ color5,
-             race == "Other race(s), non-Hispanic" ~ color3
+             race == "Hispanic, any race" ~ color2,
+             race == "Other race(s), non-Hispanic" ~ color5
            ))
 
   max_los <- max(df1$average_los, na.rm = TRUE)
@@ -112,64 +120,8 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
   df_lines <- df_lines |>
     gather(key = "point", value = "value", start_x, end_x)
 
-  highcharts <- highchart() |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = race_num, group = race),
-      lineWidth = 1,
-      color = "black",
-      dashStyle = "solid",
-      opacity = 1,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_los, y = race_num, group = race, name = race, color = color),
-      dataLabels = list(
-        enabled = TRUE,
-        format = '{point.x:.1f} Years',
-        align = "left",
-        y = 9,
-        x = 8,
-        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
-      )
-    ) |>
-    hc_add_theme(base_hc_theme)|>
-    hc_yAxis(
-      labels = list(
-        style = list(
-          color = 'black',
-          fontWeight = "regular",
-          fontSize = "12px"
-        )
-      ),
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      title = list(text = ""),
-      labels = list(enabled = FALSE),
-      lineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickLength = 0,
-      gridLineColor = "transparent",
-      tickColor = "transparent",
-      max = max_los*1.5
-    ) |>
-    hc_exporting(enabled = FALSE) |>
-    hc_tooltip(enabled = FALSE) |>
-    hc_legend(enabled = FALSE) |>
+  # Call the function for the highchart generation
+  highcharts <- fnc_hc_lollipop_overview(df1, df_lines, "average_los", "race_num", "race", y_labels, max_los, base_hc_theme) |>
     hc_size(height = 150)
 
   return(highcharts)
@@ -178,23 +130,32 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_lollipop_los_race <- setNames(all_lollipop_los_race, states)
 all_lollipop_los_race$Georgia
+rm(states)
+
+
+
+
 
 # ---------------------------------------------------------------------------- #
 # Time Served by Sex
 # ---------------------------------------------------------------------------- #
 
 # Calculate average time served by sex and state
-ncrp_sex_los <- fnc_filter_population(ncrp_releases) |>
+los_sex <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(sex != "Unknown") |>
   group_by(state, sex) |>
   summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
             .groups = "drop")
 
-states <- unique(ncrp_sex_los$state)
+# Get unique states to iterate over
+states <- unique(los_sex$state)
+
+# SENTENCE: "In YEAR, females spent X year(s) fewer./more on average in prison compared to males in STATE."
+# Generate sentence for each state
 all_sentence_los_sex <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_sex_los |>
+  df1 <- los_sex |>
     ungroup() |>
     filter(state == x)
 
@@ -214,10 +175,17 @@ all_sentence_los_sex <- map(.x = states, .f = function(x) {
   if (nrow(df_female) > 0 && nrow(df_male) > 0) {
     los_diff_female <- df_female$average_los - df_male$average_los
     if (!is.na(los_diff_female)) {
+      abs_los_diff_female <- round(abs(los_diff_female), 1)
       if (los_diff_female > 0) {
-        female_sentence <- paste0("On average, females spent ", round(los_diff_female, 1), " more years in prison compared to male in ", x, ".")
+        female_sentence <- paste0("In ", select_year, ", females spent ",
+                                  abs_los_diff_female,
+                                  if (abs_los_diff_female == 1) " year more" else " years more",
+                                  " on average in prison compared to males in ", x, ".")
       } else if (los_diff_female < 0) {
-        female_sentence <- paste0("On average, females spent ", round(abs(los_diff_female), 1), " fewer years in prison compared to males in ", x, ".")
+        female_sentence <- paste0("In ", select_year, ", females spent ",
+                                  abs_los_diff_female,
+                                  if (abs_los_diff_female == 1) " year fewer" else " years fewer",
+                                  " on average in prison compared to males in ", x, ".")
       }
     }
   }
@@ -226,24 +194,27 @@ all_sentence_los_sex <- map(.x = states, .f = function(x) {
   if (female_sentence != "") {
     return(female_sentence)
   } else {
-    return(paste0("On average, females and males spent the same number of years in prison in ", x, "."))
+    return(paste0("In ", select_year, ", females and males spent the same number of years on average in prison in ", x, "."))
   }
 })
 
 # Set names for the list elements
 all_sentence_los_sex <- setNames(all_sentence_los_sex, states)
 all_sentence_los_sex$Georgia
-##########################################################################################     SENTENCE     ################################
+rm(states)
 
+# Get unique states to iterate over
+states <- unique(los_sex$state)
 
-
-states <- unique(ncrp_sex_los$state)
+# VISUALIZATION: Lollipop showing avg time served by sex
+# Generate chart for each state
 all_lollipop_los_sex <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_sex_los |>
+  df1 <- los_sex |>
     ungroup() |>
     filter(state == x) |>
     arrange(desc(average_los)) |>
+    mutate(value = average_los) |>
     mutate(sex_num = row_number(),
            color = case_when(
              sex == "Male" ~ color2,
@@ -264,64 +235,8 @@ all_lollipop_los_sex <- map(.x = states, .f = function(x) {
   df_lines <- df_lines |>
     gather(key = "point", value = "value", start_x, end_x)
 
-  highcharts <- highchart() |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = sex_num, group = sex),
-      lineWidth = 1,
-      color = "black",
-      dashStyle = "solid",
-      opacity = 1,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_los, y = sex_num, group = sex, name = sex, color = color),
-      dataLabels = list(
-        enabled = TRUE,
-        format = '{point.x:.1f} Years',
-        align = "left",
-        y = 9,
-        x = 8,
-        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
-      )
-    ) |>
-    hc_add_theme(base_hc_theme)|>
-    hc_yAxis(
-      labels = list(
-        style = list(
-          color = 'black',
-          fontWeight = "regular",
-          fontSize = "12px"
-        )
-      ),
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      title = list(text = ""),
-      labels = list(enabled = FALSE),
-      lineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickLength = 0,
-      gridLineColor = "transparent",
-      tickColor = "transparent",
-      max = max_los*1.5
-    ) |>
-    hc_exporting(enabled = FALSE) |>
-    hc_tooltip(enabled = FALSE) |>
-    hc_legend(enabled = FALSE) |>
+  # Call the function for the highchart generation
+  highcharts <- fnc_hc_lollipop_overview(df1, df_lines, "average_los", "sex_num", "sex", y_labels, max_los, base_hc_theme) |>
     hc_size(height = 100)
 
   return(highcharts)
@@ -330,13 +245,19 @@ all_lollipop_los_sex <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_lollipop_los_sex <- setNames(all_lollipop_los_sex, states)
 all_lollipop_los_sex$Georgia
+rm(states)
+
+
+
+
+
 
 # ---------------------------------------------------------------------------- #
 # Time Served by Offense and Race
 # ---------------------------------------------------------------------------- #
 
 # Calculate the average time served by race, state, and by offense type
-ncrp_race_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
+los_race_by_offense_type <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(race != "Unknown") |>
   group_by(state, race, fbi_index) |>
@@ -350,11 +271,16 @@ ncrp_race_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
                                   "Hispanic, any race",
                                   "Other race(s), non-Hispanic")))
 
+# Get unique states
+states <- unique(los_race_by_offense_type$state)
+
+# SENTENCE: "The largest disparity was observed among X offenses, where
+#            GROUP people spent X more years in prison on average compared
+#            to GROUP people, who had the shortest time served for these offenses."
 # Generate sentence for each state
-states <- unique(ncrp_race_los_by_offense_type$state)
 all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_race_los_by_offense_type |>
+  df1 <- los_race_by_offense_type |>
     filter(state == x)
 
   # Handling missing data
@@ -431,16 +357,26 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 # Set names for the list elements
 all_sentence_los_race_offense <- setNames(all_sentence_los_race_offense, states)
 all_sentence_los_race_offense$Georgia
-##########################################################################################     SENTENCE     ################################
+rm(states)
+
+
 
 # Get unique states
-states <- unique(ncrp_race_los_by_offense_type$state)
+states <- unique(los_race_by_offense_type$state)
+
+# Generate chart for each state
 all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_race_los_by_offense_type |>
+  df1 <- los_race_by_offense_type |>
     ungroup() |>
     filter(state == x)|>
-    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
+    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
+           color = case_when(
+             race == "White, non-Hispanic" ~ color1,
+             race == "Black, non-Hispanic" ~ color4,
+             race == "Hispanic, any race" ~ color2,
+             race == "Other race(s), non-Hispanic" ~ color5
+           ))
 
   # Create a named vector for y-axis labels
   y_labels <- setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index))))
@@ -455,10 +391,11 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
     gather(key = "point", value = "value", start_x, end_x)
 
   highcharts <- highchart() |>
+    hc_add_theme(base_hc_theme) |>
     hc_add_series(
       df1,
       type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
+      marker = list(radius = 5),
       hcaes(x = average_los, y = fbi_index_num, group = race, name = fbi_index)
     ) |>
     hc_yAxis(
@@ -482,9 +419,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       gridLineColor = lightgray       # Set grid line color
     ) |>
     hc_title(text = "Average Time Served by Offense and Race and Ethnicity") |>
-    hc_colors(c(color4, color2, color5, color3)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_add_theme(base_hc_theme) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
       pointFormat = paste0(
@@ -495,7 +430,8 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       )
     ) |>
     hc_legend(verticalAlign = "top",
-              layout = "horizontal")
+              layout = "horizontal") |>
+    hc_colors(c(color4, color1, color2, color5))
 
   return(highcharts)
 })
@@ -503,15 +439,16 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
 all_scatter_los_race_offense$Georgia
-all_scatter_los_race_offense$Alabama
-all_scatter_los_race_offense$Idaho # no LOS?
+rm(states)
+
+
 
 # ---------------------------------------------------------------------------- #
 # Time Served by Offense and Sex
 # ---------------------------------------------------------------------------- #
 
 # Calculate the average time served by sex, state, and offense type
-ncrp_sex_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
+los_sex_by_offense_type <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
   filter(sex != "Unknown") |>
   group_by(state, sex, fbi_index) |>
@@ -520,11 +457,13 @@ ncrp_sex_los_by_offense_type <- fnc_filter_population(ncrp_releases) |>
     people_released = n(),
     .groups = "drop")
 
+# Get unique states to iterate over
+states <- unique(los_sex_by_offense_type$state)
+
 # Generate sentence for each state
-states <- unique(ncrp_sex_los_by_offense_type$state)
 all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_sex_los_by_offense_type |>
+  df1 <- los_sex_by_offense_type |>
     filter(state == x)
 
   # Handling missing data
@@ -574,13 +513,18 @@ all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 # Set names for the list elements
 all_sentence_los_sex_offense <- setNames(all_sentence_los_sex_offense, states)
 all_sentence_los_sex_offense$Georgia
-##########################################################################################     SENTENCE     ################################
+rm(states)
 
-# Get unique states
-states <- unique(ncrp_sex_los_by_offense_type$state)
+
+
+
+# Get unique states to iterate over
+states <- unique(los_sex_by_offense_type$state)
+
+# Generate chart for each state
 all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_sex_los_by_offense_type |>
+  df1 <- los_sex_by_offense_type |>
     ungroup() |>
     filter(state == x)|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
@@ -601,7 +545,7 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
     hc_add_series(
       df1,
       type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
+      marker = list(radius = 5),
       hcaes(x = average_los, y = fbi_index_num, group = sex, name = fbi_index)
     ) |>
     hc_yAxis(
@@ -646,6 +590,7 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_scatter_los_sex_offense <- setNames(all_scatter_los_sex_offense, states)
 all_scatter_los_sex_offense$Georgia
+rm(states)
 
 
 
@@ -655,7 +600,39 @@ all_scatter_los_sex_offense$Georgia
 
 
 
-######################################################################################################################################
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------------------------- #
+# Save Data
+# ---------------------------------------------------------------------------- #
+
+save(all_sentence_los_race,                    file = file.path(app_folder, "all_sentence_los_race.rds"))
+save(all_lollipop_los_race,                    file = file.path(app_folder, "all_lollipop_los_race.rds"))
+
+save(all_sentence_los_sex,                     file = file.path(app_folder, "all_sentence_los_sex.rds"))
+save(all_lollipop_los_sex,                     file = file.path(app_folder, "all_lollipop_los_sex.rds"))
+
+save(all_sentence_los_race_offense,            file = file.path(app_folder, "all_sentence_los_race_offense.rds"))
+save(all_scatter_los_race_offense,             file = file.path(app_folder, "all_scatter_los_race_offense.rds"))
+
+save(all_sentence_los_sex_offense,             file = file.path(app_folder, "all_sentence_los_sex_offense.rds"))
+save(all_scatter_los_sex_offense,              file = file.path(app_folder, "all_scatter_los_sex_offense.rds"))
+
+#######################################
+# Project: AV Parole
+# File: tab_disparities_years_past_pe.R
+# Authors: Mari Roberts
+# Date last updated: September 24, 2024 (MAR)
+# Description:
+#    Prison disparities visualizations and findings for disparities tab
+#######################################
+
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison After Parole Eligibility by Race and Ethnicity
 # Visualizations
@@ -679,29 +656,30 @@ ncrp_pe_release <- fnc_filter_pe_population_criteria(ncrp_releases) |>
                                   "Other race(s), non-Hispanic")))
 
 # Get average time between PE and release by state and race
-ncrp_avg_pe_release_race <- ncrp_pe_release |>
+avg_pe_release_race <- ncrp_pe_release |>
   filter(!is.na(race)) |>
   group_by(state, race) |>
   summarise(average_avg_pe_release = mean(time_between_ped_release, na.rm = TRUE),
             people_released = n(),
             .groups = "drop")
 
-# Get states with data
-states <- unique(ncrp_avg_pe_release_race$state)
+# Get unique states to iterate over
+states <- unique(avg_pe_release_race$state)
 
 # Generate chart for each state
 all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_avg_pe_release_race |>
+  df1 <- avg_pe_release_race |>
     ungroup() |>
     filter(state == x) |>
     arrange(desc(average_avg_pe_release)) |>
+    mutate(value = average_avg_pe_release) |>
     mutate(race_num = row_number(),
            color = case_when(
-             race == "White, non-Hispanic" ~ color2,
+             race == "White, non-Hispanic" ~ color1,
              race == "Black, non-Hispanic" ~ color4,
-             race == "Hispanic, any race" ~ color5,
-             race == "Other race(s), non-Hispanic" ~ color3
+             race == "Hispanic, any race" ~ color2,
+             race == "Other race(s), non-Hispanic" ~ color5
            ))
 
   max_avg_pe_release <- max(df1$average_avg_pe_release, na.rm = TRUE)
@@ -718,64 +696,8 @@ all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
   df_lines <- df_lines |>
     gather(key = "point", value = "value", start_x, end_x)
 
-  highcharts <- highchart() |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = race_num, group = race),
-      lineWidth = 1,
-      color = "black",
-      dashStyle = "solid",
-      opacity = 1,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_avg_pe_release, y = race_num, group = race, name = race, color = color),
-      dataLabels = list(
-        enabled = TRUE,
-        format = '{point.x:.1f} Years',
-        align = "left",
-        y = 9,
-        x = 8,
-        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
-      )
-    ) |>
-    hc_add_theme(base_hc_theme)|>
-    hc_yAxis(
-      labels = list(
-        style = list(
-          color = 'black',
-          fontWeight = "regular",
-          fontSize = "12px"
-        )
-      ),
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      title = list(text = ""),
-      labels = list(enabled = FALSE),
-      lineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickLength = 0,
-      gridLineColor = "transparent",
-      tickColor = "transparent",
-      max = max_avg_pe_release*1.5
-    ) |>
-    hc_exporting(enabled = FALSE) |>
-    hc_tooltip(enabled = FALSE) |>
-    hc_legend(enabled = FALSE) |>
+  # Call the function for the highchart generation
+  highcharts <- fnc_hc_lollipop_overview(df1, df_lines, "average_avg_pe_release", "race_num", "race", y_labels, max_avg_pe_release, base_hc_theme) |>
     hc_size(height = 150)
 
   return(highcharts)
@@ -784,9 +706,10 @@ all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_lollipop_avg_pe_release_race <- setNames(all_lollipop_avg_pe_release_race, states)
 all_lollipop_avg_pe_release_race$Georgia
+rm(states)
 
 # Get average time between PE and release by state and race and offense
-ncrp_avg_pe_release_race_offese <- ncrp_pe_release |>
+avg_pe_release_race_offense <- ncrp_pe_release |>
   filter(!is.na(race) & !is.na(fbi_index)) |>
   group_by(state, race, fbi_index) |>
   summarise(total_years = sum(time_between_ped_release, na.rm = TRUE),
@@ -794,11 +717,13 @@ ncrp_avg_pe_release_race_offese <- ncrp_pe_release |>
             people_released = n(),
             .groups = "drop")
 
-# Get unique states
-states <- unique(ncrp_avg_pe_release_race_offese$state)
+# Get unique states to iterate over
+states <- unique(avg_pe_release_race_offense$state)
+
+# Generate chart for each state
 all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_avg_pe_release_race_offese |>
+  df1 <- avg_pe_release_race_offense |>
     ungroup() |>
     filter(state == x)|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
@@ -819,7 +744,7 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
     hc_add_series(
       df1,
       type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
+      marker = list(radius = 5),
       hcaes(x = avg_years, y = fbi_index_num, group = race, name = fbi_index)
     ) |>
     hc_yAxis(
@@ -843,8 +768,8 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
       gridLineColor = lightgray       # Set grid line color
     ) |>
     hc_title(text = "Avg. Years In Prison Past Parole Eligibility<br>by Offense and Race and Ethnicity") |>
-    hc_colors(c(color4, color2, color5, color3)) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_colors(c(color4, color1, color2, color5))
+  hc_exporting(enabled = TRUE) |>
     hc_add_theme(base_hc_theme) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
@@ -864,6 +789,10 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_scatter_avg_pe_release_race_offense <- setNames(all_scatter_avg_pe_release_race_offense, states)
 all_scatter_avg_pe_release_race_offense$Georgia
+rm(states)
+
+
+
 
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison After Parole Eligibility by Sex
@@ -883,7 +812,7 @@ ncrp_pe_release <- fnc_filter_pe_population_criteria(ncrp_releases) |>
   )
 
 # Get average time between PE and release by state and sex
-ncrp_avg_pe_release_sex <- ncrp_pe_release |>
+avg_pe_release_sex <- ncrp_pe_release |>
   filter(!is.na(sex)) |>
   group_by(state, sex) |>
   summarise(average_avg_pe_release = mean(time_between_ped_release, na.rm = TRUE),
@@ -891,15 +820,16 @@ ncrp_avg_pe_release_sex <- ncrp_pe_release |>
             .groups = "drop")
 
 # Get states with data
-states <- unique(ncrp_avg_pe_release_sex$state)
+states <- unique(avg_pe_release_sex$state)
 
 # Generate chart for each state
 all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_avg_pe_release_sex |>
+  df1 <- avg_pe_release_sex |>
     ungroup() |>
     filter(state == x) |>
     arrange(desc(average_avg_pe_release)) |>
+    mutate(value = average_avg_pe_release) |>
     mutate(sex_num = row_number(),
            color = case_when(
              sex == "Male" ~ color2,
@@ -920,64 +850,7 @@ all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
   df_lines <- df_lines |>
     gather(key = "point", value = "value", start_x, end_x)
 
-  highcharts <- highchart() |>
-    hc_add_series(
-      df_lines,
-      type = 'line',
-      hcaes(x = value, y = sex_num, group = sex),
-      lineWidth = 1,
-      color = "black",
-      dashStyle = "solid",
-      opacity = 1,
-      marker = list(enabled = FALSE),
-      enableMouseTracking = FALSE,
-      showInLegend = FALSE
-    ) |>
-    hc_add_series(
-      df1,
-      type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
-      hcaes(x = average_avg_pe_release, y = sex_num, group = sex, name = sex, color = color),
-      dataLabels = list(
-        enabled = TRUE,
-        format = '{point.x:.1f} Years',
-        align = "left",
-        y = 9,
-        x = 8,
-        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
-      )
-    ) |>
-    hc_add_theme(base_hc_theme)|>
-    hc_yAxis(
-      labels = list(
-        style = list(
-          color = 'black',
-          fontWeight = "regular",
-          fontSize = "12px"
-        )
-      ),
-      title = list(text = ""),
-      majorGridLineColor = "transparent",
-      gridLineColor = "transparent",
-      lineColor = "transparent",
-      majorGridLineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickColor = "black",
-      categories = y_labels
-    ) |>
-    hc_xAxis(
-      title = list(text = ""),
-      labels = list(enabled = FALSE),
-      lineColor = "transparent",
-      minorGridLineColor = "transparent",
-      tickLength = 0,
-      gridLineColor = "transparent",
-      tickColor = "transparent",
-      max = max_avg_pe_release*1.5
-    ) |>
-    hc_exporting(enabled = FALSE) |>
-    hc_tooltip(enabled = FALSE) |>
-    hc_legend(enabled = FALSE) |>
+  highcharts <- fnc_hc_lollipop_overview(df1, df_lines, "average_avg_pe_release", "sex_num", "sex", y_labels, max_avg_pe_release, base_hc_theme) |>
     hc_size(height = 100)
 
   return(highcharts)
@@ -986,20 +859,23 @@ all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_lollipop_avg_pe_release_sex <- setNames(all_lollipop_avg_pe_release_sex, states)
 all_lollipop_avg_pe_release_sex$Georgia
+rm(states)
 
-# Get average time between PE and release by state, sex, and offense
-ncrp_avg_pe_release_sex_offense <- ncrp_pe_release |>
+# Gstates# Get average time between PE and release by state, sex, and offense
+avg_pe_release_sex_offense <- ncrp_pe_release |>
   filter(!is.na(sex) & !is.na(fbi_index)) |>
   group_by(state, sex, fbi_index) |>
   summarise(avg_years = mean(time_between_ped_release, na.rm = TRUE),
             people_released = n(),
             .groups = "drop")
 
-# Get unique states
-states <- unique(ncrp_avg_pe_release_sex_offense$state)
+# Get unique states to iterate over
+states <- unique(avg_pe_release_sex_offense$state)
+
+# Generate chart for each state
 all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 
-  df1 <- ncrp_avg_pe_release_sex_offense |>
+  df1 <- avg_pe_release_sex_offense |>
     ungroup() |>
     filter(state == x)|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)))
@@ -1020,7 +896,7 @@ all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
     hc_add_series(
       df1,
       type = 'scatter',
-      marker = list(symbol = "circle", radius = 5),
+      marker = list(radius = 5),
       hcaes(x = avg_years, y = fbi_index_num, group = sex, name = fbi_index)
     ) |>
     hc_yAxis(
@@ -1065,7 +941,7 @@ all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_scatter_avg_pe_release_sex_offense <- setNames(all_scatter_avg_pe_release_sex_offense, states)
 all_scatter_avg_pe_release_sex_offense$Georgia
-
+rm(states)
 
 
 
@@ -1075,21 +951,16 @@ all_scatter_avg_pe_release_sex_offense$Georgia
 
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison After Parole Eligibility by Race and Ethnicity
-# The goal is to generate sentence summaries for each state comparing the years spent in prison
-# past parole eligibility by race and ethnicity.
-# Two main outputs are generated:
-# 1. Summary of disparities based on race (focus on Black and Hispanic groups compared to White).
-# 2. Disparities based on offense type (comparing longest vs shortest time spent in prison).
 # ---------------------------------------------------------------------------- #
 
-# Load unique states from the dataset to iterate over.
-states <- unique(ncrp_avg_pe_release_race$state)
+# Get unique states to iterate over
+states <- unique(avg_pe_release_race$state)
 
 # Function to generate sentences summarizing racial disparities in time spent past parole eligibility.
 all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
 
   # Data preparation: filter the dataset for the current state and rename race categories for clarity.
-  df1 <- ncrp_avg_pe_release_race |>
+  df1 <- avg_pe_release_race |>
     ungroup() |>
     mutate(race = case_when(
       race == "White, non-Hispanic" ~ "White",
@@ -1148,21 +1019,19 @@ all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
 # Set the names of the list elements to match the state names.
 all_sentence_avg_pe_release_race <- setNames(all_sentence_avg_pe_release_race, states)
 all_sentence_avg_pe_release_race$Georgia
-##########################################################################################     SENTENCE     ################################
-
+rm(states)
 
 
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison After Parole Eligibility by Race and Ethnicity by Offense Type
-# The goal here is to summarize racial disparities in time spent past parole eligibility for
-# specific offense types within each state.
 # ---------------------------------------------------------------------------- #
 
+states <- unique(avg_pe_release_race_offense$state)
 # Iterate over states to generate offense-specific summaries.
 all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   # Filter the dataset for the current state.
-  df1 <- ncrp_avg_pe_release_race_offese |>
+  df1 <- avg_pe_release_race_offense |>
     filter(state == x)
 
   # Handle missing data for the state.
@@ -1226,25 +1095,19 @@ all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 # Set the names of the list elements to match the state names.
 all_sentence_avg_pe_release_race_offense <- setNames(all_sentence_avg_pe_release_race_offense, states)
 all_sentence_avg_pe_release_race_offense$Georgia
-##########################################################################################     SENTENCE     ################################
 
 
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison After Parole Eligibility by Sex
-# The goal is to generate sentence summaries for each state comparing the years spent in prison
-# past parole eligibility by sex.
-# Two main outputs are generated:
-# 1. Summary of disparities based on sex (focus on Female vs. Male).
-# 2. Disparities based on offense type (comparing longest vs shortest time spent in prison).
 # ---------------------------------------------------------------------------- #
 
-states <- unique(ncrp_avg_pe_release_sex$state)
+states <- unique(avg_pe_release_sex$state)
 
 # Function to generate sentences summarizing sex disparities in time spent past parole eligibility.
 all_sentence_avg_pe_release_sex <- map(.x = states, .f = function(x) {
 
   # Data preparation: filter the dataset for the current state and rename sex categories for clarity.
-  df1 <- ncrp_avg_pe_release_sex |>
+  df1 <- avg_pe_release_sex |>
     ungroup() |>
     filter(state == x)  # Filter dataset for the current state.
 
@@ -1283,77 +1146,19 @@ all_sentence_avg_pe_release_sex <- map(.x = states, .f = function(x) {
 # Set the names of the list elements to match the state names.
 all_sentence_avg_pe_release_sex <- setNames(all_sentence_avg_pe_release_sex, states)
 all_sentence_avg_pe_release_sex$Georgia
-##########################################################################################     SENTENCE     ################################
 
 
 
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison After Parole Eligibility by Sex and Offense Type
-# The goal here is to summarize sex disparities in time spent past parole eligibility for
-# specific offense types within each state.
 # ---------------------------------------------------------------------------- #
 
-# # Iterate over states to generate offense-specific summaries.
-# all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
-#
-#   # Filter the dataset for the current state.
-#   df1 <- ncrp_avg_pe_release_sex_offense |>
-#     filter(state == x)
-#
-#   # Handle missing data for the state.
-#   if (nrow(df1) == 0) {
-#     return(paste0("No data available for ", x))
-#   }
-#
-#   # Calculate the disparity in average years spent past parole eligibility across sexes for each offense.
-#   df_disparity <- df1 %>%
-#     group_by(fbi_index) %>%
-#     reframe(
-#       max_avg_pe_release = max(avg_years),  # Maximum years spent past parole eligibility.
-#       min_avg_pe_release = min(avg_years),  # Minimum years spent past parole eligibility.
-#       diff_avg_pe_release = max_avg_pe_release - min_avg_pe_release,  # Difference in years.
-#       sex_longest = sex[which.max(avg_years)],  # Sex group with longest average years.
-#       sex_shortest = sex[which.min(avg_years)]  # Sex group with shortest average years.
-#     ) %>%
-#     arrange(desc(diff_avg_pe_release))  # Sort by the magnitude of disparity.
-#
-#   # If no disparities involving females are found, return a message.
-#   df_disparity_filtered <- df_disparity %>% filter(sex_longest != "Male")
-#
-#   if (nrow(df_disparity_filtered) == 0) {
-#     return(paste0("No disparities found between males and females for ", x ,"."))
-#   }
-#
-#   # Extract the largest disparity for females.
-#   largest_disparity <- df_disparity_filtered %>% slice(1)
-#
-#   # Extract details for the generated sentence.
-#   offense_type <- tolower(largest_disparity$fbi_index)  # Convert the offense type to lowercase.
-#   sex_longest <- largest_disparity$sex_longest
-#   los_longest <- round(largest_disparity$max_avg_pe_release, 1)
-#   sex_shortest <- largest_disparity$sex_shortest
-#   los_shortest <- round(largest_disparity$min_avg_pe_release, 1)
-#   disparity_diff <- round(largest_disparity$diff_avg_pe_release, 1)
-#
-#   # Construct the sentence summarizing the disparity.
-#   sentence <- paste0(
-#     "For ", offense_type, " offenses, females had ", disparity_diff,
-#     " more years in prison past parole eligibility on average compared to males, who had the shortest time served for these offenses."
-#   )
-#
-#   return(sentence)  # Return the constructed sentence for the state.
-# })
-#
-# # Set the names of the list elements to match the state names.
-# all_sentence_avg_pe_release_sex_offense <- setNames(all_sentence_avg_pe_release_sex_offense, states)
-# all_sentence_avg_pe_release_sex_offense$Georgia
-##########################################################################################     SENTENCE     ################################
 # Iterate over states to generate offense-specific summaries.
-states <- unique(ncrp_avg_pe_release_sex_offense$state)
+states <- unique(avg_pe_release_sex_offense$state)
 all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 
   # Filter the dataset for the current state.
-  df1 <- ncrp_avg_pe_release_sex_offense |>
+  df1 <- avg_pe_release_sex_offense |>
     filter(state == x)
 
   # Handle missing data for the state.
@@ -1409,16 +1214,10 @@ all_sentence_avg_pe_release_sex_offense$Georgia
 
 
 
-
 # ---------------------------------------------------------------------------- #
 # Save Data
 # ---------------------------------------------------------------------------- #
 
-save(all_sentence_los_race,                    file = file.path(app_folder, "all_sentence_los_race.rds"))
-save(all_lollipop_los_race,                    file = file.path(app_folder, "all_lollipop_los_race.rds"))
-
-save(all_sentence_los_race_offense,            file = file.path(app_folder, "all_sentence_los_race_offense.rds"))
-save(all_scatter_los_race_offense,             file = file.path(app_folder, "all_scatter_los_race_offense.rds"))
 
 save(all_sentence_avg_pe_release_race,         file = file.path(app_folder, "all_sentence_avg_pe_release_race.rds"))
 save(all_lollipop_avg_pe_release_race,         file = file.path(app_folder, "all_lollipop_avg_pe_release_race.rds"))
@@ -1426,13 +1225,7 @@ save(all_lollipop_avg_pe_release_race,         file = file.path(app_folder, "all
 save(all_sentence_avg_pe_release_race_offense, file = file.path(app_folder, "all_sentence_avg_pe_release_race_offense.rds"))
 save(all_scatter_avg_pe_release_race_offense,  file = file.path(app_folder, "all_scatter_avg_pe_release_race_offense.rds"))
 
-save(ncrp_avg_pe_release_race,                 file = file.path(app_folder, "ncrp_avg_pe_release_race.rds"))
-
-save(all_sentence_los_sex,                     file = file.path(app_folder, "all_sentence_los_sex.rds"))
-save(all_lollipop_los_sex,                     file = file.path(app_folder, "all_lollipop_los_sex.rds"))
-
-save(all_sentence_los_sex_offense,             file = file.path(app_folder, "all_sentence_los_sex_offense.rds"))
-save(all_scatter_los_sex_offense,              file = file.path(app_folder, "all_scatter_los_sex_offense.rds"))
+save(avg_pe_release_race,                      file = file.path(app_folder, "avg_pe_release_race.rds"))
 
 save(all_sentence_avg_pe_release_sex,          file = file.path(app_folder, "all_sentence_avg_pe_release_sex.rds"))
 save(all_lollipop_avg_pe_release_sex,          file = file.path(app_folder, "all_lollipop_avg_pe_release_sex.rds"))
@@ -1440,4 +1233,5 @@ save(all_lollipop_avg_pe_release_sex,          file = file.path(app_folder, "all
 save(all_sentence_avg_pe_release_sex_offense,  file = file.path(app_folder, "all_sentence_avg_pe_release_sex_offense.rds"))
 save(all_scatter_avg_pe_release_sex_offense,   file = file.path(app_folder, "all_scatter_avg_pe_release_sex_offense.rds"))
 
-save(ncrp_avg_pe_release_sex,                  file = file.path(app_folder, "ncrp_avg_pe_release_sex.rds"))
+save(avg_pe_release_sex,                       file = file.path(app_folder, "avg_pe_release_sex.rds"))
+

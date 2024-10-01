@@ -71,6 +71,7 @@ deliverables_folder <- file.path(config$sp_data_path, "data", "deliverables", "k
 select_year <- 2020
 
 # Choose alignment for content (left or center)
+# For now we like things centered
 alignment <- "center"
 
 #------ Fonts ------#
@@ -88,22 +89,7 @@ options(highcharter.lang = hcoptslang)
 
 #------ Colors ------#
 
-# Michael colors
-# colors <- list(
-#   lightgray = "#d7d7d7",
-#   darkgray  = "#969696",
-#   purple    = "#938ebf", # primary color
-#   red       = "#d97d68", # primary color
-#   blue      = "#55b4e5", # primary color
-#   yellow    = "#decf64", # primary color
-#   green1    = "#b1d4d5",
-#   green2    = "#49a7a1",
-#   green3    = "#176f6d", # primary color
-#   green4    = "#104040",
-#   brown     = "#9e6c10"  # primary color
-# )
-
-# Colors for the groups
+# Colors by Eleventy
 blue <- "#55b4e5"
 teal <- "#49a7a1"
 lightteal <- "#b1d4d5"

@@ -2,26 +2,25 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: September 24, 2024 (MAR)
+# Date last updated: October 1, 2024 (MAR)
 # Description:
 #    This script generates parole eligibility visualizations and related summaries
 #    for the "Parole Eligibility" tab in state reports.
 #
 #    Key Components:
-#    - **Prison Population by Parole Eligibility Status**: Filters the NCRP prison population data by specific criteria,
-#      including new court commitments and sentence lengths of 1-25 years, to analyze people in prison past their parole eligibility date.
+#    - Prison Population by Parole Eligibility Status: Filters the NCRP prison population data by specific criteria,
+#      including new court commitments and sentence lengths 1+ years (except life), to analyze people in prison past their parole eligibility date.
 #      It then visualizes the proportion of individuals in different parole eligibility statuses (current, future, missing).
 #
-#    - **Demographic Breakdown**: Analyzes and visualizes demographics such as race, sex, and age for
+#    - Demographics: Analyzes and visualizes demographics such as race, sex, and age for
 #      people in prison past parole eligibility.
 #
-#    - **Offense Type Analysis**: Breaks down the parole eligibility population by offense types (e.g., violent, non-violent) to see what
-#      percentage of people are in prison past their eligibility date based on the crimes committed.
+#    - Offense Types: Breaks down the parole eligibility population by offense types (e.g., violent, non-violent) to see what
+#      percentage of people are in prison past their eligibility based on the crimes committed.
 #
-#    - **Sentence Length Distribution**:  Breaks down the parole eligibility population by sentence length for individuals in prison past their parole eligibility year,
-#      with a focus on people sentenced to 1-24.9 years.
+#    - Sentence Lengths:  Breaks down the parole eligibility population by sentence length for individuals in prison past their parole eligibility.
 #
-#    For each of these components, the script generates both **visualizations** (e.g., stacked bar charts, column charts) and **descriptive sentences**
+#    For each of these components, the script generates both visualizations (e.g., stacked bar charts, column charts) and descriptive sentences.
 #    to summarize the findings for each state.
 #
 #    Finally, the output data and visualizations are saved as `.rds` files for later use in the interactive tool.
@@ -32,13 +31,13 @@
 # ---------------------------------------------------------------------------- #
 
 # Filter the population data to include only people in prison for new court commitments
-# with sentence lengths between 1-25 years, based on our criteria
+# with sentence lengths 1+ years except LIFE, based on our criteria
 # Only includes states with parole systems
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Total prison population by state and year
 # Only people in prison for new court commitments
-# with sentence lengths between 1-25 years, based on our criteria
+# with sentence lengths 1+ years except LIFE, based on our criteria
 # Only includes states with parole systems
 total_pe_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
@@ -46,7 +45,7 @@ total_pe_pop <- ncrp_yearendpop_filtered |>
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
 # Only people in prison for new court commitments
-# with sentence lengths between 1-25 years, based on our criteria
+# with sentence lengths 1+ years except LIFE, based on our criteria
 # Only includes states with parole systems
 pe_status_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>

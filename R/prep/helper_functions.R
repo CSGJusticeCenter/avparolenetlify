@@ -421,12 +421,12 @@ base_hc_theme <- hc_theme(
     tickColor = "transparent"
   ),
   plotOptions = list(
-    line = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    spline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    area = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    areaspline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    arearange = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    bubble = list(maxSize = "10%", dataLabels = list(style = common_style)),
+    # line = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    # spline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    # area = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    # areaspline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    # arearange = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
+    # bubble = list(maxSize = "10%", dataLabels = list(style = common_style)),
     column = list(
       dataLabels = list(
         style = common_style
@@ -458,37 +458,37 @@ hc_theme_with_line <- hc_theme(
     labels = list(enabled = TRUE, style = common_style)
   ),
   plotOptions = list(
-    line = list(
-      marker = list(
-        enabled = TRUE,
-        symbol = 'circle'
-      )
-    ),
-    spline = list(
-      marker = list(
-        enabled = TRUE,
-        symbol = 'circle'
-      )
-    ),
-    area = list(
-      marker = list(
-        enabled = TRUE,
-        symbol = 'circle'
-      )
-    ),
-    areaspline = list(
-      marker = list(
-        enabled = TRUE,
-        symbol = 'circle'
-      )
-    ),
-    arearange = list(
-      marker = list(
-        enabled = TRUE,
-        symbol = 'circle'
-      )
-    ),
-    bubble = list(maxSize = "10%"),
+    # line = list(
+    #   marker = list(
+    #     enabled = TRUE,
+    #     symbol = 'circle'
+    #   )
+    # ),
+    # spline = list(
+    #   marker = list(
+    #     enabled = TRUE,
+    #     symbol = 'circle'
+    #   )
+    # ),
+    # area = list(
+    #   marker = list(
+    #     enabled = TRUE,
+    #     symbol = 'circle'
+    #   )
+    # ),
+    # areaspline = list(
+    #   marker = list(
+    #     enabled = TRUE,
+    #     symbol = 'circle'
+    #   )
+    # ),
+    # arearange = list(
+    #   marker = list(
+    #     enabled = TRUE,
+    #     symbol = 'circle'
+    #   )
+    # ),
+    # bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
         style = list(color = "black")
@@ -664,6 +664,95 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
 }
 
 
+#' @title Highcharter Lollipop Overview Chart
+#' @description This function creates a lollipop chart using Highcharter, where lines
+#' represent the data range and circles represent specific points like average length of stay (LOS).
+#' @param df1 A data frame containing the main data points to be plotted as scatter points (e.g., average LOS).
+#' @param df_lines A data frame containing line data, typically representing ranges (e.g., min and max LOS).
+#' @param y_var The variable on the y-axis, typically a categorical variable.
+#' @param group_var The variable to group the data by, used for color coding and labeling points.
+#' @param y_labels A vector of labels for the y-axis.
+#' @param max_los A numeric value representing the maximum length of stay (LOS) to set the x-axis limit.
+#' @param base_hc_theme A theme object to apply to the Highcharter plot.
+#' @return A Highcharter object representing the lollipop chart.
+#' @export
+# fnc_hc_lollipop_overview <- function(df1, df_lines, x_var, y_var, group_var, y_labels, max_los, base_hc_theme) {
+#
+#   # Initialize the highchart object
+#   highchart() |>
+#
+#     # Add a line series to represent ranges (e.g., min-max LOS)
+#     hc_add_series(
+#       df_lines,
+#       type = 'line',
+#       hcaes(x = value, y = !!sym(y_var), group = !!sym(group_var)),  # Map the x and y aesthetics
+#       lineWidth = 1,  # Set line width
+#       color = "black",  # Line color
+#       dashStyle = "solid",  # Line style
+#       opacity = 1,  # Line opacity
+#       marker = list(enabled = FALSE),  # Disable markers on the line
+#       enableMouseTracking = FALSE,  # Disable mouse tracking for the line
+#       showInLegend = FALSE  # Hide the line from the legend
+#     ) |>
+#
+#     # Add scatter points to represent specific values (e.g., average LOS)
+#     hc_add_series(
+#       df1,
+#       type = 'scatter',
+#       marker = list(radius = 5),  # Customize scatter point markers
+#       hcaes(x = !!sym(x_var), y = !!sym(y_var), group = !!sym(group_var), name = !!sym(group_var), color = color),  # Map scatter aesthetics
+#       dataLabels = list(
+#         enabled = TRUE,  # Enable data labels for scatter points
+#         format = '{point.x:.1f} Years',  # Format the data label as years
+#         align = "left",  # Align the data label to the left
+#         y = 9,  # Adjust vertical position of the label
+#         x = 8,  # Adjust horizontal position of the label
+#         style = list(color = 'black', fontWeight = "regular", fontSize = "12px")  # Style for the data labels
+#       )
+#     ) |>
+#
+#     # Apply a base theme to the chart
+#     hc_add_theme(base_hc_theme) |>
+#
+#     # Customize the y-axis
+#     hc_yAxis(
+#       labels = list(
+#         style = list(
+#           color = 'black',  # Y-axis label color
+#           fontWeight = "regular",  # Font weight for the labels
+#           fontSize = "12px"  # Font size for the labels
+#         )
+#       ),
+#       title = list(text = ""),  # No title for the y-axis
+#       majorGridLineColor = "transparent",  # Hide major grid lines
+#       gridLineColor = "transparent",  # Hide grid lines
+#       lineColor = "transparent",  # Hide axis line
+#       minorGridLineColor = "transparent",  # Hide minor grid lines
+#       tickColor = "black",  # Color of the axis ticks
+#       categories = y_labels  # Set the y-axis categories based on the provided labels
+#     ) |>
+#
+#     # Customize the x-axis
+#     hc_xAxis(
+#       title = list(text = ""),  # No title for the x-axis
+#       labels = list(enabled = FALSE),  # Disable x-axis labels
+#       lineColor = "transparent",  # Hide the x-axis line
+#       minorGridLineColor = "transparent",  # Hide minor grid lines
+#       tickLength = 0,  # No tick marks
+#       gridLineColor = "transparent",  # Hide grid lines
+#       tickColor = "transparent",  # Hide tick color
+#       max = max_los * 1.5  # Set the maximum x-axis value based on max_los
+#     ) |>
+#
+#     # Disable exporting features
+#     hc_exporting(enabled = FALSE) |>
+#
+#     # Disable tooltips
+#     hc_tooltip(enabled = FALSE) |>
+#
+#     # Disable the legend
+#     hc_legend(enabled = FALSE)
+# }
 
 
 
@@ -671,10 +760,199 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
 
 
 
+#-------------------------------------------------------------------------------
+# PEOPLE INFOGRAPHICS
+#-------------------------------------------------------------------------------
 
+#' @title Blank Out Plot Theme
+#' @description This function sets up a theme for blanking out plot elements like axes, scales, and legends.
+#' @return A list of ggplot2 theme and scale elements for use in plots.
+#' @export
+fnc_blankitout <- function(){
+  list(
+    theme_void(),  # Removes background and gridlines for a clean appearance.
+    scale_x_continuous(expand = expansion(mult = ex_w, add = 0)),  # Customizes x-axis scale expansion.
+    scale_y_continuous(expand = expansion(mult = ex_h, add = 0)),  # Customizes y-axis scale expansion.
+    theme(legend.position = "none", aspect.ratio = img_ar_hw)  # Removes legend and sets the aspect ratio for the plot.
+  )
+}
 
+#' @title Icon Options for Plotting
+#' @description Generates a list of plot options based on a partial fill value, colors, and a background for creating icon-based infographics.
+#' @param partialval A numeric value between 0 and 1 representing the percentage of the partial icon fill.
+#' @param empty Color for the empty part of the icon.
+#' @param fill Color for the full part of the icon.
+#' @param partial Color for the partially filled icon.
+#' @param bg Background color for the icons.
+#' @param fillHoriz A logical flag indicating whether to fill icons horizontally (TRUE) or vertically (FALSE).
+#' @return A list of ggplot objects representing empty, full, and partial icon states.
+#' @export
+fnc_icon_options <- function(partialval, empty = "#FFFFFF", fill = dark_color, partial = light_color, bg = "#FFFFFF", fillHoriz = FALSE) {
+  # Ensure partialval is within valid range
+  if (partialval < 0 | partialval >= 1) stop("partialval must be between 0 and 1")
 
+  # Define color sets for different states of the icon (empty, full, partial)
+  cols_lst <- list(
+    "empty" = c(bg, empty),
+    "full" = c(bg, fill),
+    "partial" = c(bg, partial, fill)
+  )
 
+  # Define percentage fills for each icon state
+  pcts_lst <- list(
+    "empty" = 0,
+    "full" = 100,
+    "partial" = partialval * 100
+  )
+
+  # Initialize the plot list to store generated plots for each state
+  plot_lst <- list("empty" = NULL, "full" = NULL, "partial" = NULL)
+
+  # Determine the boundaries for filling either horizontally or vertically
+  if (fillHoriz == FALSE) {
+    pos1 <- which(apply(img[,,1], 2, function(y) any(y == 1)))  # Determine filled vertical range
+    max <- max(pos1)
+  } else {
+    pos1 <- which(apply(img[,,1], 1, function(y) any(y == 1)))  # Determine filled horizontal range
+    max <- max(pos1)
+  }
+  h <- dim(img)[1]  # Icon height
+  w <- dim(img)[2]  # Icon width
+  min <- min(pos1)
+
+  # Loop through each icon state and generate corresponding plot
+  for (j in names(plot_lst)) {
+    pcts <- pcts_lst[[j]]  # Get the fill percentage for the current state
+    pospct <- round((max - min) * pcts / 100 + min)  # Calculate the fill position based on percentage
+    finalimg <- img[h:1,,1]  # Flip the image vertically for correct orientation
+    bkgr <- (finalimg == 1)  # Background mask
+    colfill <- matrix(rep(FALSE, h*w), nrow = h)  # Initialize fill matrix
+
+    # Apply the fill either horizontally or vertically
+    if (fillHoriz == FALSE) {
+      colfill[1:h, max:pospct] <- TRUE
+    } else {
+      colfill[max:pospct, 1:w] <- TRUE
+    }
+
+    # Assign partially filled cells in the image
+    finalimg[bkgr & colfill] <- 0.5
+    df <- reshape2::melt(finalimg)  # Convert matrix to long format for plotting
+
+    # Remove partial fill for the 'full' state
+    if (j == "full") {
+      df[df$value == 0.5, ] <- 0
+    }
+
+    # Create the ggplot for each icon state
+    plot <- ggplot(df, aes(x = Var2, y = Var1, fill = factor(value))) +
+      geom_raster() +
+      scale_fill_manual(values = cols_lst[[j]]) +  # Apply the corresponding color scheme
+      fnc_blankitout()  # Apply the blank theme
+
+    plot_lst[[j]] <- plot  # Store the plot in the list
+  }
+
+  return(plot_lst)  # Return the list of generated plots
+}
+
+#' @title Create Icon Infographic
+#' @description Generates an infographic representing a Relative Rate Index (RRI) using icons to indicate full, partial, and empty states.
+#' @param rri_raw The raw Relative Rate Index value.
+#' @param rri_digits Number of decimal places to round the RRI value.
+#' @param fillcolor Color to fill the full icons.
+#' @param partialcolor Color to fill partially filled icons.
+#' @param emptyhumans Logical flag to indicate whether empty icons should be included.
+#' @param emptycolor Color for the empty icons.
+#' @param infogs Total number of icons to display.
+#' @param infogs_ncol Number of columns for the grid layout of icons.
+#' @param fillHoriz Logical flag to determine if icons should be filled horizontally or vertically.
+#' @return A ggplot2 object representing the generated icon infographic.
+#' @export
+fnc_create_icons <- function(rri_raw, rri_digits = 1, fillcolor = dark_color, partialcolor = light_color,
+                             emptyhumans = TRUE, emptycolor = "white", infogs = default_ncols,
+                             infogs_ncol = default_ncols, fillHoriz = FALSE) {
+
+  # Round the RRI value and compute full and partial icons
+  RRI <- round(rri_raw, digits = rri_digits)
+  numfull <- floor(RRI)  # Number of fully filled icons
+  numremain <- RRI - numfull  # Portion of the partial icon
+
+  # Generate plot options for full, partial, and empty icons
+  plot_opts <- fnc_icon_options(partialval = numremain, empty = emptycolor, fill = fillcolor, partial = partialcolor, fillHoriz = fillHoriz)
+
+  plot_list <- list()  # Initialize list for storing plots
+
+  # Create full and partial icons based on RRI value
+  if (RRI > 1 & numremain != 0) {
+    for (i in 1:numfull) {
+      plot_list[[i]] <- plot_opts$full
+    }
+    plot_list[[numfull + 1]] <- plot_opts$partial
+  } else if (RRI > 1 & numremain == 0) {
+    for (i in 1:numfull) {
+      plot_list[[i]] <- plot_opts$full
+    }
+  } else if (RRI == 1) {
+    plot_list[[1]] <- plot_opts$full
+  } else if (RRI < 1) {
+    plot_list[[1]] <- plot_opts$partial
+  }
+
+  # Add empty icons if needed
+  if (emptyhumans == TRUE & length(plot_list) != infogs) {
+    st_empty <- ifelse(numremain != 0, numfull + 2, numfull + 1)
+    for (i in st_empty:infogs) {
+      plot_list[[i]] <- plot_opts$empty
+    }
+  }
+
+  # Determine the number of rows for the icon grid
+  rows <- ifelse(infogs > infogs_ncol, ceiling(rri_raw / infogs_ncol), 1)
+
+  # Return the grid of icon plots
+  plot_grid(plotlist = plot_list, nrow = rows)
+}
+
+#' @title Create Infographic with Icons and RRI Label
+#' @description Combines a label of the RRI value with a grid of icons representing the RRI.
+#' @param rri_raw The raw Relative Rate Index value.
+#' @param infographic_color The color for the infographic elements.
+#' @return A ggplot object combining the RRI label and the icon grid.
+#' @export
+fnc_create_infographic <- function(rri_raw, infographic_color) {
+
+  # Round the RRI value and format as a text label
+  rri_text <- paste0(round(rri_raw, digits = 1), "x")
+
+  # Generate the icons for the infographic
+  ggtemp_justpeople <- fnc_create_icons(
+    rri_raw = rri_raw,
+    infogs = default_ncols,
+    infogs_ncol = default_ncols,
+    fillcolor = infographic_color,
+    partialcolor = light_color,
+    emptyhumans = TRUE,
+    emptycolor = "white",
+    fillHoriz = FALSE
+  )
+
+  # Create the plot for displaying the RRI text label
+  rri_label_plot <- ggplot() +
+    annotate("text", x = 1, y = 1, label = rri_text, size = 12, hjust = 0.5,
+             fontface = "bold",
+             color = infographic_color,
+             family = "Graphik") +
+    theme_void()
+
+  # Combine the RRI label plot with the icon grid
+  final_plot <- plot_grid(
+    rri_label_plot, ggtemp_justpeople,
+    nrow = 1, rel_widths = c(1, 6)  # Adjust widths to balance the label and icons
+  )
+
+  print(final_plot)  # Display the final infographic plot
+}
 
 
 

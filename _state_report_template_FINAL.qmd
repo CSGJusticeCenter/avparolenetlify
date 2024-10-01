@@ -245,6 +245,8 @@ div(id = "visualization", state_stackedbar_parole_eligibility_release)
 
 Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. 
 
+`r paste(state_sentence_release_type, collapse = ", ")`
+
 ```{r state_pie_release_type}
 div(id = "visualization", state_pie_release_type)
 ```
@@ -372,7 +374,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
-This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity. 
+This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity in 2020. 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
@@ -381,7 +383,6 @@ div(id = "visualization", state_scatter_los_race_offense)
 
 ### Gender 
 
-This chart shows the average time served in prison for the most serious sentenced offense by gender. 
 `r paste(state_sentence_los_sex, collapse = ", ")`
 
 ```{r state_lollipop_los_sex}
@@ -389,6 +390,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_sex)
 ```
 
+This chart shows the average time served in prison for the most serious sentenced offense by gender in 2020. 
 `r paste(state_sentence_los_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_los_sex_offense}
@@ -487,7 +489,7 @@ if (file.exists(pe_rri_infographic_hispanic)) {
 div(id = "bold-text", "Avg. Years in Prison After Parole Eligibility")
 br()
 
-df1 <- ncrp_avg_pe_release_race |>
+df1 <- avg_pe_release_race |>
   filter(state == state_for_report)
 
 # Check if all average_avg_pe_release are NA
@@ -498,10 +500,10 @@ if (!all(is.na(df1$average_avg_pe_release))) {
     div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", 
         paste0(round(df1$average_avg_pe_release[df1$race == "Black, non-Hispanic"], 1), " Years")
         ),
-    div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", 
+    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", 
         paste0(round(df1$average_avg_pe_release[df1$race == "Hispanic, any race"], 1), " Years")
         ),
-    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", 
+    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", 
         paste0(round(df1$average_avg_pe_release[df1$race == "White, non-Hispanic"], 1), " Years")
         ),
     div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;", 
@@ -509,8 +511,8 @@ if (!all(is.na(df1$average_avg_pe_release))) {
         ),
 
     div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
-    div(style = "color: #decf64; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
-    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("White")),
+    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
+    div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White")),
     div(style = "color: #938ebf; text-align: center; font-size: 16px; font-weight: bold;", HTML("Other"))
   )
   cat(as.character(html_output))
@@ -524,6 +526,7 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_avg_pe_release_race)
 ```
 
+This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by race and ethnicity in 2020.
 `r paste(state_sentence_avg_pe_release_race_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_pe_release_race_offense}
@@ -538,7 +541,7 @@ div(id = "visualization", state_scatter_avg_pe_release_race_offense)
 div(id = "bold-text", "Avg. Years in Prison After Parole Eligibility")
 br()
 
-df1 <- ncrp_avg_pe_release_sex |>
+df1 <- avg_pe_release_sex |>
   filter(state == state_for_report)
 
 # Check if all average_avg_pe_release are NA
@@ -563,6 +566,7 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 }
 ```
 
+This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by sex in 2020.
 `r paste(state_sentence_avg_pe_release_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_pe_release_sex_offense}
