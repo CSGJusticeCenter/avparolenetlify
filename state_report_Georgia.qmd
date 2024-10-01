@@ -75,7 +75,7 @@ div(id = "small-visualization", state_stackedbar_pe_type)
 
 `r paste(state_sentence_pop_pe_by_year, collapse = ", ")`
 
-```{r}
+```{r state_stackedbar_pop_pe_by_year}
 div(id = "visualization", state_stackedbar_pop_pe_by_year)
 ```
 
@@ -89,7 +89,7 @@ div(id = "visualization", state_stackedbar_pop_pe_by_year)
 
 `r paste(state_sentence_parole_eligibility_race, collapse = ", ")`
 
-```{r}
+```{r state_bar_parole_eligibility_race}
 div(id = "small-visualization", state_bar_parole_eligibility_race)
 ```
 
@@ -97,7 +97,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_race)
 
 `r paste(state_sentence_parole_eligibility_sex, collapse = ", ")`
 
-```{r}
+```{r state_bar_parole_eligibility_sex}
 div(id = "small-visualization", state_bar_parole_eligibility_sex)
 ```
 
@@ -105,7 +105,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_sex)
 
 `r paste(state_sentence_parole_eligibility_ageyrend, collapse = ", ")`
 
-```{r}
+```{r state_bar_parole_eligibility_ageyrend}
 div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 ```
 
@@ -167,7 +167,7 @@ div(id = "visualization", state_line_population_by_year)
 
 `r paste(state_sentence_population_race, collapse = ", ")`
 
-```{r}
+```{r state_bar_population_race}
 div(id = "small-visualization", state_bar_population_race)
 ```
 
@@ -175,7 +175,7 @@ div(id = "small-visualization", state_bar_population_race)
 
 `r paste(state_sentence_population_sex, collapse = ", ")`
 
-```{r}
+```{r state_bar_population_sex}
 div(id = "small-visualization", state_bar_population_sex)
 ```
 
@@ -183,7 +183,7 @@ div(id = "small-visualization", state_bar_population_sex)
 
 `r paste(state_sentence_population_ageyrend, collapse = ", ")`
 
-```{r}
+```{r state_bar_population_ageyrend}
 div(id = "small-visualization", state_bar_population_ageyrend)
 ```
 
@@ -195,7 +195,7 @@ div(id = "small-visualization", state_bar_population_ageyrend)
 
 `r paste(state_sentence_population_fbi_index, collapse = ", ")`
 
-```{r}
+```{r state_bar_population_fbi_index}
 div(id = "visualization", state_bar_population_fbi_index)
 ```
 
@@ -205,7 +205,7 @@ div(id = "visualization", state_bar_population_fbi_index)
 
 `r paste(state_sentence_population_sentlgth, collapse = ", ")`
 
-```{r}
+```{r state_bar_population_sentlgth}
 div(id = "visualization", state_bar_population_sentlgth)
 ```
 
@@ -262,7 +262,7 @@ div(id = "visualization", state_pie_release_type)
 
 `r paste(state_sentence_releases_race, collapse = ", ")`
 
-```{r}
+```{r state_bar_releases_race}
 div(id = "small-visualization", state_bar_releases_race)
 ```
   
@@ -270,7 +270,7 @@ div(id = "small-visualization", state_bar_releases_race)
   
 `r paste(state_sentence_releases_sex, collapse = ", ")`
 
-```{r}
+```{r state_bar_releases_sex}
 div(id = "small-visualization", state_bar_releases_sex)
 ```
   
@@ -278,7 +278,7 @@ div(id = "small-visualization", state_bar_releases_sex)
   
 `r paste(state_sentence_releases_agerlse, collapse = ", ")`
 
-```{r}
+```{r state_bar_releases_agerlse}
 div(id = "small-visualization", state_bar_releases_agerlse)
 ```
 
@@ -291,7 +291,7 @@ div(id = "small-visualization", state_bar_releases_agerlse)
 
 `r paste(state_sentence_releases_fbi_index, collapse = ", ")`
 
-```{r}
+```{r state_bar_releases_fbi_index}
 div(id = "visualization", state_bar_releases_fbi_index)
 ```
 
@@ -315,7 +315,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 Racial and ethnic disparities in prison incarceration represents the accumulation of disparities across the system.  
 <br>
 
-```{r}
+```{r rri_infographic_black}
 if (file.exists(rri_infographic_black)) {
   knitr::include_graphics(rri_infographic_black)
 }
@@ -326,7 +326,7 @@ if (file.exists(rri_infographic_black)) {
 
 `r paste(state_sentence_rri_black, collapse = ", ")`
 
-```{r}
+```{r rri_infographic_hispanic}
 if (file.exists(rri_infographic_hispanic)) {
     knitr::include_graphics(rri_infographic_hispanic)
 }
@@ -356,22 +356,10 @@ Gender disparities in prison incarceration represents the accumulation of dispar
 
 ### Race and Ethnicity
 
-```{r}
-# section_text <- "X individuals faced the longest average time served in prison in 2020. Similarly, Y, individuals also experienced notably longer prison stays compared to their Z counterparts, who had the shortest average time served."
-# div(
-#   id = "grid-container",
-#   style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
-#   section_text,
-#   div(id = "visualization", state_lollipop_los_race)
-# )
-# br()
-```
-
 `r paste(state_sentence_los_race, collapse = ", ")`
 
 ```{r state_lollipop_los_race}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
-# div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_race)
 ```
 
 This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity in 2020. 
@@ -387,7 +375,6 @@ div(id = "visualization", state_scatter_los_race_offense)
 
 ```{r state_lollipop_los_sex}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
-# div(id = "visualization", style = "margin: 0 auto; text-align: center;", state_lollipop_los_sex)
 ```
 
 This chart shows the average time served in prison for the most serious sentenced offense by gender in 2020. 
@@ -410,7 +397,7 @@ div(id = "visualization", state_scatter_los_sex_offense)
 
 <br>
 
-```{r}
+```{r pe_rri_infographic_black}
 if (file.exists(pe_rri_infographic_black)) {
   knitr::include_graphics(pe_rri_infographic_black)
 }
@@ -418,7 +405,7 @@ if (file.exists(pe_rri_infographic_black)) {
 
 `r paste(state_sentence_pe_rri_black, collapse = ", ")`
 
-```{r}
+```{r pe_rri_infographic_hispanic}
 if (file.exists(pe_rri_infographic_hispanic)) {
     knitr::include_graphics(pe_rri_infographic_hispanic)
 }
@@ -449,46 +436,6 @@ if (file.exists(pe_rri_infographic_hispanic)) {
 `r paste(state_sentence_avg_pe_release_race, collapse = ", ")`
 
 ```{r state_parole_release_disparities, results='asis'}
-# df1 <- all_pe_release_total_years_race |>
-#   filter(state == state_for_report)
-# 
-# # Check if all total_years are NA
-# if (!all(is.na(df1$total_years))) {
-# 
-#   message <- HTML(paste0("In ", select_year, ", people in prison collectively spent a total of ",
-#                    comma(sum(df1$total_years, na.rm = TRUE)), " years past their parole eligibility."))
-# 
-#   cat(message)
-# 
-#   br()
-#   html_output <- div(
-#     id = "grid-container",
-#     style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-#     div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Black, non-Hispanic"]) ),
-#     div(style = "color: #decf64; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Hispanic, any race"]) ),
-#     div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "White, non-Hispanic"]) ),
-#     div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;", comma(df1$total_years[df1$race == "Other race(s), non-Hispanic"]) ),
-# 
-#     div(style = "color: #49a7a1; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-#     div(style = "color: #decf64; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-#     div(style = "color: #55b4e5; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-#     div(style = "color: #938ebf; text-align: center; font-size: 20px; font-weight: bold;", "Years"),
-# 
-#     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Black People")),
-#     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Hispanic People")),
-#     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("White People")),
-#     div(style = "text-align: center; font-size: 14px; font-weight: bold;", HTML("Other Race(s), Non-Hispanic People"))
-#   )
-# 
-#   cat(as.character("<br><br>"))
-#   cat(as.character(html_output))
-#   br()
-# } else {
-#   cat("")
-# }
-div(id = "bold-text", "Avg. Years in Prison After Parole Eligibility")
-br()
-
 df1 <- avg_pe_release_race |>
   filter(state == state_for_report)
 
@@ -515,6 +462,7 @@ if (!all(is.na(df1$average_avg_pe_release))) {
     div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White")),
     div(style = "color: #938ebf; text-align: center; font-size: 16px; font-weight: bold;", HTML("Other"))
   )
+  cat(as.character(div(id = "bold-text", "Avg. Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
   br()
 } else {
@@ -538,9 +486,6 @@ div(id = "visualization", state_scatter_avg_pe_release_race_offense)
 `r paste(state_sentence_avg_pe_release_sex, collapse = ", ")`
 
 ```{r state_pe_release_total_years_sex, results='asis'}
-div(id = "bold-text", "Avg. Years in Prison After Parole Eligibility")
-br()
-
 df1 <- avg_pe_release_sex |>
   filter(state == state_for_report)
 
@@ -548,17 +493,19 @@ df1 <- avg_pe_release_sex |>
 if (!all(is.na(df1$average_avg_pe_release))) {
   html_output <- div(
     id = "grid-container",
-    style = "display: grid; grid-template-columns: repeat(2, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold; margin: 0; padding: 0;", 
+    style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
+    # First column: Years for Male, Second column: Years for Female
+    div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
         paste0(round(df1$average_avg_pe_release[df1$sex == "Male"], 1), " Years")
     ),
-    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold; margin: 0; padding: 0;", 
+    div(style = "color: #55b4e5; font-size: 24px; font-weight: bold; margin: 0;", 
         paste0(round(df1$average_avg_pe_release[df1$sex == "Female"], 1), " Years")
     ),
-    
-    div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold; margin: 0; padding: 0;", HTML("Male")),
-    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold; margin: 0; padding: 0;", HTML("Female"))
+    # First column: Male label, Second column: Female label
+    div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
+    div(style = "color: #55b4e5; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
   )
+  cat(as.character(div(id = "bold-text", "Avg. Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
   br()
 } else {

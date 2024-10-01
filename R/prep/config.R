@@ -103,6 +103,10 @@ color3 <- yellow
 color4 <- teal
 color5 <- purple
 color6 <- lightteal
+green1    = "#b1d4d5"
+green2    = "#49a7a1"
+green3    = "#176f6d"
+green4    = "#104040"
 
 # DARKER COLORS
 # teal <- "#176f6d"

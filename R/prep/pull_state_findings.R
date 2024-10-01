@@ -7,8 +7,10 @@
 no_data_text <- paste0("Data is not available. ", state_for_report,
                        " did not submit this data to the National Corrections Reporting Program in ",
                        select_year, ".")
-no_data_text <- ""
-
+no_sentence <- ""
+no_visualization <- paste0("Data is not available. ", state_for_report,
+                           " did not submit this data to the National Corrections Reporting Program in ",
+                           select_year, ".")
 
 #------------------------------------------------------------------------------#
 # Highlighted Findings (page_national_trends.R)
@@ -60,7 +62,7 @@ if (state_for_report %in% names(all_sentence_pe_type)) {
   state_sentence_pe_type <-
     all_sentence_pe_type[[state_for_report]]
 } else {
-  state_sentence_pe_type <- ""
+  state_sentence_pe_type <- no_sentence
 }
 
 # PAROLE ELIGIBILITY TRENDS ------------------
@@ -80,7 +82,7 @@ if (state_for_report %in% names(all_sentence_pop_pe_by_year)) {
   state_sentence_pop_pe_by_year <-
     all_sentence_pop_pe_by_year[[state_for_report]]
 } else {
-  state_sentence_pop_pe_by_year <- ""
+  state_sentence_pop_pe_by_year <- no_sentence
 }
 
 # TITLE: Line chart
@@ -99,7 +101,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_race)) {
   state_sentence_parole_eligibility_race <-
     all_sentence_parole_eligibility_race[[state_for_report]]
 } else {
-  state_sentence_parole_eligibility_race <- ""
+  state_sentence_parole_eligibility_race <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_parole_eligibility_race)) {
@@ -107,14 +109,14 @@ if (state_for_report %in% names(all_bar_parole_eligibility_race)) {
     all_bar_parole_eligibility_race[[state_for_report]] |>
     hc_size(height = 300)
 } else {
-  state_bar_parole_eligibility_race <- ""
+  state_bar_parole_eligibility_race <- no_visualization
 }
 
 if (state_for_report %in% names(all_sentence_parole_eligibility_sex)) {
   state_sentence_parole_eligibility_sex <-
     all_sentence_parole_eligibility_sex[[state_for_report]]
 } else {
-  state_sentence_parole_eligibility_sex <- ""
+  state_sentence_parole_eligibility_sex <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_parole_eligibility_sex)) {
@@ -122,14 +124,14 @@ if (state_for_report %in% names(all_bar_parole_eligibility_sex)) {
     all_bar_parole_eligibility_sex[[state_for_report]] |>
     hc_size(height = 300)
 } else {
-  state_bar_parole_eligibility_sex <- ""
+  state_bar_parole_eligibility_sex <- no_visualization
 }
 
 if (state_for_report %in% names(all_sentence_parole_eligibility_ageyrend)) {
   state_sentence_parole_eligibility_ageyrend <-
     all_sentence_parole_eligibility_ageyrend[[state_for_report]]
 } else {
-  state_sentence_parole_eligibility_ageyrend <- ""
+  state_sentence_parole_eligibility_ageyrend <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_parole_eligibility_ageyrend)) {
@@ -137,7 +139,7 @@ if (state_for_report %in% names(all_bar_parole_eligibility_ageyrend)) {
     all_bar_parole_eligibility_ageyrend[[state_for_report]] |>
     hc_size(height = 300)
 } else {
-  state_bar_parole_eligibility_ageyrend <- ""
+  state_bar_parole_eligibility_ageyrend <- no_visualization
 }
 
 
@@ -155,7 +157,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
   state_sentence_parole_eligibility_fbi_index <-
     all_sentence_parole_eligibility_fbi_index[[state_for_report]]
 } else {
-  state_sentence_parole_eligibility_fbi_index <- ""
+  state_sentence_parole_eligibility_fbi_index <- no_sentence
 }
 
 # TITLE:  Offense Breakdown for People in Prison Past Their Parole Eligibility Year
@@ -177,7 +179,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
   state_sentence_parole_eligibility_sentlgth <-
     all_sentence_parole_eligibility_sentlgth[[state_for_report]]
 } else {
-  state_sentence_parole_eligibility_sentlgth <- ""
+  state_sentence_parole_eligibility_sentlgth <- no_sentence
 }
 
 # TITLE: Sentence Lengths for People in Prison Past Their Parole Eligibility Year
@@ -232,7 +234,7 @@ if (state_for_report %in% names(all_sentence_population)) {
   state_sentence_population <-
     all_sentence_population[[state_for_report]]
 } else {
-  state_sentence_population <- ""
+  state_sentence_population <- no_sentence
 }
 
 # TITLE: Prison Population by Year
@@ -251,7 +253,7 @@ if (state_for_report %in% names(all_sentence_population_race)) {
   state_sentence_population_race <-
     all_sentence_population_race[[state_for_report]]
 } else {
-  state_sentence_population_race <- ""
+  state_sentence_population_race <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_population_race)) {
@@ -260,14 +262,14 @@ if (state_for_report %in% names(all_bar_population_race)) {
     hc_size(height = 300) |>
     hc_colors(c(color2))
 } else {
-  state_bar_population_race <- ""
+  state_bar_population_race <- no_visualization
 }
 
 if (state_for_report %in% names(all_sentence_population_sex)) {
   state_sentence_population_sex <-
     all_sentence_population_sex[[state_for_report]]
 } else {
-  state_sentence_population_sex <- ""
+  state_sentence_population_sex <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_population_sex)) {
@@ -276,14 +278,14 @@ if (state_for_report %in% names(all_bar_population_sex)) {
     hc_size(height = 300) |>
     hc_colors(c(color2))
 } else {
-  state_bar_population_sex <- ""
+  state_bar_population_sex <- no_visualization
 }
 
 if (state_for_report %in% names(all_sentence_population_ageyrend)) {
   state_sentence_population_ageyrend <-
     all_sentence_population_ageyrend[[state_for_report]]
 } else {
-  state_sentence_population_ageyrend <- ""
+  state_sentence_population_ageyrend <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_population_ageyrend)) {
@@ -292,7 +294,7 @@ if (state_for_report %in% names(all_bar_population_ageyrend)) {
     hc_size(height = 300) |>
     hc_colors(c(color2))
 } else {
-  state_bar_population_ageyrend <- ""
+  state_bar_population_ageyrend <- no_visualization
 }
 
 # OFFENSE TYPE ------------------
@@ -301,7 +303,7 @@ if (state_for_report %in% names(all_sentence_population_fbi_index)) {
   state_sentence_population_fbi_index <-
     all_sentence_population_fbi_index[[state_for_report]]
 } else {
-  state_sentence_population_fbi_index <- ""
+  state_sentence_population_fbi_index <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_population_fbi_index)) {
@@ -310,7 +312,7 @@ if (state_for_report %in% names(all_bar_population_fbi_index)) {
     hc_size(height = 400) |>
     hc_colors(c(color2))
 } else {
-  state_bar_population_fbi_index <- ""
+  state_bar_population_fbi_index <- no_visualization
 }
 
 # SENTENCE LENGTH ------------------
@@ -319,7 +321,7 @@ if (state_for_report %in% names(all_sentence_population_sentlgth)) {
   state_sentence_population_sentlgth <-
     all_sentence_population_sentlgth[[state_for_report]]
 } else {
-  state_sentence_population_sentlgth <- ""
+  state_sentence_population_sentlgth <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_population_sentlgth)) {
@@ -328,7 +330,7 @@ if (state_for_report %in% names(all_bar_population_sentlgth)) {
     hc_size(height = 400) |>
     hc_colors(c(color2))
 } else {
-  state_bar_population_sentlgth <- ""
+  state_bar_population_sentlgth <- no_visualization
 }
 
 
@@ -362,7 +364,7 @@ if (state_for_report %in% names(all_sentence_releases)) {
   state_sentence_releases <-
     all_sentence_releases[[state_for_report]]
 } else {
-  state_sentence_releases <- ""
+  state_sentence_releases <- no_sentence
 }
 
 # TITLE: Prison Releases by Year
@@ -380,7 +382,7 @@ if (state_for_report %in% names(all_sentence_pe_proportion_released)) {
   state_sentence_pe_proportion_released <-
     all_sentence_pe_proportion_released[[state_for_report]]
 } else {
-  state_sentence_pe_proportion_released <- ""
+  state_sentence_pe_proportion_released <- no_sentence
 }
 
 # TITLE: Parole-Eligible Prison Population Released by Year
@@ -397,7 +399,7 @@ if (state_for_report %in% names(all_sentence_release_type)) {
   state_sentence_release_type <-
     all_sentence_release_type[[state_for_report]]
 } else {
-  state_sentence_release_type <- ""
+  state_sentence_release_type <- no_sentence
 }
 
 # TITLE: Proportion of Conditional vs Unconditional Releases
@@ -415,7 +417,7 @@ if (state_for_report %in% names(all_sentence_releases_race)) {
   state_sentence_releases_race <-
     all_sentence_releases_race[[state_for_report]]
 } else {
-  state_sentence_releases_race <- ""
+  state_sentence_releases_race <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_releases_race)) {
@@ -423,14 +425,14 @@ if (state_for_report %in% names(all_bar_releases_race)) {
     all_bar_releases_race[[state_for_report]] |>
     hc_size(height = 300)
 } else {
-  state_bar_releases_race <- ""
+  state_bar_releases_race <- no_visualization
 }
 
 if (state_for_report %in% names(all_sentence_releases_sex)) {
   state_sentence_releases_sex <-
     all_sentence_releases_sex[[state_for_report]]
 } else {
-  state_sentence_releases_sex <- ""
+  state_sentence_releases_sex <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_releases_sex)) {
@@ -438,14 +440,14 @@ if (state_for_report %in% names(all_bar_releases_sex)) {
     all_bar_releases_sex[[state_for_report]] |>
     hc_size(height = 300)
 } else {
-  state_bar_releases_sex <- ""
+  state_bar_releases_sex <- no_visualization
 }
 
 if (state_for_report %in% names(all_sentence_releases_agerlse)) {
   state_sentence_releases_agerlse <-
     all_sentence_releases_agerlse[[state_for_report]]
 } else {
-  state_sentence_releases_agerlse <- ""
+  state_sentence_releases_agerlse <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_releases_agerlse)) {
@@ -453,7 +455,7 @@ if (state_for_report %in% names(all_bar_releases_agerlse)) {
     all_bar_releases_agerlse[[state_for_report]] |>
     hc_size(height = 300)
 } else {
-  state_bar_releases_agerlse <- ""
+  state_bar_releases_agerlse <- no_visualization
 }
 
 # OFFENSE TYPE ------------------
@@ -462,7 +464,7 @@ if (state_for_report %in% names(all_sentence_releases_fbi_index)) {
   state_sentence_releases_fbi_index <-
     all_sentence_releases_fbi_index[[state_for_report]]
 } else {
-  state_sentence_releases_fbi_index <- ""
+  state_sentence_releases_fbi_index <- no_sentence
 }
 
 if (state_for_report %in% names(all_bar_releases_fbi_index)) {
@@ -470,7 +472,7 @@ if (state_for_report %in% names(all_bar_releases_fbi_index)) {
     all_bar_releases_fbi_index[[state_for_report]] |>
     hc_size(height = 400)
 } else {
-  state_bar_releases_fbi_index <- ""
+  state_bar_releases_fbi_index <- no_visualization
 }
 
 
@@ -522,13 +524,13 @@ if (state_for_report %in% names(all_sentence_rri_black)) {
   state_sentence_rri_black <-
     all_sentence_rri_black[[state_for_report]]
 } else {
-  state_sentence_rri_black <- ""
+  state_sentence_rri_black <- no_sentence
 }
 if (state_for_report %in% names(all_sentence_rri_hispanic)) {
   state_sentence_rri_hispanic <-
     all_sentence_rri_hispanic[[state_for_report]]
 } else {
-  state_sentence_rri_hispanic <- ""
+  state_sentence_rri_hispanic <- no_sentence
 }
 
 # SENTENCE: "Hispanic, any race individuals faced the longest average time
@@ -539,7 +541,7 @@ if (state_for_report %in% names(all_sentence_los_race)) {
   state_sentence_los_race <-
     all_sentence_los_race[[state_for_report]]
 } else {
-  state_sentence_los_race <- ""
+  state_sentence_los_race <- no_sentence
 }
 
 # TITLE: Average Length of Stay by Race, Ethnicity, and Offense Type
@@ -560,7 +562,7 @@ if (state_for_report %in% names(all_sentence_los_race_offense)) {
   state_sentence_los_race_offense <-
     all_sentence_los_race_offense[[state_for_report]]
 } else {
-  state_sentence_los_race_offense <- ""
+  state_sentence_los_race_offense <- no_sentence
 }
 
 if (state_for_report %in% names(all_scatter_los_race_offense)) {
@@ -580,27 +582,27 @@ if (state_for_report %in% names(all_sentence_pe_rri_black)) {
   state_sentence_pe_rri_black <-
     all_sentence_pe_rri_black[[state_for_report]]
 } else {
-  state_sentence_pe_rri_black <- ""
+  state_sentence_pe_rri_black <- no_sentence
 }
 if (state_for_report %in% names(all_sentence_pe_rri_hispanic)) {
   state_sentence_pe_rri_hispanic <-
     all_sentence_pe_rri_hispanic[[state_for_report]]
 } else {
-  state_sentence_pe_rri_hispanic <- ""
+  state_sentence_pe_rri_hispanic <- no_sentence
 }
 
 if (state_for_report %in% names(all_sentence_avg_pe_release_race)) {
   state_sentence_avg_pe_release_race <-
     all_sentence_avg_pe_release_race[[state_for_report]]
 } else {
-  state_sentence_avg_pe_release_race <- ""
+  state_sentence_avg_pe_release_race <- no_sentence
 }
 
 if (state_for_report %in% names(all_sentence_avg_pe_release_race_offense)) {
   state_sentence_avg_pe_release_race_offense <-
     all_sentence_avg_pe_release_race_offense[[state_for_report]]
 } else {
-  state_sentence_avg_pe_release_race_offense <- ""
+  state_sentence_avg_pe_release_race_offense <- no_sentence
 }
 
 
@@ -630,7 +632,7 @@ if (state_for_report %in% names(all_sentence_los_sex)) {
   state_sentence_los_sex <-
     all_sentence_los_sex[[state_for_report]]
 } else {
-  state_sentence_los_sex <- ""
+  state_sentence_los_sex <- no_sentence
 }
 
 # TITLE: Average Length of Stay by sex, Ethnicity, and Offense Type
@@ -651,7 +653,7 @@ if (state_for_report %in% names(all_sentence_los_sex_offense)) {
   state_sentence_los_sex_offense <-
     all_sentence_los_sex_offense[[state_for_report]]
 } else {
-  state_sentence_los_sex_offense <- ""
+  state_sentence_los_sex_offense <- no_sentence
 }
 
 if (state_for_report %in% names(all_scatter_los_sex_offense)) {
@@ -673,14 +675,14 @@ if (state_for_report %in% names(all_sentence_avg_pe_release_sex)) {
   state_sentence_avg_pe_release_sex <-
     all_sentence_avg_pe_release_sex[[state_for_report]]
 } else {
-  state_sentence_avg_pe_release_sex <- ""
+  state_sentence_avg_pe_release_sex <- no_sentence
 }
 
 if (state_for_report %in% names(all_sentence_avg_pe_release_sex_offense)) {
   state_sentence_avg_pe_release_sex_offense <-
     all_sentence_avg_pe_release_sex_offense[[state_for_report]]
 } else {
-  state_sentence_avg_pe_release_sex_offense <- ""
+  state_sentence_avg_pe_release_sex_offense <- no_sentence
 }
 
 

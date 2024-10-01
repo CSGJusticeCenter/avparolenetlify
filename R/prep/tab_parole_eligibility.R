@@ -473,7 +473,7 @@ current_ped_fbi_index <- current_ped_fbi_index |>
     TRUE ~ "Other or Unknown"
   ),
   color = case_when(
-    group == "Violent" ~ color2, # color3
+    group == "Violent" ~ color2,
     group == "Non-Violent" ~ color2,
     group == "Other or Unknown" ~ darkgray
   ))

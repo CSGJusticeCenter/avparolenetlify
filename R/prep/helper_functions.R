@@ -754,7 +754,41 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
 #     hc_legend(enabled = FALSE)
 # }
 
-
+fnc_disparities_theme <- function(chart){
+  chart <- chart |>
+  hc_add_theme(base_hc_theme) |>
+    hc_yAxis(
+      labels = list(
+        style = list(
+          color = 'black',
+          fontWeight = "regular",
+          fontSize = "12px"
+        )
+      ),
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      majorGridLineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickColor = "black",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      title = list(text = ""),
+      labels = list(enabled = FALSE),
+      lineColor = "transparent",
+      minorGridLineColor = "transparent",
+      tickLength = 0,
+      gridLineColor = "transparent",
+      tickColor = "transparent",
+      max = max_los * 1.5
+    ) |>
+    hc_exporting(enabled = FALSE) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_legend(enabled = FALSE)
+  return(chart)
+}
 
 
 

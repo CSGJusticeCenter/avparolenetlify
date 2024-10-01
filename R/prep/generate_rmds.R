@@ -5,7 +5,6 @@ source("R/prep/config.R")
 # source("R/prep/tab_population.R")
 # source("R/prep/tab_releases.R")
 # source("R/prep/tab_disparities_rris.R")
-# source("R/prep/tab_disparities_pe_rris.R")
 # source("R/prep/tab_disparities_time_served.R")
 # source("R/prep/tab_disparities_years_past_pe.R")
 
@@ -18,11 +17,11 @@ wd <- getwd()
 
 # Get list of states where parol eligibility is the focus
 states <- "Georgia"
-# states <- carl_state_notes |>
-#   filter(abolished_parole_16_total == "N") |>
-#   inner_join(parole_eligibility_table, by = "state") |>
-#   filter(!is.na(current_perc)) |>
-#   pull(state)
+states <- carl_state_notes |>
+  filter(abolished_parole_16_total == "N") |>
+  inner_join(parole_eligibility_table, by = "state") |>
+  filter(!is.na(current_perc)) |>
+  pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template_FINAL.qmd")

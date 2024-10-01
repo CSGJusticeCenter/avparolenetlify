@@ -146,8 +146,9 @@ ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
   ) |>
   mutate(status = case_when(
     status == "prop_parole_eligible_not_released" ~ "Not Released",
-    status == "prop_parole_eligible_released" ~ "Released"
-  ))
+    status == "prop_parole_eligible_released" ~ "Released")
+  )
+
 
 # Generate stacked bar charts for each state showing the proportion of parole-eligible people released and not released
 states <- unique(ncrp_pe_proportion_released$state)
@@ -178,6 +179,12 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
                                         landmarkVerbosity = "one"),
                    area = list(accessibility = list(description = "TBD accessibility text"))) |>
     hc_title(text = "Proportion of Parole-Eligible People Released from Prison by Year") |>
+    hc_tooltip(formatter = JS("
+      function() {
+        return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+          (this.y * 100).toFixed(0) + '%</b><br/>';
+      }
+    ")) |>
     hc_colors(c(color3, color5))
   return(highcharts)
 })
