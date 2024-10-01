@@ -312,16 +312,9 @@ fnc_filter_pe_population_criteria <- function(data,
 #' fnc_prepare_pe_data(df, count_column = "parole_eligibility_status")
 #' }
 fnc_prepare_pe_data <- function(df, count_column) {
-  df1 <- df |>
+  df1 <- fnc_filter_pe_population_criteria(df) |>
     # Filter for the selected year and 'Current' parole eligibility status
     filter(rptyear == select_year & parelig_status == "Current") |>
-    # Further filter for the "New court commitment" admission type
-    filter(admtype == "New court commitment") |>
-    # Filter for specific sentence lengths
-    filter(sentlgth == "1-1.9 years" |
-             sentlgth == "2-4.9 years" |
-             sentlgth == "5-9.9 years" |
-             sentlgth == "10-24.9 years") |>
     # Group by state and count occurrences of the specified column
     group_by(state) |>
     filter(!is.na({{ count_column }})) |>

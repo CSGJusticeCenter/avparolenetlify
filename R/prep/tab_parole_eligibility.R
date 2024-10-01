@@ -476,7 +476,11 @@ current_ped_fbi_index <- current_ped_fbi_index |>
     group == "Violent" ~ color2,
     group == "Non-Violent" ~ color2,
     group == "Other or Unknown" ~ darkgray
-  ))
+  )) |>
+  mutate(tooltip = paste0("<b>", state, " - ",
+                          group, "</b><br>",
+                          "Number of People: ", n_label, "<br>",
+                          "Percentage of People: ", prop_label, "<br>"))
 
 # Generate graph for each state
 states <- unique(current_ped_fbi_index$state)
@@ -500,19 +504,15 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
+all_bar_ped_fbi_index$Alabama
+
 rm(states)
 
 
-
 # Get proportion of offenses that were violent and non-violent
-current_ped_offense_group <- ncrp_yearendpop |>
+current_ped_offense_group <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
   filter(rptyear == select_year &
            parelig_status == "Current") |>
-  filter(admtype == "New court commitment") |>
-  filter(sentlgth == "1-1.9 years" |
-           sentlgth == "2-4.9 years" |
-           sentlgth == "5-9.9 years" |
-           sentlgth == "10-24.9 years") |>
   mutate(group = case_when(
     fbi_index %in% c("Murder and Non-negligent Manslaughter",
                      "Rape or Sexual Assault",
@@ -534,13 +534,7 @@ current_ped_offense_group <- ncrp_yearendpop |>
   mutate(tooltip = paste0("<b>", state, " - ",
                           group, "</b><br>",
                           "Number of People: ", n_label, "<br>",
-                          "Percentage of People: ", prop_label, "<br>"),
-         color = case_when(
-           group == "Violent" ~ color3,
-           group == "Non-Violent" ~ color2,
-           group == "Other or Unknown" ~ darkgray
-         )) |>
-  mutate(group = ifelse(group == "Other or Unknown", "Other<br>or Unknown", group))
+                          "Percentage of People: ", prop_label, "<br>"))
 
 
 
@@ -591,6 +585,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
 all_sentence_parole_eligibility_fbi_index$Georgia
+all_sentence_parole_eligibility_fbi_index$Alabama
 rm(states)
 
 
