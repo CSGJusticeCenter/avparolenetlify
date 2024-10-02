@@ -11,7 +11,7 @@
 #       and transforming variables for analysis.
 #    3. Clean and structure BJS Prisoners data by race, ethnicity, and sex for different years.
 #    4. Import hex map for the National Trends page.
-#    5. Load external data from the Robina Institute and Carl Reynold's state notes on parole eligibility.
+#    5. Load external data from the Robina Institute and Carl Reynold's state notes on parole eligibility (PE).
 #    6. Save cleaned and transformed datasets for use in analyses and visualizations.
 #######################################
 
@@ -22,33 +22,34 @@
 # Hex map for national trends page
 # Load hexgrid shapefile and select only the 'state_abb' column
 # Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
-hex_gj <- if (file.exists(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson"))) {
-  read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
+hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
     select(state_abb = iso3166_2) |>
     filter(state_abb != "DC") |>
     st_transform(3857) |>
     sf_geojson() |>
     fromJSON(simplifyVector = FALSE)
-} else {
-  stop("File not found: Check file path")
-}
-
 
 
 #------------------------------------------------------------------------------#
-# Robina Institute/Carl Notes
+# State-Specific Notes for "How is Parole Eligibility Determined?" Section
 #------------------------------------------------------------------------------#
 
-# Load Carl's state notes, which contains parole eligibility information for each state
-carl_state_notes <- read.xlsx(file.path(config$sp_data_path, "data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
-  clean_names()
+# # Load Carl's state notes, which contains parole eligibility information for each state
+# carl_state_notes <- read.xlsx(file.path(config$sp_data_path, "data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
+#   clean_names()
+#
+# # Load additional parole information by state from an Excel sheet (includes details such as the number of parole board members)
+# parole_info_by_state <- read.xlsx(file.path(config$sp_data_path, "background/app/Parole Info by State.xlsx"),
+#                                   sheet = "Overall") |>
+#   clean_names()
 
-# Load additional parole information by state from an Excel sheet (includes details such as the number of parole board members)
-parole_info_by_state <- read.xlsx(file.path(config$sp_data_path, "background/app/Parole Info by State.xlsx"),
-                                  sheet = "Overall") |>
-  clean_names()
-
-
+# Import state-specific notes about parole eligibility and number of parole board members
+state_notes <- read.csv(file.path(config$sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v1.csv")) |>
+  clean_names() |>
+  mutate(across(where(is.character), str_trim)) |>
+  mutate(
+    state = str_replace_all(state, "\\*", ""),
+    citation = sapply(citation, fnc_format_citation)) # format citations
 
 
 #------------------------------------------------------------------------------#
@@ -82,15 +83,16 @@ ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_
         # Caused by warning:
         #   ! NAs introduced by coercion
 ncrp_releases <- ncrp_releases_combined |>
-  mutate(time_between_ped_rptyear = years_to_estimated_pey,
+  mutate(offdetail = trimws(offdetail),
+         time_between_ped_rptyear = years_to_estimated_pey,
          time_between_admisson_release =  as.numeric(relyr) - as.numeric(admityr),
          time_between_ped_release = as.numeric(relyr) - as.numeric(estimated_pey),
          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>
-  mutate(across(c(race, agerlse, sex, sentlgth), ~ ifelse(is.na(.), "NA", .))) |>
-  mutate(offdetail = trimws(offdetail)) |>
+  # Replace NAs and "NAs" with "No Data"
+  mutate_at(vars(race, agerlse, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
@@ -103,7 +105,8 @@ ncrp_releases <- ncrp_releases_combined |>
                                          "45-54 years",
                                          "35-44 years",
                                          "25-34 years",
-                                         "18-24 years")),
+                                         "18-24 years",
+                                         "Unknown")),
     sentlgth = factor(sentlgth, levels = c("< 1 year",
                                            "1-1.9 years",
                                            "2-4.9 years",
@@ -118,15 +121,16 @@ ncrp_releases <- ncrp_releases_combined |>
 # Combine past and current to get all who are currently eligible
 # Factor variables
 ncrp_yearendpop <- ncrp_yearendpop_combined |>
-  mutate(time_between_ped_rptyear = years_to_estimated_pey,
+  mutate(offdetail = trimws(offdetail),
+         time_between_ped_rptyear = as.numeric(years_to_estimated_pey),
          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>
-  mutate(offdetail = trimws(offdetail)) |>
+  # Replace NAs and "NAs" with "No Data"
+  mutate_at(vars(race, ageyrend, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
-  mutate(across(c(race, ageyrend, sex, sentlgth), ~ ifelse(is.na(.), "Unknown", .))) |>
   mutate(
     race = factor(race,
                   levels = c("Unknown",
@@ -139,7 +143,8 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
                                  "45-54 years",
                                  "35-44 years",
                                  "25-34 years",
-                                 "18-24 years")),
+                                 "18-24 years",
+                                 "Unknown")),
     sentlgth = factor(sentlgth,
                       levels = c(
                         "< 1 year",
@@ -361,5 +366,4 @@ save(bjs_prison_pop_by_race_2022, file = file.path(app_folder, "bjs_prison_pop_b
 save(bjs_prison_pop_by_sex_2022,  file = file.path(app_folder, "bjs_prison_pop_by_sex_2022.rds"))
 save(bjs_prison_pop_by_rptyear,   file = file.path(app_folder, "bjs_prison_pop_by_rptyear.rds"))
 save(hex_gj,                      file = file.path(app_folder, "hex_gj.rds"))
-save(carl_state_notes,            file = file.path(app_folder, "carl_state_notes.rds"))
-save(parole_info_by_state,        file = file.path(app_folder, "parole_info_by_state.rds"))
+save(state_notes,                 file = file.path(app_folder, "state_notes.rds"))

@@ -17,9 +17,7 @@ total_pop_by_year <- ncrp_yearendpop |>
 
 # Filter data to people in prison for a new court commitment with sentences 1+ years but not life
 # Not including people who are failing supervision (parole return/revocation)
-filtered_ncrp_yearendpop <- ncrp_yearendpop |>
-  filter(admtype == "New court commitment") |>
-  filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0)
+filtered_ncrp_yearendpop <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Get total prison population for new court commitments and with sentences 1+ years but not life
 filtered_pop_by_year <- filtered_ncrp_yearendpop |>
@@ -68,25 +66,25 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
 #------ Parole Board Members by State ------#
 
 # Get parole status information by state
-parole_info_by_state_clean <- parole_info_by_state |>
-  select(state, abolished_discretionary_parole)
+state_notes_clean <- state_notes |>
+  select(state, abolished_parole)
 
 # Get number of parole board members
-parole_board_members_select_states <- parole_info_by_state |>
-  filter(abolished_discretionary_parole == "No") |>
-  select(state, parole_board_members)
+members_select_states <- state_notes |>
+  filter(abolished_parole == "N") |>
+  select(state, members)
 
-parole_board_members <- parole_info_by_state |>
-  select(state, parole_board_members)
+members <- state_notes |>
+  select(state, members)
 
 
 #------ Parole Eligibility Table ------#
 
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
-  left_join(parole_info_by_state_clean, by = "state") |>
-  left_join(parole_board_members, by = "state") |>
-  filter(abolished_discretionary_parole == "No" | state == "Louisiana") |>
-  select(state, current_perc, current_count, filtered_total_pop, abolished_discretionary_parole, parole_board_members)
+  left_join(state_notes_clean, by = "state") |>
+  left_join(members, by = "state") |>
+  filter(abolished_parole == "N" | state == "Louisiana") |>
+  select(state, current_perc, current_count, filtered_total_pop, abolished_parole, members)
 
 
 
@@ -114,7 +112,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   complete(state = all_states) |>
 
   # add info about whether state abolished parole release
-  left_join(parole_info_by_state_clean, by = "state") |>
+  left_join(state_notes_clean, by = "state") |>
 
   # Format data and create tooltip
   mutate(
@@ -128,19 +126,19 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
     # Create tooltips
     tooltip = case_when(
-      all_na == TRUE & abolished_discretionary_parole == "No" ~
+      all_na == TRUE & abolished_parole == "N" ~
         paste0("<b>", state, "</b><br>",
                "Parole eligibility data is not available.<br>"),
 
-      all_na == TRUE & abolished_discretionary_parole == "Yes" ~
+      all_na == TRUE & abolished_parole == "Y" ~
         paste0("<b>", state, "</b><br>",
                state, " abolished discretionary parole.<br>"),
 
-      all_na == FALSE & abolished_discretionary_parole == "Yes" ~
+      all_na == FALSE & abolished_parole == "Y" ~
         paste0("<b>", state, "</b><br>",
                state, " abolished discretionary parole.<br>"),
 
-      all_na == FALSE & abolished_discretionary_parole == "No" ~
+      all_na == FALSE & abolished_parole == "N" ~
         paste0("<b>", state, "</b><br>",
                "<b>People in Prison Past Their Parole Eligibility</b><br>",
                "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
@@ -178,24 +176,24 @@ map_data_breaks <- map_data |>
     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
     current_perc = round(current_perc, 0)
   ) |>
-  mutate(color = case_when(abolished_discretionary_parole == "Yes" ~ yellow))
+  mutate(color = case_when(abolished_parole == "Y" ~ yellow))
 
 # URL generation to exclude states with abolished discretionary parole
 map_data_breaks <- map_data_breaks |>
-  mutate(url = ifelse(abolished_discretionary_parole == "Yes", NA,
+  mutate(url = ifelse(abolished_parole == "Y", NA,
                       paste0("https://avparoleproject.netlify.app/state_report_",
                              tolower(gsub(" ", "_", map_data_breaks$state)))))
 
 # Adding a dummy column for value in the abolished discretionary parole series
 map_data_breaks <- map_data_breaks |>
-  mutate(dummy_value = ifelse(abolished_discretionary_parole == "Yes", 1, NA))
+  mutate(dummy_value = ifelse(abolished_parole == "Y", 1, NA))
 
 # map_percent <- highchart() |>
 #
 #   # # Series for states with abolished discretionary parole
 #   # hc_add_series_map(
 #   #   map = hex_gj,
-#   #   df = map_data_breaks |> filter(abolished_discretionary_parole == "Yes"),
+#   #   df = map_data_breaks |> filter(abolished_parole == "Y"),
 #   #   joinBy = "state_abb",
 #   #   value = "dummy_value",  # Using the dummy column as the value
 #   #   color = yellow,
@@ -321,7 +319,7 @@ map_data_breaks <- map_data_breaks |>
 #            align = "left")
 # map_percent
 map_data <- map_data_breaks |>
-  select(state, state_abb, current_perc, change_label, abolished_discretionary_parole, tooltip)
+  select(state, state_abb, current_perc, change_label, abolished_parole, tooltip)
 
 # Define the gradient colors for categories
 gradient_colors <- c(green1, green2, green3, green4, blue)
@@ -351,8 +349,8 @@ map_data_breaks <- map_data |>
       gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$current_perc, na.rm = TRUE), "%")
     ),
     data_category = case_when(
-      is.na(data_category) & abolished_discretionary_parole == "No" ~ "Missing Data",
-      is.na(data_category) & abolished_discretionary_parole == "Yes" ~ "Abolished Parole",
+      is.na(data_category) & abolished_parole == "N" ~ "Missing Data",
+      is.na(data_category) & abolished_parole == "Y" ~ "Abolished Parole",
       TRUE ~ data_category
     ),
     gradient_color = case_when(
@@ -465,7 +463,7 @@ map_percent <- highchart(height = 600) |>
   ) |>
 
   hc_title(text = "Pct. of People in Prison Past Parole Eligibility: 2023 Projections",
-           align = "left") |>
+           align = "center") |>
 
   hc_exporting(
     enabled = TRUE,

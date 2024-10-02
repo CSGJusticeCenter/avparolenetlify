@@ -31,13 +31,15 @@
 # ---------------------------------------------------------------------------- #
 
 # Filter the population data to include only people in prison for new court commitments
-# with sentence lengths 1+ years except LIFE, based on our criteria
+# with sentence lengths 1+ years except life
 # Only includes states with parole systems
+# Function prints potential issues with the state (overall, 2019, and 2020)
+#   2020 Issues: States with 100% missing 'admtype': Alaska Connecticut Hawaii Idaho Vermont
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Total prison population by state and year
 # Only people in prison for new court commitments
-# with sentence lengths 1+ years except LIFE, based on our criteria
+# with sentence lengths 1+ years except life
 # Only includes states with parole systems
 total_pe_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
@@ -45,7 +47,7 @@ total_pe_pop <- ncrp_yearendpop_filtered |>
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
 # Only people in prison for new court commitments
-# with sentence lengths 1+ years except LIFE, based on our criteria
+# with sentence lengths 1+ years except life
 # Only includes states with parole systems
 pe_status_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
@@ -167,13 +169,15 @@ all_sentence_pe_type <- map(.x = states,  .f = function(x) {
 
   sentences <- paste0("In ", select_year, ", ",
                       round(df1$prop*100, 0),
-                      " percent of people in prison were in prison past their parole eligibility.")
+                      " percent of people in prison were in prison past their parole eligibility year.")
   return(sentences)
 })
 
 all_sentence_pe_type <- setNames(all_sentence_pe_type, states)
 all_sentence_pe_type$Georgia
 rm(states)
+
+
 
 # ---------------------------------------------------------------------------- #
 # PE Prison Population Trends

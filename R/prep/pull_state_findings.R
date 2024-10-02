@@ -12,6 +12,22 @@ no_visualization <- paste0("Data is not available. ", state_for_report,
                            " did not submit this data to the National Corrections Reporting Program in ",
                            select_year, ".")
 
+
+
+#------------------------------------------------------------------------------#
+# Citations (import_format.R)
+#------------------------------------------------------------------------------#
+
+# Load Prepared Data
+load(file = paste0(config$sp_data_path, "/data/analysis/app/state_notes.rds"))
+
+state_citation <- state_notes |>
+  filter(state == state_for_report) |>
+  pull(citation)
+
+
+
+
 #------------------------------------------------------------------------------#
 # Highlighted Findings (page_national_trends.R)
 #------------------------------------------------------------------------------#
@@ -34,7 +50,6 @@ num_parole_board_mem <- state_data |> filter(state == state_for_report) |> pull(
 # Parole Eligibility Tab (tab_parole_eligibility.R)
 #------------------------------------------------------------------------------#
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/carl_state_notes.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
@@ -53,8 +68,8 @@ load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
 
 # TITLE: How is Parole Eligibility Determined?
-parole_eligibility_criteria <- subset(carl_state_notes,
-                                      state == state_for_report)$parole_eligibility_criteria
+parole_eligibility_criteria <- subset(state_notes,
+                                      state == state_for_report)$release_systems
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
 #           eligibility date. This group made up X% of the people in prison.

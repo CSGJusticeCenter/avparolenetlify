@@ -540,8 +540,10 @@ State data broken down by race and ethnicity were pulled from National Correctio
 
 ## End Notes
 
-Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp; “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program.  
- 
+`r paste(state_citation, collapse = ", ")`
+
+Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program).
+
 </div>
 
 ---

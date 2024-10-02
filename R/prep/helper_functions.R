@@ -2,6 +2,48 @@
 # IMPORT FUNCTIONS
 #-------------------------------------------------------------------------------
 
+#' Format citation text for Markdown
+#'
+#' This function formats a citation by italicizing the report title and converting URLs
+#' into Markdown hyperlinks. It also ensures that any period after a URL is placed outside
+#' the hyperlink for correct formatting.
+#'
+#' @param citation A character string containing the full citation with a report title and URL.
+#'
+#' @return A character string with the formatted citation for use in a Markdown document.
+#' The report title is italicized, and the URL is converted into a clickable Markdown link.
+#'
+#' @examples
+#' citation <- "Kevin R. Reitz, Allegra Lukac, and Edward E. Rhine,
+#' Prison-Release Discretion and Prison Population Size: State Report:
+#' Alabama (Robina Institute of Criminal Law and Criminal, February 2023),
+#' https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu/files/2023-02/alabama_doi_report_2_13_22.pdf."
+#' formatted_citation <- format_citation(citation)
+#' cat(formatted_citation)
+#'
+fnc_format_citation <- function(citation) {
+  # Italicize the report title: Add * around report title
+  formatted_citation <- str_replace_all(
+    citation,
+    "Prison-Release Discretion and Prison Population Size: State Report: [^\\(]+",
+    function(x) paste0("*", x, "*")
+  )
+
+  # Convert URLs to markdown hyperlinks and ensure the period is outside the link
+  formatted_citation <- str_replace_all(
+    formatted_citation,
+    "(https?://[^\\s]+)\\.",  # Match the URL pattern followed by a period
+    function(x) {
+      url <- str_remove(x, "\\.$")  # Remove the period from the URL
+      paste0("[", url, "](", url, ").")  # Place the period outside the link
+    }
+  )
+
+  return(formatted_citation)
+}
+
+
+
 #' Read Data and Add Year Column
 #'
 #' This function reads in a Stata file, extracts the year from the file name,
@@ -82,13 +124,13 @@ fnc_create_fbi_index <- function(df) {
       offdetail == "Other violent offenses" ~ "Other Violent Offenses",
       offdetail == "Rape/sexual assault" ~ "Rape or Sexual Assault",
       offdetail == "Robbery" ~ "Robbery",
-      offdetail == "Other/unspecified" ~ "Other or Unknown",
-      is.na(offdetail) ~ "Other or Unknown",
+      offdetail == "Other/unspecified" ~ "Other/Unspecified",
+      is.na(offdetail) ~ "Unknown",
       TRUE ~ offgeneral
     )) |>
     fnc_apply_factor_levels(fbi_index, c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter",
                                      "Rape or Sexual Assault", "Robbery", "Aggravated or Simple Assault",
-                                     "Other Violent Offenses", "Property", "Public order", "Drugs", "Other", "Unknown"))
+                                     "Other Violent Offenses", "Property", "Public order", "Drugs", "Other/Unspecified", "Unknown"))
 }
 
 # Test: Ensure that 'fbi_index' is correctly categorized and factored
@@ -113,17 +155,12 @@ fnc_create_fbi_index <- function(df) {
 fnc_create_admtype <- function(df) {
   df |>
     mutate(admtype = case_when(
-      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other or Unknown",
-      is.na(admtype) ~ "Other or Unknown",
+      admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other",
+      is.na(admtype) ~ "Unknown",
       TRUE ~ admtype
     )) |>
-    fnc_apply_factor_levels(admtype, c("New court commitment", "Parole return/revocation", "Other or Unknown"))
+    fnc_apply_factor_levels(admtype, c("New court commitment", "Parole return/revocation", "Other", "Unknown"))
 }
-
-# Test: Ensure that 'admtype' is correctly categorized and factored
-# test_df <- data.frame(admtype = c("Other admission (including unsentenced, transfer, AWOL/escapee return)", NA))
-# test_df <- fnc_create_admtype(test_df)
-# stopifnot(all(levels(test_df$admtype) == c("New court commitment", "Parole return/revocation", "Other or Unknown")))
 
 #' Clean Bureau of Justice Statistics (BJS) Data
 #'
@@ -248,53 +285,169 @@ fnc_get_census_data <- function(state) {
 #' \dontrun{
 #' filtered_data <- filter_population_criteria(prison_data)
 #' }
-fnc_filter_pe_population_criteria <- function(data,
-                                              admtype_filter = "New court commitment") {
-  # Get states that have not abolished parole
-  abolished <- carl_state_notes |>
-    filter(abolished_parole_16_total == "N") |>
-    pull(state)
-
-  # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
-  filtered_data <- data |>
-    filter(admtype == admtype_filter) |>
-    filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
-    filter(state %in% abolished)  # Only keep states that did not abolish parole
-
-  return(filtered_data)
-}
 # fnc_filter_pe_population_criteria <- function(data,
-#                                        admtype_filter = "New court commitment",
-#                                        sentence_lengths = c("1-1.9 years",
-#                                                             "2-4.9 years",
-#                                                             "5-9.9 years",
-#                                                             "10-24.9 years")) {
+#                                               admtype_filter = "New court commitment") {
 #   # Get states that have not abolished parole
-#   abolished <- carl_state_notes |>
-#     filter(abolished_parole_16_total == "N") |>
+#   abolished <- state_notes |>
+#     filter(abolished_parole == "N") |>
 #     pull(state)
 #
-#   # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
+#   # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
 #   filtered_data <- data |>
 #     filter(admtype == admtype_filter) |>
-#     filter(sentlgth %in% sentence_lengths) |>
+#     filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
 #     filter(state %in% abolished)  # Only keep states that did not abolish parole
 #
 #   return(filtered_data)
 # }
 
-# Test: Ensure the filtering works correctly
-# test_data <- data.frame(
-#   admtype = c("New court commitment", "Parole return/revocation"),
-#   sentlgth = c("1-1.9 years", "10-24.9 years"),
-#   state = c("California", "Texas")
-# )
-# carl_state_notes <- data.frame(
-#   state = c("California", "Texas"),
-#   abolished_parole_16_total = c("N", "Y")
-# )
-# filtered_df <- filter_population_criteria(test_data)
-# stopifnot(nrow(filtered_df) == 1)  # Only one row should remain after filtering
+
+#' Filter Population Data Based on Parole Eligibility Criteria
+#'
+#' This function filters a dataset based on specific criteria related to parole eligibility.
+#' It filters by admission type, sentence length, and states that have not abolished parole.
+#' Additionally, it calculates and prints diagnostic information about states with missing data
+#' for the `admtype` and `calc_sent_lgth_compl` columns.
+#'
+#' @param data A data frame containing parole population data.
+#' @param admtype_filter A string specifying the admission type to filter on. Defaults to "New court commitment".
+#' @param missing_threshold A numeric value between 0 and 1 specifying the threshold for considering a state as having
+#' high missing data. Defaults to 0.5 (i.e., 50%).
+#'
+#' @return A filtered data frame with the population meeting the specified criteria.
+#' The function also prints diagnostic information about included states and states with high missing data.
+#'
+#' @details The function first filters the dataset to include only states that have not abolished parole.
+#' It then applies additional filters based on admission type and sentence length.
+#' Missing data rates for each state are calculated, and states with missing rates above the threshold are identified.
+#' Diagnostic information about the included states and states with high missing data is printed to the console.
+#'
+#' @examples
+#' # Assuming `ncrp_yearendpop` is a data frame with the necessary columns:
+#' filtered_data <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
+#'
+#' @export
+# fnc_filter_pe_population_criteria <- function(data,
+#                                               admtype_filter = "New court commitment",
+#                                               missing_threshold = 0.5) {
+#   # Get states that have not abolished parole
+#   abolished <- state_notes |>
+#     filter(abolished_parole == "N") |>
+#     pull(state)
+#
+#   # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
+#   filtered_data <- data |>
+#     filter(admtype == admtype_filter) |>
+#     filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
+#     filter(state %in% abolished)  # Only keep states that did not abolish parole
+#
+#   # Calculate missing rates for each state in admtype and calc_sent_lgth_compl
+#   missing_summary <- data |>
+#     group_by(state) |>
+#     summarize(
+#       admtype_missing_rate = sum(is.na(admtype)) / n(),
+#       calc_sent_lgth_missing_rate = sum(is.na(calc_sent_lgth_compl)) / n(),
+#       total_records = n()
+#     ) |>
+#     ungroup()
+#
+#   # Identify states with more than the threshold of missing admtype and calc_sent_lgth_compl
+#   states_high_missing_admtype <- missing_summary |>
+#     filter(admtype_missing_rate > missing_threshold) |>
+#     pull(state)
+#
+#   states_high_missing_calc_sent <- missing_summary |>
+#     filter(calc_sent_lgth_missing_rate > missing_threshold) |>
+#     pull(state)
+#
+#   # States that are included in the final filtered data
+#   included_states <- unique(filtered_data$state)
+#
+#   # Print diagnostic information
+#   cat("States included in the final filtered data:\n", included_states, "\n\n")
+#   cat("States with more than", missing_threshold * 100, "% missing 'admtype':\n", states_high_missing_admtype, "\n\n")
+#   cat("States with more than", missing_threshold * 100, "% missing 'calc_sent_lgth_compl':\n", states_high_missing_calc_sent, "\n\n")
+#
+#   # Return the filtered data
+#   return(filtered_data)
+# }
+fnc_filter_pe_population_criteria <- function(data,
+                                              admtype_filter = "New court commitment",
+                                              missing_threshold = 0.5) {
+
+  # Function to calculate and print diagnostic information for a given subset of data
+  print_diagnostics <- function(data_subset, subset_label) {
+    # Get states that have not abolished parole (inside this function to avoid scoping issues)
+    abolished <- state_notes |>
+      filter(abolished_parole == "N") |>
+      pull(state)
+
+    # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
+    filtered_data <- data_subset |>
+      filter(admtype == admtype_filter) |>
+      filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
+      filter(state %in% abolished)
+
+    # Calculate missing rates for each state in admtype and calc_sent_lgth_compl
+    missing_summary <- data_subset |>
+      group_by(state) |>
+      summarize(
+        admtype_missing_rate = sum(admtype == "Unknown") / n(),
+        calc_sent_lgth_missing_rate = sum(is.na(calc_sent_lgth_compl)) / n(),
+        total_records = n()
+      ) |>
+      ungroup()
+
+    # Identify states with more than the threshold of missing admtype and calc_sent_lgth_compl
+    states_high_missing_admtype <- missing_summary |>
+      filter(admtype_missing_rate > missing_threshold) |>
+      pull(state)
+
+    states_high_missing_calc_sent <- missing_summary |>
+      filter(calc_sent_lgth_missing_rate > missing_threshold) |>
+      pull(state)
+
+    # Identify states with 100% missing admtype and calc_sent_lgth_compl
+    states_100_missing_admtype <- missing_summary |>
+      filter(admtype_missing_rate == 1) |>
+      pull(state)
+
+    states_100_missing_calc_sent <- missing_summary |>
+      filter(calc_sent_lgth_missing_rate == 1) |>
+      pull(state)
+
+    # States that are included in the final filtered data
+    included_states <- unique(filtered_data$state)
+
+    # Print diagnostic information
+    cat("\nDiagnostic Information for", subset_label, ":\n")
+    cat("States included in the final filtered data:\n", included_states, "\n\n")
+    cat("States with more than", missing_threshold * 100, "% missing 'admtype':\n", states_high_missing_admtype, "\n\n")
+    cat("States with more than", missing_threshold * 100, "% missing 'calc_sent_lgth_compl':\n", states_high_missing_calc_sent, "\n\n")
+    cat("States with 100% missing 'admtype':\n", states_100_missing_admtype, "\n\n")
+    cat("States with 100% missing 'calc_sent_lgth_compl':\n", states_100_missing_calc_sent, "\n\n")
+  }
+
+  # Print diagnostics for all data
+  print_diagnostics(data, "All Data")
+
+  # Print diagnostics for rptyear == 2019
+  data_2019 <- data |> filter(rptyear == 2019)
+  print_diagnostics(data_2019, "rptyear == 2019")
+
+  # Print diagnostics for rptyear == 2020
+  data_2020 <- data |> filter(rptyear == 2020)
+  print_diagnostics(data_2020, "rptyear == 2020")
+
+  # Return the filtered data for the entire dataset as before
+  abolished <- state_notes |> filter(abolished_parole == "N") |> pull(state)
+
+  return(data |>
+           filter(admtype == admtype_filter) |>
+           filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
+           filter(state %in% abolished))
+}
+
 
 
 #' Prepare Parole Eligibility Data for Visualization
@@ -451,37 +604,6 @@ hc_theme_with_line <- hc_theme(
     labels = list(enabled = TRUE, style = common_style)
   ),
   plotOptions = list(
-    # line = list(
-    #   marker = list(
-    #     enabled = TRUE,
-    #     symbol = 'circle'
-    #   )
-    # ),
-    # spline = list(
-    #   marker = list(
-    #     enabled = TRUE,
-    #     symbol = 'circle'
-    #   )
-    # ),
-    # area = list(
-    #   marker = list(
-    #     enabled = TRUE,
-    #     symbol = 'circle'
-    #   )
-    # ),
-    # areaspline = list(
-    #   marker = list(
-    #     enabled = TRUE,
-    #     symbol = 'circle'
-    #   )
-    # ),
-    # arearange = list(
-    #   marker = list(
-    #     enabled = TRUE,
-    #     symbol = 'circle'
-    #   )
-    # ),
-    # bubble = list(maxSize = "10%"),
     column = list(
       dataLabels = list(
         style = list(color = "black")

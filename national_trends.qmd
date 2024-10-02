@@ -51,7 +51,7 @@ num_people_current_rounded <- fnc_round_to_power(num_people_current)
 
 ```{r highlights}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
-filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_discretionary_parole == "No", ]
+filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_parole== "N", ]
 
 # Calculate the total current_count for this filtered data
 total_current_count <- sum(filtered_df$current_count, na.rm = TRUE)
@@ -149,7 +149,7 @@ reactable(
   parole_eligibility_table,
   pagination = FALSE,
   searchable = TRUE,
-  defaultSorted = c("abolished_discretionary_parole", "current_perc"),
+  defaultSorted = c("abolished_parole", "current_perc"),
   defaultColDef = colDef(
     headerStyle = list(fontWeight = "normal"),
     sortable = TRUE,
@@ -199,14 +199,14 @@ reactable(
       align = "right",
       format = colFormat(separators = TRUE)
     ),
-    abolished_discretionary_parole = colDef(
+    abolished_parole = colDef(
       show = F,
       name = "Abolished Discretionary Parole", 
       align = "right",
       width = 150,
       defaultSortOrder = "asc"  # Sort ascending
     ),
-    parole_board_members = colDef(
+    members = colDef(
       name = "Parole Board Members", 
       align = "right"
     ),
@@ -227,11 +227,11 @@ reactable(
 
 #       cell = function(value, index) {
 #     # Check if discretionary parole is abolished
-#     if (parole_eligibility_table$abolished_discretionary_parole[index] == "Yes") {
+#     if (parole_eligibility_table$abolished_parole[index] == "Y") {
 #       return("Abolished Parole")
 #     }
 #     # Check if the value is NA and parole is not abolished
-#     else if (is.na(value) && parole_eligibility_table$abolished_discretionary_parole[index] == "No") {
+#     else if (is.na(value) && parole_eligibility_table$abolished_parole[index] == "N") {
 #       return("Data not available")
 #     }
 #     # Otherwise, round the value using the custom function
@@ -251,8 +251,11 @@ reactable(
 
 ## End Notes
 
-Data analysis was conducted using information from the National Corrections Reporting Program. National Corrections Reporting Program (NCRP), accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp.
+Kevin R. Reitz, Allegra Lukac, and Edward E. Rhine, *Prison-Release Discretion and Prison Population Size: State Reports* (Robina Institute of Criminal Law and Criminal Justice, 2022-2023), [State-Specific URLs].
 
+The above report was published for all 50 states. For a full list of state reports and their URLs, see the Robina Institute's website at [https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu](https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu).
+
+Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program).
 
 
 
