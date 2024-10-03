@@ -79,11 +79,8 @@ state_notes <- state_notes_raw |>
          source_note2    = gsub("\u00B9", "\u00B3", source_note2),
          source_note3    = gsub("\u00B3", "\u2074", source_note3),
          # combine methodology info and citations
-         methdology_notes = paste(estimation_note, matching_note, rules_note, projection_note, sep = "<br><br>"),
-         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>")
-         )
-
-
+         methodology_notes = paste(estimation_note, matching_note, rules_note, projection_note, sep = "<br><br>"),
+         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"))
 
 #------------------------------------------------------------------------------#
 # NCRP

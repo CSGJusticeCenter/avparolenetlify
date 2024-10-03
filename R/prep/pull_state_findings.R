@@ -28,7 +28,7 @@ state_citation <- state_notes |>
 
 state_imputation_notes <- state_notes |>
   filter(state == state_for_report) |>
-  pull(methdology_notes)
+  pull(methodology_notes)
 
 
 
@@ -207,7 +207,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
 if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
   state_bar_parole_eligibility_sentlgth <-
     all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
-    hc_size(height = 300) |>
+    hc_size(height = 400) |>
     hc_colors(c(color4))
 } else {
   state_bar_parole_eligibility_sentlgth <- no_data_text
