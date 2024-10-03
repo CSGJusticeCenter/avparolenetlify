@@ -244,7 +244,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
   # Generate the sentence
   sentence <- paste0(
     "From ", earliest_year, " to ", latest_year,
-    ", the percent of people* in prison past parole eligibility ", direction, "."
+    ", the percent of people in prison past parole eligibility ", direction, "."
   )
 
   return(sentence)
@@ -366,7 +366,7 @@ all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
-                      " percent of people* in prison past parole eligibility were ",
+                      " percent of people in prison past parole eligibility were ",
                       df1$race,
                       " people.")
   return(sentences)
@@ -409,7 +409,7 @@ all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
-                      " percent of people* in prison past parole eligibility were ",
+                      " percent of people in prison past parole eligibility were ",
                       tolower(df1$sex), "s.")
   return(sentences)
 })
@@ -452,7 +452,7 @@ all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
     slice(1)
   df1$ageyrend <- gsub("-", " to ", df1$ageyrend)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
-                      " percent of people* in prison past parole eligibility were between the ages of ",
+                      " percent of people in prison past parole eligibility were between the ages of ",
                       df1$ageyrend, " old.")
   return(sentences)
 })
@@ -548,7 +548,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
   nonviolent_prop <- df1 |> filter(group == "Non-Violent") |> pull(prop) * 100
 
   group_sentence <- paste0("In ", select_year, ", ", round(violent_prop, 0),
-                           " percent of people* in prison past parole eligibility were in prison for violent offenses and ",
+                           " percent of people in prison past parole eligibility were in prison for violent offenses and ",
                            round(nonviolent_prop, 0), " percent for non-violent offenses.")
 
   # Get the top two FBI index categories
@@ -626,7 +626,7 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
     slice(1)
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
-                      " percent of people* in prison past parole eligibility had sentence lengths between ",
+                      " percent of people in prison past parole eligibility had sentence lengths between ",
                       df1$sentlgth, ".")
   return(sentences)
 })

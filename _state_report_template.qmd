@@ -39,9 +39,9 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc * 100, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("People* In Prison Past<br>Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Prison Population* Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Parole Board<br>Members"))
 )
@@ -133,7 +133,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 
 <br><div class="divider"></div>
 
-## State Notes
+## 2023 Projection Methodology
 
 `r paste(state_imputation_notes, collapse = ", ")`
 
@@ -527,7 +527,7 @@ State data broken down by race and ethnicity were pulled from National Correctio
 
 <div class="divider"></div>
 
-## End Notes
+## Endnotes
 
 `r paste(state_citation, collapse = ", ")`
 

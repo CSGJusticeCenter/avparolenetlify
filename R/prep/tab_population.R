@@ -17,9 +17,9 @@
 states <- unique(bjs_prison_pop_by_rptyear$state)
 
 # Filter out states that have abolished parole (abolished_parole_16_total == "N")
-# from the carl_state_notes dataset, retaining only states still practicing parole.
-states <- carl_state_notes |>
-  filter(abolished_parole_16_total == "N", state %in% states) |>
+# from the state_notes dataset, retaining only states still practicing parole.
+states <- state_notes |>
+  filter(abolished_parole == "N", state %in% states) |>
   pull(state)
 
 # Loop through each state and generate a sentence summarizing the change in prison population
@@ -170,8 +170,8 @@ rm(states)
 states <- unique(bjs_prison_pop_by_race_2022$state)
 
 # Filter states that still have parole (abolished_parole_16_total == "N")
-states <- carl_state_notes |>
-  filter(abolished_parole_16_total == "N", state %in% states) |>
+states <- state_notes |>
+  filter(abolished_parole == "N", state %in% states) |>
   pull(state)
 
 # Generate bar charts for each state based on race data for the prison population
@@ -231,8 +231,8 @@ rm(states)
 states <- unique(bjs_prison_pop_by_sex_2022$state)
 
 # Filter states that still have parole
-states <- carl_state_notes |>
-  filter(abolished_parole_16_total == "N", state %in% states) |>
+states <- state_notes |>
+  filter(abolished_parole == "N", state %in% states) |>
   pull(state)
 
 # Generate bar charts for each state based on sex demographics in the prison population
