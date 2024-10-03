@@ -1,3 +1,28 @@
+
+
+
+
+fnc_round_to_power <- function(x) {
+  sapply(x, function(val) {
+    # Check if the value is NA, and return NA if true
+    if (is.na(val)) {
+      return(NA)
+    }
+
+    # Determine the number of digits in the number
+    digits <- nchar(floor(val))
+
+    # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
+    if (digits >= 3) {
+      power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
+      floor(val / power) * power  # Use floor to always round down
+    } else {
+      round(val, -1)
+    }
+  })
+}
+
+
 #-------------------------------------------------------------------------------
 # IMPORT FUNCTIONS
 #-------------------------------------------------------------------------------
@@ -125,12 +150,13 @@ fnc_create_fbi_index <- function(df) {
       offdetail == "Rape/sexual assault" ~ "Rape or Sexual Assault",
       offdetail == "Robbery" ~ "Robbery",
       offdetail == "Other/unspecified" ~ "Other/Unspecified",
+      offdetail == "Drugs" ~ "Drug",
       is.na(offdetail) ~ "Unknown",
       TRUE ~ offgeneral
     )) |>
     fnc_apply_factor_levels(fbi_index, c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter",
                                      "Rape or Sexual Assault", "Robbery", "Aggravated or Simple Assault",
-                                     "Other Violent Offenses", "Property", "Public order", "Drugs", "Other/Unspecified", "Unknown"))
+                                     "Other Violent Offenses", "Property", "Public order", "Drug", "Other/Unspecified", "Unknown"))
 }
 
 # Test: Ensure that 'fbi_index' is correctly categorized and factored

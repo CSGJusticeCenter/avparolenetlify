@@ -28,8 +28,8 @@ race_vars <- c(estimate_white              = "P4_005N",
 
 # List of state names used to pull census data for each state
 states <- state.name
-states <- carl_state_notes |>
-  filter(abolished_parole_16_total == "N", state %in% states) |>
+states <- state_notes |>
+  filter(abolished_parole == "N", state %in% states) |>
   pull(state)
 
 # Using lapply to apply the function `fnc_get_census_data` for each state in `states`.
@@ -114,7 +114,7 @@ all_sentence_rri_hispanic <- map(.x = states, .f = function(x) {
 
   # Generate the sentence only if the RRI for Hispanic people is greater than 1.
   if (nrow(df1) > 0 && df1$rri > 1) {
-    final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison at a rate <span style='color:#49a7a1; font-weight:bold;'>",
+    final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison at a rate <span style='color:#55b4e5; font-weight:bold;'>",
                              round(df1$rri, 1), "</span> times higher than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
   } else {
     final_sentence <- paste0("")
@@ -296,7 +296,7 @@ all_sentence_pe_rri_hispanic <- map(.x = states, .f = function(x) {
 
   # Generate the sentence only if the RRI for Hispanic people is greater than 1.
   if (nrow(df1) > 0 && df1$rri > 1) {
-    final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison past parole eligibility at a rate <span style='color:#49a7a1; font-weight:bold;'>",
+    final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison past parole eligibility at a rate <span style='color:#55b4e5; font-weight:bold;'>",
                              round(df1$rri, 1), "</span> times higher than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
   } else {
     final_sentence <- paste0("")

@@ -113,7 +113,8 @@ ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_
         # Caused by warning:
         #   ! NAs introduced by coercion
 ncrp_releases <- ncrp_releases_combined |>
-  mutate(offdetail = trimws(offdetail),
+  mutate(sentlgth_raw = sentlgth,
+         offdetail    = trimws(offdetail),
          time_between_ped_rptyear = years_to_estimated_pey,
          time_between_admisson_release =  as.numeric(relyr) - as.numeric(admityr),
          time_between_ped_release = as.numeric(relyr) - as.numeric(estimated_pey),
@@ -126,6 +127,15 @@ ncrp_releases <- ncrp_releases_combined |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
+    sentlgth = case_when(
+      calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
+      calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
+      calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
+      calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
+      calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
+      calc_sent_lgth_compl >= 25 ~ ">=25 years",
+      is.na(calc_sent_lgth_compl) ~ "Life/Unknown",
+      TRUE ~ NA_character_),
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",
@@ -151,7 +161,8 @@ ncrp_releases <- ncrp_releases_combined |>
 # Combine past and current to get all who are currently eligible
 # Factor variables
 ncrp_yearendpop <- ncrp_yearendpop_combined |>
-  mutate(offdetail = trimws(offdetail),
+  mutate(sentlgth_raw = sentlgth,
+         offdetail = trimws(offdetail),
          time_between_ped_rptyear = as.numeric(years_to_estimated_pey),
          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
@@ -162,6 +173,15 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
+    sentlgth = case_when(
+      calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
+      calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
+      calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
+      calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
+      calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
+      calc_sent_lgth_compl >= 25 ~ ">=25 years",
+      is.na(calc_sent_lgth_compl) ~ "Life/Unknown",
+      TRUE ~ NA_character_),
     race = factor(race,
                   levels = c("Unknown",
                              "Other race(s), non-Hispanic",

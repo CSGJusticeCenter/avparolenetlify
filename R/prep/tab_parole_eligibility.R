@@ -82,7 +82,10 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 
   highcharts <- highchart() |>
     hc_chart(type = "bar",
-             marginTop = -20) |>
+             marginTop = -20
+             # marginLeft = 100,  # Adjust for more space on the left
+             # marginRight = 100  # Adjust for more space on the right
+             ) |>
     hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |>
     hc_add_theme(base_hc_theme) |>
     hc_xAxis(title = list(text = NULL),
@@ -139,7 +142,6 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                     enabled = TRUE,
                     align = "center",
                     formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
-                    useHTML = TRUE,
                     x = 0,
                     y = 50,
                     style = list(fontSize = "12px", fontWeight = "regular",
@@ -351,6 +353,9 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 })
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
 all_bar_parole_eligibility_race$Georgia
+all_bar_parole_eligibility_race$Alabama
+all_bar_parole_eligibility_race$Louisiana
+all_bar_parole_eligibility_race$`South Dakota`
 rm(states)
 
 # Generate sentence for each state
@@ -473,7 +478,7 @@ current_ped_fbi_index <- current_ped_fbi_index |>
                      "Robbery",
                      "Aggravated or Simple Assault",
                      "Other Violent Offenses") ~ "Violent",
-    fbi_index %in% c("Drugs", "Public order", "Property") ~ "Non-Violent",
+    fbi_index %in% c("Drug", "Public order", "Property") ~ "Non-Violent",
     TRUE ~ "Other or Unknown"
   ),
   color = case_when(
@@ -509,37 +514,18 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
 all_bar_ped_fbi_index$Alabama
-
+all_bar_ped_fbi_index$Arkansas
 rm(states)
 
 
 # Get proportion of offenses that were violent and non-violent
-current_ped_offense_group <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
-  filter(rptyear == select_year &
-           parelig_status == "Current") |>
-  mutate(group = case_when(
-    fbi_index %in% c("Murder and Non-negligent Manslaughter",
-                     "Rape or Sexual Assault",
-                     "Robbery",
-                     "Aggravated or Simple Assault",
-                     "Other Violent Offenses") ~ "Violent",
-    fbi_index %in% c("Drugs", "Public order", "Property") ~ "Non-Violent",
-    TRUE ~ "Other or Unknown"
-  )) |>
+current_ped_offense_group <- current_ped_fbi_index |>
+  select(state, fbi_index, group, n) |>
+  filter(group == "Violent" | group == "Non-Violent") |>
+  group_by(state, group) |>
+  summarise(total_offenses = sum(n), .groups = 'drop') |>
   group_by(state) |>
-  count(group) |>
-  mutate(
-    prop = n/sum(n),
-    yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop*100, 0), "%"),
-    n_label = formattable::comma(n, 0)
-  ) |>
-  ungroup() |>
-  mutate(tooltip = paste0("<b>", state, " - ",
-                          group, "</b><br>",
-                          "Number of People: ", n_label, "<br>",
-                          "Percentage of People: ", prop_label, "<br>"))
-
+  mutate(prop = total_offenses / sum(total_offenses))
 
 
 
@@ -648,13 +634,6 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 all_sentence_parole_eligibility_sentlgth <- setNames(all_sentence_parole_eligibility_sentlgth, states)
 all_sentence_parole_eligibility_sentlgth$Georgia
 rm(states)
-
-
-
-
-# ---------------------------------------------------------------------------- #
-# STATE NOTES - WAITING ON SEBA'S WORK AS OF 9/24/2024
-# ---------------------------------------------------------------------------- #
 
 
 
