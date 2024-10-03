@@ -99,14 +99,6 @@ div(
 <br>
 <div id="map-section">
 ```{r map}
-# map_percent |> 
-#     hc_size(height = 690) |> 
-#     hc_exporting(enabled = TRUE,
-#                  buttons = list(contextButton = list(align = 'right',
-#                                                      verticalAlign = 'top',
-#                                                      y = 0,
-#                                                      x = -5))) |> 
-#     hc_chart(marginTop = 0, marginBottom = -50, height = 740)
 map_percent |>
     hc_exporting(enabled = TRUE,
                  buttons = list(contextButton = list(align = 'right',
@@ -255,7 +247,7 @@ Kevin R. Reitz, Allegra Lukac, and Edward E. Rhine, *Prison-Release Discretion a
 
 The above report was published for all 50 states. For a full list of state reports and their URLs, see the Robina Institute's website at [https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu](https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu).
 
-Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program).
+Data analysis was conducted using information from the National Corrections Reporting Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp).
 
 
 
