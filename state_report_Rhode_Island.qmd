@@ -135,12 +135,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 
 ## State Notes
 
-"What if we change the section from Missing Data to more of a high-level state-specific Methods section? It can include:
-
-1) Total N for the state  
-2) How we determined parole eligibility (e.g., what formulas did we use to estimate parole eligibility year)  
-3) Missing data patterns"
-- Jess S.
+`r paste(state_imputation_notes, collapse = ", ")`
 
 
 
@@ -242,8 +237,6 @@ div(id = "visualization", state_stackedbar_parole_eligibility_release)
 <div class="divider"></div>
 
 ## Conditional Releases
-
-Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. 
 
 `r paste(state_sentence_release_type, collapse = ", ")`
 
@@ -362,7 +355,6 @@ Gender disparities in prison incarceration represents the accumulation of dispar
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
 ```
 
-This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity in 2020. 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
@@ -377,7 +369,6 @@ div(id = "visualization", state_scatter_los_race_offense)
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
 ```
 
-This chart shows the average time served in prison for the most serious sentenced offense by gender in 2020. 
 `r paste(state_sentence_los_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_los_sex_offense}
@@ -474,7 +465,6 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_avg_pe_release_race)
 ```
 
-This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by race and ethnicity in 2020.
 `r paste(state_sentence_avg_pe_release_race_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_pe_release_race_offense}
@@ -513,7 +503,6 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 }
 ```
 
-This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by sex in 2020.
 `r paste(state_sentence_avg_pe_release_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_pe_release_sex_offense}
@@ -540,8 +529,10 @@ State data broken down by race and ethnicity were pulled from National Correctio
 
 ## End Notes
 
-Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp; “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program.  
- 
+`r paste(state_citation, collapse = ", ")`
+
+Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program).
+
 </div>
 
 ---

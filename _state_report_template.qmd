@@ -238,8 +238,6 @@ div(id = "visualization", state_stackedbar_parole_eligibility_release)
 
 ## Conditional Releases
 
-Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. 
-
 `r paste(state_sentence_release_type, collapse = ", ")`
 
 ```{r state_pie_release_type}
@@ -357,7 +355,6 @@ Gender disparities in prison incarceration represents the accumulation of dispar
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
 ```
 
-This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity in 2020. 
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
@@ -372,7 +369,6 @@ div(id = "visualization", state_scatter_los_race_offense)
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
 ```
 
-This chart shows the average time served in prison for the most serious sentenced offense by gender in 2020. 
 `r paste(state_sentence_los_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_los_sex_offense}
@@ -469,7 +465,6 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 # div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_avg_pe_release_race)
 ```
 
-This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by race and ethnicity in 2020.
 `r paste(state_sentence_avg_pe_release_race_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_pe_release_race_offense}
@@ -508,7 +503,6 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 }
 ```
 
-This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by sex in 2020.
 `r paste(state_sentence_avg_pe_release_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_pe_release_sex_offense}

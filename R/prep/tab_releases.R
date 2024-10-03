@@ -333,7 +333,9 @@ states <- unique(release_types$state)
 all_sentence_release_type <- map(.x = states,  .f = function(x) {
   df1 <- release_types |>
     filter(state == x & reltype == "Conditional Release")
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", tolower(df1$reltype), "s.")
+  sentences <- paste0(
+    "Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. ",
+    "In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", tolower(df1$reltype), "s.")
   return(sentences)
 })
 # Assign state names as the names of the charts list

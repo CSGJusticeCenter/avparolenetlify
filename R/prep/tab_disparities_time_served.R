@@ -556,6 +556,7 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
   # Construct the sentence with special handling for "people of Other race(s)"
   sentence <- paste0(
+    "This chart shows the average time served in prison for the most serious sentenced offense by race and ethnicity in 2020. ",
     "The largest disparity was observed among ", tolower(offense_type), " offenses, where ", race_longest,
     " people spent ", disparity_diff, " more years in prison on average compared to ",
     if (race_shortest == "people of Other race(s)") {
@@ -754,6 +755,7 @@ all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 
   # Construct the sentence
   sentence <- paste0(
+    "This chart shows the average time served in prison for the most serious sentenced offense by gender in 2020. ",
     "For ", tolower(offense_type), " offenses, ", tolower(sex_longest),
     "s spent ", disparity_diff, " more years in prison on average compared to ",
     tolower(sex_shortest), "s."

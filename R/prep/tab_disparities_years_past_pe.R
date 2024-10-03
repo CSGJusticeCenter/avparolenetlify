@@ -732,6 +732,7 @@ all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   # Construct the sentence summarizing the disparity.
   sentence <- paste0(
+    "This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by race and ethnicity in 2020. ",
     "The largest disparity observed was for ", offense_type, " offenses, where ", race_longest_adjusted,
     " had ", disparity_diff, " more years in prison past parole eligibility on average compared to ",
     race_shortest_adjusted, " people, who had the shortest time in prison past parole eligibility for these offenses."
@@ -842,12 +843,14 @@ all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
   if (largest_disparity$diff_avg_pe_release > 0) {
     # Males spent longer
     sentence <- paste0(
+      "This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by sex in 2020. ",
       "For ", offense_type, " offenses, males spent ", disparity_diff,
       " more years in prison past parole eligibility on average compared to females."
     )
   } else {
     # Females spent longer
     sentence <- paste0(
+      "This chart shows the average years in prison past parole eligibility for the most serious sentenced offense by sex in 2020. ",
       "For ", offense_type, " offenses, females spent ", disparity_diff,
       " more years in prison past parole eligibility on average compared to males."
     )

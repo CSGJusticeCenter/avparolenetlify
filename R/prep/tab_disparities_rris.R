@@ -196,7 +196,7 @@ map(.x = states, .f = function(x) {
   df_state <- rri_greater_than_1_hispanic |>
     filter(state == x)
 
-  fnc_create_infographic(df_state$rri, color1)
+  fnc_create_infographic(df_state$rri, color2)
 
   # Save the infographic
   ggsave(file.path(app_folder, paste0("rri_infographic_hispanic_", x, ".png")),
@@ -355,7 +355,7 @@ map(.x = states, .f = function(x) {
   df_state <- pe_rri_greater_than_1_hispanic |>
     filter(state == x)
 
-  fnc_create_infographic(df_state$rri, color1)
+  fnc_create_infographic(df_state$rri, color2)
 
   # Save the infographic
   ggsave(file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")),

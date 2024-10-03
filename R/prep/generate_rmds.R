@@ -10,17 +10,18 @@ source("R/prep/config.R")
 
 # Load notes
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/state_notes.rds"))
 
 # Save working directory
 wd <- getwd()
 
 # Get list of states where parol eligibility is the focus
-states <- "Georgia"
-# states <- carl_state_notes |>
-#   filter(abolished_parole_16_total == "N") |>
-#   inner_join(parole_eligibility_table, by = "state") |>
-#   filter(!is.na(current_perc)) |>
-#   pull(state)
+# states <- "Georgia"
+states <- state_notes |>
+  filter(abolished_parole == "N") |>
+  inner_join(parole_eligibility_table, by = "state") |>
+  filter(!is.na(current_perc)) |>
+  pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
