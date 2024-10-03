@@ -20,10 +20,16 @@ no_visualization <- paste0("Data is not available. ", state_for_report,
 
 # Load Prepared Data
 load(file = paste0(config$sp_data_path, "/data/analysis/app/state_notes.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/state_methodology.rds"))
 
 state_citation <- state_notes |>
   filter(state == state_for_report) |>
   pull(citation)
+
+state_imputation_notes <- state_notes |>
+  filter(state == state_for_report) |>
+  pull(methdology_notes)
+
 
 
 
@@ -42,9 +48,9 @@ if (state_for_report %in% unique(parole_eligibility_table$state)) {
   state_data <- no_data_text
 }
 
-num_people_current <- state_data |> filter(state == state_for_report) |> pull(current_count)
-num_people_current_perc <- state_data |> filter(state == state_for_report) |> pull(current_perc)
-num_parole_board_mem <- state_data |> filter(state == state_for_report) |> pull(parole_board_members)
+num_people_current <- parole_eligibility_table |> filter(state == state_for_report) |> pull(current_count)
+num_people_current_perc <- parole_eligibility_table |> filter(state == state_for_report) |> pull(current_perc)
+num_parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report) |> pull(members)
 
 #------------------------------------------------------------------------------#
 # Parole Eligibility Tab (tab_parole_eligibility.R)

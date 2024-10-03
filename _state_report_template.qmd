@@ -135,12 +135,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 
 ## State Notes
 
-"What if we change the section from Missing Data to more of a high-level state-specific Methods section? It can include:
-
-1) Total N for the state  
-2) How we determined parole eligibility (e.g., what formulas did we use to estimate parole eligibility year)  
-3) Missing data patterns"
-- Jess S.
+`r paste(state_imputation_notes, collapse = ", ")`
 
 
 
