@@ -133,8 +133,9 @@ data_bars_custom <- function(value) {
     width = percentage,
     height = "10px"
   ))
-  div(style = list(display = "flex", alignItems = "center"),
-      bar, div(style = list(marginLeft = "8px"), percentage))
+  div(style = list(display = "flex", alignItems = "center"), bar,
+      div(style = list(marginLeft = "5px"), percentage)
+      )
 }
 
 style_cells <- function(value, color) {
@@ -144,7 +145,7 @@ style_cells <- function(value, color) {
 parole_eligibility_table$filtered_total_pop <- as.numeric(parole_eligibility_table$filtered_total_pop)
 
 reactable(
-  parole_eligibility_table,
+  parole_eligibility_table |> select(-current_count_rounded),
   pagination = FALSE,
   searchable = TRUE,
   defaultSorted = c("abolished_parole", "current_perc"),
@@ -171,7 +172,7 @@ reactable(
     current_perc = colDef(
       name = "Percentage of People in Prison",
       align = "left",
-      width = 150,
+      width = 250,
       cell = data_bars_custom,
       defaultSortOrder = "desc"  # Sort descending
     ),
@@ -193,7 +194,7 @@ reactable(
         }
       ),
     filtered_total_pop = colDef(
-      name = "Prison Population*", 
+      name = "Prison Population", 
       align = "right",
       format = colFormat(separators = TRUE)
     ),
@@ -216,7 +217,7 @@ reactable(
   ),
   columnGroups = list(
     colGroup(
-      name = "People* In Prison Past Parole Eligibility", 
+      name = "People In Prison Past Parole Eligibility", 
       columns = c("current_perc", "current_count")
     )
   )
@@ -229,15 +230,4 @@ reactable(
 </div>
 <div class="divider"></div>
 <br>
-
-## Endnotes
-
-Kevin R. Reitz, Allegra Lukac, and Edward E. Rhine, *Prison-Release Discretion and Prison Population Size: State Reports* (Robina Institute of Criminal Law and Criminal Justice, 2022-2023), [State-Specific URLs].
-
-The above report was published for all 50 states. For a full list of state reports and their URLs, see the Robina Institute's website at [https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu](https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu).
-
-Data analysis was conducted using information from the National Corrections Reporting Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp).
-
-
-
 
