@@ -293,6 +293,7 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_yAxis(
       title = list(text = ""),
+      labels = fnc_xaxis_labels,
       majorGridLineColor = "transparent",
       gridLineColor = "transparent",
       lineColor = "transparent",
@@ -551,6 +552,7 @@ all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
     ) |>
     hc_yAxis(
       title = list(text = ""),
+      labels = fnc_xaxis_labels,
       majorGridLineColor = "transparent",
       gridLineColor = "transparent",
       lineColor = "transparent",

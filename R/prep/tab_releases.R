@@ -294,15 +294,22 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
   df1 <- release_types |>
     ungroup() |>
     filter(state == x)
+
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   released by release type (unconditional release vs. conditional
                                   release) in ",
                                   select_year, " in the state of ", x, ".")
+
+  # Check if 100% of the releases are "Conditional Release"
+  is_100_conditional <- all(df1$reltype == "Conditional Release")
+
   highcharts <- # Create a pie chart
     highchart() |>
     hc_chart(type = "pie") |>
     hc_title(text = "Proportion of Conditional vs. Unconditional Releases") |>
     hc_plotOptions(pie = list(
+      startAngle = if (is_100_conditional) 90 else 0,  # Rotate by 90 degrees if 100% conditional
+      endAngle = if (is_100_conditional) 450 else 360, # Keep chart full if rotated
       dataLabels = list(
         enabled = TRUE,
         format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span><br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
@@ -319,13 +326,16 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_colors(c(color2, color3)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of Releases: {point.y}<br>Percentage of Releases: {point.percentage:.0f}%')
+
   return(highcharts)
 })
 
 # Assign state names as the names of the charts list
 all_pie_release_type <- setNames(all_pie_release_type, states)
 all_pie_release_type$Georgia
+all_pie_release_type$`South Dakota`
 rm(states)
+
 
 
 # Generate sentence for each state

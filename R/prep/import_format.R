@@ -417,3 +417,4 @@ save(bjs_prison_pop_by_sex_2022,  file = file.path(app_folder, "bjs_prison_pop_b
 save(bjs_prison_pop_by_rptyear,   file = file.path(app_folder, "bjs_prison_pop_by_rptyear.rds"))
 save(hex_gj,                      file = file.path(app_folder, "hex_gj.rds"))
 save(state_notes,                 file = file.path(app_folder, "state_notes.rds"))
+

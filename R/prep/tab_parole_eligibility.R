@@ -325,8 +325,10 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Get number and proportion of people in prison past their parole eligibility year
-# by offense
-current_ped_race     <- fnc_prepare_pe_data(ncrp_yearendpop, race)
+# by demographic
+current_ped_race     <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
+  filter(!(race == "Unknown" & prop == 1)) # remove state with 100% Unknown
+
 current_ped_sex      <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
@@ -355,7 +357,7 @@ all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, sta
 all_bar_parole_eligibility_race$Georgia
 all_bar_parole_eligibility_race$Alabama
 all_bar_parole_eligibility_race$Louisiana
-all_bar_parole_eligibility_race$`South Dakota`
+all_bar_parole_eligibility_race$`South Dakota` # is "U" - remove since 100% unknown
 rm(states)
 
 # Generate sentence for each state
@@ -410,7 +412,7 @@ all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
     slice(1)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
                       " percent of people in prison past parole eligibility were ",
-                      tolower(df1$sex), "s.")
+                      tolower(df1$sex), "s.<br><br>")
   return(sentences)
 })
 

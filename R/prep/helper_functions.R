@@ -150,8 +150,8 @@ fnc_create_fbi_index <- function(df) {
       offdetail == "Rape/sexual assault" ~ "Rape or Sexual Assault",
       offdetail == "Robbery" ~ "Robbery",
       offdetail == "Other/unspecified" ~ "Other/Unspecified",
-      offdetail == "Drugs" ~ "Drug",
-      is.na(offdetail) ~ "Unknown",
+      offdetail == "Drugs (includes possession, distribution, trafficking, other)" ~ "Drug",
+      is.na(offdetail) | offgeneral == "NA" ~ "Unknown",
       TRUE ~ offgeneral
     )) |>
     fnc_apply_factor_levels(fbi_index, c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter",
@@ -159,12 +159,6 @@ fnc_create_fbi_index <- function(df) {
                                      "Other Violent Offenses", "Property", "Public order", "Drug", "Other/Unspecified", "Unknown"))
 }
 
-# Test: Ensure that 'fbi_index' is correctly categorized and factored
-# test_df <- data.frame(offdetail = c("Aggravated or simple assault", "Murder (including non-negligent manslaughter)", NA))
-# test_df <- fnc_create_fbi_index(test_df)
-# stopifnot(all(levels(test_df$fbi_index) == c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter", "Rape or Sexual Assault",
-#                                              "Robbery", "Aggravated or Simple Assault", "Other Violent Offenses", "Property",
-#                                              "Public order", "Drugs", "Other", "Unknown")))
 
 #' Create Admission Type Categories
 #'
@@ -251,8 +245,8 @@ fnc_clean_bjs_data <- function(df) {
 #' filtered_data <- fnc_filter_population(population_data)
 fnc_filter_population <- function(data) {
   # Get states that have not abolished parole
-  abolished <- carl_state_notes |>
-    filter(abolished_parole_16_total == "N") |>
+  abolished <- state_notes |>
+    filter(abolished_parole == "N") |>
     pull(state)
 
   # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
@@ -718,6 +712,41 @@ fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, c
   return(highcharts)
 }
 
+
+fnc_xaxis_labels <- list(
+  formatter = JS(
+    "function() {
+                    var label = this.value;
+                    var maxLength = 15;
+                    if (label.length > maxLength) {
+                      var words = label.split(' ');
+                      var result = [];
+                      var line = [];
+                      var lineLength = 0;
+
+                      words.forEach(function(word) {
+                        if (lineLength + word.length > maxLength) {
+                          result.push(line.join(' '));
+                          line = [];
+                          lineLength = 0;
+                        }
+                        line.push(word);
+                        lineLength += word.length + 1;
+                      });
+                      if (line.length > 0) {
+                        result.push(line.join(' '));
+                      }
+                      return result.join('<br>');
+                    } else {
+                      return label;
+                    }
+                  }"
+  ),
+  style = list(fontSize = "1em", fontFamily = "Graphik")
+)
+
+
+
 #' Generate Highcharts Column Chart
 #'
 #' This function generates a column chart in Highcharts with custom styling
@@ -750,37 +779,8 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
     #            style = list(fontSize = "1em", fontFamily = "Graphik")
     #          )) |>
     hc_xAxis(categories = xaxis_order,
-             labels = list(
-               formatter = JS(
-                 "function() {
-                    var label = this.value;
-                    var maxLength = 15;
-                    if (label.length > maxLength) {
-                      var words = label.split(' ');
-                      var result = [];
-                      var line = [];
-                      var lineLength = 0;
-
-                      words.forEach(function(word) {
-                        if (lineLength + word.length > maxLength) {
-                          result.push(line.join(' '));
-                          line = [];
-                          lineLength = 0;
-                        }
-                        line.push(word);
-                        lineLength += word.length + 1;
-                      });
-                      if (line.length > 0) {
-                        result.push(line.join(' '));
-                      }
-                      return result.join('<br>');
-                    } else {
-                      return label;
-                    }
-                  }"
-               ),
-               style = list(fontSize = "1em", fontFamily = "Graphik")
-             )) |>
+             labels = fnc_xaxis_labels
+             ) |>
     hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() {
