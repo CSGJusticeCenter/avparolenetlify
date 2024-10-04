@@ -17,8 +17,8 @@ gender_vars <- c(
 )
 
 # Get state names, excluding states without parole
-states <- carl_state_notes |>
-  filter(abolished_parole_16_total == "N", state %in% state.name) |>
+states <- state_notes |>
+  filter(abolished_parole == "N", state %in% state.name) |>
   pull(state)
 
 # Get ACS population data for race

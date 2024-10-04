@@ -496,7 +496,7 @@ states <- unique(los_race_by_offense_type$state)
 all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
   df1 <- los_race_by_offense_type |>
-    filter(state == x)
+    filter(state == x & fbi_index != "Unknown")
 
   # Handling missing data
   if (nrow(df1) == 0) {
@@ -585,7 +585,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
   df1 <- los_race_by_offense_type |>
     ungroup() |>
-    filter(state == x)|>
+    filter(state == x & fbi_index != "Unknown")|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
            color = case_when(
              race == "White, non-Hispanic" ~ color1,
@@ -718,7 +718,7 @@ states <- unique(los_sex_by_offense_type$state)
 all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 
   df1 <- los_sex_by_offense_type |>
-    filter(state == x)
+    filter(state == x & fbi_index != "Unknown")
 
   # Handling missing data
   if (nrow(df1) == 0) {
@@ -780,7 +780,7 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
 
   df1 <- los_sex_by_offense_type |>
     ungroup() |>
-    filter(state == x)|>
+    filter(state == x & fbi_index != "Unknown")|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
            color = case_when(
              sex == "Female" ~ color2,

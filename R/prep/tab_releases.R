@@ -582,7 +582,7 @@ releases_fbi_index <- ncrp_releases_filtered |>
 states <- unique(releases_fbi_index$state)
 all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- releases_fbi_index |>
-    filter(state == x) |>
+    filter(state == x & fbi_index != "Unknown") |>
     mutate(prop = prop*100,
            tooltip = paste0("<b>Offense Type:</b> ", fbi_index, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",

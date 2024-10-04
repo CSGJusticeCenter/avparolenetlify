@@ -497,7 +497,7 @@ current_ped_fbi_index <- current_ped_fbi_index |>
 states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
   df1 <- current_ped_fbi_index |>
-    filter(state == x) |>
+    filter(state == x & fbi_index != "Unknown") |>
     mutate(prop = prop * 100,
            tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",

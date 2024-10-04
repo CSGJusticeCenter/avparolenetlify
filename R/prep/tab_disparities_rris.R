@@ -74,7 +74,8 @@ reference_rate <- merged_data %>%
 # This gives us a comparison of how much more or less likely other racial groups are incarcerated compared to Whites.
 all_rri_data <- merged_data %>%
   inner_join(reference_rate, by = "state") %>%
-  mutate(rri = incarceration_rate / reference_rate) %>%  # Calculate the RRI.
+  mutate(rri = incarceration_rate / reference_rate,
+         rri = round(rri, 1)) %>%  # Calculate the RRI.
   select(state, race, rri)
 
 
@@ -103,6 +104,8 @@ all_sentence_rri_black <- map(.x = states, .f = function(x) {
 # Assign state names to the generated sentences for each state.
 all_sentence_rri_black <- setNames(all_sentence_rri_black, states)
 all_sentence_rri_black$Georgia
+all_sentence_rri_black$Oklahoma
+rm(states)
 
 # RRI sentence for Hispanic people
 states <- unique(all_rri_data$state)
@@ -126,7 +129,8 @@ all_sentence_rri_hispanic <- map(.x = states, .f = function(x) {
 # Assign state names to the generated sentences for each state.
 all_sentence_rri_hispanic <- setNames(all_sentence_rri_hispanic, states)
 all_sentence_rri_hispanic$Georgia
-
+all_sentence_rri_hispanic$Oklahoma
+rm(states)
 
 
 # ---------------------------------------------------------------------------- #
@@ -259,7 +263,8 @@ reference_parole_rate <- merged_parole_data %>%
 # Calculate RRI for other racial groups
 all_pe_rri_data <- merged_parole_data %>%
   inner_join(reference_parole_rate, by = "state") %>%
-  mutate(rri = past_parole_rate / reference_parole_rate) %>%
+  mutate(rri = past_parole_rate / reference_parole_rate,
+         rri = round(rri, 1)) %>%
   select(state, race, rri)
 
 

@@ -227,7 +227,7 @@ states <- unique(avg_pe_release_race_offense$state)
 all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_race_offense |>
     ungroup() |>
-    filter(state == x)|>
+    filter(state == x & fbi_index != "Unknown")|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
            color = case_when(
              race == "White, non-Hispanic" ~ color1,
@@ -508,7 +508,7 @@ states <- unique(avg_pe_release_sex_offense$state)
 all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_sex_offense |>
     ungroup() |>
-    filter(state == x)|>
+    filter(state == x & fbi_index != "Unknown")|>
     mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
            color = case_when(
              sex == "Female" ~ color2,
@@ -682,7 +682,7 @@ all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   # Filter the dataset for the current state.
   df1 <- avg_pe_release_race_offense |>
-    filter(state == x)
+    filter(state == x & fbi_index != "Unknown")
 
   # Handle missing data for the state.
   if (nrow(df1) == 0) {
@@ -810,7 +810,7 @@ all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 
   # Filter the dataset for the current state.
   df1 <- avg_pe_release_sex_offense |>
-    filter(state == x)
+    filter(state == x & fbi_index != "Unknown")
 
   # Handle missing data for the state.
   if (nrow(df1) == 0) {

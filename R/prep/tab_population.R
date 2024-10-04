@@ -166,8 +166,8 @@ rm(states)
 # RACE AND ETHNICITY DEMOGRAPHICS
 #------------------------------------------------------------------------------#
 
-# Get unique states from the bjs_prison_pop_by_race_2022 dataset to process race data
-states <- unique(bjs_prison_pop_by_race_2022$state)
+# Get unique states from the bjs_prison_pop_by_race_2020 dataset to process race data
+states <- unique(bjs_prison_pop_by_race_2020$state)
 
 # Filter states that still have parole (abolished_parole_16_total == "N")
 states <- state_notes |>
@@ -176,7 +176,7 @@ states <- state_notes |>
 
 # Generate bar charts for each state based on race data for the prison population
 all_bar_population_race <- map(.x = states,  .f = function(x) {
-  df1 <- bjs_prison_pop_by_race_2022 |>
+  df1 <- bjs_prison_pop_by_race_2020 |>
     filter(state == x) |>
     mutate(prop = prop*100,  # Convert proportion to percentage
            tooltip = paste0("<b>Race:</b> ", race, "<br>",
@@ -185,7 +185,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
     arrange(desc(prop))  # Sort by proportion in descending order
 
   # Accessibility description for the chart
-  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race and ethnicity in 2022 in the state of ", x, ".")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race and ethnicity in 2020 in the state of ", x, ".")
 
   # Create a Highcharts bar chart for racial demographics
   highcharts <- fnc_hc_columnchart(df1, "race", "prop", hc_accessibility_text) |>
@@ -194,7 +194,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
     hc_title(text = "Race and Ethnicity") |>
-    hc_subtitle(text = "Prison Population, 2022") |>
+    hc_subtitle(text = "Prison Population, 2020") |>
     hc_exporting(enabled = TRUE)
 
   return(highcharts)
@@ -203,16 +203,17 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 # Name the charts for easy reference by state
 all_bar_population_race <- setNames(all_bar_population_race, states)
 all_bar_population_race$Georgia
+all_bar_population_race$Kentucky
 
 # Generate sentences summarizing race demographics for each state
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
-  df1 <- bjs_prison_pop_by_race_2022 |>
+  df1 <- bjs_prison_pop_by_race_2020 |>
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)  # Select the race with the highest proportion
 
   # Generate a sentence summarizing the racial breakdown for the prison population
-  sentences <- paste0("In 2022, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, " people.")
+  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, " people.")
   return(sentences)
 })
 
@@ -227,7 +228,7 @@ rm(states)
 # SEX DEMOGRAPHICS
 #------------------------------------------------------------------------------#
 
-# Get unique states from the bjs_prison_pop_by_sex_2022 dataset to process sex data
+# Get unique states from the bjs_prison_pop_by_sex_2020 dataset to process sex data
 states <- unique(bjs_prison_pop_by_sex_2022$state)
 
 # Filter states that still have parole
@@ -246,7 +247,7 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
     arrange(desc(prop))  # Sort by proportion in descending order
 
   # Accessibility description for the chart
-  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by sex in 2022 in the state of ", x, ".")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by sex in 2020 in the state of ", x, ".")
 
   # Create a Highcharts bar chart for sex demographics
   highcharts <- fnc_hc_columnchart(df1, "sex", "prop", hc_accessibility_text) |>
@@ -255,7 +256,7 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
     hc_title(text = "Sex") |>
-    hc_subtitle(text = "Prison Population, 2022") |>
+    hc_subtitle(text = "Prison Population, 2020") |>
     hc_exporting(enabled = TRUE)
 
   return(highcharts)
@@ -273,7 +274,7 @@ all_sentence_population_sex <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the sex with the highest proportion
 
   # Generate a sentence summarizing the sex breakdown for the prison population
-  sentences <- paste0("In 2022, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), "s.")
+  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), "s.")
   return(sentences)
 })
 
@@ -342,7 +343,7 @@ all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 
   df1$ageyrend <- gsub("-", " to ", df1$ageyrend)  # Format age range for readability
   # Generate a sentence summarizing the age breakdown for the prison population
-  sentences <- paste0("In 2022, ", round(df1$prop*100, 0), " percent of people in prison were between the ages of ", df1$ageyrend, " old.")
+  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were between the ages of ", df1$ageyrend, " old.")
   return(sentences)
 })
 
@@ -375,7 +376,7 @@ ncrp_population_fbi_index <- ncrp_yearendpop |>
 states <- unique(ncrp_population_fbi_index$state)
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_fbi_index |>
-    filter(state == x) |>
+    filter(state == x & fbi_index != "Unknown") |>
     mutate(prop = prop*100,  # Convert proportion to percentage
            tooltip = paste0("<b>Offense Type:</b> ", fbi_index, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",

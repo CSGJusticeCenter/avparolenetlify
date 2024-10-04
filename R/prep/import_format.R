@@ -271,8 +271,10 @@ total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
   filter(jurisdiction == "") |>
   select(x, total) |>
   rename(state = x) |>
-  mutate(total = str_replace_all(total, ",", ""),
+  mutate(state = sub("/.*", "", state),
+         total = str_replace_all(total, ",", ""),
          total = as.numeric(total))
+
 
 # Process BJS population by race and ethnicity for 2020
 # Warning OK - characters like '~' turned to NA
@@ -287,19 +289,21 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
   pivot_longer(cols = total:did_not_report,
                names_to = "race",
                values_to = "n") |>
-  mutate(race = case_when(
-    race == "total" ~ "Total Population",
-    race == "white_a" ~ "White, non-Hispanic",
-    race == "black_a" ~ "Black, non-Hispanic",
-    race == "hispanic" ~ "Hispanic, any race",
-    race %in% c("american_indian_alaska_native_a",
-                "asian_a",
-                "native_hawaiian_other_pacific_islander_a",
-                "two_or_more_races_a",
-                "other_a") ~ "Other race(s), non-Hispanic",
-    race == "unknown" ~ "Unknown",
-    race == "did_not_report" ~ "Unknown",
-    TRUE ~ race
+  mutate(
+    state = sub("/.*", "", state),
+    race = case_when(
+      race == "total" ~ "Total Population",
+      race == "white_a" ~ "White, non-Hispanic",
+      race == "black_a" ~ "Black, non-Hispanic",
+      race == "hispanic" ~ "Hispanic, any race",
+      race %in% c("american_indian_alaska_native_a",
+                  "asian_a",
+                  "native_hawaiian_other_pacific_islander_a",
+                  "two_or_more_races_a",
+                  "other_a") ~ "Other race(s), non-Hispanic",
+      race == "unknown" ~ "Unknown",
+      race == "did_not_report" ~ "Unknown",
+      TRUE ~ race
   )) |>
   filter(race != "Unknown" & race != "Total Population") |>
   group_by(state, race) |>
@@ -333,7 +337,9 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   pivot_longer(cols = total:did_not_report,
                names_to = "race",
                values_to = "n") |>
-  mutate(race = case_when(
+  mutate(
+    state = sub("/.*", "", state),
+    race = case_when(
     race == "total" ~ "Total Population",
     race == "white_a" ~ "White, non-Hispanic",
     race == "black_a" ~ "Black, non-Hispanic",
