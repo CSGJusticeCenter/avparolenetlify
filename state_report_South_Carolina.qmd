@@ -16,7 +16,6 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
-
 source("R/prep/config.R")
 
 state_for_report <- "South Carolina"
