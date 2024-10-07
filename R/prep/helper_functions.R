@@ -144,19 +144,19 @@ fnc_create_fbi_index <- function(df) {
   df |>
     mutate(fbi_index = case_when(
       offdetail == "Aggravated or simple assault" ~ "Aggravated or Simple Assault",
-      offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder and Non-negligent Manslaughter",
+      offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder or Non-negligent Manslaughter",
       offdetail == "Negligent manslaughter" ~ "Negligent Manslaughter",
       offdetail == "Other violent offenses" ~ "Other Violent Offenses",
       offdetail == "Rape/sexual assault" ~ "Rape or Sexual Assault",
       offdetail == "Robbery" ~ "Robbery",
-      offdetail == "Other/unspecified" ~ "Other/Unspecified",
+      offdetail == "Other/Unspecified" ~ "Other or Unspecified",
       offdetail == "Drugs (includes possession, distribution, trafficking, other)" ~ "Drug",
       is.na(offdetail) | offgeneral == "NA" ~ "Unknown",
       TRUE ~ offgeneral
     )) |>
-    fnc_apply_factor_levels(fbi_index, c("Murder and Non-negligent Manslaughter", "Negligent Manslaughter",
+    fnc_apply_factor_levels(fbi_index, c("Murder or Non-negligent Manslaughter", "Negligent Manslaughter",
                                      "Rape or Sexual Assault", "Robbery", "Aggravated or Simple Assault",
-                                     "Other Violent Offenses", "Property", "Public order", "Drug", "Other/Unspecified", "Unknown"))
+                                     "Other Violent Offenses", "Property", "Public order", "Drug", "Other or Unspecified", "Unknown"))
 }
 
 
@@ -405,7 +405,12 @@ fnc_filter_pe_population_criteria <- function(data,
     # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
     filtered_data <- data_subset |>
       filter(admtype == admtype_filter) |>
-      filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
+      # filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
+      filter(sentlgth %in% c("1-1.9 years",
+                             "2-4.9 years",
+                             "5-9.9 years",
+                             "10-24.9 years",
+                             ">=25 years")) |>
       filter(state %in% abolished)
 
     # Calculate missing rates for each state in admtype and calc_sent_lgth_compl
@@ -413,7 +418,7 @@ fnc_filter_pe_population_criteria <- function(data,
       group_by(state) |>
       summarize(
         admtype_missing_rate = sum(admtype == "Unknown") / n(),
-        calc_sent_lgth_missing_rate = sum(is.na(calc_sent_lgth_compl)) / n(),
+        # calc_sent_lgth_missing_rate = sum(is.na(calc_sent_lgth_compl)) / n(),
         total_records = n()
       ) |>
       ungroup()
@@ -423,18 +428,18 @@ fnc_filter_pe_population_criteria <- function(data,
       filter(admtype_missing_rate > missing_threshold) |>
       pull(state)
 
-    states_high_missing_calc_sent <- missing_summary |>
-      filter(calc_sent_lgth_missing_rate > missing_threshold) |>
-      pull(state)
+    # states_high_missing_calc_sent <- missing_summary |>
+    #   filter(calc_sent_lgth_missing_rate > missing_threshold) |>
+    #   pull(state)
 
     # Identify states with 100% missing admtype and calc_sent_lgth_compl
     states_100_missing_admtype <- missing_summary |>
       filter(admtype_missing_rate == 1) |>
       pull(state)
 
-    states_100_missing_calc_sent <- missing_summary |>
-      filter(calc_sent_lgth_missing_rate == 1) |>
-      pull(state)
+    # states_100_missing_calc_sent <- missing_summary |>
+    #   filter(calc_sent_lgth_missing_rate == 1) |>
+    #   pull(state)
 
     # States that are included in the final filtered data
     included_states <- unique(filtered_data$state)
@@ -443,9 +448,9 @@ fnc_filter_pe_population_criteria <- function(data,
     cat("\nDiagnostic Information for", subset_label, ":\n")
     cat("States included in the final filtered data:\n", included_states, "\n\n")
     cat("States with more than", missing_threshold * 100, "% missing 'admtype':\n", states_high_missing_admtype, "\n\n")
-    cat("States with more than", missing_threshold * 100, "% missing 'calc_sent_lgth_compl':\n", states_high_missing_calc_sent, "\n\n")
+    # cat("States with more than", missing_threshold * 100, "% missing 'calc_sent_lgth_compl':\n", states_high_missing_calc_sent, "\n\n")
     cat("States with 100% missing 'admtype':\n", states_100_missing_admtype, "\n\n")
-    cat("States with 100% missing 'calc_sent_lgth_compl':\n", states_100_missing_calc_sent, "\n\n")
+    # cat("States with 100% missing 'calc_sent_lgth_compl':\n", states_100_missing_calc_sent, "\n\n")
   }
 
   # Print diagnostics for all data
@@ -464,7 +469,11 @@ fnc_filter_pe_population_criteria <- function(data,
 
   return(data |>
            filter(admtype == admtype_filter) |>
-           filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
+           filter(sentlgth %in% c("1-1.9 years",
+                                  "2-4.9 years",
+                                  "5-9.9 years",
+                                  "10-24.9 years",
+                                  ">=25 years")) |>
            filter(state %in% abolished))
 }
 
@@ -587,19 +596,21 @@ base_hc_theme <- hc_theme(
     tickColor = "transparent"
   ),
   plotOptions = list(
-    # line = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    # spline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    # area = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    # areaspline = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    # arearange = list(marker = list(enabled = FALSE), dataLabels = list(style = common_style)),
-    # bubble = list(maxSize = "10%", dataLabels = list(style = common_style)),
     column = list(
       dataLabels = list(
         style = common_style
       )
     )
+  ),
+  caption = list(
+    align = "left",
+    style = list(
+      fontSize = "10px",
+      color = "#555555"
+    )
   )
 )
+
 
 #' Highcharts Theme with Line Marker
 #'

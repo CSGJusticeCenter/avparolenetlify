@@ -47,7 +47,7 @@ div(
 ```
 
 <br>
-<div style="font-size: 0.8em; color: black; text-align: center;">
+<div style="font-size: 0.8em; color: black; text-align: left;">
 *Includes people in prison for new offenses and with sentence lengths that are not less than one year or life sentences.
 </div>
 
@@ -55,7 +55,7 @@ div(
 
 # Parole Eligibility
 
-## How Parole Eligibility is Determined
+## How Parole Eligibility Is Determined
 
 Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
 

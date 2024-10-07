@@ -16,6 +16,14 @@
 #######################################
 
 #------------------------------------------------------------------------------#
+# Sources
+#------------------------------------------------------------------------------#
+
+ncrp_source     <- "National Corrections Reporting Program (2020)"
+bjs_source_2022 <- "BJS Prisoners in the United States (2022)"
+bjs_source_2020 <- "BJS Prisoners in the United States (2020)"
+
+#------------------------------------------------------------------------------#
 # MAP - National Trends Page
 #------------------------------------------------------------------------------#
 
@@ -34,15 +42,6 @@ hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_
 # State-Specific Notes for "How is Parole Eligibility Determined?" Section
 # Methodology for Imputation for"End Notes" Section
 #------------------------------------------------------------------------------#
-
-# # Load Carl's state notes, which contains parole eligibility information for each state
-# carl_state_notes <- read.xlsx(file.path(config$sp_data_path, "data/raw/Carl State Notes/carl_state_notes.xlsx")) |>
-#   clean_names()
-#
-# # Load additional parole information by state from an Excel sheet (includes details such as the number of parole board members)
-# parole_info_by_state <- read.xlsx(file.path(config$sp_data_path, "background/app/Parole Info by State.xlsx"),
-#                                   sheet = "Overall") |>
-#   clean_names()
 
 # Import state-specific notes about parole eligibility and number of parole board members
 state_notes_raw <- read.csv(file.path(config$sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v1.csv")) |>
@@ -127,15 +126,17 @@ ncrp_releases <- ncrp_releases_combined |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
+    sentlgth_raw = sentlgth,
     sentlgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
       calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
       calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
       calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
-      calc_sent_lgth_compl >= 25 ~ ">=25 years",
-      is.na(calc_sent_lgth_compl) ~ "Life/Unknown",
-      TRUE ~ NA_character_),
+      calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
+      is.na(calc_sent_lgth_compl) & is.na(relyr) ~ "Life, LWOP, Life plus additional years, Death",
+      calc_sent_lgth_compl == 200 ~ "Unknown",
+      TRUE ~ "Unknown"),
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",
@@ -173,38 +174,36 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
+    sentlgth_raw = sentlgth,
     sentlgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
       calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
       calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
       calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
-      calc_sent_lgth_compl >= 25 ~ ">=25 years",
-      is.na(calc_sent_lgth_compl) ~ "Life/Unknown",
-      TRUE ~ NA_character_),
-    race = factor(race,
-                  levels = c("Unknown",
-                             "Other race(s), non-Hispanic",
-                             "White, non-Hispanic",
-                             "Hispanic, any race",
-                             "Black, non-Hispanic")),
-    ageyrend = factor(ageyrend,
-                      levels = c("55+ years",
-                                 "45-54 years",
-                                 "35-44 years",
-                                 "25-34 years",
-                                 "18-24 years",
-                                 "Unknown")),
-    sentlgth = factor(sentlgth,
-                      levels = c(
-                        "< 1 year",
-                        "1-1.9 years",
-                        "2-4.9 years",
-                        "5-9.9 years",
-                        "10-24.9 years",
-                        ">=25 years",
-                        "Life, LWOP, Life plus additional years, Death",
-                        "Unknown")))
+      calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
+      is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
+      calc_sent_lgth_compl == 200 ~ "Unknown",
+      TRUE ~ "Unknown"),
+    race = factor(race, levels = c("Unknown",
+                                   "Other race(s), non-Hispanic",
+                                   "White, non-Hispanic",
+                                   "Hispanic, any race",
+                                   "Black, non-Hispanic")),
+    ageyrend = factor(ageyrend, levels = c("55+ years",
+                                         "45-54 years",
+                                         "35-44 years",
+                                         "25-34 years",
+                                         "18-24 years",
+                                         "Unknown")),
+    sentlgth = factor(sentlgth, levels = c("< 1 year",
+                                           "1-1.9 years",
+                                           "2-4.9 years",
+                                           "5-9.9 years",
+                                           "10-24.9 years",
+                                           ">=25 years",
+                                           "Life, LWOP, Life plus additional years, Death",
+                                           "Unknown")))
 
 
 

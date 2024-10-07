@@ -15,7 +15,7 @@
 #    - Demographics: Analyzes and visualizes demographics such as race, sex, and age for
 #      people in prison past parole eligibility.
 #
-#    - Offense Types: Breaks down the parole eligibility population by offense types (e.g., violent, non-violent) to see what
+#    - Offense Types: Breaks down the parole eligibility population by offense types (e.g., violent, nonviolent) to see what
 #      percentage of people are in prison past their eligibility based on the crimes committed.
 #
 #    - Sentence Lengths:  Breaks down the parole eligibility population by sentence length for individuals in prison past their parole eligibility.
@@ -148,7 +148,8 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
                                  color = "#000000", textOutline = "none")
                   )) |>
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -156,6 +157,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
 all_stackedbar_pe_type$Alabama
 all_stackedbar_pe_type$Georgia
+all_stackedbar_pe_type$`New Jersey`
 rm(states)
 
 
@@ -169,9 +171,16 @@ all_sentence_pe_type <- map(.x = states,  .f = function(x) {
              parelig_status == "Current"&
              rptyear == select_year)
 
+  df2 <- pe_status_pop |>
+    filter(state == x &
+             parelig_status == "Future" &
+             rptyear == select_year)
+
   sentences <- paste0("In ", select_year, ", ",
                       round(df1$prop*100, 0),
-                      " percent of people in prison were in prison past their parole eligibility year.")
+                      " percent of people in prison were past their parole eligibility.",
+                      " Another ", round(df2$prop*100, 0), " percent will reach their parole eligibility after ",
+                      select_year, ".")
   return(sentences)
 })
 
@@ -306,7 +315,8 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
     hc_add_theme(hc_theme_with_line) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color3, color4)) |>
-    hc_legend(reversed = TRUE)  # Reverse the order of the legend for better clarity
+    hc_legend(reversed = TRUE) |>  # Reverse the order of the legend for better clarity
+    hc_caption(text = ncrp_source)
 
   return(highcharts)  # Return the highchart object for the current state
 })
@@ -328,7 +338,6 @@ rm(states)
 # by demographic
 current_ped_race     <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
   filter(!(race == "Unknown" & prop == 1)) # remove state with 100% Unknown
-
 current_ped_sex      <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
@@ -350,7 +359,8 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
   highcharts <- fnc_hc_columnchart(df1, "race", "prop", hc_accessibility_text) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_colors(c(color4))
+    hc_colors(c(color4)) |>
+    hc_caption(text = ncrp_source)
   return(highcharts)
 })
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
@@ -369,8 +379,7 @@ all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
     slice(1)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
                       " percent of people in prison past parole eligibility were ",
-                      df1$race,
-                      " people.")
+                      df1$race, ".")
   return(sentences)
 })
 
@@ -396,7 +405,8 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
   highcharts <- fnc_hc_columnchart(df1, "sex", "prop", hc_accessibility_text) |>
     hc_title(text = "Sex") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_colors(c(color4))
+    hc_colors(c(color4)) |>
+    hc_caption(text = ncrp_source)
   return(highcharts)
 })
 all_bar_parole_eligibility_sex <- setNames(all_bar_parole_eligibility_sex, states)
@@ -412,7 +422,7 @@ all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
     slice(1)
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
                       " percent of people in prison past parole eligibility were ",
-                      tolower(df1$sex), "s.<br><br>")
+                      tolower(df1$sex), ".<br><br>")
   return(sentences)
 })
 
@@ -438,7 +448,8 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
   highcharts <- fnc_hc_columnchart(df1, "ageyrend", "prop", hc_accessibility_text) |>
     hc_title(text = "Age") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_colors(c(color4))
+    hc_colors(c(color4)) |>
+    hc_caption(text = ncrp_source)
   return(highcharts)
 })
 all_bar_parole_eligibility_ageyrend <- setNames(all_bar_parole_eligibility_ageyrend, states)
@@ -474,18 +485,18 @@ rm(states)
 current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
 current_ped_fbi_index <- current_ped_fbi_index |>
   mutate(group = case_when(
-    fbi_index %in% c("Murder and Non-negligent Manslaughter",
+    fbi_index %in% c("Murder or Non-negligent Manslaughter",
                      "Negligent Manslaughter",
                      "Rape or Sexual Assault",
                      "Robbery",
                      "Aggravated or Simple Assault",
                      "Other Violent Offenses") ~ "Violent",
-    fbi_index %in% c("Drug", "Public order", "Property") ~ "Non-Violent",
+    fbi_index %in% c("Drug", "Public order", "Property") ~ "Nonviolent",
     TRUE ~ "Other or Unknown"
   ),
   color = case_when(
     group == "Violent" ~ color2,
-    group == "Non-Violent" ~ color2,
+    group == "Nonviolent" ~ color2,
     group == "Other or Unknown" ~ darkgray
   )) |>
   mutate(tooltip = paste0("<b>", state, " - ",
@@ -508,7 +519,8 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
   highcharts <- fnc_hc_columnchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
     hc_title(text = "Offense Type") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_colors(c(color4))
+    hc_colors(c(color4)) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -520,10 +532,10 @@ all_bar_ped_fbi_index$Arkansas
 rm(states)
 
 
-# Get proportion of offenses that were violent and non-violent
+# Get proportion of offenses that were violent and nonviolent
 current_ped_offense_group <- current_ped_fbi_index |>
   select(state, fbi_index, group, n) |>
-  filter(group == "Violent" | group == "Non-Violent") |>
+  filter(group == "Violent" | group == "Nonviolent") |>
   group_by(state, group) |>
   summarise(total_offenses = sum(n), .groups = 'drop') |>
   group_by(state) |>
@@ -545,13 +557,13 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
     return(paste0("Data for ", x, " is missing for the top offense groups."))
   }
 
-  # Violent vs Non-Violent breakdown sentence
+  # Violent vs Nonviolent breakdown sentence
   violent_prop <- df1 |> filter(group == "Violent") |> pull(prop) * 100
-  nonviolent_prop <- df1 |> filter(group == "Non-Violent") |> pull(prop) * 100
+  nonviolent_prop <- df1 |> filter(group == "Nonviolent") |> pull(prop) * 100
 
   group_sentence <- paste0("In ", select_year, ", ", round(violent_prop, 0),
                            " percent of people in prison past parole eligibility were in prison for violent offenses and ",
-                           round(nonviolent_prop, 0), " percent for non-violent offenses.")
+                           round(nonviolent_prop, 0), " percent for nonviolent offenses.")
 
   # Get the top two FBI index categories
   df2 <- current_ped_fbi_index |>
@@ -611,7 +623,8 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
   highcharts <- fnc_hc_columnchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
     hc_title(text = "Sentence Length") |>
     hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
-    hc_colors(c(color4))
+    hc_colors(c(color4)) |>
+    hc_caption(text = ncrp_source)
   return(highcharts)
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
