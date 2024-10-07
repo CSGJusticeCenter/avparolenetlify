@@ -92,7 +92,7 @@ div(id = "visualization", state_stackedbar_pop_pe_by_year)
 div(id = "small-visualization", state_bar_parole_eligibility_race)
 ```
 
-#### Gender
+#### Sex
 
 `r paste(state_sentence_parole_eligibility_sex, collapse = ", ")`
 
@@ -165,7 +165,7 @@ div(id = "visualization", state_line_population_by_year)
 div(id = "small-visualization", state_bar_population_race)
 ```
 
-#### Gender
+#### Sex
 
 `r paste(state_sentence_population_sex, collapse = ", ")`
 
@@ -258,7 +258,7 @@ div(id = "visualization", state_pie_release_type)
 div(id = "small-visualization", state_bar_releases_race)
 ```
   
-#### Gender
+#### Sex
   
 `r paste(state_sentence_releases_sex, collapse = ", ")`
 
@@ -305,6 +305,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 ### Race and Ethnicity
 
 Racial and ethnic disparities in prison incarceration represents the accumulation of disparities across the system.  
+
 <br>
 
 ```{r rri_infographic_black}
@@ -329,9 +330,9 @@ if (file.exists(rri_infographic_hispanic)) {
 
 `r paste(state_sentence_rri_hispanic, collapse = ", ")`
 
-### Gender
+### Sex
 
-Gender disparities in prison incarceration represents the accumulation of disparities across the system.  
+Sex disparities in prison incarceration represents the accumulation of disparities across the system.  
 
 <br>
 
@@ -360,7 +361,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 div(id = "visualization", state_scatter_los_race_offense)
 ```
 
-### Gender 
+### Sex 
 
 `r paste(state_sentence_los_sex, collapse = ", ")`
 
@@ -403,7 +404,7 @@ if (file.exists(pe_rri_infographic_hispanic)) {
 
 `r paste(state_sentence_pe_rri_hispanic, collapse = ", ")`
 
-### Gender
+### Sex
 
 :::
 
@@ -470,7 +471,7 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 div(id = "visualization", state_scatter_avg_pe_release_race_offense)
 ```
 
-### Gender
+### Sex
 
 `r paste(state_sentence_avg_pe_release_sex, collapse = ", ")`
 

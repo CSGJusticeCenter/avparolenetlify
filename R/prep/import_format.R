@@ -65,7 +65,6 @@ state_notes <- state_notes_raw |>
          rules_note      = gsub("\u00B2", "\u00B3", rules_note),
          projection_note = gsub("\u00B3", "\u2074", projection_note),
 
-
          source_note1    = gsub("\u00B9", "\u00B2", source_note1),
          source_note2    = gsub("\u00B2", "\u00B3", source_note2),
          source_note3    = gsub("\u00B3", "\u2074", source_note3),
@@ -119,7 +118,7 @@ ncrp_releases <- ncrp_releases_combined |>
   fnc_create_admtype() |>   # Redo admission types
   mutate(
     sentlgth_raw = sentlgth,
-    sentlgth = case_when(
+    calc_sent_lgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
       calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
@@ -129,6 +128,8 @@ ncrp_releases <- ncrp_releases_combined |>
       is.na(calc_sent_lgth_compl) & is.na(relyr) ~ "Life, LWOP, Life plus additional years, Death",
       calc_sent_lgth_compl == 200 ~ "Unknown",
       TRUE ~ "Unknown"),
+    sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
+                         TRUE ~ sentlgth),
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",
@@ -167,7 +168,7 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
   fnc_create_admtype() |>   # Redo admission types
   mutate(
     sentlgth_raw = sentlgth,
-    sentlgth = case_when(
+    calc_sent_lgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
       calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
@@ -177,6 +178,8 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
       is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
       calc_sent_lgth_compl == 200 ~ "Unknown",
       TRUE ~ "Unknown"),
+    sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
+                         TRUE ~ sentlgth),
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",

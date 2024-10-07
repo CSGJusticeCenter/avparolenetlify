@@ -54,13 +54,13 @@ num_people_current_rounded <- fnc_round_to_power(num_people_current)
 
 ```{r highlights}
 # Filter the dataframe where current_count is not NA and abolished_parole is "No"
-filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_parole== "N", ]
+# filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_parole== "N", ]
 
 # Calculate the total current_count for this filtered data
-total_current_count <- sum(filtered_df$current_count, na.rm = TRUE)
+total_current_count <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
 
 # Calculate the national percentage based on filtered_total_pop
-national_percentage <- paste0(round(total_current_count / sum(filtered_df$filtered_total_pop, na.rm = TRUE) * 100, 0), "%")
+national_percentage <- paste0(round(total_current_count / sum(parole_eligibility_table$filtered_total_pop, na.rm = TRUE) * 100, 0), "%")
 
 div(
   id = "grid-container",
@@ -142,10 +142,10 @@ style_cells <- function(value, color) {
 parole_eligibility_table$filtered_total_pop <- as.numeric(parole_eligibility_table$filtered_total_pop)
 
 reactable(
-  parole_eligibility_table |> select(-current_count_rounded),
+  parole_eligibility_table ,
   pagination = FALSE,
   searchable = TRUE,
-  defaultSorted = c("abolished_parole", "current_perc"),
+  defaultSorted = c("current_perc"),
   defaultColDef = colDef(
     headerStyle = list(fontWeight = "normal"),
     sortable = TRUE,
@@ -195,21 +195,9 @@ reactable(
       align = "right",
       format = colFormat(separators = TRUE)
     ),
-    abolished_parole = colDef(
-      show = F,
-      name = "Abolished Discretionary Parole", 
-      align = "right",
-      width = 150,
-      defaultSortOrder = "asc"  # Sort ascending
-    ),
     members = colDef(
       name = "Parole Board Members*", 
       align = "right"
-    ),
-    ratio = colDef(
-      show = F, 
-      name = "Ratio", 
-      align = "center"
     )
   ),
   columnGroups = list(
@@ -222,9 +210,11 @@ reactable(
 ```
 
 <div id="footnotes-text"><br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
-<a href="" style="font-size: 0.7em; color: gray;">Download Table</a>
+<a href="parole_eligibility_table_download_v1.csv" style="font-size: 0.7em; color: gray;">Download Table</a>
 <br>
 </div>
 <div class="divider"></div>
+<br>
+<br>
 <br>
 

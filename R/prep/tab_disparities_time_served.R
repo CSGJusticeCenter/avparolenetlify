@@ -758,7 +758,7 @@ all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 
   # Construct the sentence
   sentence <- paste0(
-    "This chart shows the average time served in prison for the most serious sentenced offense by gender in 2020. ",
+    "This chart shows the average time served in prison for the most serious sentenced offense by sex in 2020. ",
     "For ", tolower(offense_type), " offenses, ", tolower(sex_longest),
     "s spent ", disparity_diff, " more years in prison on average compared to ",
     tolower(sex_shortest), "s."

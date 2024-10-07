@@ -152,6 +152,7 @@ lightgray <- "#d7d7d7"
 # Sources
 #------------------------------------------------------------------------------#
 
+# Format sources
 ncrp_source     <- "National Corrections Reporting Program (2020)"
 bjs_source_2022 <- "BJS Prisoners in the United States (2022)"
 bjs_source_2020 <- "BJS Prisoners in the United States (2020)"

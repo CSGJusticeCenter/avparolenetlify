@@ -84,10 +84,19 @@ parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
   left_join(state_notes_clean, by = "state") |>
   left_join(members, by = "state") |>
   filter(abolished_parole == "N" | state == "Louisiana") |>
-  select(state, current_perc, current_count, filtered_total_pop, abolished_parole, members)
+  select(state, current_perc, current_count, filtered_total_pop, members)
 
+# Rename variables for downloadable table
+parole_eligibility_table_download <- parole_eligibility_table |>
+  mutate(current_count_rounded = fnc_round_to_power(current_count),
+         current_perc = round(current_perc*100, 1)) |>
+  select(State = state,
+         `In Prison Past Parole Eligibility (N)` = current_count_rounded,
+         `In Prison Past Parole Eligibility (%)` = current_perc,
+         `Prison Population` = filtered_total_pop,
+         `Parole Board Members` = members)
 
-
+write.csv(parole_eligibility_table_download, file.path(app_folder, "parole_eligibility_table_download_v1.csv"))
 
 
 
@@ -97,6 +106,9 @@ parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
 
 # Create a vector of all state names
 all_states <- state.name
+
+# Define the gradient colors for categories
+gradient_colors <- c(green1, green2, green3, green4, blue)
 
 # Prepare data for national maps
 map_data <- filtered_parole_elig_table_analysis_year |>
@@ -170,28 +182,6 @@ map_data <- filtered_parole_elig_table_analysis_year |>
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
-# Process map_data to include gradient color and data category
-map_data_breaks <- map_data |>
-  mutate(
-    all_na = ifelse(is.na(current_count) &
-                      is.na(future_count) & is.na(missing_count), TRUE, FALSE),
-    gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
-    gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
-    current_perc = round(current_perc, 0)
-  ) |>
-  mutate(color = case_when(abolished_parole == "Y" ~ yellow),
-         url = ifelse(abolished_parole == "Y" | !is.na(current_perc), NA,
-                      paste0("https://avparoleproject.netlify.app/state_report_",
-                             tolower(gsub(" ", "_", map_data_breaks$state)))),
-         dummy_value = ifelse(abolished_parole == "Y", 1, NA))
-
-# Select data
-map_data <- map_data_breaks |>
-  select(state, state_abb, current_perc, change_label, abolished_parole, tooltip)
-
-# Define the gradient colors for categories
-gradient_colors <- c(green1, green2, green3, green4, blue)
-
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1
 breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
@@ -199,6 +189,72 @@ breaks[1] <- 0  # Set the first break to 0
 breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
 breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 
+# # Process map_data to include gradient color and data category
+# map_data_breaks <- map_data |>
+#   mutate(
+#     all_na = ifelse(is.na(current_count) &
+#                       is.na(future_count) & is.na(missing_count), TRUE, FALSE),
+#     gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+#     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
+#     current_perc = round(current_perc, 0)
+#   ) |>
+#   mutate(color = case_when(abolished_parole == "Y" ~ yellow),
+#          url = ifelse(abolished_parole == "Y" | !is.na(current_perc), NA,
+#                       paste0("https://avparoleproject.netlify.app/state_report_",
+#                              tolower(gsub(" ", "_", map_data_breaks$state)))),
+#          dummy_value = ifelse(abolished_parole == "Y", 1, NA))
+#
+# # Select data
+# map_data <- map_data_breaks |>
+#   select(state, state_abb, current_perc, change_label, abolished_parole, tooltip)
+#
+# # Define the gradient colors for categories
+# gradient_colors <- c(green1, green2, green3, green4, blue)
+#
+# # Calculate the breaks for the percent of people eligible for parole
+# num_breaks <- length(gradient_colors) - 1
+# breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+# breaks[1] <- 0  # Set the first break to 0
+# breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
+# breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
+#
+# # Process map_data to include gradient color and data category
+# map_data_breaks <- map_data |>
+#   mutate(
+#     gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+#     gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
+#     current_perc = round(current_perc, 0),
+#     data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
+#   ) |>
+#   group_by(gradient_color) |>
+#   mutate(
+#     data_category = case_when(
+#       state == "Louisiana" ~ "Abolished Parole",
+#       gradient_color == gradient_colors[1] ~ paste0(breaks[1], "% - ", breaks[2], "%"),
+#       gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
+#       gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
+#       gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
+#       gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$current_perc, na.rm = TRUE), "%")
+#     ),
+#     data_category = case_when(
+#       is.na(data_category) & abolished_parole == "N" ~ "Missing Data",
+#       is.na(data_category) & abolished_parole == "Y" ~ "Abolished Parole",
+#       state == "Louisiana" ~ "Abolished Parole",
+#       TRUE ~ data_category
+#     ),
+#     gradient_color = case_when(
+#       is.na(gradient_color) & data_category == "Missing Data" ~ lightgray,
+#       is.na(gradient_color) & data_category == "Abolished Parole" ~ yellow,
+#       state == "Louisiana" ~ yellow,
+#       TRUE ~ gradient_color
+#     ),
+#     data_category_num = case_when(
+#       is.na(data_category_num) & data_category == "Missing Data" ~ 6,
+#       is.na(data_category_num) & data_category == "Abolished Parole" ~ 5,
+#       state == "Louisiana" ~ 5,
+#       TRUE ~ data_category_num
+#     )
+#   )
 # Process map_data to include gradient color and data category
 map_data_breaks <- map_data |>
   mutate(
@@ -367,7 +423,7 @@ map_percent
 theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
 
 for (folder in theseFOLDERS){
-  save(map_percent,              file = file.path(folder, "map_percent.rds"))
-  save(parole_eligibility_table, file = file.path(folder, "parole_eligibility_table.rds"))
+  save(map_percent,                       file = file.path(folder, "map_percent.rds"))
+  save(parole_eligibility_table,          file = file.path(folder, "parole_eligibility_table.rds"))
 }
 
