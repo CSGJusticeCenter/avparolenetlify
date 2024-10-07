@@ -305,7 +305,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 ### Race and Ethnicity
 
 Racial and ethnic disparities in prison incarceration represents the accumulation of disparities across the system.  
-
+ 
 <br>
 
 ```{r rri_infographic_black}

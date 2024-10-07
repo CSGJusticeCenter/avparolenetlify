@@ -335,3 +335,9 @@ body {
   font-size: 12px;
   padding: 4px 8px;
 }
+
+@media (max-width: 768px) {
+  #map-section {
+    display: none;
+  }
+}
