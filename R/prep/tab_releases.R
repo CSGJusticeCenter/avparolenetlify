@@ -71,16 +71,15 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   # Determine the maximum value for the y-axis in the visualization
   # Adds a small margin space at the top
   max_value <- max(df1$total)*1.1
-  min_value <- min(df1$total)/1.5
 
   hc_accessibility_text <- paste0("This graph shows the number of releases in ",
                                   select_year, " in the state of ", x, ".")
   highcharts <- # Create the line chart
     hc <- highchart() |>
     hc_chart(type = "line") |>
-    hc_title(text = "People Released From Prison by Year") |>
+    hc_title(text = paste0("People Released From Prison by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_yAxis(title = list(text = ""),
-             min = min_value,
+             min = 0,
              max = max_value) |>
     hc_xAxis(categories = df1$rptyear,
              lineWidth = 1) |>
@@ -105,6 +104,8 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
 # Assign state names as the names of the charts list
 all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
 all_line_releases_by_year$Georgia
+all_line_releases_by_year$Maryland
+all_line_releases_by_year$Mississippi
 
 # We have the year-end population of those who were parole-eligible but were not released,
 #   and we have the number of parole-eligible individuals who were released but
@@ -176,7 +177,7 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
                                         linkedDescription = "TBD accessibility text",
                                         landmarkVerbosity = "one"),
                    area = list(accessibility = list(description = "TBD accessibility text"))) |>
-    hc_title(text = "Proportion of Parole-Eligible People Released from Prison by Year") |>
+    hc_title(text = paste0("Proportion of Parole-Eligible People Released from Prison by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_tooltip(formatter = JS("
       function() {
         return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
@@ -306,7 +307,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
   highcharts <- # Create a pie chart
     highchart() |>
     hc_chart(type = "pie") |>
-    hc_title(text = "Proportion of Conditional vs. Unconditional Releases") |>
+    hc_title(text = paste0("Proportion of Conditional vs. Unconditional Releases, ", select_year)) |>
     hc_plotOptions(pie = list(
       startAngle = if (is_100_conditional) 90 else 0,  # Rotate by 90 degrees if 100% conditional
       endAngle = if (is_100_conditional) 450 else 360, # Keep chart full if rotated
@@ -325,7 +326,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color2, color3)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_tooltip(pointFormat = 'Number of Releases: {point.y}<br>Percentage of Releases: {point.percentage:.0f}%') |>
+    hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
     hc_caption(text = ncrp_source)
 
   return(highcharts)

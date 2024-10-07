@@ -107,7 +107,8 @@ map_percent |>
                  buttons = list(contextButton = list(align = 'right',
                                                      verticalAlign = 'top',
                                                      y = 0,
-                                                     x = -5)))
+                                                     x = -5))) |>
+    hc_caption(text = ncrp_source)
 ```
 </div>
 <br>

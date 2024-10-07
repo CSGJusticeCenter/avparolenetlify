@@ -1,3 +1,18 @@
+df1 <- ncrp_yearendpop |>
+  filter(state == "Utah") |>
+  # Filter for the selected year and 'Current' parole eligibility status
+  # filter(parelig_status == "Current") |>
+  # Group by state and count occurrences of the specified column
+  group_by(state, rptyear) |>
+  count(sentlgth) |>
+  # Calculate proportions and create labels for visualization
+  mutate(
+    prop = n/sum(n),                    # Calculate proportion
+    yearendpop_ped = sum(n),            # Calculate total population
+    prop_label = paste0(round(prop * 100, 0), "%"),  # Create proportion label as percentage
+    n_label = formattable::comma(n, 0)  # Format count labels with commas
+  ) |>
+  ungroup()
 
 # Notes from Jess
 # I think we should handle missing differently from unknown.

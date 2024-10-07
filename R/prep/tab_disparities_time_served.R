@@ -671,7 +671,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
       gridLineWidth = 1,           # Ensure grid lines are visible
       gridLineColor = lightgray       # Set grid line color
     ) |>
-    hc_title(text = "Average Time Served by Offense and Race and Ethnicity") |>
+    hc_title(text = paste0("Average Time Served by Offense and Race and Ethnicity, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
@@ -845,7 +845,7 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
       gridLineWidth = 1,           # Ensure grid lines are visible
       gridLineColor = lightgray       # Set grid line color
     ) |>
-    hc_title(text = "Average Time Served by Offense and Sex") |>
+    hc_title(text = paste0("Average Time Served by Offense and Sex, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',

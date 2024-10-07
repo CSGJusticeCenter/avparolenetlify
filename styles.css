@@ -1,11 +1,4 @@
 
-
-.download-button {
-  font-family: "Graphik";
-  font-size: 10px;
-  padding: 4px 8px;
-}
-
 /******************************************************************************/
 /* Overview */
 /******************************************************************************/
@@ -333,4 +326,12 @@ body {
 /* remove rounded edges everything */
 * {
   border-radius: 0!important;
+}
+
+
+
+.download-button {
+  font-family: "Graphik";
+  font-size: 12px;
+  padding: 4px 8px;
 }

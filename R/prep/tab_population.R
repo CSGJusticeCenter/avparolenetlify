@@ -87,9 +87,9 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
   # Create the Highcharts line chart
   highcharts <- highchart() |>
     hc_chart(type = "line") |>
-    hc_title(text = "Prison Population by Year") |>
+    hc_title(text = paste0("Prison Population by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_yAxis(title = list(text = ""),
-             min = min_value,
+             min = 0,
              max = max_value) |>
     hc_xAxis(categories = df1$rptyear, lineWidth = 1) |>
     hc_series(
@@ -127,16 +127,15 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
   # Determine the maximum value for the y-axis in the visualization
   # Adds a small margin space at the top
   max_value <- max(df1$bjs_prison_population)*1.1
-  min_value <- min(df1$bjs_prison_population)/1.5
 
   hc_accessibility_text <- paste0("TBD")
 
   highcharts <- # Create the line chart
     hc <- highchart() |>
     hc_chart(type = "line") |>
-    hc_title(text = "Prison Population by Year") |>
+    hc_title(text = paste0("Prison Population by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_yAxis(title = list(text = ""),
-             min = min_value,
+             min = 0,
              max = max_value) |>
     hc_xAxis(categories = df1$rptyear,
              lineWidth = 1) |>
@@ -327,7 +326,8 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
-    hc_title(text = paste0("Prison Population by Age, ", select_year)) |>
+    hc_title(text = "Sex") |>
+    hc_subtitle(text = "Prison Population, 2020") |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color2)) |>
     hc_caption(text = ncrp_source)

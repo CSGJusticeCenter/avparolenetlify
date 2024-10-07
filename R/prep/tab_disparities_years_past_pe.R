@@ -225,10 +225,21 @@ states <- unique(avg_pe_release_race_offense$state)
 
 # Generate chart for each state
 all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
+  # df1 <- avg_pe_release_race_offense |>
+  #   ungroup() |>
+  #   filter(state == x & fbi_index != "Unknown")|>
+  #   mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
+  #          color = case_when(
+  #            race == "White, non-Hispanic" ~ color1,
+  #            race == "Black, non-Hispanic" ~ color4,
+  #            race == "Hispanic, any race" ~ color2,
+  #            race == "Other race(s), non-Hispanic" ~ color5
+  #          ))
   df1 <- avg_pe_release_race_offense |>
     ungroup() |>
-    filter(state == x & fbi_index != "Unknown")|>
-    mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
+    filter(state == x & fbi_index != "Unknown") |>
+    mutate(fbi_index = factor(fbi_index),  # Ensure fbi_index is a factor
+           fbi_index_num = as.numeric(fbi_index),  # Convert factor to numeric
            color = case_when(
              race == "White, non-Hispanic" ~ color1,
              race == "Black, non-Hispanic" ~ color4,
@@ -312,7 +323,7 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
       gridLineWidth = 1,           # Ensure grid lines are visible
       gridLineColor = lightgray       # Set grid line color
     ) |>
-    hc_title(text = "Average Years Past Parole Eligibility by Offense and Race and Ethnicity") |>
+    hc_title(text = paste0("Average Years Past Parole Eligibility by Offense and Race and Ethnicity, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
@@ -334,6 +345,7 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 # Name the list of charts by state
 all_scatter_avg_pe_release_race_offense <- setNames(all_scatter_avg_pe_release_race_offense, states)
 all_scatter_avg_pe_release_race_offense$Georgia
+all_scatter_avg_pe_release_race_offense$Arkansas
 rm(states)
 
 
@@ -372,7 +384,7 @@ all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_sex |>
     ungroup() |>
     filter(state == x) |>
-    arrange(desc(average_avg_pe_release)) |>
+    arrange(desc(average_avg_pe_release)) |> ####### might need to adjust like with race graph
     mutate(sex_num = row_number(),
            color = case_when(
              sex == "Female" ~ color2,
@@ -572,7 +584,7 @@ all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
       gridLineWidth = 1,           # Ensure grid lines are visible
       gridLineColor = lightgray       # Set grid line color
     ) |>
-    hc_title(text = "Average Years Past Parole Eligibility by Offense and Sex") |>
+    hc_title(text = paste0("Average Years Past Parole Eligibility by Offense and Sex, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(
       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
@@ -639,7 +651,7 @@ all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
   if (nrow(df_black) > 0 && nrow(df_white) > 0) {
     los_diff_black <- df_black$average_avg_pe_release - df_white$average_avg_pe_release
     if (!is.na(los_diff_black) && los_diff_black > 0) {
-      black_sentence <- paste0("Black people spent an average of ", round(los_diff_black, 1),
+      black_sentence <- paste0("In ", select_year, ", Black people spent an average of ", round(los_diff_black, 1),
                                " more years in prison past parole eligibility")
     }
   }

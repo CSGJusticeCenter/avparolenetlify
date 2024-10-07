@@ -325,6 +325,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
 all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
 all_stackedbar_pop_pe_by_year$Georgia
 all_stackedbar_pop_pe_by_year$Hawaii
+all_stackedbar_pop_pe_by_year$Maryland
 rm(states)
 
 
@@ -629,6 +630,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
 all_bar_parole_eligibility_sentlgth$Georgia
+all_bar_parole_eligibility_sentlgth$Utah
 rm(states)
 
 
