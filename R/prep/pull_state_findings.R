@@ -39,6 +39,7 @@ state_imputation_notes <- state_notes |>
 #------------------------------------------------------------------------------#
 
 # Load Prepared Data
+load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
 # Get number of people currently eligible for parole

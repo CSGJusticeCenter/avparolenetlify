@@ -23,9 +23,9 @@ knitr::opts_chunk$set(
 
 source("R/prep/config.R")
 
-# Load prepared data
 load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
 
 # Custom function to round
 fnc_round_to_power <- function(x) {
@@ -210,11 +210,21 @@ reactable(
 ```
 
 <div id="footnotes-text"><br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
-<a href="parole_eligibility_table_download_v1.csv" style="font-size: 0.7em; color: gray;">Download Table</a>
-<br>
-</div>
-<div class="divider"></div>
-<br>
-<br>
-<br>
 
+
+```{r echo=FALSE}
+library(downloadthis)
+parole_eligibility_table_download %>%
+  download_this(
+    output_name = "Parole_Eligibility_By_State_Estimates_2023",
+    output_extension = ".csv",
+    button_label = "Download Table",
+    button_type = "default",
+    has_icon = TRUE,
+    icon = "fa fa-save",
+    class = "download-button" 
+  )
+```
+
+<br>
+<br>

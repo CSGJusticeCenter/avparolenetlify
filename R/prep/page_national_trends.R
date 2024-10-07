@@ -96,8 +96,6 @@ parole_eligibility_table_download <- parole_eligibility_table |>
          `Prison Population` = filtered_total_pop,
          `Parole Board Members` = members)
 
-write.csv(parole_eligibility_table_download, file.path(app_folder, "parole_eligibility_table_download_v1.csv"))
-
 
 
 
@@ -425,5 +423,6 @@ theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app
 for (folder in theseFOLDERS){
   save(map_percent,                       file = file.path(folder, "map_percent.rds"))
   save(parole_eligibility_table,          file = file.path(folder, "parole_eligibility_table.rds"))
+  save(parole_eligibility_table_download, file = file.path(folder, "parole_eligibility_table_download.rds"))
 }
 
