@@ -485,7 +485,7 @@ rm(states)
 current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
 current_ped_fbi_index <- current_ped_fbi_index |>
   mutate(group = case_when(
-    fbi_index %in% c("Murder or Non-negligent Manslaughter",
+    fbi_index %in% c("Murder or Nonnegligent Manslaughter",
                      "Negligent Manslaughter",
                      "Rape or Sexual Assault",
                      "Robbery",

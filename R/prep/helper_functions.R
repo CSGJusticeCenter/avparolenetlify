@@ -132,7 +132,7 @@ fnc_apply_factor_levels <- function(df, col_name, levels) {
 #'
 #' This function categorizes offenses into FBI index categories based on the `offdetail` column
 #' and applies factor levels to the resulting `fbi_index` column. It standardizes offense types
-#' into broader categories such as "Murder and Non-negligent Manslaughter", "Robbery", etc.
+#' into broader categories such as "Murder and Nonnegligent Manslaughter", "Robbery", etc.
 #'
 #' @param df A data frame containing an `offdetail` column with specific offense details.
 #' @return A data frame with a new `fbi_index` column, categorized and factored into FBI index categories.
@@ -144,7 +144,7 @@ fnc_create_fbi_index <- function(df) {
   df |>
     mutate(fbi_index = case_when(
       offdetail == "Aggravated or simple assault" ~ "Aggravated or Simple Assault",
-      offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder or Non-negligent Manslaughter",
+      offdetail == "Murder (including non-negligent manslaughter)" ~ "Murder or Nonnegligent Manslaughter",
       offdetail == "Negligent manslaughter" ~ "Negligent Manslaughter",
       offdetail == "Other violent offenses" ~ "Other Violent Offenses",
       offdetail == "Rape/sexual assault" ~ "Rape or Sexual Assault",
@@ -154,7 +154,7 @@ fnc_create_fbi_index <- function(df) {
       is.na(offdetail) | offgeneral == "NA" ~ "Unknown",
       TRUE ~ offgeneral
     )) |>
-    fnc_apply_factor_levels(fbi_index, c("Murder or Non-negligent Manslaughter", "Negligent Manslaughter",
+    fnc_apply_factor_levels(fbi_index, c("Murder or Nonnegligent Manslaughter", "Negligent Manslaughter",
                                      "Rape or Sexual Assault", "Robbery", "Aggravated or Simple Assault",
                                      "Other Violent Offenses", "Property", "Public order", "Drug", "Other or Unspecified", "Unknown"))
 }
@@ -608,8 +608,18 @@ base_hc_theme <- hc_theme(
       fontSize = "10px",
       color = "#555555"
     )
+  ),
+  exporting = list(
+    buttons = list(
+      contextButton = list(
+        menuItems = list(
+          "downloadPNG"
+        )
+      )
+    )
   )
 )
+
 
 
 #' Highcharts Theme with Line Marker

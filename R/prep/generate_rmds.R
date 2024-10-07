@@ -1,12 +1,12 @@
 
 source("R/prep/config.R")
-# source("R/prep/page_national_trends.R")
-# source("R/prep/tab_parole_eligibility.R")
-# source("R/prep/tab_population.R")
-# source("R/prep/tab_releases.R")
+source("R/prep/page_national_trends.R")
+source("R/prep/tab_parole_eligibility.R")
+source("R/prep/tab_population.R")
+source("R/prep/tab_releases.R")
 # source("R/prep/tab_disparities_rris.R")
-# source("R/prep/tab_disparities_time_served.R")
-# source("R/prep/tab_disparities_years_past_pe.R")
+source("R/prep/tab_disparities_time_served.R")
+source("R/prep/tab_disparities_years_past_pe.R")
 
 # Load notes
 load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))

@@ -104,14 +104,15 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))
+    hc_colors(c(color2))|>
+    hc_caption(text = bjs_source)
 
   return(highcharts)
 })
 
 # Name each chart in the list by state
 all_line_population_by_year <- setNames(all_line_population_by_year, states)
-all_sentence_population$Georgia
+all_line_population_by_year$Georgia
 
 all_line_population_by_year <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_rptyear |>
@@ -152,7 +153,8 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))
+    hc_colors(c(color2)) |>
+    hc_caption(text = bjs_source)
 
   return(highcharts)
 })
@@ -195,7 +197,8 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = "Prison Population, 2020") |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_caption(text = bjs_source_2020)
 
   return(highcharts)
 })
@@ -213,7 +216,7 @@ all_sentence_population_race <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the race with the highest proportion
 
   # Generate a sentence summarizing the racial breakdown for the prison population
-  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, " people.")
+  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, ".")
   return(sentences)
 })
 
@@ -257,7 +260,8 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = "Sex") |>
     hc_subtitle(text = "Prison Population, 2020") |>
-    hc_exporting(enabled = TRUE)
+    hc_exporting(enabled = TRUE) |>
+    hc_caption(text = bjs_source_2020)
 
   return(highcharts)
 })
@@ -274,7 +278,7 @@ all_sentence_population_sex <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the sex with the highest proportion
 
   # Generate a sentence summarizing the sex breakdown for the prison population
-  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), "s.")
+  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), ".")
   return(sentences)
 })
 
@@ -325,7 +329,8 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = paste0("Prison Population by Age, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))
+    hc_colors(c(color2)) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -393,7 +398,8 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = paste0("Prison Population by Offense Type, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))
+    hc_colors(c(color2)) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -460,7 +466,8 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
              )) |>
     hc_title(text = paste0("Prison Population by Sentence Length, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))
+    hc_colors(c(color2)) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })

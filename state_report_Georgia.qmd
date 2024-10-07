@@ -48,7 +48,7 @@ div(
 
 <br>
 <div style="font-size: 0.8em; color: black; text-align: left;">
-*Includes people in prison for new offenses and with sentence lengths that are not less than one year or life sentences.
+*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.
 </div>
 
 ::: {.panel-tabset .nav-pills}

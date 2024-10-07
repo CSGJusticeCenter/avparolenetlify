@@ -455,7 +455,8 @@ all_lollipop_los_sex <- map(.x = states, .f = function(x) {
     hc_exporting(enabled = FALSE) |>
     hc_tooltip(enabled = FALSE) |>
     hc_legend(enabled = FALSE) |>
-    hc_size(height = 100)
+    hc_size(height = 100) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -683,7 +684,8 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
     ) |>
     hc_legend(verticalAlign = "top",
               layout = "horizontal") |>
-    hc_colors(c(color1, color4, color2, color5))
+    hc_colors(c(color1, color4, color2, color5)) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -855,7 +857,8 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
       )
     ) |>
     hc_legend(verticalAlign = "top",
-              layout = "horizontal")
+              layout = "horizontal") |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })

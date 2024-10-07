@@ -24,7 +24,9 @@
 #      on your system.
 #######################################
 
-#------ Package Installation Instructions ------#
+#------------------------------------------------------------------------------#
+# Package Installation Instructions
+#------------------------------------------------------------------------------#
 
 # Uncomment and run the following lines to install necessary packages if not already installed.
 # Install remotes package to install CSGJCR package
@@ -37,7 +39,9 @@
 # install.packages("devtools")
 # devtools::install_github("mrjoh3/highcharter")
 
-#------ Load Packages ------#
+#------------------------------------------------------------------------------#
+# Load Packages
+#------------------------------------------------------------------------------#
 
 required_packages <- c(
   "csgjcr", "dplyr", "ggplot2", "janitor", "tidyverse", "highcharter",
@@ -49,7 +53,9 @@ required_packages <- c(
 
 lapply(required_packages, library, character.only = TRUE)
 
-#------ Configuration ------#
+#------------------------------------------------------------------------------#
+# Configurations
+#------------------------------------------------------------------------------#
 
 # Set project path
 csg_set_project_path(
@@ -74,20 +80,32 @@ select_year <- 2020
 # For now we like things centered
 alignment <- "center"
 
-#------ Fonts ------#
+
+
+#------------------------------------------------------------------------------#
+# Fonts
+#------------------------------------------------------------------------------#
 
 # Add custom fonts
 font_add("Graphik",     regular = "fonts/Graphik.ttf")
 font_add("GraphikBold", regular = "fonts/GraphikBold.ttf")
 
-#------ Highcharter Options ------#
+
+
+#------------------------------------------------------------------------------#
+# Highcharter Options
+#------------------------------------------------------------------------------#
 
 # Set options so that y axis has comma separator on highcharts
 hcoptslang <- getOption("highcharter.lang")
 hcoptslang$thousandsSep <- ","
 options(highcharter.lang = hcoptslang)
 
-#------ Colors ------#
+
+
+#------------------------------------------------------------------------------#
+# Colors
+#------------------------------------------------------------------------------#
 
 # Colors by Eleventy
 blue <- "#55b4e5"
@@ -128,3 +146,13 @@ green4    = "#104040"
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
 
+
+
+#------------------------------------------------------------------------------#
+# Sources
+#------------------------------------------------------------------------------#
+
+ncrp_source     <- "National Corrections Reporting Program (2020)"
+bjs_source_2022 <- "BJS Prisoners in the United States (2022)"
+bjs_source_2020 <- "BJS Prisoners in the United States (2020)"
+bjs_source      <- "BJS Prisoners in the United States"

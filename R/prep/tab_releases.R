@@ -7,7 +7,7 @@
 #    This script is responsible for generating the visualizations and
 #    findings for the 'Releases' tab in the AV Parole web tool.
 #    It covers:
-#    - Trends in prison releases by year and state
+#    - Trends in people released from prison by year and state
 #    - Proportion of parole-eligible individuals released by year
 #    - Breakdown by release type, race, sex, age, and offense type
 #######################################
@@ -20,7 +20,7 @@
 # Filter the NCRP releases data to include only states with parole systems
 ncrp_releases_filtered <- fnc_filter_population(ncrp_releases)
 
-# Summarize total prison releases by state and year for data from 2010 onwards
+# Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
   filter(rptyear >= 2010) |>
   group_by(state, rptyear) |>
@@ -29,7 +29,7 @@ ncrp_releases_by_year <- ncrp_releases_filtered |>
 # Create a list of unique states for which we have release data
 states <- unique(ncrp_releases_by_year$state)
 
-# Generate sentences summarizing the change in prison releases over time for each state
+# Generate sentences summarizing the change in people released from prison over time for each state
 all_sentence_releases <- map(.x = states, .f = function(x) {
   # Filter release data for the specific state
   df1 <- ncrp_releases_by_year %>% filter(state == x)
@@ -48,7 +48,7 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
   percent_change_abs <- abs(round(percent_change, 0))
 
   # Construct a sentence describing the trend in releases
-  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", prison releases ",
+  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", people released from prison ",
                       change_type, " ", percent_change_abs, " percent, dropping from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
@@ -60,7 +60,7 @@ all_sentence_releases <- setNames(all_sentence_releases, states)
 all_sentence_releases$Georgia
 rm(states)
 
-# Generate line charts for each state showing the trend in prison releases since 2010
+# Generate line charts for each state showing the trend in people released from prison since 2010
 states <- unique(ncrp_releases_by_year$state)
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_releases_by_year |>
@@ -78,7 +78,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   highcharts <- # Create the line chart
     hc <- highchart() |>
     hc_chart(type = "line") |>
-    hc_title(text = "Prison Releases by Year") |>
+    hc_title(text = "People Released From Prison by Year") |>
     hc_yAxis(title = list(text = ""),
              min = min_value,
              max = max_value) |>
@@ -88,18 +88,16 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
       list(
         name = "Releases",
         data = df1$total,
-        # tooltip = list(
-        #   pointFormat = "Year: {point.category}<br>Prison Releases: {point.y}"
-        # )
         tooltip = list(
-          pointFormat = "<b>Prison Releases:</b> {point.y}"
+          pointFormat = "<b>People Released From Prison:</b> {point.y}"
         )
       )
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color5))
+    hc_colors(c(color5)) |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -185,7 +183,9 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
           (this.y * 100).toFixed(0) + '%</b><br/>';
       }
     ")) |>
-    hc_colors(c(color3, color5))
+    hc_colors(c(color3, color5)) |>
+    hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
@@ -325,7 +325,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color2, color3)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_tooltip(pointFormat = 'Number of Releases: {point.y}<br>Percentage of Releases: {point.percentage:.0f}%')
+    hc_tooltip(pointFormat = 'Number of Releases: {point.y}<br>Percentage of Releases: {point.percentage:.0f}%') |>
+    hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
@@ -345,7 +346,7 @@ all_sentence_release_type <- map(.x = states,  .f = function(x) {
     filter(state == x & reltype == "Conditional Release")
   sentences <- paste0(
     "Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. ",
-    "In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", tolower(df1$reltype), "s.")
+    "In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", tolower(df1$reltype), "s.")
   return(sentences)
 })
 # Assign state names as the names of the charts list
@@ -359,7 +360,7 @@ rm(states)
 # DEMOGRAPHICS
 # ---------------------------------------------------------------------------- #
 
-# Generate bar charts and sentences describing prison releases by demographic categories (race, sex, age)
+# Generate bar charts and sentences describing people released from prison by demographic categories (race, sex, age)
 
 # Race and Ethnicity
 # Filter releases for valid race data and generate visualizations and summary sentences
@@ -417,7 +418,7 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
                             "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
     arrange(desc(prop))
 
-  hc_accessibility_text <- paste0("This graph shows the proportion of prison releases by race and ethnicity in ",
+  hc_accessibility_text <- paste0("This graph shows the proportion of people released from prison by race and ethnicity in ",
                                   select_year, " in the state of ", x, ".")
   highcharts <- fnc_hc_columnchart(df1, "race", "prop", hc_accessibility_text) |>
     hc_yAxis(max = 100,
@@ -427,9 +428,11 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Race and Ethnicity") |>
-    hc_subtitle(text = paste0("Prison Releases, ", select_year)) |>
+    hc_subtitle(text = paste0("People Released From Prison, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color5))
+    hc_colors(c(color5)) |>
+    hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 
@@ -445,7 +448,7 @@ all_sentence_releases_race <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", df1$race, " people.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", df1$race, ".")
   return(sentences)
 })
 
@@ -465,7 +468,7 @@ all_bar_releases_sex <- map(.x = states,  .f = function(x) {
                             "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
     arrange(desc(prop))
 
-  hc_accessibility_text <- paste0("This graph shows the proportion of prison releases by sex in ",
+  hc_accessibility_text <- paste0("This graph shows the proportion of people released from prison by sex in ",
                                   select_year, " in the state of ", x, ".")
   highcharts <- fnc_hc_columnchart(df1, "sex", "prop", hc_accessibility_text) |>
     hc_yAxis(max = 100,
@@ -475,9 +478,11 @@ all_bar_releases_sex <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Sex") |>
-    hc_subtitle(text = paste0("Prison Releases, ", select_year)) |>
+    hc_subtitle(text = paste0("People Released From Prison, ", select_year)) |>
     hc_exporting(enabled = TRUE)|>
-    hc_colors(c(color5))
+    hc_colors(c(color5)) |>
+    hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 
@@ -494,7 +499,7 @@ all_sentence_releases_sex <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were ", tolower(df1$sex), "s.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", tolower(df1$sex), ".")
   return(sentences)
 })
 
@@ -514,7 +519,7 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
                             "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
     arrange(desc(agerlse))
 
-  hc_accessibility_text <- paste0("This graph shows the proportion of prison releases by age in ",
+  hc_accessibility_text <- paste0("This graph shows the proportion of people released from prison by age in ",
                                   select_year, " in the state of ", x, ".")
   highcharts <- fnc_hc_columnchart(df1, "agerlse", "prop", hc_accessibility_text) |>
     hc_yAxis(max = 100,
@@ -524,9 +529,11 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
       }")
              )) |>
     hc_title(text = "Age") |>
-    hc_subtitle(text = paste0("Prison Releases, ", select_year)) |>
+    hc_subtitle(text = paste0("People Released From Prison, ", select_year)) |>
     hc_exporting(enabled = TRUE)|>
-    hc_colors(c(color5))
+    hc_colors(c(color5)) |>
+    hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 
@@ -544,7 +551,7 @@ all_sentence_releases_agerlse <- map(.x = states,  .f = function(x) {
     arrange(-prop) |>
     slice(1)
   df1$agerlse <- gsub("-", " to ", df1$agerlse)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were between the ages of ", df1$agerlse, " old.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were between the ages of ", df1$agerlse, " old.")
   return(sentences)
 })
 
@@ -588,7 +595,7 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",
                             "<b>Percentage of People:</b> ", round(prop, 0), "%"))
 
-  hc_accessibility_text <- paste0("This graph shows the proportion of prison releases by offense type in ",
+  hc_accessibility_text <- paste0("This graph shows the proportion of people released from prison by offense type in ",
                                   select_year, " in the state of ", x, ".")
   highcharts <- fnc_hc_columnchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
     hc_yAxis(max = 100,
@@ -597,9 +604,11 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = paste0("Prison Releases by Offense Type, ", select_year)) |>
+    hc_title(text = paste0("People Released From Prison by Offense Type, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color5))
+    hc_colors(c(color5)) |>
+    hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 
@@ -615,7 +624,7 @@ all_sentence_releases_fbi_index <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of prison releases were for people incarcerated for ", tolower(df1$fbi_index), " offenses.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were for people incarcerated for ", tolower(df1$fbi_index), " offenses.")
   return(sentences)
 })
 
