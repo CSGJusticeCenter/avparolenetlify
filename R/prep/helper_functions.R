@@ -141,6 +141,11 @@ fnc_apply_factor_levels <- function(df, col_name, levels) {
 #' fnc_create_fbi_index(df)
 #' }
 fnc_create_fbi_index <- function(df) {
+  # Define custom order (in reverse)
+  custom_order <- c("Drug", "Public Order", "Property",
+                    "Aggravated or Simple Assault", "Robbery", "Rape or Sexual Assault",
+                    "Negligent Manslaughter", "Murder or Nonnegligent Manslaughter", "Other Violent Offenses",
+                    "Unknown")
   df |>
     mutate(fbi_index = case_when(
       offdetail == "Aggravated or simple assault" ~ "Aggravated or Simple Assault",
@@ -148,15 +153,14 @@ fnc_create_fbi_index <- function(df) {
       offdetail == "Negligent manslaughter" ~ "Negligent Manslaughter",
       offdetail == "Other violent offenses" ~ "Other Violent Offenses",
       offdetail == "Rape/sexual assault" ~ "Rape or Sexual Assault",
+      offdetail == "Public order" ~ "Public Order",
       offdetail == "Robbery" ~ "Robbery",
-      offdetail == "Other/Unspecified" ~ "Other or Unspecified",
+      offdetail == "Other/unspecified" ~ "Other or Unspecified",
       offdetail == "Drugs (includes possession, distribution, trafficking, other)" ~ "Drug",
       is.na(offdetail) | offgeneral == "NA" ~ "Unknown",
       TRUE ~ offgeneral
     )) |>
-    fnc_apply_factor_levels(fbi_index, c("Murder or Nonnegligent Manslaughter", "Negligent Manslaughter",
-                                     "Rape or Sexual Assault", "Robbery", "Aggravated or Simple Assault",
-                                     "Other Violent Offenses", "Property", "Public order", "Drug", "Other or Unspecified", "Unknown"))
+    mutate(fbi_index = factor(fbi_index, levels = custom_order))
 }
 
 
@@ -581,14 +585,17 @@ base_hc_theme <- hc_theme(
     itemStyle = common_style
   ),
   xAxis = list(
-    labels = list(enabled = TRUE, style = common_style),
+    labels = list(enabled = TRUE #, style = common_style
+                  ),
     gridLineColor = "transparent",
     lineColor = "black",
     minorGridLineColor = "transparent",
     tickColor = "black"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = common_style),
+    labels = list(enabled = FALSE
+                  #, style = common_style
+                  ),
     gridLineColor = "transparent",
     lineColor = "transparent",
     majorGridLineColor = "transparent",
@@ -727,7 +734,7 @@ fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, c
                     rename(y = prop),
                   name = "Current",
                   color = colors[3]) |>
-    hc_add_theme(hc_theme_with_line) |>
+    hc_add_theme(base_hc_theme) |>
     hc_legend(enabled = TRUE, reversed = TRUE)
 
   return(highcharts)
@@ -735,6 +742,8 @@ fnc_hc_stackedbar_pe_population <- function(df, count_column, title, subtitle, c
 
 
 fnc_xaxis_labels <- list(
+  useHTML = TRUE,
+  enabled = TRUE,
   formatter = JS(
     "function() {
                     var label = this.value;
@@ -763,9 +772,44 @@ fnc_xaxis_labels <- list(
                     }
                   }"
   ),
-  style = list(fontSize = "1em", fontFamily = "Graphik")
+  style = list(fontSize = "1em", fontFamily = "Graphik",
+               textAlign = "center" )
 )
 
+fnc_xaxis_labels_right <- list(
+  useHTML = TRUE,
+  enabled = TRUE,
+  formatter = JS(
+    "function() {
+                    var label = this.value;
+                    var maxLength = 15;
+                    if (label.length > maxLength) {
+                      var words = label.split(' ');
+                      var result = [];
+                      var line = [];
+                      var lineLength = 0;
+
+                      words.forEach(function(word) {
+                        if (lineLength + word.length > maxLength) {
+                          result.push(line.join(' '));
+                          line = [];
+                          lineLength = 0;
+                        }
+                        line.push(word);
+                        lineLength += word.length + 1;
+                      });
+                      if (line.length > 0) {
+                        result.push(line.join(' '));
+                      }
+                      return result.join('<br>');
+                    } else {
+                      return label;
+                    }
+                  }"
+  ),
+  style = list(fontSize = "1em", fontFamily = "Graphik",
+               textAlign = "right" )
+)
 
 
 #' Generate Highcharts Column Chart
@@ -808,7 +852,7 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
                   return this.value + '%';
                 }")
              )) |>
-    hc_add_theme(hc_theme_with_line) |>
+    hc_add_theme(base_hc_theme) |>
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>

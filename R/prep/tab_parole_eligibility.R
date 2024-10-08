@@ -160,6 +160,53 @@ all_stackedbar_pe_type$Georgia
 all_stackedbar_pe_type$`New Jersey`
 rm(states)
 
+states <- unique(pe_status_pop$state)
+all_pie_pe_type <- map(.x = states, .f = function(x) {
+
+  df1 <- pe_status_pop |>
+    ungroup() |>
+    filter(state == x) |>
+    filter(rptyear == select_year)
+
+  hc_accessibility_text <- "TBD"
+
+  # Define color mapping for categories
+  color_mapping <- c("Future" = color2,  # Blue
+                     "Missing" = darkgray,  # Light Gray
+                     "Current" = color4)  # Green
+
+  # Ensure each category gets the correct color
+  df1 <- df1 |>
+    mutate(color = color_mapping[parelig_status])
+
+  highcharts <- highchart() |>
+    hc_chart(type = "pie") |>
+    hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |>
+    hc_plotOptions(pie = list(
+      dataLabels = list(
+        enabled = TRUE,
+        format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span><br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
+      ),
+      colorByPoint = FALSE  # Disable automatic coloring by Highcharts
+    )) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_series(list(
+      name = "Parole Eligibility Status",
+      data = df1 |>
+        mutate(y = n) |>
+        transmute(name = parelig_status, y = y, color = color) |>
+        list_parse()  # Manually specify data with colors
+    )) |>
+    hc_exporting(enabled = TRUE) |>
+    hc_tooltip(pointFormat = 'Number of People: {point.y}<br>Percentage of People: {point.percentage:.0f}%') |>
+    hc_caption(text = ncrp_source)
+
+  return(highcharts)
+})
+
+all_pie_pe_type <- setNames(all_pie_pe_type, states)
+all_pie_pe_type$Alabama
+rm(states)
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
 #           eligibility date. This group made up X% of the people in prison.
@@ -178,7 +225,7 @@ all_sentence_pe_type <- map(.x = states,  .f = function(x) {
 
   sentences <- paste0("In ", select_year, ", ",
                       round(df1$prop*100, 0),
-                      " percent of people in prison were past their parole eligibility.",
+                      " percent of people in prison were currently past their parole eligibility.",
                       " Another ", round(df2$prop*100, 0), " percent will reach their parole eligibility after ",
                       select_year, ".")
   return(sentences)
@@ -312,7 +359,8 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
                                  minPointLength = 5)) |>
 
     hc_tooltip(pointFormat = '{series.name}: <b>{point.y:.0f}%</b>') |>
-    hc_add_theme(hc_theme_with_line) |>
+    # hc_add_theme(hc_theme_with_line) |>
+    hc_add_theme(base_hc_theme) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color3, color4)) |>
     hc_legend(reversed = TRUE) |>  # Reverse the order of the legend for better clarity
@@ -492,13 +540,8 @@ current_ped_fbi_index <- current_ped_fbi_index |>
                      "Robbery",
                      "Aggravated or Simple Assault",
                      "Other Violent Offenses") ~ "Violent",
-    fbi_index %in% c("Drug", "Public order", "Property") ~ "Nonviolent",
+    fbi_index %in% c("Drug", "Public Order", "Property") ~ "Nonviolent",
     TRUE ~ "Other or Unknown"
-  ),
-  color = case_when(
-    group == "Violent" ~ color2,
-    group == "Nonviolent" ~ color2,
-    group == "Other or Unknown" ~ darkgray
   )) |>
   mutate(tooltip = paste0("<b>", state, " - ",
                           group, "</b><br>",
@@ -513,7 +556,8 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
     mutate(prop = prop * 100,
            tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
                             "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    arrange(fbi_index)
 
   hc_accessibility_text <- paste0("TBD")
 
@@ -662,6 +706,7 @@ rm(states)
 
 save(all_sentence_pe_type,                         file = file.path(app_folder, "all_sentence_pe_type.rds"))
 save(all_stackedbar_pe_type,                       file = file.path(app_folder, "all_stackedbar_pe_type.rds"))
+save(all_pie_pe_type,                              file = file.path(app_folder, "all_pie_pe_type.rds"))
 
 save(all_sentence_pop_pe_by_year,                  file = file.path(app_folder, "all_sentence_pop_pe_by_year.rds"))
 save(all_stackedbar_pop_pe_by_year,                file = file.path(app_folder, "all_stackedbar_pop_pe_by_year.rds"))

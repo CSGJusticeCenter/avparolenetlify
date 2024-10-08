@@ -164,7 +164,8 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
              labels = list(formatter = JS("function() { return (this.value * 100) + '%'; }"))) |>
     hc_xAxis(categories = unique(df1$rptyear),
              title = "") |>
-    hc_add_theme(hc_theme_with_line) |>
+    #hc_add_theme(hc_theme_with_line) |>
+    hc_add_theme(base_hc_theme) |>
     hc_legend(enabled = TRUE) |>
     hc_exporting(enabled = TRUE) |>
     hc_plotOptions(series = list(stacking = "normal",
@@ -177,7 +178,7 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
                                         linkedDescription = "TBD accessibility text",
                                         landmarkVerbosity = "one"),
                    area = list(accessibility = list(description = "TBD accessibility text"))) |>
-    hc_title(text = paste0("Proportion of Parole-Eligible People Released from Prison by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
+    hc_title(text = paste0("Percentage of Parole-Eligible People Released or Not Released on Their Parole Eligibility, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_tooltip(formatter = JS("
       function() {
         return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
@@ -307,7 +308,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
   highcharts <- # Create a pie chart
     highchart() |>
     hc_chart(type = "pie") |>
-    hc_title(text = paste0("Proportion of Conditional vs. Unconditional Releases, ", select_year)) |>
+    hc_title(text = paste0("Percentage of Conditional vs. Unconditional Releases, ", select_year)) |>
     hc_plotOptions(pie = list(
       startAngle = if (is_100_conditional) 90 else 0,  # Rotate by 90 degrees if 100% conditional
       endAngle = if (is_100_conditional) 450 else 360, # Keep chart full if rotated
@@ -324,7 +325,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
                            select(name = reltype, y))
     )) |>
     hc_add_theme(base_hc_theme) |>
-    hc_colors(c(color2, color3)) |>
+    hc_colors(c(color4, color2)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
     hc_caption(text = ncrp_source)
@@ -449,7 +450,7 @@ all_sentence_releases_race <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", df1$race, ".")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", df1$race, ".<br><br>")
   return(sentences)
 })
 
@@ -500,7 +501,7 @@ all_sentence_releases_sex <- map(.x = states,  .f = function(x) {
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", tolower(df1$sex), ".")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", tolower(df1$sex), ".<br><br>")
   return(sentences)
 })
 
@@ -605,7 +606,8 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
         return this.value + '%';
       }")
              )) |>
-    hc_title(text = paste0("People Released From Prison by Offense Type, ", select_year)) |>
+    hc_title(text = "Offense Type") |>
+    hc_subtitle(text = paste0("People Released From Prison, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5)) |>
     hc_caption(text = ncrp_source)

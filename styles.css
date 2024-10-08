@@ -3,6 +3,90 @@
 /* Overview */
 /******************************************************************************/
 
+body {
+  width: 100vw; /*Adjusts to different screen sizes*/
+  max-width: 900px; /* Adjust the maximum width for the content container */
+  margin: 0 auto; /* Center the content horizontally */
+  line-height: 1.6;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#state-body-section{
+  max-width: 750px; /* Adjust the maximum width for the content container */
+  margin: 0 auto; /* Center the content horizontally */
+  line-height: 1.6;
+  padding: 0;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 5px; /* Reduce padding for smaller devices */
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 900px; /* Adjust the maximum width for the content container */
+  margin: 0 auto;
+  padding: 0 15px; /* Adjust padding for smaller screens */
+}
+
+
+/* remove rounded edges everything */
+* {
+  border-radius: 0!important;
+}
+
+.download-button {
+  font-family: "Graphik";
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* Adjusting code blocks for mobile */
+pre {
+  white-space: pre-wrap;       /* CSS3 */
+    white-space: -moz-pre-wrap;  /* Firefox */
+    white-space: -pre-wrap;      /* Opera <7 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* IE */
+}
+
+/* Import Graphik from Google Fonts */
+/*@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');*/
+
+/* add fonts*/
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/Graphik.ttf");
+}
+@font-face {
+  font-family: "Graphik";
+  src: local('Graphik'), url("fonts/GraphikBold.ttf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Wee People";
+  src: local('Wee People'), url("fonts/weepeople.ttf");
+  font-weight: bold;
+}
+
+/* Change font throughout website */
+html,
+body {
+  font-family: 'Graphik', sans-serif;
+  color: black!important;
+  /* background-color: lightblue; */
+}
+
+
+
+
+/******************************************************************************/
+/* Headers */
+/******************************************************************************/
+
 h1 a.anchor, h2 a.anchor, h3 a.anchor, h4 a.anchor {
   display: none !important;  /* This forcefully hides the anchor element */
 }
@@ -51,33 +135,13 @@ h2 {
 
 
 
-.black-non-hispanic {
-  color: #49a7a1; /* Replace with your desired color */
-  font-weight: bold;
-}
-
-.hispanic {
-  color: #d97d68; /* Replace with your desired color */
-  font-weight: bold;
-}
 
 
 
 
-body {
-  max-width: 900px; /* Adjust the maximum width for the content container */
-  margin: 0 auto; /* Center the content horizontally */
-  line-height: 1.6;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.container {
-  width: 100%;
-  max-width: 900px; /* Adjust the maximum width for the content container */
-  margin: 0 auto;
-  padding: 0 15px; /* Adjust padding for smaller screens */
-}
+/******************************************************************************/
+/* Tables */
+/******************************************************************************/
 
 /* Responsive images */
 img {
@@ -98,62 +162,14 @@ table th, table td {
   text-align: left;
 }
 
-/* Responsive layout adjustments
-@media (max-width: 768px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  table, th, td {
-    font-size: 0.9em;
-  }
-}*/
-
-/* Adjusting code blocks for mobile */
-pre {
-  white-space: pre-wrap;       /* CSS3 */
-    white-space: -moz-pre-wrap;  /* Firefox */
-    white-space: -pre-wrap;      /* Opera <7 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* IE */
-}
-
-/* Import Graphik from Google Fonts */
-/*@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');*/
-
-/* add fonts*/
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/Graphik.ttf");
-}
-@font-face {
-  font-family: "Graphik";
-  src: local('Graphik'), url("fonts/GraphikBold.ttf");
-  font-weight: bold;
-}
-@font-face {
-  font-family: "Wee People";
-  src: local('Wee People'), url("fonts/weepeople.ttf");
-  font-weight: bold;
-}
-
-/* Change font throughout website */
-html,
-body {
-  font-family: 'Graphik', sans-serif;
-  color: black!important;
-  /* background-color: lightblue; */
-}
-
-#state-body-section{
-  max-width: 750px; /* Adjust the maximum width for the content container */
-  margin: 0 auto; /* Center the content horizontally */
-  line-height: 1.6;
-  padding: 0;
-}
 
 
-/* TAB SETTINGS */
+
+
+
+/******************************************************************************/
+/* Tabs */
+/******************************************************************************/
 
 .tab-content {
   border: none; /* remove border around box */
@@ -240,26 +256,14 @@ body {
 
 
 
-
-
+/******************************************************************************/
+/* Sections */
+/******************************************************************************/
 
 #visualization {
   margin: 0 auto; /* Center the narrow section horizontally */
   text-align: center; /* Center align text inside the narrow section */
 }
-
-
-
-/*
-#small-visualization {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}*/
 
 #small-visualization {
   margin: 0 auto; /* Center the narrow section horizontally */
@@ -272,14 +276,6 @@ body {
   margin: 0 auto;
   text-align: center;
 }
-
-
-/*
-#narrow-section {
-  max-width: 750px;
-  margin: 0 auto;
-  text-align: center;
-}*/
 
 #map-section {
   max-width: 1200px;
@@ -323,21 +319,22 @@ body {
   color: gray,
 }
 
-/* remove rounded edges everything */
-* {
-  border-radius: 0!important;
+#asterisk-section {
+  font-size: 0.8em;
+  color: black;
+  text-align: left;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.black-non-hispanic {
+  color: #49a7a1; /* Replace with your desired color */
+  font-weight: bold;
+}
+
+.hispanic {
+  color: #55b4e5; /* Replace with your desired color */
+  font-weight: bold;
 }
 
 
-
-.download-button {
-  font-family: "Graphik";
-  font-size: 12px;
-  padding: 4px 8px;
-}
-
-@media (max-width: 768px) {
-  #map-section {
-    display: none;
-  }
-}

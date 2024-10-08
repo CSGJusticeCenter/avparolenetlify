@@ -59,6 +59,7 @@ num_parole_board_mem <- parole_eligibility_table |> filter(state == state_for_re
 
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
+load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
 load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
 
@@ -98,6 +99,15 @@ if (state_for_report %in% names(all_stackedbar_pe_type)) {
 } else {
   state_stackedbar_pe_type <- no_data_text
 }
+# Pie option- TEMP
+if (state_for_report %in% names(all_pie_pe_type)) {
+  state_pie_pe_type <-
+    all_pie_pe_type[[state_for_report]] |>
+    hc_size(height = 300)
+} else {
+  state_pie_pe_type <- no_data_text
+}
+
 
 # SENTENCE: From X to X, the proportion of people in prison past parole eligibility increased/decreased by X percent/or stayed the same.
 if (state_for_report %in% names(all_sentence_pop_pe_by_year)) {
@@ -208,7 +218,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_sentlgth)) {
 if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
   state_bar_parole_eligibility_sentlgth <-
     all_bar_parole_eligibility_sentlgth[[state_for_report]] |>
-    hc_size(height = 400) |>
+    hc_size(height = 300) |>
     hc_colors(c(color4))
 } else {
   state_bar_parole_eligibility_sentlgth <- no_data_text
@@ -428,7 +438,7 @@ if (state_for_report %in% names(all_sentence_release_type)) {
 if (state_for_report %in% names(all_pie_release_type)) {
   state_pie_release_type <-
     all_pie_release_type[[state_for_report]] |>
-    hc_size(height = 225)
+    hc_size(height = 300)
 } else {
   state_pie_release_type <- no_data_text
 }

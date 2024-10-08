@@ -396,7 +396,9 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
-    hc_title(text = paste0("Prison Population by Offense Type, ", select_year)) |>
+
+    hc_title(text = "Offense Type") |>
+    hc_subtitle(text = paste0("Prison Population, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color2)) |>
     hc_caption(text = ncrp_source)
@@ -464,7 +466,8 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
-    hc_title(text = paste0("Prison Population by Sentence Length, ", select_year)) |>
+    hc_title(text = "Sentence Length") |>
+    hc_subtitle(text = paste0("Prison Population, ", select_year)) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color2)) |>
     hc_caption(text = ncrp_source)

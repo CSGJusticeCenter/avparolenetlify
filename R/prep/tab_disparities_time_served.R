@@ -226,6 +226,7 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_yAxis(
       labels = list(
+        enabled = TRUE,
         style = list(
           color = 'black',
           fontWeight = "regular",
@@ -238,7 +239,7 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
       lineColor = "transparent",
       majorGridLineColor = "transparent",
       minorGridLineColor = "transparent",
-      tickColor = "black",
+      tickColor = "white",
       categories = y_labels
     ) |>
     hc_xAxis(
@@ -427,6 +428,7 @@ all_lollipop_los_sex <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_yAxis(
       labels = list(
+        enabled = TRUE,
         style = list(
           color = 'black',
           fontWeight = "regular",
@@ -439,7 +441,7 @@ all_lollipop_los_sex <- map(.x = states, .f = function(x) {
       lineColor = "transparent",
       majorGridLineColor = "transparent",
       minorGridLineColor = "transparent",
-      tickColor = "black",
+      tickColor = "white",
       categories = y_labels
     ) |>
     hc_xAxis(
@@ -652,18 +654,18 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_yAxis(
       title = list(text = ""),
-      labels = fnc_xaxis_labels,
+      labels = fnc_xaxis_labels_right,
       majorGridLineColor = "transparent",
       gridLineColor = "transparent",
       lineColor = "transparent",
       majorGridLineColor = "transparent",
       minorGridLineColor = "transparent",
-      tickColor = "black",
+      tickColor = "white",
       categories = y_labels
     ) |>
     hc_xAxis(
       lineColor = "black",
-      tickColor = "black",
+      tickColor = "white",
       title = list(text = "Average Time Served (Years)",
                    style = list(color = "black")),
       labels = list(style = list(color = "black")),
@@ -826,18 +828,18 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
     ) |>
     hc_yAxis(
       title = list(text = ""),
-      labels = fnc_xaxis_labels,
+      labels = fnc_xaxis_labels_right,
       majorGridLineColor = "transparent",
       gridLineColor = "transparent",
       lineColor = "transparent",
       majorGridLineColor = "transparent",
       minorGridLineColor = "transparent",
-      tickColor = "black",
+      tickColor = "white",
       categories = y_labels
     ) |>
     hc_xAxis(
       lineColor = "black",
-      tickColor = "black",
+      tickColor = "white",
       title = list(text = "Average Time Served (Years)",
                    style = list(color = "black")),
       labels = list(style = list(color = "black")),
