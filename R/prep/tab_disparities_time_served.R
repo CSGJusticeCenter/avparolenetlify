@@ -14,7 +14,9 @@
 # Calculate average time served by race, ethnicity, and state
 los_race <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
-  filter(race != "Unknown") |>
+  filter(race %in% c("White, non-Hispanic",
+                     "Hispanic, any race",
+                     "Black, non-Hispanic")) |>
   group_by(state, race) |>
   summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
             .groups = "drop")
@@ -32,8 +34,7 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
     mutate(race = case_when(
       race == "White, non-Hispanic" ~ "White",
       race == "Black, non-Hispanic" ~ "Black",
-      race == "Hispanic, any race" ~ "Hispanic",
-      race == "Other race(s), non-Hispanic" ~ "Other races"
+      race == "Hispanic, any race" ~ "Hispanic"
     )) |>
     filter(state == x)
 
@@ -477,7 +478,9 @@ rm(states)
 # Calculate the average time served by race, state, and by offense type
 los_race_by_offense_type <- fnc_filter_population(ncrp_releases) |>
   filter(rptyear == select_year) |>
-  filter(race != "Unknown") |>
+  filter(race %in% c("White, non-Hispanic",
+                     "Hispanic, any race",
+                     "Black, non-Hispanic")) |>
   group_by(state, race, fbi_index) |>
   summarise(
     average_los = mean(time_between_admisson_release, na.rm = TRUE),
@@ -486,8 +489,7 @@ los_race_by_offense_type <- fnc_filter_population(ncrp_releases) |>
   mutate(race = factor(race,
                        levels = c("Black, non-Hispanic",
                                   "White, non-Hispanic",
-                                  "Hispanic, any race",
-                                  "Other race(s), non-Hispanic")))
+                                  "Hispanic, any race")))
 
 # Get unique states
 states <- unique(los_race_by_offense_type$state)
@@ -524,14 +526,12 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
       race_longest = case_when(
         race_longest == "Black, non-Hispanic" ~ "Black",
         race_longest == "White, non-Hispanic" ~ "White",
-        race_longest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
         race_longest == "Hispanic, any race" ~ "Hispanic",
         TRUE ~ race_longest
       ),
       race_shortest = case_when(
         race_shortest == "Black, non-Hispanic" ~ "Black",
         race_shortest == "White, non-Hispanic" ~ "White",
-        race_shortest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
         race_shortest == "Hispanic, any race" ~ "Hispanic",
         TRUE ~ race_shortest
       )

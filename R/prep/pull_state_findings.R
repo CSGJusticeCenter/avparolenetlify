@@ -580,7 +580,7 @@ if (state_for_report %in% names(all_sentence_los_race)) {
 if (state_for_report %in% names(all_lollipop_los_race)) {
   state_lollipop_los_race <-
     all_lollipop_los_race[[state_for_report]] |>
-    hc_size(height = 150)
+    hc_size(height = 100)
 } else {
   state_lollipop_los_race <- no_data_text
 }
@@ -643,7 +643,7 @@ if (state_for_report %in% names(all_sentence_avg_pe_release_race_offense)) {
 if (state_for_report %in% names(all_lollipop_avg_pe_release_race)) {
   state_lollipop_avg_pe_release_race <-
     all_lollipop_avg_pe_release_race[[state_for_report]] |>
-    hc_size(height = 150)
+    hc_size(height = 100)
 } else {
   state_lollipop_avg_pe_release_race <- no_data_text
 }

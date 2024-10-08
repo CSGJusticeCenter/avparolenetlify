@@ -23,11 +23,13 @@ ncrp_pe_release <- fnc_filter_pe_population_criteria(ncrp_releases) |>
            !is.na(race) &
            time_between_ped_release >= 0
   ) |>
+  filter(race %in% c("White, non-Hispanic",
+                     "Hispanic, any race",
+                     "Black, non-Hispanic")) |>
   mutate(race = factor(race,
                        levels = c("Black, non-Hispanic",
                                   "White, non-Hispanic",
-                                  "Hispanic, any race",
-                                  "Other race(s), non-Hispanic")))
+                                  "Hispanic, any race")))
 
 # Get average time between PE and release by state and race
 avg_pe_release_race <- ncrp_pe_release |>
@@ -50,8 +52,7 @@ all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
            color = case_when(
              race == "White, non-Hispanic" ~ color1,
              race == "Black, non-Hispanic" ~ color4,
-             race == "Hispanic, any race" ~ color2,
-             race == "Other race(s), non-Hispanic" ~ color5
+             race == "Hispanic, any race" ~ color2
            ))
 
   max_los <- max(df1$average_avg_pe_release, na.rm = TRUE)
@@ -81,27 +82,6 @@ all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
       marker = list(enabled = FALSE),
       enableMouseTracking = FALSE,
       showInLegend = FALSE
-    )
-
-  # Other race(s), non-Hispanic - triangle
-  highcharts <- highcharts |>
-    hc_add_series(
-      df1 %>% filter(race == "Other race(s), non-Hispanic"),
-      type = 'scatter',
-      color = color5,
-      hcaes(x = average_avg_pe_release, y = race_num, group = race, name = race),
-      marker = list(
-        radius = 5,
-        symbol = "triangle"
-      ),
-      dataLabels = list(
-        enabled = TRUE,
-        format = '{point.x:.1f} Years',
-        align = "left",
-        y = 9,
-        x = 8,
-        style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
-      )
     )
 
   # Add scatter series for each race with the appropriate marker symbol
@@ -226,16 +206,6 @@ states <- unique(avg_pe_release_race_offense$state)
 
 # Generate chart for each state
 all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
-  # df1 <- avg_pe_release_race_offense |>
-  #   ungroup() |>
-  #   filter(state == x & fbi_index != "Unknown")|>
-  #   mutate(fbi_index_num = as.numeric(as.factor(fbi_index)),
-  #          color = case_when(
-  #            race == "White, non-Hispanic" ~ color1,
-  #            race == "Black, non-Hispanic" ~ color4,
-  #            race == "Hispanic, any race" ~ color2,
-  #            race == "Other race(s), non-Hispanic" ~ color5
-  #          ))
   df1 <- avg_pe_release_race_offense |>
     ungroup() |>
     filter(state == x & fbi_index != "Unknown") |>
@@ -244,8 +214,7 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
            color = case_when(
              race == "White, non-Hispanic" ~ color1,
              race == "Black, non-Hispanic" ~ color4,
-             race == "Hispanic, any race" ~ color2,
-             race == "Other race(s), non-Hispanic" ~ color5
+             race == "Hispanic, any race" ~ color2
            ))
 
   # Create a named vector for y-axis labels
@@ -290,16 +259,6 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
       marker = list(
         radius = 5,
         symbol = "square"
-      )
-    ) |>
-    hc_add_series(
-      df1 %>% filter(race == "Other race(s), non-Hispanic"),
-      type = 'scatter',
-      color = color5,
-      hcaes(x = avg_years, y = fbi_index_num, group = race, name = fbi_index),
-      marker = list(
-        radius = 5,
-        symbol = "triangle"
       )
     ) |>
     hc_add_theme(base_hc_theme) |>
@@ -631,8 +590,7 @@ all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
     mutate(race = case_when(
       race == "White, non-Hispanic" ~ "White",
       race == "Black, non-Hispanic" ~ "Black",
-      race == "Hispanic, any race" ~ "Hispanic",
-      race == "Other race(s), non-Hispanic" ~ "Other races"
+      race == "Hispanic, any race" ~ "Hispanic"
     )) |>
     filter(state == x)  # Filter dataset for the current state.
 
@@ -739,12 +697,10 @@ all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
   # Adjust wording for race categories for the sentence construction.
   race_longest_adjusted <- case_when(
     race_longest == "Hispanic, any race" ~ "Hispanic people",
-    race_longest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
     TRUE ~ paste0("people of ", race_longest)
   )
   race_shortest_adjusted <- case_when(
     race_shortest == "Hispanic, any race" ~ "Hispanic people",
-    race_shortest == "Other race(s), non-Hispanic" ~ "people of Other race(s)",
     TRUE ~ paste0("people of ", race_shortest)
   )
 
