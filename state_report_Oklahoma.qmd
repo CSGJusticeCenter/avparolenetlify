@@ -47,7 +47,7 @@ div(
 ```
 
 <br>
-<div style="font-size: 0.8em; color: black; text-align: left;">
+<div id="asterisk-section">
 *Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.
 </div>
 
@@ -68,14 +68,15 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 
 `r paste(state_sentence_pe_type, collapse = ", ")`
 
-```{r state_stackedbar_pe_type}
-div(id = "small-visualization", state_stackedbar_pe_type)
+```{r state_pie_pe_type}
+#div(id = "small-visualization", state_stackedbar_pe_type)
+div(id = "small-visualization", state_pie_pe_type)
 ```
 
 `r paste(state_sentence_pop_pe_by_year, collapse = ", ")`
 
 ```{r state_stackedbar_pop_pe_by_year}
-div(id = "visualization", state_stackedbar_pop_pe_by_year)
+div(id = "small-visualization", state_stackedbar_pop_pe_by_year)
 ```
 
 <br><div class="transparentdivider"></div>
@@ -229,7 +230,7 @@ div(id = "visualization", state_line_releases_by_year)
 `r paste(state_sentence_pe_proportion_released, collapse = ", ")`
 
 ```{r state_stackedbar_parole_eligibility_release}
-div(id = "visualization", state_stackedbar_parole_eligibility_release)
+div(id = "small-visualization", state_stackedbar_parole_eligibility_release)
 ```
 
 <br>
