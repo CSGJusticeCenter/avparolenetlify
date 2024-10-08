@@ -92,8 +92,7 @@ ncrp_releases_combined <- bind_rows(lapply(release_files, fnc_read_and_add_year)
 ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_year))
 
 # Transform the combined release data
-# Calculate PE metrics
-# Combine past and current to get all who are currently eligible
+# Recategorize parole eligibility (PE) metrics - Combine past and current to get all who are currently eligible
 # Factor variables
 # Warning OK - changes "NA" to actual NA
         # Warning message:
@@ -117,7 +116,8 @@ ncrp_releases <- ncrp_releases_combined |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
-    sentlgth_raw = sentlgth,
+    # If sentlgth is missing, use calc_sent_lgth_compl
+    # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
     calc_sent_lgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
@@ -130,6 +130,7 @@ ncrp_releases <- ncrp_releases_combined |>
       TRUE ~ "Unknown"),
     sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
                          TRUE ~ sentlgth),
+    # Factor variables
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",
@@ -167,7 +168,8 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
   fnc_create_fbi_index() |> # Redo offense types
   fnc_create_admtype() |>   # Redo admission types
   mutate(
-    sentlgth_raw = sentlgth,
+    # If sentlgth is missing, use calc_sent_lgth_compl
+    # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
     calc_sent_lgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
@@ -180,6 +182,7 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
       TRUE ~ "Unknown"),
     sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
                          TRUE ~ sentlgth),
+    # Factor variables
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",

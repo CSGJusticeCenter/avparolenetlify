@@ -107,8 +107,7 @@ map_percent |>
                  buttons = list(contextButton = list(align = 'right',
                                                      verticalAlign = 'top',
                                                      y = 0,
-                                                     x = -5))) |>
-    hc_caption(text = ncrp_source)
+                                                     x = -5)))
 ```
 </div>
 <br>
@@ -210,7 +209,7 @@ reactable(
 )
 ```
 
-<div id="footnotes-text"><br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
+<div id="footnotes-text"><br>National Corrections Reporting Program<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
 
 
 ```{r echo=FALSE}

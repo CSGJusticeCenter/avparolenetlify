@@ -155,9 +155,7 @@ all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
 })
 
 all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
-all_stackedbar_pe_type$Alabama
 all_stackedbar_pe_type$Georgia
-all_stackedbar_pe_type$`New Jersey`
 rm(states)
 
 states <- unique(pe_status_pop$state)
@@ -206,6 +204,7 @@ all_pie_pe_type <- map(.x = states, .f = function(x) {
 
 all_pie_pe_type <- setNames(all_pie_pe_type, states)
 all_pie_pe_type$Alabama
+all_pie_pe_type$Georgia
 rm(states)
 
 # SENTENCE: In X year, there were X people who were in prison past their parole

@@ -292,9 +292,9 @@ map_data_breaks <- map_data |>
   )
 
 # create hex map
-map_percent <- highchart(height = 600) |>
+map_percent <- highchart(height = 625) |>
 
-  hc_chart(marginTop = 60,
+  hc_chart(marginTop = 50,
            marginBottom = 50,
            marginRight = 50) |>
 
@@ -388,7 +388,7 @@ map_percent <- highchart(height = 600) |>
     }")
   ) |>
 
-  hc_title(text = "Percentage of People in Prison Past Parole Eligibility: 2023 Projections",
+  hc_title(text = "Percentage of People in Prison Past Parole Eligibility<br>2023 Projections",
            align = "center") |>
 
   hc_exporting(
@@ -412,7 +412,9 @@ map_percent <- highchart(height = 600) |>
         )
       )
     )
-  )
+  ) |>
+  hc_caption(text = ncrp_source,
+             y = -20)
 map_percent
 
 
