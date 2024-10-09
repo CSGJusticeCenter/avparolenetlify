@@ -22,7 +22,7 @@
 # Hex map for national trends page
 # Load hexgrid shapefile and select only the 'state_abb' column
 # Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
-hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
+hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
     select(state_abb = iso3166_2) |>
     filter(state_abb != "DC") |>
     st_transform(3857) |>
@@ -30,13 +30,14 @@ hex_gj <- read_sf(file.path(config$sp_data_path, "data/raw/Shapefiles/us_states_
     fromJSON(simplifyVector = FALSE)
 
 
+
 #------------------------------------------------------------------------------#
 # State-Specific Notes for "How is Parole Eligibility Determined?" Section
-# Methodology for Imputation for"End Notes" Section
+# Methodology for Imputation for "State Notes" Section
 #------------------------------------------------------------------------------#
 
 # Import state-specific notes about parole eligibility and number of parole board members
-state_notes_raw <- read.csv(file.path(config$sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v1.csv")) |>
+state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v1.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
   mutate(
@@ -44,9 +45,10 @@ state_notes_raw <- read.csv(file.path(config$sp_data_path, "data/raw/Carl State 
     citation = sapply(citation, fnc_format_citation)) # format citations
 
 # Import state-specific imputation methodology
-state_methodology <- read_dta(file.path(config$sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
+state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
 
 # Combine these together
+# Adjust formatting - TBD############################################### will update when Seba has new data
 state_notes <- state_notes_raw |>
   left_join(state_methodology, by = "state") |>
   # add period to matching note.
@@ -72,16 +74,19 @@ state_notes <- state_notes_raw |>
          methodology_notes = paste(estimation_note, matching_note, rules_note, projection_note, sep = "<br><br>"),
          citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"))
 
+
+
 #------------------------------------------------------------------------------#
 # NCRP
 # Seba Guzman's Imputed Data
+# 2014 to 2020
 #------------------------------------------------------------------------------#
 
 # Define file paths for release and year-end population files (update paths if necessary)
-release_files <- list.files(path = file.path(config$sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+release_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
 
-yearendpop_files <- list.files(path = file.path(config$sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+yearendpop_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
 
 
@@ -102,21 +107,26 @@ ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_
         # Caused by warning:
         #   ! NAs introduced by coercion
 ncrp_releases <- ncrp_releases_combined |>
-  mutate(sentlgth_raw = sentlgth,
+  mutate(# Save raw sentence length
+         sentlgth_raw = sentlgth,
+         # Trim white space
          offdetail    = trimws(offdetail),
+         # Rename variable
          time_between_ped_rptyear = years_to_estimated_pey,
+         # Calculate time served
          time_between_admisson_release =  as.numeric(relyr) - as.numeric(admityr),
+         # Calculate time between PE and release
          time_between_ped_release = as.numeric(relyr) - as.numeric(estimated_pey),
+         # Recategorize PE status
          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
                                     estimated_pey_status == "missing" ~ "Missing",
                                     estimated_pey_status == "future" ~ "Future",
                                     TRUE ~ estimated_pey_status)) |>
   # Replace NAs and "NAs" with "No Data"
   mutate_at(vars(race, agerlse, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
-  fnc_create_fbi_index() |> # Redo offense types
-  fnc_create_admtype() |>   # Redo admission types
+  fnc_create_fbi_index() |> # Recategorize offense types
+  fnc_create_admtype() |>   # Recategorize admission types
   mutate(
-    # If sentlgth is missing, use calc_sent_lgth_compl
     # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
     calc_sent_lgth = case_when(
       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
@@ -126,11 +136,12 @@ ncrp_releases <- ncrp_releases_combined |>
       calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
       calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
       is.na(calc_sent_lgth_compl) & is.na(relyr) ~ "Life, LWOP, Life plus additional years, Death",
-      calc_sent_lgth_compl == 200 ~ "Unknown",
-      TRUE ~ "Unknown"),
+      calc_sent_lgth_compl == 200 ~ "Unknown", # 200 was categorized as Unknown
+      TRUE ~ "Unknown"), # Negative values and all else Unknown
+    # If sentlgth is missing, use calc_sent_lgth_compl (imputed by Seba Guzman) category
     sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
                          TRUE ~ sentlgth),
-    # Factor variables
+    # Factor variables in this order for charts
     race = factor(race, levels = c("Unknown",
                                    "Other race(s), non-Hispanic",
                                    "White, non-Hispanic",
@@ -209,7 +220,7 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
 # States Excluded
 #------------------------------------------------------------------------------#
 
-# Step 1: Determine which states have more than 50% missing in admtype and sentlgth
+# Determine which states have more than 50% missing in admtype and sentlgth
 # We need these variables to filter the population to people in prison for
 # new offenses and sentence lengths not less than one year and not life
 # Filter for states with more than 50% missing in admtype or sentlgth
@@ -218,23 +229,22 @@ states_with_high_missing <- ncrp_yearendpop %>%
   group_by(state, rptyear) %>%
   summarize(
     perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
-    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1)
-  ) %>%
+    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1)) %>%
   filter(perc_missing_admtype > 50 | perc_missing_sentlgth > 50)
 
-# Step 2: Get states that have abolished parole and keep it as a dataframe
+# Get states that have abolished parole and keep it as a dataframe
 abolished_states <- state_notes |>
   filter(abolished_parole == "Y") |>
   select(state)  # Select only the 'state' column
 
-# Step 3: Combine both dataframes of states to exclude
+# Combine both dataframes of states to exclude
 states_to_exclude <- states_with_high_missing %>%
   select(state) %>%
   distinct() %>%
   bind_rows(abolished_states) %>%
   distinct()  # Remove any duplicates
 
-# Step 4: May be needed, filter the resulting dataframe for a specific year (e.g., 2020) ##############################
+# May be needed, filter the resulting dataframe for a specific year (e.g., 2020) ##############################
 states_to_exclude <- states_with_high_missing %>%
   filter(rptyear == 2020) %>%
   select(state) %>%
@@ -242,15 +252,18 @@ states_to_exclude <- states_with_high_missing %>%
   distinct() %>%
   bind_rows(tibble(state = "Alabama"))
 
-
-states_with_high_missing_race <- ncrp_yearendpop %>%
+# States with high missingness for race and ethnicity
+states_with_high_missing_race <- ncrp_yearendpop |>
   filter(rptyear >= 2018) |>
-  group_by(state, rptyear) %>%
+  group_by(state, rptyear) |>
   summarize(
-    perc_missing_race = round(mean(race == "Unknown" | is.na(race)) * 100, 1)
-  ) %>%
+    perc_missing_race = round(mean(race == "Unknown" | is.na(race)) * 100, 1),
+    .groups = "drop") |>
   filter(perc_missing_race > 50) |>
-  select(state) |> distinct()
+  select(state) |>
+  distinct()
+
+
 
 
 #------------------------------------------------------------------------------#
@@ -259,11 +272,11 @@ states_with_high_missing_race <- ncrp_yearendpop %>%
 
 # Import BJS prisoners data for 2020 and 2022 (not sure which one will be used yet).
 # Skipping the first 10 rows due to headers and metadata.
-bjs_prison_pop_by_race_state_2020 <- read.csv(file.path(config$sp_data_path,
+bjs_prison_pop_by_race_state_2020 <- read.csv(file.path(sp_data_path,
                                                         "data/raw/BJS Prison Pop/p20st/p20stat02.csv"),
                                               skip = 10)
 
-bjs_prison_pop_by_race_state_2022 <- read.csv(file.path(config$sp_data_path,
+bjs_prison_pop_by_race_state_2022 <- read.csv(file.path(sp_data_path,
                                                         "data/raw/BJS Prison Pop/p22st/p22stat01.csv"),
                                               skip = 10)
 
@@ -292,7 +305,7 @@ cleaned_data_list <- list()
 # Loop through the years defined in file_info to read, process, and clean the data.
 for (year in names(file_info)) {
   # Construct the file path and retrieve the column name for the specified year.
-  file_path <- paste0(config$sp_data_path, "/data/raw/BJS Prison Pop/", file_info[[year]]$file)
+  file_path <- paste0(sp_data_path, "/data/raw/BJS Prison Pop/", file_info[[year]]$file)
   col_name <- file_info[[year]]$col
 
   # Read the CSV file, clean the column names, and select relevant columns (state and prison population).
@@ -355,8 +368,8 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
   left_join(total_bjs_pop_2020, by = "state") |>
   ungroup() |>
   mutate(prop = n / total,
-         prop_label = paste0(round(prop*100, 0), "%"),
-         n_label = formattable::comma(n, 0),
+         # prop_label = paste0(round(prop*100, 0), "%"),
+         # n_label = formattable::comma(n, 0),
          population_type = "In Prison") |>
   select(-total)
 
@@ -403,27 +416,28 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   left_join(total_bjs_pop_2022, by = "state") |>
   ungroup() |>
   mutate(prop = n / total,
-         prop_label = paste0(round(prop*100, 0), "%"),
-         n_label = formattable::comma(n, 0),
-         population_type = "In Prison") |>
+         # prop_label = paste0(round(prop*100, 0), "%"),
+         # n_label = formattable::comma(n, 0),
+         population_type = "In Prison"
+         ) |>
   select(-total)|>
   mutate(state = str_replace(state, "/.*", ""))
 
 
 # Read and clean BJS population data by sex for 2022 ?????????????????????????????????????????????????????? CHECK IF I NEED THIS BEFORE DOING MORE WORK
-# bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(config$sp_data_path,
+# bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(sp_data_path,
 #                                                         "data/raw/BJS Prison Pop/p22st/p22stt02.csv"),
 #                                               skip = 10)
-bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(config$sp_data_path,
+bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(sp_data_path,
                                                      "data/raw/BJS Prison Pop/p22st/p22stt02.csv"))
 bjs_prison_pop_by_sex_2022_raw <- bjs_prison_pop_by_sex_2022_raw[-(1:10), ]
 
 bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   clean_names() |>
   select(state = x, male = x_6, female = x_7) |>
-  mutate(state = str_replace(state, "/.*", "")) %>%
-  mutate(state = str_replace(state, "Alaskab", "Alaska")) %>%
-  mutate(state = str_replace(state, "Utahc", "Utah")) %>%
+  mutate(state = str_replace(state, "/.*", ""),
+         state = str_replace(state, "Alaskab", "Alaska"),
+         state = str_replace(state, "Utahc", "Utah")) %>%
   filter(state != "" &
            state != "State" &
            state != "Federal" &
@@ -431,27 +445,23 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
            state != "U.S. Total" &
            state != "U.S. total" &
            state != "U.S. tota") |>
-  mutate(male = str_replace_all(male, "[^\\d]", "")) |>
-  mutate(male = as.numeric(male)) |>
-  mutate(female = str_replace_all(female, "[^\\d]", "")) |>
-  mutate(female = as.numeric(female)) |>
+  mutate(male = str_replace_all(male, "[^\\d]", ""),
+         male = as.numeric(male),
+         female = str_replace_all(female, "[^\\d]", ""),
+         female = as.numeric(female)) |>
   pivot_longer(cols = c(male, female), names_to = "sex", values_to = "population") |>
   group_by(state) |>
+  rename(n = population) |>
   mutate(
-    n = population,
-    prop = population/sum(population),
-    yearendpop_ped = sum(population),
-    prop_label = paste0(round(prop*100, 0), "%"),
-    n_label = formattable::comma(population, 0)
+    prop = n/sum(n)
+    # yearendpop_ped = sum(n)
+    # prop_label = paste0(round(prop*100, 0), "%"),
+    # n_label = formattable::comma(n, 0)
   ) |>
   ungroup() |>
-  mutate(tooltip = paste0("<b>", state, " - ",
-                          sex, "</b><br>",
-                          prop_label, "<br>")) |>
   mutate(sex = case_when(sex == "male" ~ "Male",
                             sex == "female" ~ "Female",
                             TRUE ~ sex))
-
 
 
 
@@ -459,14 +469,22 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 # Save Data
 #------------------------------------------------------------------------------#
 
-save(ncrp_yearendpop,               file = file.path(app_folder, "ncrp_yearendpop.rds"))
-save(ncrp_releases,                 file = file.path(app_folder, "ncrp_releases.rds"))
-save(bjs_prison_pop_by_race_2020,   file = file.path(app_folder, "bjs_prison_pop_by_race_2020.rds"))
-save(bjs_prison_pop_by_race_2022,   file = file.path(app_folder, "bjs_prison_pop_by_race_2022.rds"))
-save(bjs_prison_pop_by_sex_2022,    file = file.path(app_folder, "bjs_prison_pop_by_sex_2022.rds"))
-save(bjs_prison_pop_by_rptyear,     file = file.path(app_folder, "bjs_prison_pop_by_rptyear.rds"))
-save(hex_gj,                        file = file.path(app_folder, "hex_gj.rds"))
-save(state_notes,                   file = file.path(app_folder, "state_notes.rds"))
-save(states_to_exclude,             file = file.path(app_folder, "states_to_exclude.rds"))
-save(states_with_high_missing_race, file = file.path(app_folder, "states_with_high_missing_race.rds"))
+# Define the data objects and their corresponding file names
+data_files <- list(
+  ncrp_yearendpop               = "ncrp_yearendpop.rds",
+  ncrp_releases                 = "ncrp_releases.rds",
+  bjs_prison_pop_by_race_2020   = "bjs_prison_pop_by_race_2020.rds",
+  bjs_prison_pop_by_race_2022   = "bjs_prison_pop_by_race_2022.rds",
+  bjs_prison_pop_by_sex_2022    = "bjs_prison_pop_by_sex_2022.rds",
+  bjs_prison_pop_by_rptyear     = "bjs_prison_pop_by_rptyear.rds",
+  hex_gj                        = "hex_gj.rds",
+  state_notes                   = "state_notes.rds",
+  states_to_exclude             = "states_to_exclude.rds",
+  states_with_high_missing_race = "states_with_high_missing_race.rds"
+)
+
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))
 

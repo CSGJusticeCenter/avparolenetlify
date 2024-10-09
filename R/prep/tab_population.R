@@ -195,7 +195,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = "Prison Population, 2020") |>
     hc_exporting(enabled = TRUE) |>
-    hc_caption(text = bjs_source_2020)
+    hc_caption(text = bjs_source)
 
   return(highcharts)
 })
@@ -258,7 +258,7 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
     hc_title(text = "Sex") |>
     hc_subtitle(text = "Prison Population, 2020") |>
     hc_exporting(enabled = TRUE) |>
-    hc_caption(text = bjs_source_2020)
+    hc_caption(text = bjs_source)
 
   return(highcharts)
 })

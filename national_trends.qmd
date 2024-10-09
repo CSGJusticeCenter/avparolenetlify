@@ -23,12 +23,12 @@ knitr::opts_chunk$set(
 
 source("R/prep/config.R")
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
 
 # Custom function to round
-fnc_round_to_power <- function(x) {
+fnc_round <- function(x) {
   # Check if the value is NA, and return NA if true
   if (is.na(x)) {
     return(NA)
@@ -46,18 +46,18 @@ fnc_round_to_power <- function(x) {
   }
 }
 
-num_people_current <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
-num_people_current_rounded <- fnc_round_to_power(num_people_current)
+num_people_current <- sum(parole_eligibility_table$current_count_rounded, na.rm = TRUE)
+num_people_current_rounded <- fnc_round(num_people_current)
 ```
 
 <div id="body-section">
 
 ```{r highlights}
-# Filter the dataframe where current_count is not NA and abolished_parole is "No"
-# filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count) & parole_eligibility_table$abolished_parole== "N", ]
+# Filter the dataframe where current_count_rounded is not NA and abolished_parole is "No"
+# filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count_rounded) & parole_eligibility_table$abolished_parole== "N", ]
 
-# Calculate the total current_count for this filtered data
-total_current_count <- sum(parole_eligibility_table$current_count, na.rm = TRUE)
+# Calculate the total current_count_rounded for this filtered data
+total_current_count <- sum(parole_eligibility_table$current_count_rounded, na.rm = TRUE)
 
 # Calculate the national percentage based on filtered_total_pop
 national_percentage <- paste0(round(total_current_count / sum(parole_eligibility_table$filtered_total_pop, na.rm = TRUE) * 100, 0), "%")
@@ -124,7 +124,7 @@ data_bars_custom <- function(value) {
   if (is.na(value)) {
     return("-")
   }
-  percentage <- percent(value)
+  percentage <- percent(value/100)
   bar <- div(style = list(
     background = "teal",
     width = percentage,
@@ -135,11 +135,8 @@ data_bars_custom <- function(value) {
       )
 }
 
-style_cells <- function(value, color) {
-  tags$span(style = paste("color:", color, ";"), value)
-}
-
-parole_eligibility_table$filtered_total_pop <- as.numeric(parole_eligibility_table$filtered_total_pop)
+parole_eligibility_table <- parole_eligibility_table |> 
+  mutate(filtered_total_pop = as.numeric(filtered_total_pop))
 
 reactable(
   parole_eligibility_table ,
@@ -173,22 +170,10 @@ reactable(
       cell = data_bars_custom,
       defaultSortOrder = "desc"  # Sort descending
     ),
-    current_count = colDef(
+    current_count_rounded = colDef(
       name = "Number of People", 
       align = "right",
-      format = colFormat(separators = TRUE),
-       cell = function(value, index) {
-          # Check if the value is NA (no data)
-          if (is.na(value)) {
-            return("-")
-          }
-          # Otherwise, round the value using the custom function and add commas
-          else {
-            rounded_value <- fnc_round_to_power(value)
-            formatted_value <- format(rounded_value, big.mark = ",", scientific = FALSE)
-            return(formatted_value)
-          }
-        }
+      format = colFormat(separators = TRUE)
       ),
     filtered_total_pop = colDef(
       name = "Prison Population", 
@@ -203,7 +188,7 @@ reactable(
   columnGroups = list(
     colGroup(
       name = "People In Prison Past Parole Eligibility", 
-      columns = c("current_perc", "current_count")
+      columns = c("current_perc", "current_count_rounded")
     )
   )
 )
@@ -213,10 +198,9 @@ reactable(
 
 
 ```{r echo=FALSE}
-library(downloadthis)
 parole_eligibility_table_download %>%
   download_this(
-    output_name = "Parole_Eligibility_By_State_Estimates_2023",
+    output_name = "parole_eligibility_by_state_2023_estimates",
     output_extension = ".csv",
     button_label = "Download Table",
     button_type = "default",

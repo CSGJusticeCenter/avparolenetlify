@@ -19,8 +19,8 @@ no_visualization <- paste0("Data is not available. ", state_for_report,
 #------------------------------------------------------------------------------#
 
 # Load Prepared Data
-load(file = paste0(config$sp_data_path, "/data/analysis/app/state_notes.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/state_methodology.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/state_methodology.rds"))
 
 state_citation <- state_notes |>
   filter(state == state_for_report) |>
@@ -39,8 +39,8 @@ state_imputation_notes <- state_notes |>
 #------------------------------------------------------------------------------#
 
 # Load Prepared Data
-load(file = paste0(config$sp_data_path, "/data/analysis/app/map_percent.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
 # Get number of people currently eligible for parole
 if (state_for_report %in% unique(parole_eligibility_table$state)) {
@@ -57,23 +57,23 @@ num_parole_board_mem <- parole_eligibility_table |> filter(state == state_for_re
 # Parole Eligibility Tab (tab_parole_eligibility.R)
 #------------------------------------------------------------------------------#
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pe_type.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_ageyrend.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_ageyrend.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
 
 # TITLE: How is Parole Eligibility Determined?
 parole_eligibility_criteria <- subset(state_notes,
@@ -92,13 +92,13 @@ if (state_for_report %in% names(all_sentence_pe_type)) {
 
 # TITLE: Pct. of Prison Population by Parole Eligibility Status
 # Stacked bar chart showing the  proportion of parole eligibility types
-if (state_for_report %in% names(all_stackedbar_pe_type)) {
-  state_stackedbar_pe_type <-
-    all_stackedbar_pe_type[[state_for_report]] |>
-    hc_size(height = 170)
-} else {
-  state_stackedbar_pe_type <- no_data_text
-}
+# if (state_for_report %in% names(all_stackedbar_pe_type)) {
+#   state_stackedbar_pe_type <-
+#     all_stackedbar_pe_type[[state_for_report]] |>
+#     hc_size(height = 170)
+# } else {
+#   state_stackedbar_pe_type <- no_data_text
+# }
 # Pie option- TEMP
 if (state_for_report %in% names(all_pie_pe_type)) {
   state_pie_pe_type <-
@@ -245,21 +245,21 @@ if (state_for_report %in% names(all_bar_parole_eligibility_sentlgth)) {
 # Population Tab (tab_population.R)
 #------------------------------------------------------------------------------#
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_ageyrend.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_ageyrend.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_fbi_index.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_population_sentlgth.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
 
 # SENTENCE: "From YEAR to YEAR, the prison population decreased/increased X percent."
 if (state_for_report %in% names(all_sentence_population)) {
@@ -372,24 +372,24 @@ if (state_for_report %in% names(all_bar_population_sentlgth)) {
 # Releases Tab (tab_releases.R)
 #------------------------------------------------------------------------------#
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_release_type.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_release_type.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_releases_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_releases_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases_agerlse.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_releases_agerlse.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_agerlse.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_agerlse.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_releases_fbi_index.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_bar_releases_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_fbi_index.rds"))
 
 # SENTENCE: "From YEAR to YEAR, prison releases decreased/increased X percent."
 if (state_for_report %in% names(all_sentence_releases)) {
@@ -519,35 +519,35 @@ if (state_for_report %in% names(all_bar_releases_fbi_index)) {
 
 ####################
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri_black.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_rri_hispanic.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_black.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_hispanic.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/avg_pe_release_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/avg_pe_release_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_race.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race_offense.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_race_offense.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_los_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_los_sex_offense.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_los_sex_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_los_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_sex_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_los_sex_offense.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/avg_pe_release_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/avg_pe_release_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release_sex.rds"))
 
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex_offense.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_sex_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_sex_offense.rds"))
 
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for

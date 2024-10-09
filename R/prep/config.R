@@ -48,7 +48,8 @@ required_packages <- c(
   "reactable", "reactablefmtr", "sysfonts", "extrafont", "showtext", "htmlwidgets",
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
-  "ggtext", "scales", "base64enc", "glue", "haven", "png", "reshape2", "magick"
+  "ggtext", "scales", "base64enc", "glue", "haven", "png", "reshape2", "magick",
+  "downloadthis"
 )
 
 lapply(required_packages, library, character.only = TRUE)
@@ -65,20 +66,14 @@ csg_set_project_path(
 )
 
 # Save Sharepoint data path
-config <- list(
-  sp_data_path = csg_get_project_path("AVParole")
-)
+sp_data_path <- csg_get_project_path("AVParole")
 
 # Save Sharepoint data analysis and deliverables folder
-app_folder <- file.path(config$sp_data_path, "data", "analysis", "app")
-deliverables_folder <- file.path(config$sp_data_path, "data", "deliverables", "key_findings")
+app_folder <- file.path(sp_data_path, "data", "analysis", "app")
+deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
 # Most recent year of NCRP data
 select_year <- 2020
-
-# Choose alignment for content (left or center)
-# For now we like things centered
-alignment <- "center"
 
 
 
@@ -115,34 +110,22 @@ yellow <-  "#decf64"
 red <- "#d97d68"
 purple <- "#938ebf"
 brown <- "#9e6c10"
+
+# Assign numbers so colors can be changed universally
 color1 <- red
 color2 <- blue
 color3 <- yellow
 color4 <- teal
 color5 <- purple
 color6 <- lightteal
+
+# Gradient for map
 green1    = "#b1d4d5"
 green2    = "#49a7a1"
 green3    = "#176f6d"
 green4    = "#104040"
 
-# DARKER COLORS
-# teal <- "#176f6d"
-# yellow <-  "#decf64"
-# brown <- "#9e6c10"
-# blue <- "#2a5a99"
-# red <- "#ac532f"
-# purple <- "#948ebf"
-# green1    = "#b1d4d5"
-# green2    = "#49a7a1"
-# green3    = "#176f6d"
-# green4    = "#104040"
-# color1 <- red
-# color2 <- blue
-# color3 <- brown
-# color4 <- teal
-# color5 <- purple
-
+# Gray colors
 darkgray <- "#969696"
 lightgray <- "#d7d7d7"
 
@@ -154,6 +137,4 @@ lightgray <- "#d7d7d7"
 
 # Format sources
 ncrp_source     <- "National Corrections Reporting Program"
-bjs_source_2022 <- "BJS Prisoners in the United States (2022)"
-bjs_source_2020 <- "BJS Prisoners in the United States (2020)"
 bjs_source      <- "BJS Prisoners in the United States"

@@ -59,20 +59,21 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
   arrange(state) |>
   select(state, rptyear, total_pop, filtered_total_pop,
          contains("current"), contains("future"), contains("missing")) |>
-  filter(rptyear == select_year)
+  filter(rptyear == select_year) |>
+  mutate(current_perc           = current_perc * 100,
+         future_perc            = future_perc * 100,
+         missing_perc           = missing_perc * 100,
+         current_count_rounded = fnc_round_to_power(current_count))
 
 
 
 #------ Parole Board Members by State ------#
 
 # Get parole status information by state
-state_notes_clean <- state_notes |>
+states_parole <- state_notes |>
   select(state, abolished_parole)
 
 # Get number of parole board members
-# members_select_states <- state_notes |>
-#   filter(abolished_parole == "N") |>
-#   select(state, members)
 members <- state_notes |>
   select(state, members)
 
@@ -81,15 +82,15 @@ members <- state_notes |>
 
 # Only include states that abolished parole + Lousiana (high PE population)
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
-  left_join(state_notes_clean, by = "state") |>
+  left_join(states_parole, by = "state") |>
   left_join(members, by = "state") |>
   filter(abolished_parole == "N" | state == "Louisiana") |>
-  select(state, current_perc, current_count, filtered_total_pop, members)
+  mutate(current_perc = round(current_perc, 1)) |>
+  select(state, current_perc, current_count_rounded, filtered_total_pop, members)
+
 
 # Rename variables for downloadable table
 parole_eligibility_table_download <- parole_eligibility_table |>
-  mutate(current_count_rounded = fnc_round_to_power(current_count),
-         current_perc = round(current_perc*100, 1)) |>
   select(State = state,
          `In Prison Past Parole Eligibility (N)` = current_count_rounded,
          `In Prison Past Parole Eligibility (%)` = current_perc,
@@ -115,15 +116,10 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   complete(state = all_states) |>
 
   # add info about whether state abolished parole release
-  left_join(state_notes_clean, by = "state") |>
+  left_join(states_parole, by = "state") |>
 
   # Format data and create tooltip
   mutate(
-    current_count_rounded  = fnc_round_to_power(current_count),
-    current_perc           = current_perc * 100,
-    future_perc            = future_perc * 100,
-    missing_perc           = missing_perc * 100,
-
     state_abb = state.abb[match(state, state.name)],
 
     all_na = ifelse(is.na(current_count) & is.na(future_count) & is.na(missing_count), TRUE, FALSE),
@@ -368,10 +364,13 @@ map_percent <- highchart(height = 625) |>
     enabled = TRUE,
     keyboardNavigation = list(enabled = TRUE),
     linkedDescription =
-      paste0("This map shows the proportion of people in prison who are past their parole eligibility year."),
+      paste0("This hexagonal map visualizes the projected proportion of people in prison past their parole eligibility across different U.S. states in 2023. ",
+             "States are represented as hexagons, with color gradients indicating different percentage ranges of prison populations past parole eligibility. ",
+             "The map also includes a category for states that have abolished parole and those with missing data."),
     landmarkVerbosity = "one"
   ),
-  area = list(accessibility = list(description = paste0("TEXT")))
+  area = list(accessibility = list(description =
+                                     paste0("This chart visually compares parole eligibility status across U.S. states, using colors to denote different percentage ranges.")))
   ) |>
 
   hc_tooltip(
@@ -393,6 +392,7 @@ map_percent <- highchart(height = 625) |>
 
   hc_exporting(
     enabled = TRUE,
+    filename = paste0(gsub(" ", "_", tolower("Map Past Parole Eligibility by State 2023"))),
     scale = 1,  # Ensure the exported image matches screen size exactly
     sourceWidth = 800,  # Set the width same as screen
     sourceHeight = 600,  # Set the height same as screen
@@ -417,14 +417,19 @@ map_percent <- highchart(height = 625) |>
              y = -10)
 map_percent
 
+#------------------------------------------------------------------------------#
+# Save Data
+#------------------------------------------------------------------------------#
 
-#------ Save Data ------#
+# Define the data objects and their corresponding file names
+data_files <- list(
+  map_percent                       = "map_percent.rds",
+  parole_eligibility_table          = "parole_eligibility_table.rds",
+  parole_eligibility_table_download = "bjs_prison_pop_by_race_2020.rds"
+)
 
-theseFOLDERS <- c("sharepoint" = paste0(config$sp_data_path, "/data/analysis/app"))
-
-for (folder in theseFOLDERS){
-  save(map_percent,                       file = file.path(folder, "map_percent.rds"))
-  save(parole_eligibility_table,          file = file.path(folder, "parole_eligibility_table.rds"))
-  save(parole_eligibility_table_download, file = file.path(folder, "parole_eligibility_table_download.rds"))
-}
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))
 

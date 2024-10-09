@@ -4,235 +4,110 @@
 # Authors: Mari Roberts
 # Date last updated: October 1, 2024 (MAR)
 # Description:
-#    This script generates parole eligibility visualizations and related summaries
-#    for the "Parole Eligibility" tab in state reports.
+#    This script generates parole eligibility visualizations and corresponding
+#    summary sentences for the "Parole Eligibility" tab in state-specific reports.
 #
 #    Key Components:
-#    - Prison Population by Parole Eligibility Status: Filters the NCRP prison population data by specific criteria,
-#      including new court commitments and sentence lengths 1+ years (except life), to analyze people in prison past their parole eligibility date.
-#      It then visualizes the proportion of individuals in different parole eligibility statuses (current, future, missing).
+#    1. Prison Population by Parole Eligibility Status:
+#       - Filters NCRP prison population data for individuals serving sentences of 1+ years
+#         (excluding life sentences) for new crimes. Analyzes those in prison past their
+#         parole eligibility date.
+#       - Generates pie charts and descriptive sentences for each state, detailing the proportion of
+#         individuals in each parole eligibility category (Current, Future, Missing).
 #
-#    - Demographics: Analyzes and visualizes demographics such as race, sex, and age for
-#      people in prison past parole eligibility.
+#    2. Demographics:
+#       - Breaks down the population in prison past their parole eligibility date by race, sex, and age.
+#       - Produces bar charts and descriptive summaries for each state based on these demographics.
 #
-#    - Offense Types: Breaks down the parole eligibility population by offense types (e.g., violent, nonviolent) to see what
-#      percentage of people are in prison past their eligibility based on the crimes committed.
+#    3. Offense Types:
+#       - Classifies offenses into violent, nonviolent, or unknown categories.
+#       - Creates visualizations and sentences summarizing the breakdown of people in prison past their
+#         eligibility date by offense type.
 #
-#    - Sentence Lengths:  Breaks down the parole eligibility population by sentence length for individuals in prison past their parole eligibility.
+#    4. Sentence Length:
+#       - Analyzes sentence length distribution of those in prison past their parole
+#         eligibility date, generating visualizations and sentences by state.
 #
-#    For each of these components, the script generates both visualizations (e.g., stacked bar charts, column charts) and descriptive sentences.
-#    to summarize the findings for each state.
+#    5. Trends Over Time:
+#       - Tracks trends in the proportion of people incarcerated past their parole eligibility across
+#         multiple years (2010 onward), creating stacked bar charts and summary sentences for each state.
 #
-#    Finally, the output data and visualizations are saved as `.rds` files for later use in the interactive tool.
+#    Output:
+#       All visualizations and generated sentences are saved as `.rds` files for integration into the
+#       interactive tool.
 #######################################
 
 # ---------------------------------------------------------------------------- #
 # Prison Population by PE Status
 # ---------------------------------------------------------------------------- #
 
-# Filter the population data to include only people in prison for new court commitments
+# Function that filters the population data to include only people in prison for new crimes
 # with sentence lengths 1+ years except life
-# Only includes states with parole systems
-# Function prints potential issues with the state (overall, 2019, and 2020)
-#   2020 Issues: States with 100% missing 'admtype': Alaska Connecticut Hawaii Idaho Vermont
+# Only includes states with parole systems and without high misingness
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Total prison population by state and year
-# Only people in prison for new court commitments
-# with sentence lengths 1+ years except life
-# Only includes states with parole systems
 total_pe_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n(), .groups = "drop")
 
 # Prison population by parole eligibility status (missing, current, eligible in the future)
-# Only people in prison for new court commitments
-# with sentence lengths 1+ years except life
-# Only includes states with parole systems
 pe_status_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   count(parelig_status) |>
   left_join(total_pe_pop, by = c("state", "rptyear")) |>
-  mutate(prop = n / yearendpop,
-         tooltip = paste0("<b>Parole Eligibility Status:</b> ", parelig_status, "<br>",
-                          "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                          "<b>Percentage of People:</b> ", round(prop*100, 0), "%"),
-         parelig_status_1 =
-           case_when(parelig_status == "Missing or Not Parole-Eligible" ~ "Missing or Not<br>Parole-Eligible",
-                     TRUE ~ parelig_status),
-         prop_label = paste0(
-           "<div style='text-align: center;'><b>", parelig_status_1, "</b><br>",  # Center the label
-           round(prop * 100, 1), "%</div>"
-         ))
+  mutate(prop = n / yearendpop) |>
+  fnc_create_tooltip(variable_label = "Parole Eligibility Status", variable = parelig_status)
 
 # VISUALIZATION: Prison Population by Parole Eligibility Status
-# Horizontal stacked bar chart showing prison population by parole eligibility status
-states <- unique(pe_status_pop$state)
-all_stackedbar_pe_type <- map(.x = states,  .f = function(x) {
-
-  df1 <- pe_status_pop |>
-    filter(state == x) |>
-    filter(rptyear == select_year)
-
-  hc_accessibility_text <-
-    paste0("This graph shows the proportion of the prison population by parole eligibility status in ",
-           select_year, " in the state of ", x,
-           ". Parole eligibility statuses include the new court commitment population currently eligible,
-      new court commitment population eligible in the future, and population with missing parole eligibility data.")
-
-  highcharts <- highchart() |>
-    hc_chart(type = "bar",
-             marginTop = -20
-             # marginLeft = 100,  # Adjust for more space on the left
-             # marginRight = 100  # Adjust for more space on the right
-             ) |>
-    hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_xAxis(title = list(text = NULL),
-             lineWidth = 0,
-             minorGridLineWidth = 0,
-             tickColor = "transparent",
-             lineColor = 'transparent',
-             labels = list(enabled = FALSE)) |>
-    hc_yAxis(title = list(text = ""),
-             max = 1,
-             gridLineWidth = 0,
-             tickColor = "transparent",
-             minorGridLineWidth = 0,
-             labels = list(enabled = FALSE)) |>
-    hc_plotOptions(series = list(stacking = "normal",
-                                 pointWidth = 40,
-                                 borderWidth = 3,  # Adjust this to increase outline size
-                                 borderColor = "#FFFFFF",
-                                 minPointLength = 5)) |>
-    hc_tooltip(formatter = JS("function () {return this.point.tooltip;}")) |>
-    hc_add_series(name = "Missing or Not Parole-Eligible",
-                  data = list(list(y = df1$prop[3], tooltip = df1$tooltip[3], label = df1$prop_label[3])),
-                  stack = "a",
-                  color = darkgray,
-                  dataLabels = list(
-                    enabled = TRUE,
-                    align = "center",
-                    formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
-                    useHTML = TRUE,
-                    x = 0,
-                    y = 50,
-                    style = list(fontSize = "12px", fontWeight = "normal",
-                                 color = "#000000", textOutline = "none")
-                  )) |>
-    hc_add_series(name = "Future",
-                  data = list(list(y = df1$prop[2], tooltip = df1$tooltip[2], label = df1$prop_label[2])),
-                  stack = "a",
-                  color = color2,
-                  dataLabels = list(
-                    enabled = TRUE,
-                    align = "center",
-                    formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
-                    useHTML = TRUE,
-                    x = 0,
-                    y = 50,
-                    style = list(fontSize = "12px", fontWeight = "normal",
-                                 color = "#000000", textOutline = "none")
-                  )) |>
-    hc_add_series(name = "Current",
-                  data = list(list(y = df1$prop[1], tooltip = df1$tooltip[1], label = df1$prop_label[1])),
-                  color = color4,
-                  stack = "a",
-                  dataLabels = list(
-                    enabled = TRUE,
-                    align = "center",
-                    formatter = JS("function() {if (this.y > 0.00) {return this.point.label;}return null;}"),
-                    x = 0,
-                    y = 50,
-                    style = list(fontSize = "12px", fontWeight = "regular",
-                                 color = "#000000", textOutline = "none")
-                  )) |>
-    hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_caption(text = ncrp_source)
-
-  return(highcharts)
-})
-
-all_stackedbar_pe_type <- setNames(all_stackedbar_pe_type, states)
-all_stackedbar_pe_type$Georgia
-rm(states)
-
 states <- unique(pe_status_pop$state)
 all_pie_pe_type <- map(.x = states, .f = function(x) {
+
+  # Define color mapping for categories
+  color_mapping <- c("Future" = color2,
+                     "Missing" = darkgray,
+                     "Current" = color4)
 
   df1 <- pe_status_pop |>
     ungroup() |>
     filter(state == x) |>
-    filter(rptyear == select_year)
-
-  hc_accessibility_text <- "TBD"
-
-  # Define color mapping for categories
-  color_mapping <- c("Future" = color2,  # Blue
-                     "Missing" = darkgray,  # Light Gray
-                     "Current" = color4)  # Green
-
-  # Ensure each category gets the correct color
-  df1 <- df1 |>
+    filter(rptyear == select_year) |>
+    # Ensure each category gets the correct color
     mutate(color = color_mapping[parelig_status])
 
-  highcharts <- highchart() |>
-    hc_chart(type = "pie") |>
-    hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |>
-    hc_plotOptions(pie = list(
-      dataLabels = list(
-        enabled = TRUE,
-        format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span><br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
-      ),
-      colorByPoint = FALSE  # Disable automatic coloring by Highcharts
-    )) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_series(list(
-      name = "Parole Eligibility Status",
-      data = df1 |>
-        mutate(y = n) |>
-        transmute(name = parelig_status, y = y, color = color) |>
-        list_parse()  # Manually specify data with colors
-    )) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_tooltip(pointFormat = 'Number of People: {point.y}<br>Percentage of People: {point.percentage:.0f}%') |>
-    hc_caption(text = ncrp_source)
+  hc_accessibility_text <- paste0("This pie chart shows the distribution of the prison population in ",
+                                  x, " by parole eligibility status for the year ", select_year,
+                                  ". The categories include those currently eligible, those eligible in the future, and those with missing parole eligibility information.")
+  title <- "Prison Population by Parole Eligibility Status"
+
+  highcharts <- fnc_hc_pie(df1, "parelig_status", hc_accessibility_text)
 
   return(highcharts)
 })
-
 all_pie_pe_type <- setNames(all_pie_pe_type, states)
-all_pie_pe_type$Alabama
 all_pie_pe_type$Georgia
-rm(states)
 
 # SENTENCE: In X year, there were X people who were in prison past their parole
 #           eligibility date. This group made up X% of the people in prison.
-states <- unique(pe_status_pop$state)
-all_sentence_pe_type <- map(.x = states,  .f = function(x) {
+all_sentence_pe_type <- map(states, function(x) {
+  df <- pe_status_pop |>
+    filter(state == x, rptyear == select_year)
 
-  df1 <- pe_status_pop |>
-    filter(state == x &
-             parelig_status == "Current"&
-             rptyear == select_year)
+  current_prop <- df |> filter(parelig_status == "Current") |> pull(prop)
+  future_prop <- df |> filter(parelig_status == "Future") |> pull(prop)
 
-  df2 <- pe_status_pop |>
-    filter(state == x &
-             parelig_status == "Future" &
-             rptyear == select_year)
-
-  sentences <- paste0("In ", select_year, ", ",
-                      round(df1$prop*100, 0),
-                      " percent of people in prison were currently past their parole eligibility.",
-                      " Another ", round(df2$prop*100, 0), " percent will reach their parole eligibility after ",
-                      select_year, ".")
-  return(sentences)
+  paste0(
+    "In ", select_year, ", ",
+    round(current_prop * 100, 0),
+    " percent of people in prison were currently past their parole eligibility.",
+    " Another ", round(future_prop * 100, 0),
+    " percent will reach their parole eligibility after ", select_year, "."
+  )
 })
-
 all_sentence_pe_type <- setNames(all_sentence_pe_type, states)
 all_sentence_pe_type$Georgia
 rm(states)
+
 
 
 
@@ -304,19 +179,11 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
 
   return(sentence)
 })
-
-# Assign state names as labels to the generated sentences for each state
 all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Georgia
-all_sentence_pop_pe_by_year$Hawaii
-all_sentence_pop_pe_by_year$`New Jersey`
-rm(states)
 
 # VISUALIZATION: Create a stacked bar chart showing the percentage of people past parole eligibility (PCE)
 # and the remaining total prison population for each state over time
-
-# Loop through each unique state to generate the visualizations
-states <- unique(pe_pop_prop$state)
 all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
 
   # Filter the data for the current state and limit the analysis to years from 2010 onward
@@ -325,55 +192,54 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
     filter(rptyear >= 2010) |>
     mutate(rptyear_fac = factor(rptyear))  # Convert years to a factor for the x-axis
 
+  title <- "Percentage of Prison Population Incarcerated Past Parole Eligibility"
+
+  # Accessibility text describing the chart content
+  hc_accessibility_text <- paste0("This chart shows the percentage of people past parole eligibility ",
+                                  "and the remaining prison population for the state of ", x,
+                                  " from ", min(df_state$rptyear), " to ", max(df_state$rptyear), ". ",
+                                  "The bars represent the total prison population, with the portion of people ",
+                                  "past their parole eligibility highlighted in a different color.")
+
   # Create the highchart visualization
   highcharts <- highchart() |>
-    hc_title(text = paste0("Pct. of Prison Population Incarcerated Past Parole Eligibility, ",
-                           min(df_state$rptyear), "-", max(df_state$rptyear))) |>
     hc_xAxis(categories = df_state$rptyear_fac) |>
     hc_yAxis(
       title = list(text = ""),
-      max = 100,  # Set the y-axis maximum to 100% for percentage representation
-      labels = list(format = "{value}%")  # Format y-axis labels as percentages
+      max = 100,
+      labels = list(format = "{value}%")
     ) |>
-
-    # Add the first series: Remaining population (Total Population - Incarcerated Past Parole Eligibility)
     hc_add_series(
       name = "Total Population (Remaining)",
-      data = (1 - df_state$proportion) * 100,  # Remaining proportion as percentage
+      data = (1 - df_state$proportion) * 100,
       type = "column",
-      stacking = "percent"  # Stack as percentage
-    ) |>
-
-    # Add the second series: Proportion of people past parole eligibility
+      stacking = "percent") |>
     hc_add_series(
       name = "In Prison Past Parole Eligibility",
-      data = df_state$proportion * 100,  # Convert proportion to percentage
+      data = df_state$proportion * 100,
       type = "column",
-      stacking = "percent"  # Stack as percentage
-    ) |>
-
+      stacking = "percent") |>
     hc_plotOptions(series = list(stacking = "normal",
                                  pointWidth = 40,
-                                 borderWidth = 3,  # Adjust this to increase outline size
+                                 borderWidth = 3,
                                  borderColor = "#FFFFFF",
                                  minPointLength = 5)) |>
-
-    hc_tooltip(pointFormat = '{series.name}: <b>{point.y:.0f}%</b>') |>
-    # hc_add_theme(hc_theme_with_line) |>
-    hc_add_theme(base_hc_theme) |>
-    hc_exporting(enabled = TRUE) |>
     hc_colors(c(color3, color4)) |>
-    hc_legend(reversed = TRUE) |>  # Reverse the order of the legend for better clarity
-    hc_caption(text = ncrp_source)
+    hc_legend(reversed = TRUE) |>
+    hc_add_theme(base_hc_theme) |>
+    hc_tooltip(pointFormat = '<b>{series.name}</b>: {point.y:.0f}%') |>
+    hc_title(text = paste0(title, ", ",
+                           min(df_state$rptyear), "-", max(df_state$rptyear))) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_",
+                                   min(df_state$rptyear), "_", max(df_state$rptyear))) |>
+    hc_caption(text = ncrp_source) |>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
-  return(highcharts)  # Return the highchart object for the current state
+  return(highcharts)
 })
-
-# Assign state names to the generated visualizations for each state
 all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
 all_stackedbar_pop_pe_by_year$Georgia
-all_stackedbar_pop_pe_by_year$Hawaii
-all_stackedbar_pop_pe_by_year$Maryland
 rm(states)
 
 
@@ -386,52 +252,53 @@ rm(states)
 # Get number and proportion of people in prison past their parole eligibility year
 # by demographic
 current_ped_race     <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
-  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race) # exclude states with high missingness
 current_ped_sex      <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
 # Generate graph for each state
 states <- unique(current_ped_race$state)
 all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_race |>
     filter(state == x) |>
-    mutate(prop = prop*100,
-           tooltip = paste0("<b>Race and Ethnicity:</b> ", race, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Race and Ethnicity", variable = race) |>
     arrange(desc(prop))
+
+  title <- "People in Prison Past Parole Eligibility"
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
                                   their race and ethnicity in ",
                                   select_year, " in the state of ", x, ".")
+
   highcharts <- fnc_hc_columnchart(df1, "race", "prop", hc_accessibility_text) |>
-    hc_title(text = "Race and Ethnicity") |>
-    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_colors(c(color4)) |>
+    hc_title(text = "Race and Ethnicity") |>
+    hc_subtitle(text = paste0(title, ", ", select_year)) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_race_ethnicity_", select_year)) |>
     hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
 all_bar_parole_eligibility_race$Georgia
-all_bar_parole_eligibility_race$Alabama
-all_bar_parole_eligibility_race$Louisiana
-all_bar_parole_eligibility_race$`South Dakota` # is "U" - remove since 100% unknown
-rm(states)
 
 # Generate sentence for each state
-states <- unique(current_ped_race$state)
 all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_race |>
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop, 0),
                       " percent of people in prison past parole eligibility were ",
                       df1$race, ".")
+
   return(sentences)
 })
-
 all_sentence_parole_eligibility_race <- setNames(all_sentence_parole_eligibility_race, states)
 all_sentence_parole_eligibility_race$Georgia
 rm(states)
@@ -439,42 +306,45 @@ rm(states)
 # Generate graph for each state
 states <- unique(current_ped_sex$state)
 all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_sex |>
     filter(state == x) |>
-    mutate(prop = prop*100,
-           tooltip = paste0("<b>Sex:</b> ", sex, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Sex", variable = sex) |>
     arrange(desc(prop))
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
                                   their sex in ",
                                   select_year, " in the state of ", x, ".")
+
+  title <- "People in Prison Past Parole Eligibility"
+
   highcharts <- fnc_hc_columnchart(df1, "sex", "prop", hc_accessibility_text) |>
-    hc_title(text = "Sex") |>
-    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_colors(c(color4)) |>
+    hc_title(text = "Sex") |>
+    hc_subtitle(text = paste0(title, ", ", select_year)) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_sex_", select_year)) |>
     hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 all_bar_parole_eligibility_sex <- setNames(all_bar_parole_eligibility_sex, states)
 all_bar_parole_eligibility_sex$Georgia
-rm(states)
 
 # Generate sentence for each state
-states <- unique(current_ped_sex$state)
 all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_sex |>
     filter(state == x) |>
     arrange(-prop) |>
     slice(1)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop, 0),
                       " percent of people in prison past parole eligibility were ",
                       tolower(df1$sex), ".<br><br>")
   return(sentences)
 })
-
 all_sentence_parole_eligibility_sex <- setNames(all_sentence_parole_eligibility_sex, states)
 all_sentence_parole_eligibility_sex$Georgia
 rm(states)
@@ -482,43 +352,47 @@ rm(states)
 # Generate graph for each state
 states <- unique(current_ped_ageyrend$state)
 all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_ageyrend |>
     filter(state == x) |>
-    mutate(prop = prop*100,
-           tooltip = paste0("<b>Age:</b> ", ageyrend, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Age", variable = ageyrend) |>
     arrange(desc(ageyrend))
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
                                   their age in ",
                                   select_year, " in the state of ", x, ".")
+
+  title <- "People in Prison Past Parole Eligibility"
+
   highcharts <- fnc_hc_columnchart(df1, "ageyrend", "prop", hc_accessibility_text) |>
-    hc_title(text = "Age") |>
-    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_colors(c(color4)) |>
+    hc_title(text = "Age") |>
+    hc_subtitle(text = paste0(title, ", ", select_year)) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_age_", select_year)) |>
     hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 all_bar_parole_eligibility_ageyrend <- setNames(all_bar_parole_eligibility_ageyrend, states)
 all_bar_parole_eligibility_ageyrend$Georgia
-rm(states)
 
 # Generate sentence for each state
-states <- unique(current_ped_ageyrend$state)
 all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_ageyrend |>
     filter(state == x) |>
     arrange(-prop) |>
-    slice(1)
-  df1$ageyrend <- gsub("-", " to ", df1$ageyrend)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+    slice(1) |>
+    mutate(ageyrend = gsub("-", " to ", ageyrend))
+
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop, 0),
                       " percent of people in prison past parole eligibility were between the ages of ",
                       df1$ageyrend, " old.")
+
   return(sentences)
 })
-
 all_sentence_parole_eligibility_ageyrend <- setNames(all_sentence_parole_eligibility_ageyrend, states)
 all_sentence_parole_eligibility_ageyrend$Georgia
 rm(states)
@@ -542,40 +416,37 @@ current_ped_fbi_index <- current_ped_fbi_index |>
                      "Other Violent Offenses") ~ "Violent",
     fbi_index %in% c("Drug", "Public Order", "Property") ~ "Nonviolent",
     TRUE ~ "Other or Unknown"
-  )) |>
-  mutate(tooltip = paste0("<b>", state, " - ",
-                          group, "</b><br>",
-                          "Number of People: ", n_label, "<br>",
-                          "Percentage of People: ", prop_label, "<br>"))
+  ))
 
 # Generate graph for each state
 states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
+
   df1 <- current_ped_fbi_index |>
     filter(state == x & fbi_index != "Unknown") |>
-    mutate(prop = prop * 100,
-           tooltip = paste0("<b>Offense:</b> ", fbi_index, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Offense", variable = fbi_index) |>
     arrange(fbi_index)
 
-  hc_accessibility_text <- paste0("TBD")
+  # Accessibility text describing the chart content
+  hc_accessibility_text <- paste0(
+    "This chart shows the proportion of people in prison past parole eligibility in the state of ", x,
+    " categorized by offense type for the year ", select_year, ". ",
+    "The bars represent different FBI Index offense types, excluding unknown offenses.")
+
+  title <- "People in Prison Past Parole Eligibility"
 
   highcharts <- fnc_hc_columnchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
-    hc_title(text = "Offense Type") |>
-    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_colors(c(color4)) |>
+    hc_title(text = "Offense Type") |>
+    hc_subtitle(text = paste0(title, ", ", select_year)) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_offense_", select_year)) |>
     hc_caption(text = ncrp_source)
 
   return(highcharts)
 })
-
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
-all_bar_ped_fbi_index$Alabama
-all_bar_ped_fbi_index$Arkansas
-rm(states)
-
 
 # Get proportion of offenses that were violent and nonviolent
 current_ped_offense_group <- current_ped_fbi_index |>
@@ -586,10 +457,7 @@ current_ped_offense_group <- current_ped_fbi_index |>
   group_by(state) |>
   mutate(prop = total_offenses / sum(total_offenses))
 
-
-
 # Generate sentence for each state
-states <- unique(current_ped_fbi_index$state)
 all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) {
 
   # Get the top group
@@ -623,18 +491,16 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
   # Construct the sentence for the FBI index breakdown
   fbi_sentence <- paste0("Most people who were incarcerated past parole eligibility were serving time for ",
-                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1] * 100, 0), "%) and ",
-                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2] * 100, 0), "%) offenses.")
+                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1], 0), "%) and ",
+                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2], 0), "%) offenses.")
 
   # Combine the sentences
   sentences <- paste0(group_sentence, " ", fbi_sentence)
 
   return(sentences)
 })
-
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
 all_sentence_parole_eligibility_fbi_index$Georgia
-all_sentence_parole_eligibility_fbi_index$Alabama
 rm(states)
 
 
@@ -654,44 +520,46 @@ current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)
 # Generate graph for each state
 states <- unique(current_ped_sentlgth$state)
 all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_sentlgth |>
     filter(state == x) |>
-    mutate(prop = prop*100,
-           tooltip = paste0("<b>Sentence Length:</b> ", sentlgth, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+    fnc_create_tooltip(variable_label = "Sentence Length", variable = sentlgth)
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   who are currently eligible for parole but not yet released by
                                   their sentence length in ",
                                   select_year, " in the state of ", x, ".")
+
+  title <- "People in Prison Past Parole Eligibility"
+
   highcharts <- fnc_hc_columnchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
-    hc_title(text = "Sentence Length") |>
-    hc_subtitle(text = paste0("People in Prison Past Their Parole Eligibility, ", select_year)) |>
     hc_colors(c(color4)) |>
+    hc_title(text = "Sentence Length") |>
+    hc_subtitle(text = paste0(title, ", ", select_year)) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_sentence_length_", select_year)) |>
     hc_caption(text = ncrp_source)
+
   return(highcharts)
 })
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
 all_bar_parole_eligibility_sentlgth$Georgia
-all_bar_parole_eligibility_sentlgth$Utah
-rm(states)
-
 
 # Generate sentence for each state
-states <- unique(current_ped_sentlgth$state)
 all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
+
   df1 <- current_ped_sentlgth |>
     filter(state == x) |>
     arrange(-prop) |>
-    slice(1)
-  df1$sentlgth <- gsub("-", " to ", df1$sentlgth)
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0),
+    slice(1) |>
+    mutate(sentlgth = gsub("-", " to ", sentlgth))
+
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop, 0),
                       " percent of people in prison past parole eligibility had sentence lengths between ",
                       df1$sentlgth, ".")
+
   return(sentences)
 })
-
 all_sentence_parole_eligibility_sentlgth <- setNames(all_sentence_parole_eligibility_sentlgth, states)
 all_sentence_parole_eligibility_sentlgth$Georgia
 rm(states)
@@ -705,7 +573,6 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 save(all_sentence_pe_type,                         file = file.path(app_folder, "all_sentence_pe_type.rds"))
-save(all_stackedbar_pe_type,                       file = file.path(app_folder, "all_stackedbar_pe_type.rds"))
 save(all_pie_pe_type,                              file = file.path(app_folder, "all_pie_pe_type.rds"))
 
 save(all_sentence_pop_pe_by_year,                  file = file.path(app_folder, "all_sentence_pop_pe_by_year.rds"))
@@ -725,5 +592,3 @@ save(all_bar_ped_fbi_index,                        file = file.path(app_folder, 
 
 save(all_sentence_parole_eligibility_sentlgth,     file = file.path(app_folder, "all_sentence_parole_eligibility_sentlgth.rds"))
 save(all_bar_parole_eligibility_sentlgth,          file = file.path(app_folder, "all_bar_parole_eligibility_sentlgth.rds"))
-
-

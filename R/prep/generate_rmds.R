@@ -9,8 +9,8 @@ source("R/prep/config.R")
 # source("R/prep/tab_disparities_years_past_pe.R")
 
 # Load notes
-load(file = paste0(config$sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
-load(file = paste0(config$sp_data_path, "/data/analysis/app/state_notes.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
 
 # Save working directory
 wd <- getwd()
@@ -33,7 +33,7 @@ states_qmd <- as.character(states)
 #    and write out to qmd - name of qmd should include state name
 replace_write_qmd <- function(state) {
   cleaned_state <- str_replace_all(state, "\\s+", "_") # replace spaces with underscores
-  str_replace(orig_qmd, "change_me", state) |>
+  str_replace(orig_qmd, "this_state", state) |>
     write_lines(paste0("state_report_", cleaned_state, ".qmd"))
 }
 
