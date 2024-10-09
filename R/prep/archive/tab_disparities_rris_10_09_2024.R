@@ -55,9 +55,11 @@ census_state_race_population <- census_state_race_population |>
 # After merging, the result will have both population and prison population data.
 merged_data <- census_state_race_population %>%
   inner_join(bjs_prison_pop_by_race_2020, by = c("state", "race")) |>
-  rename(prison_population = n) |>
-  # Calculate the incarceration rate per 100,000 people for each racial group in each state.
-  # This helps to compare the incarceration levels while accounting for the population sizes.
+  rename(prison_population = n)
+
+# Calculate the incarceration rate per 100,000 people for each racial group in each state.
+# This helps to compare the incarceration levels while accounting for the population sizes.
+merged_data <- merged_data %>%
   mutate(incarceration_rate = prison_population / state_population * 100000)
 
 # Reference Rate Calculation:
@@ -80,46 +82,188 @@ all_rri_data <- merged_data %>%
 
 
 
+# RRI sentence for Black people
+states <- unique(all_rri_data$state)
+all_sentence_rri_black <- map(.x = states, .f = function(x) {
+
+  # Filter the RRI data for the specific state.
+  df1 <- all_rri_data %>%
+    filter(state == x, race == "Black, non-Hispanic")
+
+  # Generate the sentence only if the RRI for Black people is greater than 1.
+  if (nrow(df1) > 0 && df1$rri > 1) {
+    final_sentence <- paste0("In 2020, <span style='color:#49a7a1; font-weight:bold;'>Black people</span> were incarcerated in state prison at a rate <span style='color:#49a7a1; font-weight:bold;'>",
+                             round(df1$rri, 1), " times</span> higher than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
+  } else {
+    final_sentence <- paste0("")
+  }
+
+  return(final_sentence)
+})
+
+# Assign state names to the generated sentences for each state.
+all_sentence_rri_black <- setNames(all_sentence_rri_black, states)
+all_sentence_rri_black$Georgia
+all_sentence_rri_black$Oklahoma
+rm(states)
+
+# RRI sentence for Hispanic people
+states <- unique(all_rri_data$state)
+all_sentence_rri_hispanic <- map(.x = states, .f = function(x) {
+
+  # Filter the RRI data for the specific state.
+  df1 <- all_rri_data %>%
+    filter(state == x, race == "Hispanic, any race")
+
+  # Generate the sentence only if the RRI for Hispanic people is greater than 1.
+  if (nrow(df1) > 0 && df1$rri > 1) {
+    final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison at a rate <span style='color:#55b4e5; font-weight:bold;'>",
+                             round(df1$rri, 1), "</span> times higher than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
+  } else {
+    final_sentence <- paste0("")
+  }
+
+  return(final_sentence)
+})
+
+# Assign state names to the generated sentences for each state.
+all_sentence_rri_hispanic <- setNames(all_sentence_rri_hispanic, states)
+all_sentence_rri_hispanic$Georgia
+all_sentence_rri_hispanic$Oklahoma
+rm(states)
+
+
+# ---------------------------------------------------------------------------- #
+# PEOPLE INFOGRAPHICS FOR RRI's
+# ---------------------------------------------------------------------------- #
+
+# Image setup
+whichimage <- "person-2745706-bw"
+wd <- getwd()
+
+# Make sure you have the correct image path
+if (whichimage == "person-2745706-bw"){
+  px_h <- 521
+  px_w <- 323
+  ex_h <- 0.005
+  ex_w <- 0.02
+  img_ar_hw <- (px_h*(1+ex_h)) / (px_w*(1+ex_w))
+  img_ar_wh <- (px_w*(1+ex_w)) / (px_h*(1+ex_h))
+  rawimg <- readPNG(file.path(wd, glue("img/{whichimage}.png")))
+  img <- ifelse(rawimg == 0, 1, 0)
+}
+
+rri_greater_than_1 <- all_rri_data |>
+  filter(race != "White, non-Hispanic" &
+           race != "Other race(s), non-Hispanic" &
+           rri > 1) |>
+  select(state, race, rri)
+
+rri_greater_than_1_black <- rri_greater_than_1 |>
+  filter(race == "Black, non-Hispanic")
+
+rri_greater_than_1_hispanic <- rri_greater_than_1 |>
+  filter(race == "Hispanic, any race")
+
+# Set up colors
+light_color  <- darkgray
+empty_color   <- "#FFFFFF"
+default_ncols <- 15
+
+# Create infographics and save them as PNGs for each state (Black RRI)
+# Takes 5 minutes to run
+states <- unique(rri_greater_than_1_black$state)
+map(.x = states, .f = function(x) {
+  df_state <- rri_greater_than_1_black |>
+    filter(state == x)
+
+  fnc_create_infographic(df_state$rri, color4)
+
+  # Save the infographic
+  ggsave(file.path(app_folder, paste0("rri_infographic_black_", x, ".png")),
+         plot = last_plot(), width = 8, height = 6, dpi = 300)
+
+  # Load the saved image
+  img <- image_read(file.path(app_folder, paste0("rri_infographic_black_", x, ".png")))
+
+  # Crop the image
+  img_cropped <- image_trim(img)
+
+  # Save the cropped image
+  image_write(img_cropped, file.path(app_folder, paste0("rri_infographic_black_", x, ".png")))
+})
+
+# Create infographics and save them as PNGs for each state (Hispanic RRI)
+# Takes 5 minutes to run
+states <- unique(rri_greater_than_1_hispanic$state)
+map(.x = states, .f = function(x) {
+  df_state <- rri_greater_than_1_hispanic |>
+    filter(state == x)
+
+  fnc_create_infographic(df_state$rri, color2)
+
+  # Save the infographic
+  ggsave(file.path(app_folder, paste0("rri_infographic_hispanic_", x, ".png")),
+         plot = last_plot(), width = 8, height = 6, dpi = 300)
+
+  # Load the saved image
+  img <- image_read(file.path(app_folder, paste0("rri_infographic_hispanic_", x, ".png")))
+
+  # Crop the image
+  img_cropped <- image_trim(img)
+
+  # Save the cropped image
+  image_write(img_cropped, file.path(app_folder, paste0("rri_infographic_hispanic_", x, ".png")))
+})
+
+
+
+
+# ---------------------------------------------------------------------------- #
+# Save Data
+# ---------------------------------------------------------------------------- #
+
+save(all_sentence_rri_black,    file = file.path(app_folder, "all_sentence_rri_black.rds"))
+save(all_sentence_rri_hispanic, file = file.path(app_folder, "all_sentence_rri_hispanic.rds"))
+save(all_rri_data,              file = file.path(app_folder, "all_rri_data.rds"))
+
+
+
+
+
 
 
 
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
-ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
-  # remove Louisiana and Alabama
-  filter(state != "Alabama" & state != "Louisiana")
-
-# Get total prison pop by state and rptyear
-prison_pop_by_race <- ncrp_yearendpop_filtered |>
-  filter(rptyear == 2020 & race %in% c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) |>
-  group_by(state, race) |>
-  summarise(total_prison_pop = n(), .groups = "drop")
+ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
 # Get current PE pop by state and rptyear
 prison_pop_past_parole_elig_by_race <- ncrp_yearendpop_filtered |>
-  filter(rptyear == 2020 & race %in% c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) |>
   filter(parelig_status == "Current") |>
-  group_by(state, race) |>
-  summarise(n = n(), .groups = "drop")
+  group_by(state, rptyear, race) |>
+  summarise(n = n(), .groups = "drop") |>
+  filter(rptyear == 2020)
 
 # Merge with parole eligibility data
-merged_prison_pop_data <- prison_pop_by_race %>%
+merged_parole_data <- census_state_race_population %>%
   inner_join(prison_pop_past_parole_elig_by_race, by = c("state", "race")) %>%
-  rename(past_pe_population = n) |>
-  # Calculate rate of people past parole eligibility per 100,000
-  mutate(past_pe_rate = past_pe_population / total_prison_pop #* 100000
-         )
+  rename(past_parole_population = n)
+
+# Calculate rate of people past parole eligibility per 100,000
+merged_parole_data <- merged_parole_data %>%
+  mutate(past_parole_rate = past_parole_population / state_population * 100000)
 
 # Calculate the reference rate for White, non-Hispanic individuals
-reference_past_pe_rate <- merged_prison_pop_data %>%
+reference_parole_rate <- merged_parole_data %>%
   filter(race == "White, non-Hispanic") %>%
-  select(state, past_pe_rate) %>%
-  rename(reference_past_pe_rate = past_pe_rate)
+  select(state, past_parole_rate) %>%
+  rename(reference_parole_rate = past_parole_rate)
 
 # Calculate RRI for other racial groups
-all_pe_rri_data <- merged_prison_pop_data %>%
-  inner_join(reference_past_pe_rate, by = "state") %>%
-  mutate(rri = past_pe_rate / reference_past_pe_rate,
+all_pe_rri_data <- merged_parole_data %>%
+  inner_join(reference_parole_rate, by = "state") %>%
+  mutate(rri = past_parole_rate / reference_parole_rate,
          rri = round(rri, 1)) %>%
   select(state, race, rri)
 

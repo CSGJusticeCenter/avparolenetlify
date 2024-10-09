@@ -14,12 +14,10 @@
 
 # Get unique states from the bjs_prison_pop_by_rptyear dataset to ensure we're working
 # with all the states present in the dataset.
-states <- unique(bjs_prison_pop_by_rptyear$state)
-
-# Filter out states that have abolished parole (abolished_parole_16_total == "N")
-# from the state_notes dataset, retaining only states still practicing parole.
-states <- state_notes |>
-  filter(abolished_parole == "N", state %in% states) |>
+states <- bjs_prison_pop_by_rptyear |>
+  filter(!state %in% states_to_exclude$state) |>
+  distinct(state) |>
+  arrange(state) |>
   pull(state)
 
 # Loop through each state and generate a sentence summarizing the change in prison population

@@ -248,17 +248,56 @@ fnc_clean_bjs_data <- function(df) {
 #' # Example usage:
 #' filtered_data <- fnc_filter_population(population_data)
 fnc_filter_population <- function(data) {
-  # Get states that have not abolished parole
-  abolished <- state_notes |>
-    filter(abolished_parole == "N") |>
+  # Get states to exclude - missing data and abolished parole
+  exclude <- states_to_exclude |>
     pull(state)
 
   # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
   filtered_data <- data |>
-    filter(state %in% abolished)  # Only keep states that did not abolish parole
+    filter(!(state %in% exclude))  # Only keep states that did not abolish parole
 
   return(filtered_data)
 }
+
+fnc_filter_pe_population_criteria <- function(data) {
+
+  # Get states to exclude - missing data and abolished parole
+  exclude <- states_to_exclude |>
+    pull(state)
+
+  # Filter data based on the admission type, valid sentence lengths, and states that did not abolish parole
+  filtered_data <- data |>
+    filter(admtype == "New court commitment") |>
+    filter(sentlgth %in% c("1-1.9 years",
+                           "2-4.9 years",
+                           "5-9.9 years",
+                           "10-24.9 years",
+                           ">=25 years")) |>
+    filter(!(state %in% exclude))
+
+  # Return the filtered data
+  return(filtered_data)
+}
+
+fnc_filter_exclude_high_missing_race <- function(data, states_with_high_missing_race) {
+
+  # Convert to character vector if it's a list
+  if (is.list(states_with_high_missing_race)) {
+    states_with_high_missing_race <- unlist(states_with_high_missing_race)
+  }
+
+  # Debugging step: Print the list of states to be excluded
+  print("States with high missing race data:")
+  print(states_with_high_missing_race)
+
+  # Ensure both 'state' in data and 'states_with_high_missing_race' are in the same format
+  filtered_data <- data |>
+    filter(!(state %in% states_with_high_missing_race))
+
+  # Return the filtered data
+  return(filtered_data)
+}
+
 
 #' Retrieve and Process Census Data for a Given State
 #'
@@ -296,190 +335,7 @@ fnc_get_census_data <- function(state) {
 }
 
 
-#' Filter Population Criteria for Analysis
-#'
-#' This function filters a dataset of prison admissions based on specific criteria,
-#' including admission type, sentence lengths, and whether the state has abolished parole.
-#'
-#' @param data A data frame containing prison admissions data. It must have columns for `admtype`, `sentlgth`, and `state`.
-#' @param admtype_filter The type of admission to filter by. Defaults to "New court commitment".
-#' @param sentence_lengths A vector of sentence lengths to filter by. Defaults to c("1-1.9 years", "2-4.9 years", "5-9.9 years", "10-24.9 years").
-#' @return A filtered data frame based on the specified criteria.
-#' @examples
-#' \dontrun{
-#' filtered_data <- filter_population_criteria(prison_data)
-#' }
-# fnc_filter_pe_population_criteria <- function(data,
-#                                               admtype_filter = "New court commitment") {
-#   # Get states that have not abolished parole
-#   abolished <- state_notes |>
-#     filter(abolished_parole == "N") |>
-#     pull(state)
-#
-#   # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
-#   filtered_data <- data |>
-#     filter(admtype == admtype_filter) |>
-#     filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
-#     filter(state %in% abolished)  # Only keep states that did not abolish parole
-#
-#   return(filtered_data)
-# }
 
-
-#' Filter Population Data Based on Parole Eligibility Criteria
-#'
-#' This function filters a dataset based on specific criteria related to parole eligibility.
-#' It filters by admission type, sentence length, and states that have not abolished parole.
-#' Additionally, it calculates and prints diagnostic information about states with missing data
-#' for the `admtype` and `calc_sent_lgth_compl` columns.
-#'
-#' @param data A data frame containing parole population data.
-#' @param admtype_filter A string specifying the admission type to filter on. Defaults to "New court commitment".
-#' @param missing_threshold A numeric value between 0 and 1 specifying the threshold for considering a state as having
-#' high missing data. Defaults to 0.5 (i.e., 50%).
-#'
-#' @return A filtered data frame with the population meeting the specified criteria.
-#' The function also prints diagnostic information about included states and states with high missing data.
-#'
-#' @details The function first filters the dataset to include only states that have not abolished parole.
-#' It then applies additional filters based on admission type and sentence length.
-#' Missing data rates for each state are calculated, and states with missing rates above the threshold are identified.
-#' Diagnostic information about the included states and states with high missing data is printed to the console.
-#'
-#' @examples
-#' # Assuming `ncrp_yearendpop` is a data frame with the necessary columns:
-#' filtered_data <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
-#'
-#' @export
-# fnc_filter_pe_population_criteria <- function(data,
-#                                               admtype_filter = "New court commitment",
-#                                               missing_threshold = 0.5) {
-#   # Get states that have not abolished parole
-#   abolished <- state_notes |>
-#     filter(abolished_parole == "N") |>
-#     pull(state)
-#
-#   # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
-#   filtered_data <- data |>
-#     filter(admtype == admtype_filter) |>
-#     filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
-#     filter(state %in% abolished)  # Only keep states that did not abolish parole
-#
-#   # Calculate missing rates for each state in admtype and calc_sent_lgth_compl
-#   missing_summary <- data |>
-#     group_by(state) |>
-#     summarize(
-#       admtype_missing_rate = sum(is.na(admtype)) / n(),
-#       calc_sent_lgth_missing_rate = sum(is.na(calc_sent_lgth_compl)) / n(),
-#       total_records = n()
-#     ) |>
-#     ungroup()
-#
-#   # Identify states with more than the threshold of missing admtype and calc_sent_lgth_compl
-#   states_high_missing_admtype <- missing_summary |>
-#     filter(admtype_missing_rate > missing_threshold) |>
-#     pull(state)
-#
-#   states_high_missing_calc_sent <- missing_summary |>
-#     filter(calc_sent_lgth_missing_rate > missing_threshold) |>
-#     pull(state)
-#
-#   # States that are included in the final filtered data
-#   included_states <- unique(filtered_data$state)
-#
-#   # Print diagnostic information
-#   cat("States included in the final filtered data:\n", included_states, "\n\n")
-#   cat("States with more than", missing_threshold * 100, "% missing 'admtype':\n", states_high_missing_admtype, "\n\n")
-#   cat("States with more than", missing_threshold * 100, "% missing 'calc_sent_lgth_compl':\n", states_high_missing_calc_sent, "\n\n")
-#
-#   # Return the filtered data
-#   return(filtered_data)
-# }
-fnc_filter_pe_population_criteria <- function(data,
-                                              admtype_filter = "New court commitment",
-                                              missing_threshold = 0.5) {
-
-  # Function to calculate and print diagnostic information for a given subset of data
-  print_diagnostics <- function(data_subset, subset_label) {
-    # Get states that have not abolished parole (inside this function to avoid scoping issues)
-    abolished <- state_notes |>
-      filter(abolished_parole == "N") |>
-      pull(state)
-
-    # Filter data based on the admission type, valid sentence lengths (calc_sent_lgth_compl > 0), and states that did not abolish parole
-    filtered_data <- data_subset |>
-      filter(admtype == admtype_filter) |>
-      # filter(!is.na(calc_sent_lgth_compl) & calc_sent_lgth_compl > 0) |>
-      filter(sentlgth %in% c("1-1.9 years",
-                             "2-4.9 years",
-                             "5-9.9 years",
-                             "10-24.9 years",
-                             ">=25 years")) |>
-      filter(state %in% abolished)
-
-    # Calculate missing rates for each state in admtype and calc_sent_lgth_compl
-    missing_summary <- data_subset |>
-      group_by(state) |>
-      summarize(
-        admtype_missing_rate = sum(admtype == "Unknown") / n(),
-        # calc_sent_lgth_missing_rate = sum(is.na(calc_sent_lgth_compl)) / n(),
-        total_records = n()
-      ) |>
-      ungroup()
-
-    # Identify states with more than the threshold of missing admtype and calc_sent_lgth_compl
-    states_high_missing_admtype <- missing_summary |>
-      filter(admtype_missing_rate > missing_threshold) |>
-      pull(state)
-
-    # states_high_missing_calc_sent <- missing_summary |>
-    #   filter(calc_sent_lgth_missing_rate > missing_threshold) |>
-    #   pull(state)
-
-    # Identify states with 100% missing admtype and calc_sent_lgth_compl
-    states_100_missing_admtype <- missing_summary |>
-      filter(admtype_missing_rate == 1) |>
-      pull(state)
-
-    # states_100_missing_calc_sent <- missing_summary |>
-    #   filter(calc_sent_lgth_missing_rate == 1) |>
-    #   pull(state)
-
-    # States that are included in the final filtered data
-    included_states <- unique(filtered_data$state)
-
-    # Print diagnostic information
-    cat("\nDiagnostic Information for", subset_label, ":\n")
-    cat("States included in the final filtered data:\n", included_states, "\n\n")
-    cat("States with more than", missing_threshold * 100, "% missing 'admtype':\n", states_high_missing_admtype, "\n\n")
-    # cat("States with more than", missing_threshold * 100, "% missing 'calc_sent_lgth_compl':\n", states_high_missing_calc_sent, "\n\n")
-    cat("States with 100% missing 'admtype':\n", states_100_missing_admtype, "\n\n")
-    # cat("States with 100% missing 'calc_sent_lgth_compl':\n", states_100_missing_calc_sent, "\n\n")
-  }
-
-  # Print diagnostics for all data
-  print_diagnostics(data, "All Data")
-
-  # Print diagnostics for rptyear == 2019
-  data_2019 <- data |> filter(rptyear == 2019)
-  print_diagnostics(data_2019, "rptyear == 2019")
-
-  # Print diagnostics for rptyear == 2020
-  data_2020 <- data |> filter(rptyear == 2020)
-  print_diagnostics(data_2020, "rptyear == 2020")
-
-  # Return the filtered data for the entire dataset as before
-  abolished <- state_notes |> filter(abolished_parole == "N") |> pull(state)
-
-  return(data |>
-           filter(admtype == admtype_filter) |>
-           filter(sentlgth %in% c("1-1.9 years",
-                                  "2-4.9 years",
-                                  "5-9.9 years",
-                                  "10-24.9 years",
-                                  ">=25 years")) |>
-           filter(state %in% abolished))
-}
 
 
 

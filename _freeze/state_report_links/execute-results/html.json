@@ -1,0 +1,15 @@
+{
+  "hash": "afe470a3245cfbf435ccf81a92910351",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"State Report Links\"\nformat:\n  html:\n    css: styles.css\n    embed-resources: TRUE\n    code-fold: true\n    page-layout: full\n    fig_caption: yes\n---\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n[Arkansas](https://avparoleproject.netlify.app/state_report_arkansas)<br>[Colorado](https://avparoleproject.netlify.app/state_report_colorado)<br>[Georgia](https://avparoleproject.netlify.app/state_report_georgia)<br>[Iowa](https://avparoleproject.netlify.app/state_report_iowa)<br>[Kentucky](https://avparoleproject.netlify.app/state_report_kentucky)<br>[Louisiana](https://avparoleproject.netlify.app/state_report_louisiana)<br>[Maryland](https://avparoleproject.netlify.app/state_report_maryland)<br>[Massachusetts](https://avparoleproject.netlify.app/state_report_massachusetts)<br>[Mississippi](https://avparoleproject.netlify.app/state_report_mississippi)<br>[Missouri](https://avparoleproject.netlify.app/state_report_missouri)<br>[Montana](https://avparoleproject.netlify.app/state_report_montana)<br>[Nebraska](https://avparoleproject.netlify.app/state_report_nebraska)<br>[Nevada](https://avparoleproject.netlify.app/state_report_nevada)<br>[New Hampshire](https://avparoleproject.netlify.app/state_report_new_hampshire)<br>[New York](https://avparoleproject.netlify.app/state_report_new_york)<br>[North Dakota](https://avparoleproject.netlify.app/state_report_north_dakota)<br>[Oklahoma](https://avparoleproject.netlify.app/state_report_oklahoma)<br>[Pennsylvania](https://avparoleproject.netlify.app/state_report_pennsylvania)<br>[Rhode Island](https://avparoleproject.netlify.app/state_report_rhode_island)<br>[South Carolina](https://avparoleproject.netlify.app/state_report_south_carolina)<br>[South Dakota](https://avparoleproject.netlify.app/state_report_south_dakota)<br>[Tennessee](https://avparoleproject.netlify.app/state_report_tennessee)<br>[Texas](https://avparoleproject.netlify.app/state_report_texas)<br>[Utah](https://avparoleproject.netlify.app/state_report_utah)<br>[West Virginia](https://avparoleproject.netlify.app/state_report_west_virginia)<br>[Wyoming](https://avparoleproject.netlify.app/state_report_wyoming)<br>\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

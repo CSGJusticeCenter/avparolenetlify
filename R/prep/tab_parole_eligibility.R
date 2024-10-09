@@ -309,6 +309,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
 all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Georgia
 all_sentence_pop_pe_by_year$Hawaii
+all_sentence_pop_pe_by_year$`New Jersey`
 rm(states)
 
 # VISUALIZATION: Create a stacked bar chart showing the percentage of people past parole eligibility (PCE)
@@ -385,7 +386,7 @@ rm(states)
 # Get number and proportion of people in prison past their parole eligibility year
 # by demographic
 current_ped_race     <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
-  filter(!(race == "Unknown" & prop == 1)) # remove state with 100% Unknown
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 current_ped_sex      <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 

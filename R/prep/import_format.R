@@ -205,6 +205,53 @@ ncrp_yearendpop <- ncrp_yearendpop_combined |>
 
 
 
+#------------------------------------------------------------------------------#
+# States Excluded
+#------------------------------------------------------------------------------#
+
+# Step 1: Determine which states have more than 50% missing in admtype and sentlgth
+# We need these variables to filter the population to people in prison for
+# new offenses and sentence lengths not less than one year and not life
+# Filter for states with more than 50% missing in admtype or sentlgth
+states_with_high_missing <- ncrp_yearendpop %>%
+  filter(rptyear >= 2018) |>
+  group_by(state, rptyear) %>%
+  summarize(
+    perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
+    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1)
+  ) %>%
+  filter(perc_missing_admtype > 50 | perc_missing_sentlgth > 50)
+
+# Step 2: Get states that have abolished parole and keep it as a dataframe
+abolished_states <- state_notes |>
+  filter(abolished_parole == "Y") |>
+  select(state)  # Select only the 'state' column
+
+# Step 3: Combine both dataframes of states to exclude
+states_to_exclude <- states_with_high_missing %>%
+  select(state) %>%
+  distinct() %>%
+  bind_rows(abolished_states) %>%
+  distinct()  # Remove any duplicates
+
+# Step 4: May be needed, filter the resulting dataframe for a specific year (e.g., 2020) ##############################
+states_to_exclude <- states_with_high_missing %>%
+  filter(rptyear == 2020) %>%
+  select(state) %>%
+  bind_rows(abolished_states) %>%
+  distinct() %>%
+  bind_rows(tibble(state = "Alabama"))
+
+
+states_with_high_missing_race <- ncrp_yearendpop %>%
+  filter(rptyear >= 2018) |>
+  group_by(state, rptyear) %>%
+  summarize(
+    perc_missing_race = round(mean(race == "Unknown" | is.na(race)) * 100, 1)
+  ) %>%
+  filter(perc_missing_race > 50) |>
+  select(state) |> distinct()
+
 
 #------------------------------------------------------------------------------#
 # BJS
@@ -412,12 +459,14 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 # Save Data
 #------------------------------------------------------------------------------#
 
-save(ncrp_yearendpop,             file = file.path(app_folder, "ncrp_yearendpop.rds"))
-save(ncrp_releases,               file = file.path(app_folder, "ncrp_releases.rds"))
-save(bjs_prison_pop_by_race_2020, file = file.path(app_folder, "bjs_prison_pop_by_race_2020.rds"))
-save(bjs_prison_pop_by_race_2022, file = file.path(app_folder, "bjs_prison_pop_by_race_2022.rds"))
-save(bjs_prison_pop_by_sex_2022,  file = file.path(app_folder, "bjs_prison_pop_by_sex_2022.rds"))
-save(bjs_prison_pop_by_rptyear,   file = file.path(app_folder, "bjs_prison_pop_by_rptyear.rds"))
-save(hex_gj,                      file = file.path(app_folder, "hex_gj.rds"))
-save(state_notes,                 file = file.path(app_folder, "state_notes.rds"))
+save(ncrp_yearendpop,               file = file.path(app_folder, "ncrp_yearendpop.rds"))
+save(ncrp_releases,                 file = file.path(app_folder, "ncrp_releases.rds"))
+save(bjs_prison_pop_by_race_2020,   file = file.path(app_folder, "bjs_prison_pop_by_race_2020.rds"))
+save(bjs_prison_pop_by_race_2022,   file = file.path(app_folder, "bjs_prison_pop_by_race_2022.rds"))
+save(bjs_prison_pop_by_sex_2022,    file = file.path(app_folder, "bjs_prison_pop_by_sex_2022.rds"))
+save(bjs_prison_pop_by_rptyear,     file = file.path(app_folder, "bjs_prison_pop_by_rptyear.rds"))
+save(hex_gj,                        file = file.path(app_folder, "hex_gj.rds"))
+save(state_notes,                   file = file.path(app_folder, "state_notes.rds"))
+save(states_to_exclude,             file = file.path(app_folder, "states_to_exclude.rds"))
+save(states_with_high_missing_race, file = file.path(app_folder, "states_with_high_missing_race.rds"))
 

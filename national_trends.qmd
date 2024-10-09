@@ -145,7 +145,7 @@ reactable(
   parole_eligibility_table ,
   pagination = FALSE,
   searchable = TRUE,
-  defaultSorted = c("current_perc"),
+  defaultSorted = c("current_perc", "state"),
   defaultColDef = colDef(
     headerStyle = list(fontWeight = "normal"),
     sortable = TRUE,
