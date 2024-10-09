@@ -124,8 +124,12 @@ all_pe_rri_data <- merged_prison_pop_data %>%
   select(state, race, rri)
 
 
-# RRI for Black people
+
 states <- unique(all_pe_rri_data$state)
+
+# RRI for Black people
+# SENTENCE
+# Generate sentence for each state
 all_sentence_pe_rri_black <- map(.x = states, .f = function(x) {
 
   # Filter the RRI data for the specific state.
@@ -147,7 +151,8 @@ all_sentence_pe_rri_black <- map(.x = states, .f = function(x) {
 all_sentence_pe_rri_black <- setNames(all_sentence_pe_rri_black, states)
 all_sentence_pe_rri_black$Georgia
 
-# RRI for Hispanic people
+# SENTENCE
+# Generate sentence for each state
 states <- unique(all_pe_rri_data$state)
 all_sentence_pe_rri_hispanic <- map(.x = states, .f = function(x) {
 
@@ -240,7 +245,14 @@ map(.x = states, .f = function(x) {
 # Save Data
 # ---------------------------------------------------------------------------- #
 
-save(all_sentence_pe_rri_black,    file = file.path(app_folder, "all_sentence_pe_rri_black.rds"))
-save(all_sentence_pe_rri_hispanic, file = file.path(app_folder, "all_sentence_pe_rri_hispanic.rds"))
-save(all_pe_rri_data,              file = file.path(app_folder, "all_pe_rri_data.rds"))
+# Define the data objects and their corresponding file names
+data_files <- list(
+  all_sentence_pe_rri_black    = "all_sentence_pe_rri_black",
+  all_sentence_pe_rri_hispanic = "all_sentence_pe_rri_hispanic",
+  all_pe_rri_data              = "all_pe_rri_data"
+)
 
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))

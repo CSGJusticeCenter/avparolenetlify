@@ -49,7 +49,7 @@ if (state_for_report %in% unique(parole_eligibility_table$state)) {
   state_data <- no_data_text
 }
 
-num_people_current <- parole_eligibility_table |> filter(state == state_for_report) |> pull(current_count)
+num_people_current <- parole_eligibility_table |> filter(state == state_for_report) |> pull(current_count_rounded)
 num_people_current_perc <- parole_eligibility_table |> filter(state == state_for_report) |> pull(current_perc)
 num_parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report) |> pull(members)
 

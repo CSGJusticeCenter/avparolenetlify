@@ -21,7 +21,7 @@ los_race <- fnc_filter_population(ncrp_releases) |>
   summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
             .groups = "drop")
 
-# Get states with data
+# Get unique states to iterate over
 states <- unique(los_race$state)
 
 # SENTENCE: "In YEAR, Black people spent X more years on average in prison, and Hispanic people
@@ -81,15 +81,14 @@ all_sentence_los_race <- map(.x = states, .f = function(x) {
 
   return(sentence)
 })
-
-# Set names for the list elements
+# Assign state names to list
 all_sentence_los_race <- setNames(all_sentence_los_race, states)
 all_sentence_los_race$Georgia
 rm(states) # remove states
 
 
 
-# Get unique states with data
+# Get unique states to iterate over
 states <- unique(los_race$state)
 
 # VISUALIZATION: Lollipop showing avg time served by race and ethnicity
@@ -260,8 +259,7 @@ all_lollipop_los_race <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_lollipop_los_race <- setNames(all_lollipop_los_race, states)
 all_lollipop_los_race$Georgia
 
@@ -329,8 +327,7 @@ all_sentence_los_sex <- map(.x = states, .f = function(x) {
     return(paste0("In ", select_year, ", females and males spent the same number of years on average in prison in ", x, "."))
   }
 })
-
-# Set names for the list elements
+# Assign state names to list
 all_sentence_los_sex <- setNames(all_sentence_los_sex, states)
 all_sentence_los_sex$Georgia
 rm(states)
@@ -463,8 +460,7 @@ all_lollipop_los_sex <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_lollipop_los_sex <- setNames(all_lollipop_los_sex, states)
 all_lollipop_los_sex$Georgia
 rm(states)
@@ -491,7 +487,7 @@ los_race_by_offense_type <- fnc_filter_population(ncrp_releases) |>
                                   "White, non-Hispanic",
                                   "Hispanic, any race")))
 
-# Get unique states
+# Get unique states to iterate over
 states <- unique(los_race_by_offense_type$state)
 
 # SENTENCE: "The largest disparity was observed among X offenses, where
@@ -572,17 +568,17 @@ all_sentence_los_race_offense <- map(.x = states, .f = function(x) {
 
   return(sentence)
 })
-
-# Set names for the list elements
+# Assign state names to list
 all_sentence_los_race_offense <- setNames(all_sentence_los_race_offense, states)
 all_sentence_los_race_offense$Georgia
 rm(states)
 
 
 
-# Get unique states
+# Get unique states to iterate over
 states <- unique(los_race_by_offense_type$state)
 
+# VISUALIZATION:
 # Generate chart for each state
 all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
@@ -691,8 +687,7 @@ all_scatter_los_race_offense <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_scatter_los_race_offense <- setNames(all_scatter_los_race_offense, states)
 all_scatter_los_race_offense$Georgia
 rm(states)
@@ -718,6 +713,7 @@ los_sex_by_offense_type <- fnc_filter_population(ncrp_releases) |>
 # Get unique states to iterate over
 states <- unique(los_sex_by_offense_type$state)
 
+# SENTENCE:
 # Generate sentence for each state
 all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 
@@ -768,17 +764,17 @@ all_sentence_los_sex_offense <- map(.x = states, .f = function(x) {
 
   return(sentence)
 })
-
-# Set names for the list elements
+# Assign state names to list
 all_sentence_los_sex_offense <- setNames(all_sentence_los_sex_offense, states)
 all_sentence_los_sex_offense$Georgia
 rm(states)
 
 
 
-# Get unique states
+# Get unique states to iterate over
 states <- unique(los_sex_by_offense_type$state)
 
+# VISUALIZATION:
 # Generate chart for each state
 all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
 
@@ -864,8 +860,7 @@ all_scatter_los_sex_offense <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_scatter_los_sex_offense <- setNames(all_scatter_los_sex_offense, states)
 all_scatter_los_sex_offense$Georgia
 rm(states)
@@ -875,19 +870,22 @@ rm(states)
 # Save Data
 # ---------------------------------------------------------------------------- #
 
-save(all_sentence_los_race,                    file = file.path(app_folder, "all_sentence_los_race.rds"))
-save(all_lollipop_los_race,                    file = file.path(app_folder, "all_lollipop_los_race.rds"))
+# Define the data objects and their corresponding file names
+data_files <- list(
+  all_sentence_los_race          = "all_sentence_los_race.rds",
+  all_lollipop_los_race          = "all_lollipop_los_race.rds",
+  all_sentence_los_sex           = "all_sentence_los_sex.rds",
+  all_lollipop_los_sex           = "all_lollipop_los_sex.rds",
+  all_sentence_los_race_offense  = "all_sentence_los_race_offense.rds",
+  all_scatter_los_race_offense   = "all_scatter_los_race_offense.rds",
+  all_sentence_los_sex_offense   = "all_sentence_los_sex_offense.rds",
+  all_scatter_los_sex_offense    = "all_scatter_los_sex_offense.rds"
+)
 
-save(all_sentence_los_sex,                     file = file.path(app_folder, "all_sentence_los_sex.rds"))
-save(all_lollipop_los_sex,                     file = file.path(app_folder, "all_lollipop_los_sex.rds"))
-
-save(all_sentence_los_race_offense,            file = file.path(app_folder, "all_sentence_los_race_offense.rds"))
-save(all_scatter_los_race_offense,             file = file.path(app_folder, "all_scatter_los_race_offense.rds"))
-
-save(all_sentence_los_sex_offense,             file = file.path(app_folder, "all_sentence_los_sex_offense.rds"))
-save(all_scatter_los_sex_offense,              file = file.path(app_folder, "all_scatter_los_sex_offense.rds"))
-
-
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))
 
 
 

@@ -42,6 +42,7 @@ avg_pe_release_race <- ncrp_pe_release |>
 # Get unique states to iterate over
 states <- unique(avg_pe_release_race$state)
 
+# VISUALIZATION:
 # Generate chart for each state
 all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_race |>
@@ -186,8 +187,7 @@ all_lollipop_avg_pe_release_race <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_lollipop_avg_pe_release_race <- setNames(all_lollipop_avg_pe_release_race, states)
 all_lollipop_avg_pe_release_race$Georgia
 rm(states)
@@ -204,6 +204,7 @@ avg_pe_release_race_offense <- ncrp_pe_release |>
 # Get unique states to iterate over
 states <- unique(avg_pe_release_race_offense$state)
 
+# VISUALIZATION:
 # Generate chart for each state
 all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_race_offense |>
@@ -301,8 +302,7 @@ all_scatter_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_scatter_avg_pe_release_race_offense <- setNames(all_scatter_avg_pe_release_race_offense, states)
 all_scatter_avg_pe_release_race_offense$Georgia
 all_scatter_avg_pe_release_race_offense$Arkansas
@@ -336,9 +336,10 @@ avg_pe_release_sex <- ncrp_pe_release |>
             people_released = n(),
             .groups = "drop")
 
-# Get states with data
+# Get unique states to iterate over
 states <- unique(avg_pe_release_sex$state)
 
+# VISUALIZATION:
 # Generate chart for each state
 all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_sex |>
@@ -461,8 +462,7 @@ all_lollipop_avg_pe_release_sex <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_lollipop_avg_pe_release_sex <- setNames(all_lollipop_avg_pe_release_sex, states)
 all_lollipop_avg_pe_release_sex$Georgia
 rm(states)
@@ -478,6 +478,7 @@ avg_pe_release_sex_offense <- ncrp_pe_release |>
 # Get unique states to iterate over
 states <- unique(avg_pe_release_sex_offense$state)
 
+# VISUALIZATION:
 # Generate chart for each state
 all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
   df1 <- avg_pe_release_sex_offense |>
@@ -562,8 +563,7 @@ all_scatter_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the list of charts by state
+# Assign state names to list
 all_scatter_avg_pe_release_sex_offense <- setNames(all_scatter_avg_pe_release_sex_offense, states)
 all_scatter_avg_pe_release_sex_offense$Georgia
 rm(states)
@@ -581,7 +581,8 @@ rm(states)
 # Get unique states to iterate over
 states <- unique(avg_pe_release_race$state)
 
-# Function to generate sentences summarizing racial disparities in time spent past parole eligibility.
+# SENTENCE:
+# Generate sentence for each state
 all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
 
   # Data preparation: filter the dataset for the current state and rename race categories for clarity.
@@ -639,8 +640,7 @@ all_sentence_avg_pe_release_race <- map(.x = states, .f = function(x) {
 
   return(sentence)  # Return the generated sentence for the state.
 })
-
-# Set the names of the list elements to match the state names.
+# Assign state names to list
 all_sentence_avg_pe_release_race <- setNames(all_sentence_avg_pe_release_race, states)
 all_sentence_avg_pe_release_race$Georgia
 rm(states)
@@ -650,8 +650,11 @@ rm(states)
 # Years Spent in Prison After Parole Eligibility by Race and Ethnicity by Offense Type
 # ---------------------------------------------------------------------------- #
 
+# Get unique states to iterate over
 states <- unique(avg_pe_release_race_offense$state)
-# Iterate over states to generate offense-specific summaries.
+
+# SENTENCE:
+# Generate sentence for each state
 all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   # Filter the dataset for the current state.
@@ -714,8 +717,7 @@ all_sentence_avg_pe_release_race_offense <- map(.x = states, .f = function(x) {
 
   return(sentence)  # Return the constructed sentence for the state.
 })
-
-# Set the names of the list elements to match the state names.
+# Assign state names to list
 all_sentence_avg_pe_release_race_offense <- setNames(all_sentence_avg_pe_release_race_offense, states)
 all_sentence_avg_pe_release_race_offense$Georgia
 
@@ -724,9 +726,11 @@ all_sentence_avg_pe_release_race_offense$Georgia
 # Years Spent in Prison After Parole Eligibility by Sex
 # ---------------------------------------------------------------------------- #
 
+# Get unique states to iterate over
 states <- unique(avg_pe_release_sex$state)
 
-# Function to generate sentences summarizing sex disparities in time spent past parole eligibility.
+# SENTENCE:
+# Generate sentence for each state
 all_sentence_avg_pe_release_sex <- map(.x = states, .f = function(x) {
 
   # Data preparation: filter the dataset for the current state and rename sex categories for clarity.
@@ -765,8 +769,7 @@ all_sentence_avg_pe_release_sex <- map(.x = states, .f = function(x) {
     return(paste0("No significant disparities found between males and females for ", x, "."))
   }
 })
-
-# Set the names of the list elements to match the state names.
+# Assign state names to list
 all_sentence_avg_pe_release_sex <- setNames(all_sentence_avg_pe_release_sex, states)
 all_sentence_avg_pe_release_sex$Georgia
 
@@ -776,8 +779,11 @@ all_sentence_avg_pe_release_sex$Georgia
 # Years Spent in Prison After Parole Eligibility by Sex and Offense Type
 # ---------------------------------------------------------------------------- #
 
-# Iterate over states to generate offense-specific summaries.
+# Get unique states to iterate over
 states <- unique(avg_pe_release_sex_offense$state)
+
+# SENTENCE:
+# Generate sentence for each state
 all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 
   # Filter the dataset for the current state.
@@ -832,8 +838,7 @@ all_sentence_avg_pe_release_sex_offense <- map(.x = states, .f = function(x) {
 
   return(sentence)  # Return the constructed sentence for the state.
 })
-
-# Set the names of the list elements to match the state names.
+# Assign state names to list
 all_sentence_avg_pe_release_sex_offense <- setNames(all_sentence_avg_pe_release_sex_offense, states)
 all_sentence_avg_pe_release_sex_offense$Georgia
 
@@ -843,20 +848,23 @@ all_sentence_avg_pe_release_sex_offense$Georgia
 # Save Data
 # ---------------------------------------------------------------------------- #
 
+# Define the data objects and their corresponding file names
+data_files <- list(
+  all_sentence_avg_pe_release_race          = "all_sentence_avg_pe_release_race.rds",
+  all_lollipop_avg_pe_release_race          = "all_lollipop_avg_pe_release_race.rds",
+  all_sentence_avg_pe_release_race_offense  = "all_sentence_avg_pe_release_race_offense.rds",
+  all_scatter_avg_pe_release_race_offense   = "all_scatter_avg_pe_release_race_offense.rds",
+  avg_pe_release_race                       = "avg_pe_release_race.rds",
+  all_sentence_avg_pe_release_sex           = "all_sentence_avg_pe_release_sex.rds",
+  all_lollipop_avg_pe_release_sex           = "all_lollipop_avg_pe_release_sex.rds",
+  all_sentence_avg_pe_release_sex_offense   = "all_sentence_avg_pe_release_sex_offense.rds",
+  all_scatter_avg_pe_release_sex_offense    = "all_scatter_avg_pe_release_sex_offense.rds",
+  avg_pe_release_sex                        = "avg_pe_release_sex.rds"
+)
 
-save(all_sentence_avg_pe_release_race,         file = file.path(app_folder, "all_sentence_avg_pe_release_race.rds"))
-save(all_lollipop_avg_pe_release_race,         file = file.path(app_folder, "all_lollipop_avg_pe_release_race.rds"))
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))
 
-save(all_sentence_avg_pe_release_race_offense, file = file.path(app_folder, "all_sentence_avg_pe_release_race_offense.rds"))
-save(all_scatter_avg_pe_release_race_offense,  file = file.path(app_folder, "all_scatter_avg_pe_release_race_offense.rds"))
-
-save(avg_pe_release_race,                      file = file.path(app_folder, "avg_pe_release_race.rds"))
-
-save(all_sentence_avg_pe_release_sex,          file = file.path(app_folder, "all_sentence_avg_pe_release_sex.rds"))
-save(all_lollipop_avg_pe_release_sex,          file = file.path(app_folder, "all_lollipop_avg_pe_release_sex.rds"))
-
-save(all_sentence_avg_pe_release_sex_offense,  file = file.path(app_folder, "all_sentence_avg_pe_release_sex_offense.rds"))
-save(all_scatter_avg_pe_release_sex_offense,   file = file.path(app_folder, "all_scatter_avg_pe_release_sex_offense.rds"))
-
-save(avg_pe_release_sex,                       file = file.path(app_folder, "avg_pe_release_sex.rds"))
 

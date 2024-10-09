@@ -9,19 +9,21 @@
 #######################################
 
 # ---------------------------------------------------------------------------- #
-# PRISON POPULATION BY YEAR
+# Prison Population By Year
 # ---------------------------------------------------------------------------- #
 
-# Get unique states from the bjs_prison_pop_by_rptyear dataset to ensure we're working
-# with all the states present in the dataset.
+# Get unique states to iterate over
+# Only states that submitted data to BJS and not in exclusion
+# list (high missingness or abolished parole)
 states <- bjs_prison_pop_by_rptyear |>
   filter(!state %in% states_to_exclude$state) |>
   distinct(state) |>
   arrange(state) |>
   pull(state)
 
-# Loop through each state and generate a sentence summarizing the change in prison population
-# from the earliest available year to the most recent one.
+# SENTENCE: "From 2010 to 2022, the prison population decreased 17 percent,
+#            changing from 56,432 in 2010 to 47,010 in 2022."
+# Generate sentence for each state
 all_sentence_population <- map(.x = states, .f = function(x) {
   # Filter bjs_prison_pop_by_rptyear data for the specific state
   df1 <- bjs_prison_pop_by_rptyear %>% filter(state == x)
@@ -58,60 +60,12 @@ all_sentence_population <- map(.x = states, .f = function(x) {
                       earliest_year, " to ", format(latest_year_population, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
 })
-
-# Name each entry in the list of sentences by state for easy reference
+# Assign state names to list
 all_sentence_population <- setNames(all_sentence_population, states)
 all_sentence_population$Georgia
 
-# Generate a line chart for the prison population by year for each state
-all_line_population_by_year <- map(.x = states, .f = function(x) {
-  # Filter data for the specific state and prepare for the chart
-  df1 <- bjs_prison_pop_by_rptyear |>
-    ungroup() |>
-    filter(state == x) |>
-    distinct() |>
-    mutate(tooltip =
-             paste0(
-               "Year: ", rptyear, "<br>",
-               "Year-End Population: ", bjs_prison_population))
-
-  # Determine maximum and minimum values for y-axis (with padding for display purposes)
-  max_value <- max(df1$bjs_prison_population)*1.1
-  min_value <- min(df1$bjs_prison_population)/1.5
-
-  # Placeholder text for chart accessibility
-  hc_accessibility_text <- paste0("TBD")
-
-  # Create the Highcharts line chart
-  highcharts <- highchart() |>
-    hc_chart(type = "line") |>
-    hc_title(text = paste0("Prison Population by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
-    hc_yAxis(title = list(text = ""),
-             min = 0,
-             max = max_value) |>
-    hc_xAxis(categories = df1$rptyear, lineWidth = 1) |>
-    hc_series(
-      list(
-        name = "population",
-        data = df1$bjs_prison_population,
-        tooltip = list(
-          pointFormat = "<b>Prison Population:</b> {point.y}"
-        )
-      )
-    ) |>
-    hc_add_theme(hc_theme_with_line) |>
-    hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE) |>
-    hc_colors(c(color2))|>
-    hc_caption(text = bjs_source)
-
-  return(highcharts)
-})
-
-# Name each chart in the list by state
-all_line_population_by_year <- setNames(all_line_population_by_year, states)
-all_line_population_by_year$Georgia
-
+# VISUALIZATION: Prison Population by Year
+# Generate chart for each state
 all_line_population_by_year <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_rptyear |>
     ungroup() |>
@@ -142,7 +96,6 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
         name = "population",
         data = df1$bjs_prison_population,
         tooltip = list(
-          # pointFormat = "Year: {point.category}<br>Prison Population: {point.y}"
           pointFormat = "<b>Prison Population:</b> {point.y}"
         )
       )
@@ -155,25 +108,25 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_line_population_by_year <- setNames(all_line_population_by_year, states)
 all_line_population_by_year$Georgia
 rm(states)
 
 
+# ---------------------------------------------------------------------------- #
+# Prison Population By Race
+# ---------------------------------------------------------------------------- #
 
-#------------------------------------------------------------------------------#
-# RACE AND ETHNICITY DEMOGRAPHICS
-#------------------------------------------------------------------------------#
-
-# Get unique states from the bjs_prison_pop_by_race_2020 dataset to process race data
-states <- unique(bjs_prison_pop_by_race_2020$state)
-
-# Filter states that still have parole (abolished_parole_16_total == "N")
-states <- state_notes |>
-  filter(abolished_parole == "N", state %in% states) |>
+# Get unique states to iterate over
+states <- bjs_prison_pop_by_race_2020 |>
+  filter(!state %in% states_to_exclude$state) |>
+  distinct(state) |>
+  arrange(state) |>
   pull(state)
 
-# Generate bar charts for each state based on race data for the prison population
+# VISUALIZATION: Prison Population by Race
+# Generate chart for each state
 all_bar_population_race <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_race_2020 |>
     filter(state == x) |>
@@ -192,6 +145,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
+    hc_colors(c(color2)) |>
     hc_title(text = "Race and Ethnicity") |>
     hc_subtitle(text = "Prison Population, 2020") |>
     hc_exporting(enabled = TRUE) |>
@@ -199,13 +153,12 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the charts for easy reference by state
+# Assign state names to list
 all_bar_population_race <- setNames(all_bar_population_race, states)
 all_bar_population_race$Georgia
-all_bar_population_race$Kentucky
 
-# Generate sentences summarizing race demographics for each state
+# SENTENCE: "In 2020, 60 percent of people in prison were Black, non-Hispanic."
+# Generate sentence for each state
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_race_2020 |>
     filter(state == x) |>
@@ -216,19 +169,18 @@ all_sentence_population_race <- map(.x = states,  .f = function(x) {
   sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, ".")
   return(sentences)
 })
-
-# Name the sentence list for easy reference by state
+# Assign state names to list
 all_sentence_population_race <- setNames(all_sentence_population_race, states)
 all_sentence_population_race$Georgia
 rm(states)
 
 
 
-#------------------------------------------------------------------------------#
-# SEX DEMOGRAPHICS
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
+# Prison Population By Sex
+# ---------------------------------------------------------------------------- #
 
-# Get unique states from the bjs_prison_pop_by_sex_2020 dataset to process sex data
+# Get unique states to iterate over
 states <- unique(bjs_prison_pop_by_sex_2022$state)
 
 # Filter states that still have parole
@@ -236,7 +188,8 @@ states <- state_notes |>
   filter(abolished_parole == "N", state %in% states) |>
   pull(state)
 
-# Generate bar charts for each state based on sex demographics in the prison population
+# VISUALIZATION: Prison Population by Sex
+# Generate chart for each state
 all_bar_population_sex <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_sex_2022 |>
     filter(state == x) |>
@@ -262,12 +215,12 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the charts for easy reference by state
+# Assign state names to list
 all_bar_population_sex <- setNames(all_bar_population_sex, states)
 all_bar_population_sex$Georgia
 
-# Generate sentences summarizing sex demographics for each state
+# SENTENCE: "In 2020, 93 percent of people in prison were male."
+# Generate sentence for each state
 all_sentence_population_sex <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_sex_2022 |>
     filter(state == x) |>
@@ -278,17 +231,16 @@ all_sentence_population_sex <- map(.x = states,  .f = function(x) {
   sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), ".")
   return(sentences)
 })
-
-# Name the sentence list for easy reference by state
+# Assign state names to list
 all_sentence_population_sex <- setNames(all_sentence_population_sex, states)
 all_sentence_population_sex$Georgia
 rm(states)
 
 
 
-#------------------------------------------------------------------------------#
-# AGE DEMOGRAPHICS
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
+# Prison Population By Age
+# ---------------------------------------------------------------------------- #
 
 # Process age data for the prison population for each state
 ncrp_population_ageyrend <- ncrp_yearendpop |>
@@ -304,8 +256,11 @@ ncrp_population_ageyrend <- ncrp_yearendpop |>
   ) |>
   ungroup()
 
-# Generate bar charts for age distribution for each state
+# Get unique states to iterate over
 states <- unique(ncrp_population_ageyrend$state)
+
+# VISUALIZATION: Prison Population by Age
+# Generate chart for each state
 all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_ageyrend |>
     filter(state == x) |>
@@ -332,12 +287,12 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the charts for easy reference by state
+# Assign state names to list
 all_bar_population_ageyrend <- setNames(all_bar_population_ageyrend, states)
 all_bar_population_ageyrend$Georgia
 
-# Generate sentences summarizing age demographics for each state
+# SENTENCE: "In 2020, 32 percent of people in prison were between the ages of 25 to 34 years old."
+# Generate sentence for each state
 all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_ageyrend |>
     filter(state == x) |>
@@ -349,17 +304,16 @@ all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
   sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were between the ages of ", df1$ageyrend, " old.")
   return(sentences)
 })
-
-# Name the sentence list for easy reference by state
+# Assign state names to list
 all_sentence_population_ageyrend <- setNames(all_sentence_population_ageyrend, states)
 all_sentence_population_ageyrend$Georgia
 rm(states)
 
 
 
-#------------------------------------------------------------------------------#
-# OFFENSE TYPES
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
+# Prison Population By Offense Type
+# ---------------------------------------------------------------------------- #
 
 # Process offense type data for the prison population
 ncrp_population_fbi_index <- ncrp_yearendpop |>
@@ -375,8 +329,11 @@ ncrp_population_fbi_index <- ncrp_yearendpop |>
   ) |>
   ungroup()
 
-# Generate bar charts for offense types for each state
+# Get unique states to iterate over
 states <- unique(ncrp_population_fbi_index$state)
+
+# VISUALIZATION: Prison Population by Offense
+# Generate chart for each state
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_fbi_index |>
     filter(state == x & fbi_index != "Unknown") |>
@@ -403,12 +360,13 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the charts for easy reference by state
+# Assign state names to list
 all_bar_population_fbi_index <- setNames(all_bar_population_fbi_index, states)
 all_bar_population_fbi_index$Georgia
 
-# Generate sentences summarizing offense types for each state
+# SENTENCE: "In 2020, 17 percent of people in prison were incarcerated for
+#            murder or nonnegligent manslaughter offenses."
+# Generate sentence for each state
 all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_fbi_index |>
     filter(state == x) |>
@@ -419,17 +377,16 @@ all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people in prison were incarcerated for ", tolower(df1$fbi_index), " offenses.")
   return(sentences)
 })
-
-# Name the sentence list for easy reference by state
+# Assign state names to list
 all_sentence_population_fbi_index <- setNames(all_sentence_population_fbi_index, states)
 all_sentence_population_fbi_index$Georgia
 rm(states)
 
 
 
-#------------------------------------------------------------------------------#
-# SENTENCE LENGTHS
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
+# Prison Population By Sentence Length
+# ---------------------------------------------------------------------------- #
 
 # Process sentence length data for the prison population
 ncrp_population_sentlgth <- ncrp_yearendpop |>
@@ -445,8 +402,11 @@ ncrp_population_sentlgth <- ncrp_yearendpop |>
   ) |>
   ungroup()
 
-# Generate bar charts for sentence lengths for each state
+# Get unique states to iterate over
 states <- unique(ncrp_population_sentlgth$state)
+
+# VISUALIZATION: Prison Population by Sentence Length
+# Generate chart for each state
 all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_sentlgth |>
     filter(state == x) |>
@@ -472,12 +432,12 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
-
-# Name the charts for easy reference by state
+# Assign state names to list
 all_bar_population_sentlgth <- setNames(all_bar_population_sentlgth, states)
 all_bar_population_sentlgth$Georgia
 
-# Generate sentences summarizing sentence lengths for each state
+# SENTENCE: "In 2020, 41 percent of people in prison had sentence lengths between 10 to 24.9 years."
+# Generate sentence for each state
 all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_sentlgth |>
     filter(state == x) |>
@@ -489,31 +449,35 @@ all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
   sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people in prison had sentence lengths between ", tolower(df1$sentlgth), ".")
   return(sentences)
 })
-
-# Name the sentence list for easy reference by state
+# Assign state names to list
 all_sentence_population_sentlgth <- setNames(all_sentence_population_sentlgth, states)
 all_sentence_population_sentlgth$Georgia
 rm(states)
+
+
 
 #------------------------------------------------------------------------------#
 # SAVE DATA
 #------------------------------------------------------------------------------#
 
-save(all_sentence_population,           file = file.path(app_folder, "all_sentence_population.rds"))
-save(all_line_population_by_year,       file = file.path(app_folder, "all_line_population_by_year.rds"))
+# Define the data objects and their corresponding file names
+data_files <- list(
+  all_sentence_population           = "all_sentence_population.rds",
+  all_line_population_by_year       = "all_line_population_by_year.rds",
+  all_sentence_population_race      = "all_sentence_population_race.rds",
+  all_bar_population_race           = "all_bar_population_race.rds",
+  all_sentence_population_sex       = "all_sentence_population_sex.rds",
+  all_bar_population_sex            = "all_bar_population_sex.rds",
+  all_sentence_population_ageyrend  = "all_sentence_population_ageyrend.rds",
+  all_bar_population_ageyrend       = "all_bar_population_ageyrend.rds",
+  all_sentence_population_fbi_index = "all_sentence_population_fbi_index.rds",
+  all_bar_population_fbi_index      = "all_bar_population_fbi_index.rds",
+  all_sentence_population_sentlgth  = "all_sentence_population_sentlgth.rds",
+  all_bar_population_sentlgth       = "all_bar_population_sentlgth.rds"
+)
 
-save(all_sentence_population_race,      file = file.path(app_folder, "all_sentence_population_race.rds"))
-save(all_bar_population_race,           file = file.path(app_folder, "all_bar_population_race.rds"))
-
-save(all_sentence_population_sex,       file = file.path(app_folder, "all_sentence_population_sex.rds"))
-save(all_bar_population_sex,            file = file.path(app_folder, "all_bar_population_sex.rds"))
-
-save(all_sentence_population_ageyrend,  file = file.path(app_folder, "all_sentence_population_ageyrend.rds"))
-save(all_bar_population_ageyrend,       file = file.path(app_folder, "all_bar_population_ageyrend.rds"))
-
-save(all_sentence_population_fbi_index, file = file.path(app_folder, "all_sentence_population_fbi_index.rds"))
-save(all_bar_population_fbi_index,      file = file.path(app_folder, "all_bar_population_fbi_index.rds"))
-
-save(all_sentence_population_sentlgth,  file = file.path(app_folder, "all_sentence_population_sentlgth.rds"))
-save(all_bar_population_sentlgth,       file = file.path(app_folder, "all_bar_population_sentlgth.rds"))
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))
 

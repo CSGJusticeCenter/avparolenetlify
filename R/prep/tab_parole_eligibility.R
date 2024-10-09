@@ -38,7 +38,7 @@
 #######################################
 
 # ---------------------------------------------------------------------------- #
-# Prison Population by PE Status
+# Pie charts of the prison population by parole eligibility status
 # ---------------------------------------------------------------------------- #
 
 # Function that filters the population data to include only people in prison for new crimes
@@ -59,43 +59,55 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
   mutate(prop = n / yearendpop) |>
   fnc_create_tooltip(variable_label = "Parole Eligibility Status", variable = parelig_status)
 
-# VISUALIZATION: Prison Population by Parole Eligibility Status
+# Extract unique states from the dataset
 states <- unique(pe_status_pop$state)
+
+# VISUALIZATION
+# Create pie charts for each state based on parole eligibility status for the selected year
 all_pie_pe_type <- map(.x = states, .f = function(x) {
 
-  # Define color mapping for categories
+  # Map colors to parole eligibility status categories
   color_mapping <- c("Future" = color2,
                      "Missing" = darkgray,
                      "Current" = color4)
 
+  # Filter the dataset for the current state and selected year,
+  # ensuring the correct color for each category
   df1 <- pe_status_pop |>
     ungroup() |>
     filter(state == x) |>
     filter(rptyear == select_year) |>
-    # Ensure each category gets the correct color
     mutate(color = color_mapping[parelig_status])
 
+  # Accessibility text for screen readers
   hc_accessibility_text <- paste0("This pie chart shows the distribution of the prison population in ",
                                   x, " by parole eligibility status for the year ", select_year,
                                   ". The categories include those currently eligible, those eligible in the future, and those with missing parole eligibility information.")
+
+  # Chart title
   title <- "Prison Population by Parole Eligibility Status"
 
-  highcharts <- fnc_hc_pie(df1, "parelig_status", hc_accessibility_text)
+  # Create the highchart pie visualization
+  highcharts <- fnc_hc_pie(df1, "parelig_status", title, hc_accessibility_text)
 
   return(highcharts)
 })
+# Assign state names to list
 all_pie_pe_type <- setNames(all_pie_pe_type, states)
 all_pie_pe_type$Georgia
 
-# SENTENCE: In X year, there were X people who were in prison past their parole
-#           eligibility date. This group made up X% of the people in prison.
+# SENTENCE: In 2020, 76 percent of people in prison were currently past their
+#           parole eligibility. Another 23 percent will reach
+#           their parole eligibility after 2020.
 all_sentence_pe_type <- map(states, function(x) {
   df <- pe_status_pop |>
     filter(state == x, rptyear == select_year)
 
+  # Get the proportion of people currently eligible and those eligible in the future
   current_prop <- df |> filter(parelig_status == "Current") |> pull(prop)
   future_prop <- df |> filter(parelig_status == "Future") |> pull(prop)
 
+  # Generate the summary sentence
   paste0(
     "In ", select_year, ", ",
     round(current_prop * 100, 0),
@@ -104,6 +116,7 @@ all_sentence_pe_type <- map(states, function(x) {
     " percent will reach their parole eligibility after ", select_year, "."
   )
 })
+# Assign state names to list
 all_sentence_pe_type <- setNames(all_sentence_pe_type, states)
 all_sentence_pe_type$Georgia
 rm(states)
@@ -136,7 +149,7 @@ pe_pop_prop <- current_pe_pop |>
   left_join(total_pe_pop, by = c("state", "rptyear")) |>
   mutate(proportion = n / total_n)
 
-# Generate sentences summarizing the proportion of PCE population changes over time for each state
+# SENTENCE: "From 2014 to 2020, the percent of people in prison past parole eligibility increased by 14 percent."
 # Loop through each unique state
 states <- unique(pe_pop_prop$state)
 all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
@@ -146,11 +159,11 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
     filter(state == x) |>
     filter(rptyear >= 2010)
 
-  # Get the earliest and latest years
+  # Extract the earliest and latest years for each state
   earliest_year <- min(df$rptyear)
   latest_year <- max(df$rptyear)
 
-  # Get the proportion of people past parole eligibility for the earliest and latest years
+  # Calculate the proportion of people past parole eligibility for the earliest and latest years
   proportion_earliest <- df |>
     filter(rptyear == earliest_year) |>
     pull(proportion) * 100
@@ -159,7 +172,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
     filter(rptyear == latest_year) |>
     pull(proportion) * 100
 
-  # Calculate the change in proportion
+  # Calculate the change in proportion and determine if it increased, decreased, or stayed the same
   change <- proportion_latest - proportion_earliest
 
   # Determine if it increased, decreased, or stayed the same
@@ -171,7 +184,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
     direction <- "stayed the same"
   }
 
-  # Generate the sentence
+  # Generate the final sentence
   sentence <- paste0(
     "From ", earliest_year, " to ", latest_year,
     ", the percent of people in prison past parole eligibility ", direction, "."
@@ -179,6 +192,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
 
   return(sentence)
 })
+# Assign state names to list
 all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Georgia
 
@@ -186,15 +200,14 @@ all_sentence_pop_pe_by_year$Georgia
 # and the remaining total prison population for each state over time
 all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
 
-  # Filter the data for the current state and limit the analysis to years from 2010 onward
+  # Filter the data for the current state and only analyze data from 2010 onwards
   df_state <- pe_pop_prop |>
     filter(state == x) |>
     filter(rptyear >= 2010) |>
     mutate(rptyear_fac = factor(rptyear))  # Convert years to a factor for the x-axis
 
+  # Define chart title and accessibility text
   title <- "Percentage of Prison Population Incarcerated Past Parole Eligibility"
-
-  # Accessibility text describing the chart content
   hc_accessibility_text <- paste0("This chart shows the percentage of people past parole eligibility ",
                                   "and the remaining prison population for the state of ", x,
                                   " from ", min(df_state$rptyear), " to ", max(df_state$rptyear), ". ",
@@ -238,6 +251,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
 all_stackedbar_pop_pe_by_year$Georgia
 rm(states)
@@ -249,13 +263,14 @@ rm(states)
 # DEMOGRAPHICS
 # ---------------------------------------------------------------------------- #
 
-# Get number and proportion of people in prison past their parole eligibility year
-# by demographic
+# Prepare data for people in prison past their parole eligibility date by race, sex, and age
+# Race data: Exclude states with high missingness in race categories
 current_ped_race     <- fnc_prepare_pe_data(ncrp_yearendpop, race) |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) # exclude states with high missingness
 current_ped_sex      <- fnc_prepare_pe_data(ncrp_yearendpop, sex)
 current_ped_ageyrend <- fnc_prepare_pe_data(ncrp_yearendpop, ageyrend)
 
+# VISUALIZATION: Bar charts for parole eligibility by race for each state
 # Generate graph for each state
 states <- unique(current_ped_race$state)
 all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
@@ -282,9 +297,11 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
 all_bar_parole_eligibility_race$Georgia
 
+# SENTENCE: "In 2020, 60 percent of people in prison past parole eligibility were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 
@@ -303,6 +320,7 @@ all_sentence_parole_eligibility_race <- setNames(all_sentence_parole_eligibility
 all_sentence_parole_eligibility_race$Georgia
 rm(states)
 
+# VISUALIZATION: Bar charts for parole eligibility by sex for each state
 # Generate graph for each state
 states <- unique(current_ped_sex$state)
 all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
@@ -329,9 +347,11 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_bar_parole_eligibility_sex <- setNames(all_bar_parole_eligibility_sex, states)
 all_bar_parole_eligibility_sex$Georgia
 
+# SENTENCE: "In 2020, 94 percent of people in prison past parole eligibility were male.
 # Generate sentence for each state
 all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 
@@ -349,6 +369,7 @@ all_sentence_parole_eligibility_sex <- setNames(all_sentence_parole_eligibility_
 all_sentence_parole_eligibility_sex$Georgia
 rm(states)
 
+# VISUALIZATION: Bar charts for parole eligibility by age for each state
 # Generate graph for each state
 states <- unique(current_ped_ageyrend$state)
 all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
@@ -375,9 +396,12 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_bar_parole_eligibility_ageyrend <- setNames(all_bar_parole_eligibility_ageyrend, states)
 all_bar_parole_eligibility_ageyrend$Georgia
 
+# SENTENCE: "In 2020, 36 percent of people in prison past parole eligibility were
+#            between the ages of 25 to 34 years old."
 # Generate sentence for each state
 all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 
@@ -393,6 +417,7 @@ all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 
   return(sentences)
 })
+# Assign state names to list
 all_sentence_parole_eligibility_ageyrend <- setNames(all_sentence_parole_eligibility_ageyrend, states)
 all_sentence_parole_eligibility_ageyrend$Georgia
 rm(states)
@@ -405,8 +430,8 @@ rm(states)
 
 # Get number and proportion of people in prison past their parole eligibility year
 # by offense
-current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index)
-current_ped_fbi_index <- current_ped_fbi_index |>
+current_ped_fbi_index <- fnc_prepare_pe_data(ncrp_yearendpop, fbi_index) |>
+  # Group offenses into violent vs nonviolent
   mutate(group = case_when(
     fbi_index %in% c("Murder or Nonnegligent Manslaughter",
                      "Negligent Manslaughter",
@@ -415,9 +440,9 @@ current_ped_fbi_index <- current_ped_fbi_index |>
                      "Aggravated or Simple Assault",
                      "Other Violent Offenses") ~ "Violent",
     fbi_index %in% c("Drug", "Public Order", "Property") ~ "Nonviolent",
-    TRUE ~ "Other or Unknown"
-  ))
+    TRUE ~ "Other or Unknown"))
 
+# VISUALIZATION: Bar charts for parole eligibility by offense for each state
 # Generate graph for each state
 states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
@@ -445,6 +470,7 @@ all_bar_ped_fbi_index <- map(.x = states, .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
 
@@ -457,6 +483,10 @@ current_ped_offense_group <- current_ped_fbi_index |>
   group_by(state) |>
   mutate(prop = total_offenses / sum(total_offenses))
 
+# SENTENCE: In 2020, 69 percent of people in prison past parole eligibility were
+#           in prison for violent offenses and 31 percent for nonviolent offenses.
+#           Most people who were incarcerated past parole eligibility were serving
+#           time for aggravated or simple assault (21%) and robbery (20%) offenses.
 # Generate sentence for each state
 all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) {
 
@@ -499,6 +529,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
   return(sentences)
 })
+# Assign state names to list
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
 all_sentence_parole_eligibility_fbi_index$Georgia
 rm(states)
@@ -517,6 +548,7 @@ rm(states)
 # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
 current_ped_sentlgth <- fnc_prepare_pe_data(ncrp_yearendpop, sentlgth)
 
+# VISUALIZATION: Bar charts for parole eligibility by sentence length for each state
 # Generate graph for each state
 states <- unique(current_ped_sentlgth$state)
 all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
@@ -542,9 +574,12 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 
   return(highcharts)
 })
+# Assign state names to list
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
 all_bar_parole_eligibility_sentlgth$Georgia
 
+# SENTENCE: "In 2020, 59 percent of people in prison past parole eligibility
+#            had sentence lengths between 10 to 24.9 years."
 # Generate sentence for each state
 all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 
@@ -560,6 +595,7 @@ all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 
   return(sentences)
 })
+# Assign state names to list
 all_sentence_parole_eligibility_sentlgth <- setNames(all_sentence_parole_eligibility_sentlgth, states)
 all_sentence_parole_eligibility_sentlgth$Georgia
 rm(states)
@@ -572,23 +608,26 @@ rm(states)
 # SAVE DATA
 # ---------------------------------------------------------------------------- #
 
-save(all_sentence_pe_type,                         file = file.path(app_folder, "all_sentence_pe_type.rds"))
-save(all_pie_pe_type,                              file = file.path(app_folder, "all_pie_pe_type.rds"))
+# Define the data objects and their corresponding file names
+data_files <- list(
+  all_sentence_pe_type                      = "all_sentence_pe_type.rds",
+  all_pie_pe_type                           = "all_pie_pe_type.rds",
+  all_sentence_pop_pe_by_year               = "all_sentence_pop_pe_by_year.rds",
+  all_stackedbar_pop_pe_by_year             = "all_stackedbar_pop_pe_by_year.rds",
+  all_sentence_parole_eligibility_race      = "all_sentence_parole_eligibility_race.rds",
+  all_bar_parole_eligibility_race           = "all_bar_parole_eligibility_race.rds",
+  all_sentence_parole_eligibility_sex       = "all_sentence_parole_eligibility_sex.rds",
+  all_bar_parole_eligibility_sex            = "all_bar_parole_eligibility_sex.rds",
+  all_sentence_parole_eligibility_ageyrend  = "all_sentence_parole_eligibility_ageyrend.rds",
+  all_bar_parole_eligibility_ageyrend       = "all_bar_parole_eligibility_ageyrend.rds",
+  all_sentence_parole_eligibility_fbi_index = "all_sentence_parole_eligibility_fbi_index.rds",
+  all_bar_ped_fbi_index                     = "all_bar_ped_fbi_index.rds",
+  all_sentence_parole_eligibility_sentlgth  = "all_sentence_parole_eligibility_sentlgth.rds",
+  all_bar_parole_eligibility_sentlgth       = "all_bar_parole_eligibility_sentlgth.rds"
+)
 
-save(all_sentence_pop_pe_by_year,                  file = file.path(app_folder, "all_sentence_pop_pe_by_year.rds"))
-save(all_stackedbar_pop_pe_by_year,                file = file.path(app_folder, "all_stackedbar_pop_pe_by_year.rds"))
+# Loop through the list and save each data object to its corresponding file
+invisible(lapply(names(data_files), function(obj) {
+  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
+}))
 
-save(all_sentence_parole_eligibility_race,         file = file.path(app_folder, "all_sentence_parole_eligibility_race.rds"))
-save(all_bar_parole_eligibility_race,              file = file.path(app_folder, "all_bar_parole_eligibility_race.rds"))
-
-save(all_sentence_parole_eligibility_sex,          file = file.path(app_folder, "all_sentence_parole_eligibility_sex.rds"))
-save(all_bar_parole_eligibility_sex,               file = file.path(app_folder, "all_bar_parole_eligibility_sex.rds"))
-
-save(all_sentence_parole_eligibility_ageyrend,     file = file.path(app_folder, "all_sentence_parole_eligibility_ageyrend.rds"))
-save(all_bar_parole_eligibility_ageyrend,          file = file.path(app_folder, "all_bar_parole_eligibility_ageyrend.rds"))
-
-save(all_sentence_parole_eligibility_fbi_index,    file = file.path(app_folder, "all_sentence_parole_eligibility_fbi_index.rds"))
-save(all_bar_ped_fbi_index,                        file = file.path(app_folder, "all_bar_ped_fbi_index.rds"))
-
-save(all_sentence_parole_eligibility_sentlgth,     file = file.path(app_folder, "all_sentence_parole_eligibility_sentlgth.rds"))
-save(all_bar_parole_eligibility_sentlgth,          file = file.path(app_folder, "all_bar_parole_eligibility_sentlgth.rds"))

@@ -116,6 +116,32 @@ hc_theme_map <- hc_theme_merge(
   )
 )
 
+hc_theme_with_line <- hc_theme(
+  colors = c(color1, color2, color3, color4, color5),
+  chart = list(style = common_chart_style),
+  title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
+  subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+  legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+  xAxis = list(
+    labels = list(enabled = TRUE, style = common_style),
+    tickmarkPlacement = 'on',
+    tickLength = 5,
+    tickWidth = 1,
+    tickColor = "white",
+    lineColor = "black"
+  ),
+  yAxis = list(
+    labels = list(enabled = TRUE, style = common_style)
+  ),
+  plotOptions = list(
+    column = list(
+      dataLabels = list(
+        style = list(color = "black")
+      )
+    )
+  )
+)
+
 # Define a function to add accessibility and plot options to a highchart object
 fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
   hc_object |>
@@ -132,7 +158,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 
 
 
-fnc_hc_pie <- function(df, variable, accessibility_text) {
+fnc_hc_pie <- function(df, variable, title, accessibility_text) {
   highchart() |>
     hc_chart(type = "pie") |>
     hc_plotOptions(pie = list(
