@@ -2165,9 +2165,9 @@
   {
     "objectID": "state_report_links.html",
     "href": "state_report_links.html",
-    "title": "State Report Links",
+    "title": "State Reports",
     "section": "",
-    "text": "ArkansasColoradoGeorgiaIowaKentuckyLouisianaMarylandMassachusettsMississippiMissouriMontanaNebraskaNevadaNew HampshireNew YorkNorth DakotaOklahomaPennsylvaniaRhode IslandSouth CarolinaSouth DakotaTennesseeTexasUtahWest VirginiaWyoming"
+    "text": "ArkansasColoradoGeorgiaIowaKentuckyLouisianaMarylandMassachusettsMississippiMissouriMontanaNebraskaNevadaNew HampshireNew YorkNorth DakotaOklahomaPennsylvaniaRhode IslandSouth CarolinaSouth DakotaTennesseeTexasUtahWest VirginiaWyoming\n\n\n\nMissing Data\nThe following states are not included due to incomplete data submitted to the National Corrections Reporting Program in 2020, though they still have parole systems:\n\nAlabama\nAlaska\nConnecticut\nHawaii\nIdaho\nVermont\n\nAdditionally, the analysis excludes states that have abolished parole, meaning no state reports are provided for:\n\nArizona\nCalifornia\nDelaware\nFlorida\nIllinois\nIndiana\nKansas\nMaine\nMinnesota\nNew Mexico\nNorth Carolina\nOhio\nOregon\nVirginia\nWashington\nWisconsin"
   },
   {
     "objectID": "state_report_Maryland.html",
