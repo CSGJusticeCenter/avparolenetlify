@@ -1,5 +1,8 @@
 
 source("R/prep/config.R")
+
+# source("R/prep/helper_functions.R")
+# source("R/prep/import_format.R")
 # source("R/prep/page_national_trends.R")
 # source("R/prep/tab_parole_eligibility.R")
 # source("R/prep/tab_population.R")
@@ -8,20 +11,17 @@ source("R/prep/config.R")
 # source("R/prep/tab_disparities_time_served.R")
 # source("R/prep/tab_disparities_years_past_pe.R")
 
-# Load notes
+# Load parole eligibility (PE) table
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
 
 # Save working directory
 wd <- getwd()
 
-# Get list of states where parol eligibility is the focus
+# Get list of states for reports - only states with parole and complete PE data
 states <- "Georgia"
-# states <- state_notes |>
-#   filter(abolished_parole == "N") |>
-#   inner_join(parole_eligibility_table, by = "state") |>
-#   filter(!is.na(current_perc)) |>
-#   pull(state)
+states <- parole_eligibility_table |>
+  filter(!is.na(current_perc)) |>
+  pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
@@ -40,5 +40,5 @@ replace_write_qmd <- function(state) {
 # Iterate over replacement values and write new qmds
 walk(states_qmd, replace_write_qmd)
 
-# # Render Georgia
+# Render all qmds
 # quarto::quarto_render()

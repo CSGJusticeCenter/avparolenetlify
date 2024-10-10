@@ -40,7 +40,7 @@ body {
 
 .download-button {
   font-family: "Graphik";
-  font-size: 12px;
+  font-size: 1em;
   padding: 4px 8px;
 }
 
@@ -286,7 +286,7 @@ table th, table td {
 
 /* highlighted text underneath state name */
 #highlight-text {
-  font-size: 2em;
+  font-size: 2.2em;
   font-family: 'Graphik', sans-serif;
   font-weight: bold;
   color: #49a7a1;
@@ -313,7 +313,7 @@ table th, table td {
 }
 
 #footnotes-text {
-  font-size: 0.7em;
+  font-size: 0.8em;
   font-family: 'Graphik', sans-serif;
   text-align: left;
   color: gray,
