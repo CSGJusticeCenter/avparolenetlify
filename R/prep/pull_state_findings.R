@@ -549,6 +549,19 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_pe_release
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_pe_release_sex_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_pe_release_sex_offense.rds"))
 
+
+rri_infographic_black       <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_black_",
+                                      state_for_report, ".png")
+rri_infographic_hispanic    <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_hispanic_",
+                                      state_for_report, ".png")
+pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_black_",
+                                      state_for_report, ".png")
+pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_hispanic_",
+                                      state_for_report, ".png")
+
+
+
+
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for
 #            population sizes in the community."

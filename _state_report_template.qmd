@@ -20,15 +20,6 @@ state_for_report <- "this_state"
 
 source("R/prep/config.R")
 source("R/prep/pull_state_findings.R")
-
-rri_infographic_black       <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_black_",  
-                                      state_for_report, ".png")
-rri_infographic_hispanic    <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", 
-                                      state_for_report, ".png")
-pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_black_", 
-                                      state_for_report, ".png")
-pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_hispanic_", 
-                                      state_for_report, ".png")
 ```
 
 <div id="state-body-section">
