@@ -206,7 +206,27 @@ fnc_hc_pie <- function(df, variable, title, accessibility_text) {
 }
 
 
-fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
+fnc_hc_columnchart <- function(df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_source) {
+
+  # df <- df |>
+  #   filter(state == x) |>
+  #   fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var)) |>
+  #   arrange(desc(prop))
+
+  df <- df |>
+    filter(state == x) |>
+    fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var))
+
+  # Conditionally arrange by prop if x_var is "race" or "fbi_index"
+  if (x_var %in% c("race", "fbi_index", "sex")) {
+    df <- df |> arrange(desc(prop))
+  }
+
+  title <- paste0(title_type, " by ", metric)
+
+  accessibility_text <- paste0("This graph shows the percentage of ", type,
+                               " by ", tolower(metric), " in ",
+                               year, " in the state of ", x, ".")
 
   xaxis_order <- df[[x_var]]
 
@@ -258,16 +278,170 @@ fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
              )) |>
     hc_yAxis(max = 100,
              labels = list(
-               formatter = JS("function() {
-                  return this.value + '%';
-                }"))) |>
+               formatter = JS("function() { return this.value + '%'; }")
+             )) |>
+
     hc_add_theme(base_hc_theme) |>
+
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
+
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE) |>
-    fnc_add_hc_accessibility(accessibility_text)
+
+    hc_title(text = paste0(title, ", ", year)) |>
+
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", year)) |>
+
+    fnc_add_hc_accessibility(accessibility_text) |>
+
+    hc_caption(text = source)
 
   return(highcharts)
 }
+
+fnc_generate_columnchart_sentence <- function(state, df, x_var, type, year = select_year) {
+
+  df1 <- df |>
+    filter(state == x) |>
+    arrange(-prop) |>
+    slice(1)
+
+  # Modify df1[[x_var]] to lowercase if x_var is "sex"
+  if (x_var == "sex") {
+    df1[[x_var]] <- tolower(df1[[x_var]])
+  }
+
+  # Check if x_var is "ageyrend" to format the sentence differently
+  if (x_var == "ageyrend") {
+    age_range <- strsplit(as.character(df1[[x_var]]), "-")[[1]]
+    sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+                        " percent of people ", type, " were between the ages of ",
+                        age_range[1], " and ", age_range[2], " old.")
+  } else if (x_var == "fbi_index") {
+    # Lowercase the crime for proper sentence structure
+    crime <- tolower(df1[[x_var]])
+    sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+                        " percent of people ", type, " were incarcerated for ",
+                        crime, ".")
+  } else if (x_var == "sentlgth") {
+    # Split the sentence length range
+    sent_range <- strsplit(as.character(df1[[x_var]]), "-")[[1]]
+    sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+                        " percent of people ", type, " had sentence lengths between ",
+                        sent_range[1], " and ", sent_range[2], ".")
+  } else {
+    sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+                        " percent of people ", type, " were ",
+                        df1[[x_var]], ".")
+  }
+
+  return(sentences)
+}
+
+# fnc_generate_columnchart_sentence <- function(state, df, x_var, type, year = select_year) {
+#
+#   df1 <- df |>
+#     filter(state == x) |>
+#     arrange(-prop) |>
+#     slice(1)
+#
+#   # Modify df1[[x_var]] to lowercase if x_var is "sex"
+#   if (x_var == "sex") {
+#     df1[[x_var]] <- tolower(df1[[x_var]])
+#   }
+#
+#   # Check if x_var is "ageyrend" to format the sentence differently
+#   if (x_var == "ageyrend") {
+#     age_range <- strsplit(as.character(df1[[x_var]]), "-")[[1]]
+#     sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+#                         " percent of people ", type, " were between the ages of ",
+#                         age_range[1], " and ", age_range[2], " years old.")
+#   } else if (x_var == "fbi_index") {
+#     # Lowercase the crime for proper sentence structure
+#     crime <- tolower(df1[[x_var]])
+#     sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+#                         " percent of people ", type, " were incarcerated for ",
+#                         crime, ".")
+#   } else {
+#     sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
+#                         " percent of people ", type, " were ",
+#                         df1[[x_var]], ".")
+#   }
+#
+#   return(sentences)
+# }
+
+
+
+# fnc_hc_columnchart <- function(df, x_var, y_var, accessibility_text) {
+#
+#   xaxis_order <- df[[x_var]]
+#
+#   highcharts <- highchart() |>
+#     hc_add_series(df,
+#                   type = "column",
+#                   hcaes(x = !!sym(x_var),
+#                         y = !!sym(y_var)),
+#                   dataLabels = list(enabled = TRUE,
+#                                     format = "{point.prop_label}",
+#                                     style = list(fontWeight = "regular",
+#                                                  fontSize = "1em",
+#                                                  fontFamily = "Graphik",
+#                                                  textOutline = 0))) |>
+#     hc_xAxis(categories = xaxis_order,
+#              labels = list(
+#                useHTML = TRUE,
+#                enabled = TRUE,
+#                formatter = JS(
+#                  "function() {
+#                     var label = this.value;
+#                     var maxLength = 15;
+#                     if (label.length > maxLength) {
+#                       var words = label.split(' ');
+#                       var result = [];
+#                       var line = [];
+#                       var lineLength = 0;
+#
+#                       words.forEach(function(word) {
+#                         if (lineLength + word.length > maxLength) {
+#                           result.push(line.join(' '));
+#                           line = [];
+#                           lineLength = 0;
+#                         }
+#                         line.push(word);
+#                         lineLength += word.length + 1;
+#                       });
+#                       if (line.length > 0) {
+#                         result.push(line.join(' '));
+#                       }
+#                       return result.join('<br>');
+#                     } else {
+#                       return label;
+#                     }
+#                   }"
+#                ),
+#                style = list(fontSize = "1em", fontFamily = "Graphik",
+#                             textAlign = "center" )
+#              )) |>
+#     hc_yAxis(max = 100,
+#              labels = list(
+#                formatter = JS("function() { return this.value + '%'; }")
+#              )) |>
+#
+#     hc_add_theme(base_hc_theme) |>
+#
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |>
+#
+#     hc_legend(enabled = FALSE) |>
+#
+#     hc_title(text = paste0(title, ", ", select_year)) |>
+#
+#     hc_exporting(enabled = TRUE,
+#                  filename = paste0(gsub(" ", "_", tolower(title)), "_", select_year)) |>
+#
+#     fnc_add_hc_accessibility(accessibility_text)
+#
+#   return(highcharts)
+# }
 
 
