@@ -367,9 +367,9 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
   summarise(n = sum(n, na.rm = TRUE)) |>
   left_join(total_bjs_pop_2020, by = "state") |>
   ungroup() |>
-  mutate(prop = n / total,
-         # prop_label = paste0(round(prop*100, 0), "%"),
-         # n_label = formattable::comma(n, 0),
+  mutate(prop = (n / total)*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0),
          population_type = "In Prison") |>
   select(-total)
 
@@ -415,9 +415,9 @@ bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
   summarise(n = sum(n, na.rm = TRUE)) |>
   left_join(total_bjs_pop_2022, by = "state") |>
   ungroup() |>
-  mutate(prop = n / total,
-         # prop_label = paste0(round(prop*100, 0), "%"),
-         # n_label = formattable::comma(n, 0),
+  mutate(prop = (n / total)*100,
+         prop_label = paste0(round(prop, 0), "%"),
+         n_label = formattable::comma(n, 0),
          population_type = "In Prison"
          ) |>
   select(-total)|>
@@ -453,10 +453,10 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   group_by(state) |>
   rename(n = population) |>
   mutate(
-    prop = n/sum(n)
+    prop = (n/sum(n))*100,
     # yearendpop_ped = sum(n)
-    # prop_label = paste0(round(prop*100, 0), "%"),
-    # n_label = formattable::comma(n, 0)
+    prop_label = paste0(round(prop, 0), "%"),
+    n_label = formattable::comma(n, 0)
   ) |>
   ungroup() |>
   mutate(sex = case_when(sex == "male" ~ "Male",

@@ -19,9 +19,9 @@ wd <- getwd()
 
 # Get list of states for reports - only states with parole and complete PE data
 states <- "Georgia"
-states <- parole_eligibility_table |>
-  filter(!is.na(current_perc)) |>
-  pull(state)
+# states <- parole_eligibility_table |>
+#   filter(!is.na(current_perc)) |>
+#   pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

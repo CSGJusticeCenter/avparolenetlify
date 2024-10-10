@@ -11,7 +11,6 @@ fnc_filter_population <- function(data) {
 }
 
 fnc_filter_pe_population_criteria <- function(data) {
-
   # Get states to exclude - missing data and abolished parole
   exclude <- states_to_exclude |>
     pull(state)
@@ -42,7 +41,6 @@ fnc_create_tooltip <- function(df, variable_label, variable) {
 }
 
 fnc_filter_exclude_high_missing_race <- function(data, states_with_high_missing_race) {
-
   # Convert to character vector if it's a list
   if (is.list(states_with_high_missing_race)) {
     states_with_high_missing_race <- unlist(states_with_high_missing_race)

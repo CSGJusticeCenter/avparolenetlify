@@ -67,25 +67,31 @@ all_sentence_population$Georgia
 # VISUALIZATION: Prison Population by Year
 # Generate chart for each state
 all_line_population_by_year <- map(.x = states,  .f = function(x) {
+
   df1 <- bjs_prison_pop_by_rptyear |>
     ungroup() |>
     filter(state == x) |>
     distinct() |>
-    mutate(tooltip =
-             paste0(
-               "Year: ", rptyear, "<br>",
-               "Year-End Population: ", bjs_prison_population))
+    mutate(tooltip = paste0("Year: ", rptyear, "<br>",
+                            "Year-End Population: ", bjs_prison_population))
 
-  # Determine the maximum value for the y-axis in the visualization
   # Adds a small margin space at the top
   max_value <- max(df1$bjs_prison_population)*1.1
 
-  hc_accessibility_text <- paste0("TBD")
+  hc_accessibility_text <- paste0("This line chart shows the year-end prison population in ",
+                                  x, " from ", min(df1$rptyear), " to ",
+                                  max(df1$rptyear),
+                                  ". Each point on the chart represents the prison population for a specific year, ",
+                                  "showing trends over time. The y-axis represents the number of people in prison, ",
+                                  "and the x-axis represents the years. ",
+                                  "The tooltip provides the exact year and the corresponding prison population.")
 
-  highcharts <- # Create the line chart
+  title <- "Prison Population by Year"
+
+  highcharts <-
     hc <- highchart() |>
     hc_chart(type = "line") |>
-    hc_title(text = paste0("Prison Population by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
+    hc_title(text = paste0(title, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_yAxis(title = list(text = ""),
              min = 0,
              max = max_value) |>
@@ -102,9 +108,13 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE) |>
+
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_",
+                                   min(df1$rptyear), "_", max(df1$rptyear))) |>
     hc_colors(c(color2)) |>
-    hc_caption(text = bjs_source)
+    hc_caption(text = bjs_source) |>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -130,26 +140,26 @@ states <- bjs_prison_pop_by_race_2020 |>
 all_bar_population_race <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_race_2020 |>
     filter(state == x) |>
-    mutate(prop = prop*100,  # Convert proportion to percentage
-           tooltip = paste0("<b>Race:</b> ", race, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Race and Ethnicity", variable = race) |>
     arrange(desc(prop))  # Sort by proportion in descending order
 
   # Accessibility description for the chart
-  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race and ethnicity in 2020 in the state of ", x, ".")
+  hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by race and ethnicity in 2020 in the state of ",
+                                  x, ".")
+  title <- "Prison Population"
 
-  # Create a Highcharts bar chart for racial demographics
   highcharts <- fnc_hc_columnchart(df1, "race", "prop", hc_accessibility_text) |>
-    hc_yAxis(max = 100,  # Set max value for y-axis to 100% for better readability
+    hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
     hc_colors(c(color2)) |>
     hc_title(text = "Race and Ethnicity") |>
-    hc_subtitle(text = "Prison Population, 2020") |>
-    hc_exporting(enabled = TRUE) |>
-    hc_caption(text = bjs_source)
+    hc_subtitle(text = paste0(title, ", 2020")) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_race_ethnicity_", select_year)) |>
+    hc_caption(text = bjs_source)|>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -166,7 +176,7 @@ all_sentence_population_race <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the race with the highest proportion
 
   # Generate a sentence summarizing the racial breakdown for the prison population
-  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", df1$race, ".")
+  sentences <- paste0("In 2020, ", round(df1$prop, 0), " percent of people in prison were ", df1$race, ".")
   return(sentences)
 })
 # Assign state names to list
@@ -184,8 +194,8 @@ rm(states)
 states <- unique(bjs_prison_pop_by_sex_2022$state)
 
 # Filter states that still have parole
-states <- state_notes |>
-  filter(abolished_parole == "N", state %in% states) |>
+states <- bjs_prison_pop_by_sex_2022 |>
+  filter(!state %in% states_to_exclude$state) |>
   pull(state)
 
 # VISUALIZATION: Prison Population by Sex
@@ -193,25 +203,26 @@ states <- state_notes |>
 all_bar_population_sex <- map(.x = states,  .f = function(x) {
   df1 <- bjs_prison_pop_by_sex_2022 |>
     filter(state == x) |>
-    mutate(prop = prop*100,  # Convert proportion to percentage
-           tooltip = paste0("<b>Sex:</b> ", sex, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Sex", variable = sex) |>
     arrange(desc(prop))  # Sort by proportion in descending order
 
   # Accessibility description for the chart
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by sex in 2020 in the state of ", x, ".")
+  title <- "Prison Population"
 
   # Create a Highcharts bar chart for sex demographics
   highcharts <- fnc_hc_columnchart(df1, "sex", "prop", hc_accessibility_text) |>
-    hc_yAxis(max = 100,  # Set max value for y-axis to 100% for better readability
+    hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
     hc_title(text = "Sex") |>
-    hc_subtitle(text = "Prison Population, 2020") |>
-    hc_exporting(enabled = TRUE) |>
-    hc_caption(text = bjs_source)
+    hc_subtitle(text = paste0(title, ", 2020")) |>
+    hc_colors(c(color2)) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_sex_", select_year)) |>
+    hc_caption(text = bjs_source)|>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -228,7 +239,7 @@ all_sentence_population_sex <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the sex with the highest proportion
 
   # Generate a sentence summarizing the sex breakdown for the prison population
-  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were ", tolower(df1$sex), ".")
+  sentences <- paste0("In 2020, ", round(df1$prop, 0), " percent of people in prison were ", tolower(df1$sex), ".")
   return(sentences)
 })
 # Assign state names to list
@@ -249,9 +260,9 @@ ncrp_population_ageyrend <- ncrp_yearendpop |>
   filter(!is.na(ageyrend) & ageyrend != "Unknown") |>
   count(ageyrend) |>
   mutate(
-    prop = n/sum(n),  # Calculate proportion of each age group
+    prop = (n/sum(n))*100,  # Calculate proportion of each age group
     yearendpop_ped = sum(n),  # Total population for the year
-    prop_label = paste0(round(prop*100, 0), "%"),  # Create labels for display
+    prop_label = paste0(round(prop, 0), "%"),  # Create labels for display
     n_label = formattable::comma(n, 0)
   ) |>
   ungroup()
@@ -264,26 +275,26 @@ states <- unique(ncrp_population_ageyrend$state)
 all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_ageyrend |>
     filter(state == x) |>
-    mutate(prop = prop*100,  # Convert proportion to percentage
-           tooltip = paste0("<b>Age:</b> ", ageyrend, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%")) |>
+    fnc_create_tooltip(variable_label = "Age", variable = ageyrend) |>
     arrange(desc(ageyrend))  # Sort by age group
 
   # Accessibility description for the chart
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by age in ", select_year, " in the state of ", x, ".")
+  title <- "Prison Population"
 
   # Create a Highcharts bar chart for age distribution
   highcharts <- fnc_hc_columnchart(df1, "ageyrend", "prop", hc_accessibility_text) |>
-    hc_yAxis(max = 100,  # Set max value for y-axis to 100% for better readability
+    hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
-    hc_title(text = "Sex") |>
-    hc_subtitle(text = "Prison Population, 2020") |>
-    hc_exporting(enabled = TRUE) |>
+    hc_title(text = "Age") |>
+    hc_subtitle(text = paste0(title, ", 2020")) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_age_", select_year)) |>
     hc_colors(c(color2)) |>
-    hc_caption(text = ncrp_source)
+    hc_caption(text = ncrp_source)|>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -301,7 +312,7 @@ all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 
   df1$ageyrend <- gsub("-", " to ", df1$ageyrend)  # Format age range for readability
   # Generate a sentence summarizing the age breakdown for the prison population
-  sentences <- paste0("In 2020, ", round(df1$prop*100, 0), " percent of people in prison were between the ages of ", df1$ageyrend, " old.")
+  sentences <- paste0("In 2020, ", round(df1$prop, 0), " percent of people in prison were between the ages of ", df1$ageyrend, " old.")
   return(sentences)
 })
 # Assign state names to list
@@ -322,9 +333,9 @@ ncrp_population_fbi_index <- ncrp_yearendpop |>
   filter(!is.na(fbi_index) & fbi_index != "Unknown") |>
   count(fbi_index) |>
   mutate(
-    prop = n/sum(n),  # Calculate proportion of each offense type
+    prop = (n/sum(n))*100,  # Calculate proportion of each offense type
     yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop*100, 0), "%"),
+    prop_label = paste0(round(prop, 0), "%"),
     n_label = formattable::comma(n, 0)
   ) |>
   ungroup()
@@ -337,26 +348,26 @@ states <- unique(ncrp_population_fbi_index$state)
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_fbi_index |>
     filter(state == x & fbi_index != "Unknown") |>
-    mutate(prop = prop*100,  # Convert proportion to percentage
-           tooltip = paste0("<b>Offense Type:</b> ", fbi_index, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+    fnc_create_tooltip(variable_label = "Offense Type", variable = fbi_index)
 
   # Accessibility description for the chart
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by offense type in ", select_year, " in the state of ", x, ".")
+  title <- "Prison Population"
 
   # Create a Highcharts bar chart for offense type distribution
   highcharts <- fnc_hc_columnchart(df1, "fbi_index", "prop", hc_accessibility_text) |>
-    hc_yAxis(max = 100,  # Set max value for y-axis to 100% for better readability
+    hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
 
     hc_title(text = "Offense Type") |>
-    hc_subtitle(text = paste0("Prison Population, ", select_year)) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_subtitle(text = paste0(title, ", 2020")) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_offense_", select_year)) |>
     hc_colors(c(color2)) |>
-    hc_caption(text = ncrp_source)
+    hc_caption(text = ncrp_source)|>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -374,7 +385,7 @@ all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
     slice(1)  # Select the offense type with the highest proportion
 
   # Generate a sentence summarizing the offense breakdown for the prison population
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people in prison were incarcerated for ", tolower(df1$fbi_index), " offenses.")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop, 0), " percent of people in prison were incarcerated for ", tolower(df1$fbi_index), " offenses.")
   return(sentences)
 })
 # Assign state names to list
@@ -395,9 +406,9 @@ ncrp_population_sentlgth <- ncrp_yearendpop |>
   filter(!is.na(sentlgth) & sentlgth != "Unknown") |>
   count(sentlgth) |>
   mutate(
-    prop = n/sum(n),  # Calculate proportion of each sentence length
+    prop = (n/sum(n))*100,  # Calculate proportion of each sentence length
     yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop*100, 0), "%"),
+    prop_label = paste0(round(prop, 0), "%"),
     n_label = formattable::comma(n, 0)
   ) |>
   ungroup()
@@ -410,25 +421,25 @@ states <- unique(ncrp_population_sentlgth$state)
 all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
   df1 <- ncrp_population_sentlgth |>
     filter(state == x) |>
-    mutate(prop = prop*100,  # Convert proportion to percentage
-           tooltip = paste0("<b>Sentence Length:</b> ", sentlgth, "<br>",
-                            "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-                            "<b>Percentage of People:</b> ", round(prop, 0), "%"))
+    fnc_create_tooltip(variable_label = "Sentence Length", variable = sentlgth)
 
   # Accessibility description for the chart
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population by sentence length in ", select_year, " in the state of ", x, ".")
+  title <- "Prison Population"
 
   # Create a Highcharts bar chart for sentence length distribution
   highcharts <- fnc_hc_columnchart(df1, "sentlgth", "prop", hc_accessibility_text) |>
-    hc_yAxis(max = 100,  # Set max value for y-axis to 100% for better readability
+    hc_yAxis(max = 100,
              labels = list(
                formatter = JS("function() { return this.value + '%'; }")
              )) |>
     hc_title(text = "Sentence Length") |>
-    hc_subtitle(text = paste0("Prison Population, ", select_year)) |>
-    hc_exporting(enabled = TRUE) |>
+    hc_subtitle(text = paste0(title, ", 2020")) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", "by_sentence_length_", select_year)) |>
     hc_colors(c(color2)) |>
-    hc_caption(text = ncrp_source)
+    hc_caption(text = ncrp_source)|>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -446,7 +457,7 @@ all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
 
   df1$sentlgth <- gsub("-", " to ", df1$sentlgth)  # Format sentence range for readability
   # Generate a sentence summarizing the sentence length breakdown for the prison population
-  sentences <- paste0("In ", select_year, ", ", round(df1$prop*100, 0), " percent of people in prison had sentence lengths between ", tolower(df1$sentlgth), ".")
+  sentences <- paste0("In ", select_year, ", ", round(df1$prop, 0), " percent of people in prison had sentence lengths between ", tolower(df1$sentlgth), ".")
   return(sentences)
 })
 # Assign state names to list

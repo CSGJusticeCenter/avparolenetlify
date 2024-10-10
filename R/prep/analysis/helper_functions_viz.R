@@ -55,7 +55,7 @@ base_hc_theme <- hc_theme(
     itemStyle = common_style
   ),
   xAxis = list(
-    labels = list(enabled = TRUE #, style = common_style
+    labels = list(enabled = TRUE, style = common_style
     ),
     gridLineColor = "transparent",
     lineColor = "black",
@@ -63,8 +63,8 @@ base_hc_theme <- hc_theme(
     tickColor = "black"
   ),
   yAxis = list(
-    labels = list(enabled = FALSE
-                  #, style = common_style
+    labels = list(enabled = FALSE,
+                  style = common_style
     ),
     gridLineColor = "transparent",
     lineColor = "transparent",
@@ -143,19 +143,36 @@ hc_theme_with_line <- hc_theme(
 )
 
 # Define a function to add accessibility and plot options to a highchart object
+# fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
+#   hc_object |>
+#     hc_plotOptions(series = list(animation = FALSE,
+#                                  cursor = "pointer",
+#                                  borderWidth = 3,
+#                                  minPointLength = 4),
+#                    accessibility = list(enabled = TRUE,
+#                                         keyboardNavigation = list(enabled = TRUE),
+#                                         linkedDescription = text,
+#                                         landmarkVerbosity = "one"),
+#                    area = list(accessibility = list(description = accessibility_text)))
+# }
 fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
   hc_object |>
-    hc_plotOptions(series = list(animation = FALSE,
-                                 cursor = "pointer",
-                                 borderWidth = 3,
-                                 minPointLength = 4),
-                   accessibility = list(enabled = TRUE,
-                                        keyboardNavigation = list(enabled = TRUE),
-                                        linkedDescription = text,
-                                        landmarkVerbosity = "one"),
-                   area = list(accessibility = list(description = accessibility_text)))
+    hc_chart(accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      description = accessibility_text,
+      landmarkVerbosity = "one"
+    )) |>
+    hc_plotOptions(series = list(
+      animation = FALSE,
+      cursor = "pointer",
+      borderWidth = 3,
+      minPointLength = 4,
+      accessibility = list(
+        description = accessibility_text
+      )
+    ))
 }
-
 
 
 fnc_hc_pie <- function(df, variable, title, accessibility_text) {

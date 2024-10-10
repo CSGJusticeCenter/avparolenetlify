@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 state_for_report <- "this_state"
 
 source("R/prep/config.R")
-source("R/prep/pull_state_findings.R")
+source("R/pull_state_findings.R")
 ```
 
 <div id="state-body-section">
