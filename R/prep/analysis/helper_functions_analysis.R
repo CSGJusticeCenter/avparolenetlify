@@ -130,3 +130,26 @@ fnc_round_to_power <- function(x) {
     }
   })
 }
+
+
+fnc_get_census_data <- function(state) {
+  df <-
+    tidycensus::get_decennial(
+      geography = "state",
+      state = state,
+      variables = race_vars,
+      summary_var = "P3_001N",
+      year = select_year,
+      geometry = FALSE) %>%
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race = case_when(
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    )
+  return(df)
+}

@@ -440,4 +440,38 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type, year =
 #   return(highcharts)
 # }
 
+fnc_xaxis_labels_right <- list(
+  useHTML = TRUE,
+  enabled = TRUE,
+  formatter = JS(
+    "function() {
+                    var label = this.value;
+                    var maxLength = 15;
+                    if (label.length > maxLength) {
+                      var words = label.split(' ');
+                      var result = [];
+                      var line = [];
+                      var lineLength = 0;
+
+                      words.forEach(function(word) {
+                        if (lineLength + word.length > maxLength) {
+                          result.push(line.join(' '));
+                          line = [];
+                          lineLength = 0;
+                        }
+                        line.push(word);
+                        lineLength += word.length + 1;
+                      });
+                      if (line.length > 0) {
+                        result.push(line.join(' '));
+                      }
+                      return result.join('<br>');
+                    } else {
+                      return label;
+                    }
+                  }"
+  ),
+  style = list(fontSize = "1em", fontFamily = "Graphik",
+               textAlign = "right" )
+)
 

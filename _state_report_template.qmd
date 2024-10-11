@@ -337,33 +337,33 @@ if (file.exists(pe_rri_infographic_hispanic)) {
 
 ### Race and Ethnicity
 
-`r paste(state_sentence_avg_pe_release_race, collapse = ", ")`
+`r paste(state_sentence_avg_past_pe_race, collapse = ", ")`
 
 ```{r state_parole_release_disparities, results='asis'}
-df1 <- avg_pe_release_race |>
+df1 <- avg_current_pe_race |>
   filter(state == state_for_report)
 
-# Check if all average_avg_pe_release are NA
-if (!all(is.na(df1$average_avg_pe_release))) {
+# Check if all avg_years_to_estimated_pey are NA
+if (!all(is.na(df1$avg_years_to_estimated_pey))) {
   html_output <- div(
     id = "grid-container",
     # style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
         style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
     div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "Black, non-Hispanic"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
         ),
     div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "Hispanic, any race"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
         ),
     div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "White, non-Hispanic"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
         ),
 
     div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
     div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
     div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
   )
-  cat(as.character(div(id = "bold-text", "Avg. Years in Prison Past Parole Eligibility", br())))
+  cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
   br()
 } else {
@@ -371,41 +371,36 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 }
 ```
 
-```{r state_lollipop_avg_pe_release_race}
-# div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_avg_pe_release_race)
-```
-
-`r paste(state_sentence_avg_pe_release_race_offense, collapse = ", ")`
-
-```{r state_scatter_avg_pe_release_race_offense}
-div(id = "visualization", state_scatter_avg_pe_release_race_offense)
+```{r state_scatter_avg_past_pe_race_offense}
+# `r paste(state_sentence_avg_past_pe_race_offense, collapse = ", ")`
+# div(id = "visualization", state_scatter_avg_past_pe_race_offense)
 ```
 
 ### Sex
 
-`r paste(state_sentence_avg_pe_release_sex, collapse = ", ")`
+`r paste(state_sentence_avg_past_pe_sex, collapse = ", ")`
 
 ```{r state_pe_release_total_years_sex, results='asis'}
-df1 <- avg_pe_release_sex |>
+df1 <- avg_current_pe_sex |>
   filter(state == state_for_report)
 
-# Check if all average_avg_pe_release are NA
-if (!all(is.na(df1$average_avg_pe_release))) {
+# Check if all avg_years_to_estimated_pey are NA
+if (!all(is.na(df1$avg_years_to_estimated_pey))) {
   html_output <- div(
     id = "grid-container",
     style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
     # First column: Years for Male, Second column: Years for Female
     div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$average_avg_pe_release[df1$sex == "Male"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Male"], 1), " Years")
     ),
     div(style = "color: #55b4e5; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$average_avg_pe_release[df1$sex == "Female"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Female"], 1), " Years")
     ),
     # First column: Male label, Second column: Female label
     div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
     div(style = "color: #55b4e5; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
   )
-  cat(as.character(div(id = "bold-text", "Avg. Years in Prison Past Parole Eligibility", br())))
+  cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
   br()
 } else {
@@ -413,15 +408,49 @@ if (!all(is.na(df1$average_avg_pe_release))) {
 }
 ```
 
-`r paste(state_sentence_avg_pe_release_sex_offense, collapse = ", ")`
 
-```{r state_scatter_avg_pe_release_sex_offense}
-div(id = "visualization", state_scatter_avg_pe_release_sex_offense)
+```{r state_scatter_avg_past_pe_sex_offense}
+# `r paste(state_sentence_avg_past_pe_sex_offense, collapse = ", ")`
+# div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
 ```
 
 :::
 
 <br>
+<div class="divider"></div>
+
+## Disparities in Incarceration
+
+::: {.panel-tabset .custom-tabs}
+
+<br>
+
+### Race and Ethnicity
+
+<br>
+
+```{r rri_infographic_black}
+if (file.exists(rri_infographic_black)) {
+  knitr::include_graphics(rri_infographic_black)
+}
+```
+
+`r paste(state_sentence_rri_black, collapse = ", ")`
+
+```{r rri_infographic_hispanic}
+if (file.exists(rri_infographic_hispanic)) {
+    knitr::include_graphics(rri_infographic_hispanic)
+}
+```
+
+`r paste(state_sentence_rri_hispanic, collapse = ", ")`
+
+### Sex
+
+<br>
+
+:::
+
 <div class="divider"></div>
 
 ## Time Served
@@ -439,7 +468,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
-div(id = "visualization", state_scatter_los_race_offense)
+# div(id = "visualization", state_scatter_los_race_offense)
 ```
 
 ### Sex 
@@ -450,10 +479,10 @@ div(id = "visualization", state_scatter_los_race_offense)
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
 ```
 
-`r paste(state_sentence_los_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_los_sex_offense}
-div(id = "visualization", state_scatter_los_sex_offense)
+# `r paste(state_sentence_los_sex_offense, collapse = ", ")`
+# div(id = "visualization", state_scatter_los_sex_offense)
 ```
 
 :::
