@@ -528,6 +528,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_black.rds"
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_hispanic.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_male.rds"))
 
 rri_infographic_black       <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_black_",
                                       state_for_report, ".png")
@@ -567,6 +568,12 @@ if (state_for_report %in% names(all_sentence_pe_rri_hispanic)) {
   state_sentence_pe_rri_hispanic <- no_sentence
 }
 
+if (state_for_report %in% names(all_sentence_pe_rri_male)) {
+  state_sentence_pe_rri_male <-
+    all_sentence_pe_rri_male[[state_for_report]]
+} else {
+  state_sentence_pe_rri_male <- no_sentence
+}
 
 # LOS
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
