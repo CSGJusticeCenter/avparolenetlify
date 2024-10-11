@@ -1,5 +1,5 @@
 
-source("R/prep/config.R")
+source("R/config.R")
 
 # source("R/prep/helper_functions.R")
 # source("R/prep/import_format.R")

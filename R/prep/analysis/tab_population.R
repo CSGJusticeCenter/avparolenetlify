@@ -122,6 +122,7 @@ all_line_population_by_year$Georgia
 rm(states)
 
 
+
 # ---------------------------------------------------------------------------- #
 # Prison Population By Race
 # ---------------------------------------------------------------------------- #
@@ -138,13 +139,14 @@ states <- bjs_prison_pop_by_race_2020 |>
 all_bar_population_race <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Race and Ethnicity"
-  highcharts <- fnc_hc_columnchart(df         = current_ped_race,
+  highcharts <- fnc_hc_columnchart(state_var  = x,
+                                   df         = bjs_prison_pop_by_race_2020,
                                    x_var      = "race",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source = bjs_source)
+                                   source     = bjs_source)
 
   return(highcharts)
 })
@@ -156,7 +158,10 @@ all_bar_population_race$Georgia
 # Generate sentence for each state
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
 
-  sentences <- fnc_generate_columnchart_sentence(x, current_ped_race, "race", type = "in prison")
+  sentences <- fnc_generate_columnchart_sentence(state_var  = x,
+                                                 df         = bjs_prison_pop_by_race_2020,
+                                                 x_var      = "race",
+                                                 type       = "in prison")
 
   return(sentences)
 })
@@ -181,13 +186,14 @@ states <- bjs_prison_pop_by_sex_2022 |>
 all_bar_population_sex <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Sex"
-  highcharts <- fnc_hc_columnchart(df         = current_ped_sex,
+  highcharts <- fnc_hc_columnchart(state_var  = x,
+                                   df         = bjs_prison_pop_by_sex_2022,
                                    x_var      = "sex",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source = bjs_source)
+                                   source     = bjs_source)
 
   return(highcharts)
 })
@@ -199,7 +205,10 @@ all_bar_population_sex$Georgia
 # Generate sentence for each state
 all_sentence_population_sex <- map(.x = states,  .f = function(x) {
 
-  sentences <- fnc_generate_columnchart_sentence(x, current_ped_sex, "sex", type = "in prison")
+  sentences <- fnc_generate_columnchart_sentence(state_var  = x,
+                                                 df         = bjs_prison_pop_by_sex_2022,
+                                                 x_var      = "sex",
+                                                 type       = "in prison")
 
   return(sentences)
 })
@@ -207,23 +216,14 @@ all_sentence_population_sex <- setNames(all_sentence_population_sex, states)
 all_sentence_population_sex$Georgia
 rm(states)
 
+
+
 # ---------------------------------------------------------------------------- #
 # Prison Population By Age
 # ---------------------------------------------------------------------------- #
 
-# Process age data for the prison population for each state
-ncrp_population_ageyrend <- ncrp_yearendpop |>
-  filter(rptyear == select_year) |>
-  group_by(state) |>
-  filter(!is.na(ageyrend) & ageyrend != "Unknown") |>
-  count(ageyrend) |>
-  mutate(
-    prop = (n/sum(n))*100,  # Calculate proportion of each age group
-    yearendpop_ped = sum(n),  # Total population for the year
-    prop_label = paste0(round(prop, 0), "%"),  # Create labels for display
-    n_label = formattable::comma(n, 0)
-  ) |>
-  ungroup()
+# Summarize age data for the prison population for each state
+ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop, "ageyrend")
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_ageyrend$state)
@@ -233,13 +233,14 @@ states <- unique(ncrp_population_ageyrend$state)
 all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Age"
-  highcharts <- fnc_hc_columnchart(df         = current_ped_ageyrend,
+  highcharts <- fnc_hc_columnchart(state_var  = x,
+                                   df         = ncrp_population_ageyrend,
                                    x_var      = "ageyrend",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source = bjs_source)
+                                   source     = ncrp_source)
 
   return(highcharts)
 })
@@ -251,7 +252,10 @@ all_bar_population_ageyrend$Georgia
 # Generate sentence for each state
 all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 
-  sentences <- fnc_generate_columnchart_sentence(x, current_ped_ageyrend, "ageyrend", type = "in prison")
+  sentences <- fnc_generate_columnchart_sentence(state_var  = x,
+                                                 df         = ncrp_population_ageyrend,
+                                                 x_var      = "ageyrend",
+                                                 type       = "in prison")
 
   return(sentences)
 })
@@ -264,19 +268,8 @@ rm(states)
 # Prison Population By Offense Type
 # ---------------------------------------------------------------------------- #
 
-# Process offense type data for the prison population
-ncrp_population_fbi_index <- ncrp_yearendpop |>
-  filter(rptyear == select_year) |>
-  group_by(state) |>
-  filter(!is.na(fbi_index) & fbi_index != "Unknown") |>
-  count(fbi_index) |>
-  mutate(
-    prop = (n/sum(n))*100,  # Calculate proportion of each offense type
-    yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop, 0), "%"),
-    n_label = formattable::comma(n, 0)
-  ) |>
-  ungroup()
+# Summarize offense data for the prison population for each state
+ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop, "fbi_index")
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_fbi_index$state)
@@ -286,13 +279,14 @@ states <- unique(ncrp_population_fbi_index$state)
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Offense Type"
-  highcharts <- fnc_hc_columnchart(df         = current_ped_fbi_index,
+  highcharts <- fnc_hc_columnchart(state_var  = x,
+                                   df         = ncrp_population_fbi_index,
                                    x_var      = "fbi_index",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source = bjs_source)
+                                   source     = ncrp_source)
 
   return(highcharts)
 })
@@ -304,7 +298,10 @@ all_bar_population_fbi_index$Georgia
 # Generate sentence for each state
 all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
 
-  sentences <- fnc_generate_columnchart_sentence(x, current_ped_fbi_index, "fbi_index", type = "in prison")
+  sentences <- fnc_generate_columnchart_sentence(state_var  = x,
+                                                 df         = ncrp_population_fbi_index,
+                                                 x_var      = "fbi_index",
+                                                 type       = "in prison")
 
   return(sentences)
 })
@@ -318,18 +315,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Process sentence length data for the prison population
-ncrp_population_sentlgth <- ncrp_yearendpop |>
-  filter(rptyear == select_year) |>
-  group_by(state) |>
-  filter(!is.na(sentlgth) & sentlgth != "Unknown") |>
-  count(sentlgth) |>
-  mutate(
-    prop = (n/sum(n))*100,  # Calculate proportion of each sentence length
-    yearendpop_ped = sum(n),
-    prop_label = paste0(round(prop, 0), "%"),
-    n_label = formattable::comma(n, 0)
-  ) |>
-  ungroup()
+ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop, "sentlgth")
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_sentlgth$state)
@@ -339,13 +325,14 @@ states <- unique(ncrp_population_sentlgth$state)
 all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Sentence Length"
-  highcharts <- fnc_hc_columnchart(df         = current_ped_sentlgth,
+  highcharts <- fnc_hc_columnchart(state_var  = x,
+                                   df         = ncrp_population_sentlgth,
                                    x_var      = "sentlgth",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source = bjs_source)
+                                   source     = ncrp_source)
 
   return(highcharts)
 })
@@ -357,7 +344,10 @@ all_bar_population_sentlgth$Georgia
 # Generate sentence for each state
 all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
 
-  sentences <- fnc_generate_columnchart_sentence(x, current_ped_sentlgth, "sentlgth", type = "in prison")
+  sentences <- fnc_generate_columnchart_sentence(state_var  = x,
+                                                 df         = ncrp_population_sentlgth,
+                                                 x_var      = "sentlgth",
+                                                 type       = "in prison")
 
   return(sentences)
 })

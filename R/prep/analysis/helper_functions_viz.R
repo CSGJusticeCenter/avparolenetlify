@@ -175,7 +175,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 }
 
 
-fnc_hc_pie <- function(df, variable, title, accessibility_text) {
+fnc_hc_pie <- function(df, variable, title, accessibility_text, year = select_year, source = ncrp_source) {
   highchart() |>
     hc_chart(type = "pie") |>
     hc_plotOptions(pie = list(
@@ -198,40 +198,36 @@ fnc_hc_pie <- function(df, variable, title, accessibility_text) {
     )) |>
     hc_add_theme(base_hc_theme) |>
     hc_tooltip(formatter = JS("function () {return this.point.tooltip;}")) |>
-    hc_title(text = paste0(title, ", ", select_year)) |>
+    hc_title(text = paste0(title, ", ", year)) |>
     hc_exporting(enabled = TRUE,
-                 filename = paste0(gsub(" ", "_", tolower(title)), "_", select_year)) |>
-    hc_caption(text = ncrp_source) |>
+                 filename = paste0(gsub(" ", "_", tolower(title)), "_", year)) |>
+    hc_caption(text = source) |>
     fnc_add_hc_accessibility(accessibility_text)
 }
 
 
-fnc_hc_columnchart <- function(df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_source) {
+fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_source) {
 
-  # df <- df |>
-  #   filter(state == x) |>
-  #   fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var)) |>
-  #   arrange(desc(prop))
-
-  df <- df |>
-    filter(state == x) |>
+  df1 <- df |>
+    filter(state == state_var) |>
     fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var))
 
-  # Conditionally arrange by prop if x_var is "race" or "fbi_index"
+  # Conditionally arrange by prop if x_var is "race" "fbi_index" or "sex"
+  # Don't arrange if sentence length or age since these need to be in order
   if (x_var %in% c("race", "fbi_index", "sex")) {
-    df <- df |> arrange(desc(prop))
+    df1 <- df1 |> arrange(desc(prop))
   }
 
   title <- paste0(title_type, " by ", metric)
 
   accessibility_text <- paste0("This graph shows the percentage of ", type,
                                " by ", tolower(metric), " in ",
-                               year, " in the state of ", x, ".")
+                               year, " in the state of ", state_var, ".")
 
-  xaxis_order <- df[[x_var]]
+  xaxis_order <- df1[[x_var]]
 
   highcharts <- highchart() |>
-    hc_add_series(df,
+    hc_add_series(df1,
                   type = "column",
                   hcaes(x = !!sym(x_var),
                         y = !!sym(y_var)),
@@ -299,10 +295,10 @@ fnc_hc_columnchart <- function(df, x_var, y_var, metric, type, title_type, year 
   return(highcharts)
 }
 
-fnc_generate_columnchart_sentence <- function(state, df, x_var, type, year = select_year) {
+fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type, year = select_year) {
 
   df1 <- df |>
-    filter(state == x) |>
+    filter(state == state_var) |>
     arrange(-prop) |>
     slice(1)
 
@@ -312,7 +308,7 @@ fnc_generate_columnchart_sentence <- function(state, df, x_var, type, year = sel
   }
 
   # Check if x_var is "ageyrend" to format the sentence differently
-  if (x_var == "ageyrend") {
+  if (x_var == "ageyrend" | x_var == "agerlse") {
     age_range <- strsplit(as.character(df1[[x_var]]), "-")[[1]]
     sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
                         " percent of people ", type, " were between the ages of ",
@@ -322,7 +318,7 @@ fnc_generate_columnchart_sentence <- function(state, df, x_var, type, year = sel
     crime <- tolower(df1[[x_var]])
     sentences <- paste0("In ", year, ", ", round(df1$prop, 0),
                         " percent of people ", type, " were incarcerated for ",
-                        crime, ".")
+                        crime, " offenses.")
   } else if (x_var == "sentlgth") {
     # Split the sentence length range
     sent_range <- strsplit(as.character(df1[[x_var]]), "-")[[1]]

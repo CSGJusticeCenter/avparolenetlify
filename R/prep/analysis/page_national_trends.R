@@ -70,12 +70,10 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
 #------ Parole Board Members by State ------#
 
 # Get parole status information by state
-states_parole <- state_notes |>
-  select(state, abolished_parole)
-
 # Get number of parole board members
-members <- state_notes |>
-  select(state, members)
+states_parole <- state_notes |>
+  select(state, abolished_parole, members)
+
 
 
 #------ Parole Eligibility Table ------#
@@ -83,7 +81,6 @@ members <- state_notes |>
 # Only include states that abolished parole + Lousiana (high PE population)
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
   left_join(states_parole, by = "state") |>
-  left_join(members, by = "state") |>
   filter(abolished_parole == "N" | state == "Louisiana") |>
   mutate(current_perc = round(current_perc, 1)) |>
   select(state, current_perc, current_count_rounded, filtered_total_pop, members)

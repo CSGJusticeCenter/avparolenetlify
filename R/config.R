@@ -72,9 +72,9 @@ sp_data_path <- csg_get_project_path("AVParole")
 app_folder <- file.path(sp_data_path, "data", "analysis", "app")
 deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
-# Most recent year of NCRP data
+# Most recent year of NCRP data and BJS data
 select_year <- 2020
-
+bjs_data_year <- 2020
 
 
 #------------------------------------------------------------------------------#
