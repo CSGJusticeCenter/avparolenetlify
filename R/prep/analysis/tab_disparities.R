@@ -159,3 +159,102 @@ invisible(lapply(names(data_files), function(obj) {
 }))
 
 
+
+
+
+# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
+#   # Get unique states to iterate over
+#   states <- unique(df$state)
+#
+#   # Generate sentence for each state
+#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
+#
+#     if (compare_var == "race") {
+#
+#       # Filter and categorize races within the data
+#       df1 <- df |>
+#         dplyr::ungroup() |>
+#         dplyr::mutate(race = dplyr::case_when(
+#           race == "White, non-Hispanic" ~ "White",
+#           race == "Black, non-Hispanic" ~ "Black",
+#           race == "Hispanic, any race" ~ "Hispanic"
+#         )) |>
+#         dplyr::filter(state == state_var)
+#
+#       # Handle missing data for the state
+#       if (nrow(df1) == 0) {
+#         return(paste0("No data available for ", state_var, "."))
+#       }
+#
+#       # Focus on comparisons with White individuals
+#       df_white <- df1 |> dplyr::filter(race == "White")
+#
+#       # Initialize variables to hold sentences for each race comparison
+#       black_sentence <- ""
+#       hispanic_sentence <- ""
+#
+#       # Generate sentence for Black vs White comparison
+#       df_black <- df1 |> dplyr::filter(race == "Black")
+#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
+#         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
+#         if (!is.na(los_diff_black)) {
+#           abs_los_diff_black <- round(abs(los_diff_black), 1)
+#           if (los_diff_black > 0) {
+#             black_sentence <- paste0("Black people spent an average of ",
+#                                      abs_los_diff_black, " more years ", type)
+#           } else if (los_diff_black < 0) {
+#             black_sentence <- paste0("Black people spent an average of ",
+#                                      abs_los_diff_black,
+#                                      if (abs_los_diff_black == 1) " less year" else " less years",
+#                                      " ", type)
+#           }
+#         }
+#       }
+#
+#       # Generate sentence for Hispanic vs White comparison
+#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
+#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
+#         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
+#         if (!is.na(los_diff_hispanic)) {
+#           abs_los_diff_hispanic <- round(abs(los_diff_hispanic), 1)
+#           if (los_diff_hispanic > 0) {
+#             hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#                                         abs_los_diff_hispanic, " more years ", type)
+#           } else if (los_diff_hispanic < 0) {
+#             hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#                                         abs_los_diff_hispanic,
+#                                         if (abs_los_diff_hispanic == 1) " less year" else " less years",
+#                                         " ", type)
+#           }
+#         }
+#       }
+#
+#       # Combine both sentences, or indicate no significant differences
+#       if (black_sentence != "" && hispanic_sentence != "") {
+#         if (abs_los_diff_black == abs_los_diff_hispanic) {
+#           sentence <- paste0("In ", year, ", Black people and Hispanic people spent an average of ",
+#                              abs_los_diff_black, " more years ", type, " compared to White people.")
+#         } else {
+#           sentence <- paste0("In ", year, ", ", black_sentence, ", and ",
+#                              hispanic_sentence, " compared to White people.")
+#         }
+#       } else if (black_sentence != "") {
+#         sentence <- paste0("In ", year, ", ", black_sentence, " compared to White people.")
+#       } else if (hispanic_sentence != "") {
+#         sentence <- paste0("In ", year, ", ", hispanic_sentence, " compared to White people.")
+#       } else {
+#         sentence <- "" # No significant differences
+#       }
+#
+#       return(sentence)
+#     } else {
+#       return("Invalid comparison variable.")
+#     }
+#   })
+#
+#   # Assign state names to list
+#   all_sentences <- setNames(all_sentences, states)
+#
+#   return(all_sentences)
+# }
+

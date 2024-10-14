@@ -1,3 +1,25 @@
+fnc_get_census_data <- function(state) {
+  df <-
+    tidycensus::get_decennial(
+      geography = "state",
+      state = state,
+      variables = race_vars,
+      summary_var = "P3_001N",
+      year = select_year,
+      geometry = FALSE) %>%
+    clean_names() %>%
+    select(-geoid) %>%
+    mutate(
+      race = case_when(
+        variable == "estimate_black" ~ "Black, non-Hispanic",
+        variable == "estimate_hispanic" ~ "Hispanic, any race",
+        variable == "estimate_white" ~ "White, non-Hispanic",
+        TRUE ~ "NA"
+      )
+    )
+  return(df)
+}
+
 #' Generate Disparity Sentences Based on Length of Stay Data
 #'
 #' This function generates descriptive sentences that explain disparities in the average length
@@ -14,7 +36,7 @@
 #' @details This function can compare average LOS between males and females, or between races
 #' (White, Black, and Hispanic) within a state.
 #'
-fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col) {
+fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
   # Get unique states to iterate over
   states <- unique(df$state)
 
@@ -44,15 +66,16 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col)
       df_female <- df1 |> dplyr::filter(sex == "Female")
       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
         los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
+        abs_los_diff_female <- round(abs(los_diff_female), 1)  # round to one decimal place
+
         if (!is.na(los_diff_female)) {
-          abs_los_diff_female <- round(abs(los_diff_female), 1)
           if (los_diff_female > 0) {
-            sentence <- paste0("In ", select_year, ", females spent an average of ",
+            sentence <- paste0("In ", year, ", females spent an average of ",
                                abs_los_diff_female,
                                if (abs_los_diff_female == 1) " more year" else " more years",
                                " ", type, " compared to males in ", state_var, ".")
           } else if (los_diff_female < 0) {
-            sentence <- paste0("In ", select_year, ", females spent an average of ",
+            sentence <- paste0("In ", year, ", females spent an average of ",
                                abs_los_diff_female,
                                if (abs_los_diff_female == 1) " less year" else " less years",
                                " ", type, " compared to males in ", state_var, ".")
@@ -91,43 +114,57 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col)
       black_sentence <- ""
       hispanic_sentence <- ""
 
-      # Generate sentence for Black vs White comparison
+      # Generate sentence for Black vs White comparison using rounded values
       df_black <- df1 |> dplyr::filter(race == "Black")
       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
-        los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
-        if (!is.na(los_diff_black) && los_diff_black > 0) {
-          black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
-                                   round(los_diff_black, 1), " more years ", type)
-        } else if (!is.na(los_diff_black) && los_diff_black < 0) {
-          black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
-                                   round(abs(los_diff_black), 1),
-                                   if (abs(los_diff_black) == 1) " less year" else " less years",
-                                   " ", type)
+        los_diff_black <- round(df_black[[los_col]], 1) - round(df_white[[los_col]], 1)
+        abs_los_diff_black <- round(abs(los_diff_black), 1)  # round to one decimal place
+
+        if (!is.na(los_diff_black)) {
+          if (los_diff_black > 0) {
+            black_sentence <- paste0("Black people spent an average of ",
+                                     abs_los_diff_black, " more years ", type)
+          } else if (los_diff_black < 0) {
+            black_sentence <- paste0("Black people spent an average of ",
+                                     abs_los_diff_black,
+                                     if (abs_los_diff_black == 1) " less year" else " less years",
+                                     " ", type)
+          }
         }
       }
 
-      # Generate sentence for Hispanic vs White comparison
+      # Generate sentence for Hispanic vs White comparison using rounded values
       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
-        los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
-        if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
-          hispanic_sentence <- paste0("Hispanic people spent an average of ",
-                                      round(los_diff_hispanic, 1), " more years ", type)
-        } else if (!is.na(los_diff_hispanic) && los_diff_hispanic < 0) {
-          hispanic_sentence <- paste0("Hispanic people spent an average of ",
-                                      round(abs(los_diff_hispanic), 1),
-                                      if (abs(los_diff_hispanic) == 1) " less year" else " less years",
-                                      " ", type)
+        los_diff_hispanic <- round(df_hispanic[[los_col]], 1) - round(df_white[[los_col]], 1)
+        abs_los_diff_hispanic <- round(abs(los_diff_hispanic), 1)  # round to one decimal place
+
+        if (!is.na(los_diff_hispanic)) {
+          if (los_diff_hispanic > 0) {
+            hispanic_sentence <- paste0("Hispanic people spent an average of ",
+                                        abs_los_diff_hispanic, " more years ", type)
+          } else if (los_diff_hispanic < 0) {
+            hispanic_sentence <- paste0("Hispanic people spent an average of ",
+                                        abs_los_diff_hispanic,
+                                        if (abs_los_diff_hispanic == 1) " less year" else " less years",
+                                        " ", type)
+          }
         }
       }
 
       # Combine both sentences, or indicate no significant differences
       if (black_sentence != "" && hispanic_sentence != "") {
-        sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
+        if (abs_los_diff_black == abs_los_diff_hispanic) {
+          sentence <- paste0("In ", year, ", Black people and Hispanic people spent an average of ",
+                             abs_los_diff_black, " more years ", type, " compared to White people.")
+        } else {
+          sentence <- paste0("In ", year, ", ", black_sentence, ", and ",
+                             hispanic_sentence, " compared to White people.")
+        }
       } else if (black_sentence != "") {
-        sentence <- paste0(black_sentence, " compared to White people.")
+        sentence <- paste0("In ", year, ", ", black_sentence, " compared to White people.")
       } else if (hispanic_sentence != "") {
-        sentence <- paste0(hispanic_sentence, " compared to White people.")
+        sentence <- paste0("In ", year, ", ", hispanic_sentence, " compared to White people.")
       } else {
         sentence <- "" # No significant differences
       }
@@ -143,6 +180,271 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col)
 
   return(all_sentences)
 }
+
+# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col) {
+#   # Get unique states to iterate over
+#   states <- unique(df$state)
+#
+#   # Generate sentence for each state
+#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
+#
+#     # Check for the comparison variable ("sex" or "race")
+#     if (compare_var == "sex") {
+#
+#       # Filter data for the specified state
+#       df1 <- df |>
+#         dplyr::ungroup() |>
+#         dplyr::filter(state == state_var)
+#
+#       # Handle missing data for the state
+#       if (nrow(df1) == 0) {
+#         return(paste0("No data available for ", state_var))
+#       }
+#
+#       # Focus on comparisons with males
+#       df_male <- df1 |> dplyr::filter(sex == "Male")
+#
+#       # Initialize an empty sentence variable
+#       sentence <- ""
+#
+#       # Generate sentence for female vs male comparison
+#       df_female <- df1 |> dplyr::filter(sex == "Female")
+#       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
+#         los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
+#         if (!is.na(los_diff_female)) {
+#           abs_los_diff_female <- round(abs(los_diff_female), 1)
+#           if (los_diff_female > 0) {
+#             sentence <- paste0("In ", select_year, ", females spent an average of ",
+#                                abs_los_diff_female,
+#                                if (abs_los_diff_female == 1) " more year" else " more years",
+#                                " ", type, " compared to males in ", state_var, ".")
+#           } else if (los_diff_female < 0) {
+#             sentence <- paste0("In ", select_year, ", females spent an average of ",
+#                                abs_los_diff_female,
+#                                if (abs_los_diff_female == 1) " less year" else " less years",
+#                                " ", type, " compared to males in ", state_var, ".")
+#           }
+#         }
+#       }
+#
+#       # Return the generated sentence, or indicate no disparity found
+#       if (sentence != "") {
+#         return(sentence)
+#       } else {
+#         return(paste0("Females and males spent the same average number of years ", type, "."))
+#       }
+#
+#     } else if (compare_var == "race") {
+#
+#       # Filter and categorize races within the data
+#       df1 <- df |>
+#         dplyr::ungroup() |>
+#         dplyr::mutate(race = dplyr::case_when(
+#           race == "White, non-Hispanic" ~ "White",
+#           race == "Black, non-Hispanic" ~ "Black",
+#           race == "Hispanic, any race" ~ "Hispanic"
+#         )) |>
+#         dplyr::filter(state == state_var)
+#
+#       # Handle missing data for the state
+#       if (nrow(df1) == 0) {
+#         return(paste0("No data available for ", state_var, "."))
+#       }
+#
+#       # Focus on comparisons with White individuals
+#       df_white <- df1 |> dplyr::filter(race == "White")
+#
+#       # Initialize variables to hold sentences for each race comparison
+#       black_sentence <- ""
+#       hispanic_sentence <- ""
+#
+#       # Generate sentence for Black vs White comparison
+#       df_black <- df1 |> dplyr::filter(race == "Black")
+#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
+#         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
+#         if (!is.na(los_diff_black) && los_diff_black > 0) {
+#           black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
+#                                    round(los_diff_black, 1), " more years ", type)
+#         } else if (!is.na(los_diff_black) && los_diff_black < 0) {
+#           black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
+#                                    round(abs(los_diff_black), 1),
+#                                    if (abs(los_diff_black) == 1) " less year" else " less years",
+#                                    " ", type)
+#         }
+#       }
+#
+#       # Generate sentence for Hispanic vs White comparison
+#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
+#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
+#         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
+#         if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
+#           hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#                                       round(los_diff_hispanic, 1), " more years ", type)
+#         } else if (!is.na(los_diff_hispanic) && los_diff_hispanic < 0) {
+#           hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#                                       round(abs(los_diff_hispanic), 1),
+#                                       if (abs(los_diff_hispanic) == 1) " less year" else " less years",
+#                                       " ", type)
+#         }
+#       }
+#
+#       # Combine both sentences, or indicate no significant differences
+#       if (black_sentence != "" && hispanic_sentence != "") {
+#         sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
+#       } else if (black_sentence != "") {
+#         sentence <- paste0(black_sentence, " compared to White people.")
+#       } else if (hispanic_sentence != "") {
+#         sentence <- paste0(hispanic_sentence, " compared to White people.")
+#       } else {
+#         sentence <- "" # No significant differences
+#       }
+#
+#       return(sentence)
+#     } else {
+#       return("Invalid comparison variable.")
+#     }
+#   })
+#
+#   # Assign state names to list
+#   all_sentences <- setNames(all_sentences, states)
+#
+#   return(all_sentences)
+# }
+# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
+#   # Get unique states to iterate over
+#   states <- unique(df$state)
+#
+#   # Generate sentence for each state
+#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
+#
+#     # Check for the comparison variable ("sex" or "race")
+#     if (compare_var == "sex") {
+#
+#       # Filter data for the specified state
+#       df1 <- df |>
+#         dplyr::ungroup() |>
+#         dplyr::filter(state == state_var)
+#
+#       # Handle missing data for the state
+#       if (nrow(df1) == 0) {
+#         return(paste0("No data available for ", state_var))
+#       }
+#
+#       # Focus on comparisons with males
+#       df_male <- df1 |> dplyr::filter(sex == "Male")
+#
+#       # Initialize an empty sentence variable
+#       sentence <- ""
+#
+#       # Generate sentence for female vs male comparison
+#       df_female <- df1 |> dplyr::filter(sex == "Female")
+#       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
+#         los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
+#         if (!is.na(los_diff_female)) {
+#           abs_los_diff_female <- round(abs(los_diff_female), 1)
+#           if (los_diff_female > 0) {
+#             sentence <- paste0("In ", year, ", females spent an average of ",
+#                                abs_los_diff_female,
+#                                if (abs_los_diff_female == 1) " more year" else " more years",
+#                                " ", type, " compared to males in ", state_var, ".")
+#           } else if (los_diff_female < 0) {
+#             sentence <- paste0("In ", year, ", females spent an average of ",
+#                                abs_los_diff_female,
+#                                if (abs_los_diff_female == 1) " less year" else " less years",
+#                                " ", type, " compared to males in ", state_var, ".")
+#           }
+#         }
+#       }
+#
+#       # Return the generated sentence, or indicate no disparity found
+#       if (sentence != "") {
+#         return(sentence)
+#       } else {
+#         return(paste0("Females and males spent the same average number of years ", type, "."))
+#       }
+#
+#     } else if (compare_var == "race") {
+#
+#       # Filter and categorize races within the data
+#       df1 <- df |>
+#         dplyr::ungroup() |>
+#         dplyr::mutate(race = dplyr::case_when(
+#           race == "White, non-Hispanic" ~ "White",
+#           race == "Black, non-Hispanic" ~ "Black",
+#           race == "Hispanic, any race" ~ "Hispanic"
+#         )) |>
+#         dplyr::filter(state == state_var)
+#
+#       # Handle missing data for the state
+#       if (nrow(df1) == 0) {
+#         return(paste0("No data available for ", state_var, "."))
+#       }
+#
+#       # Focus on comparisons with White individuals
+#       df_white <- df1 |> dplyr::filter(race == "White")
+#
+#       # Initialize variables to hold sentences for each race comparison
+#       black_sentence <- ""
+#       hispanic_sentence <- ""
+#
+#       # Generate sentence for Black vs White comparison
+#       df_black <- df1 |> dplyr::filter(race == "Black")
+#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
+#         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
+#       }
+#
+#       # Generate sentence for Hispanic vs White comparison
+#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
+#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
+#         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
+#       }
+#
+#       # Handle cases where both Black and Hispanic comparisons exist
+#       if (!is.na(los_diff_black) && !is.na(los_diff_hispanic)) {
+#         if (round(los_diff_black, 1) == round(los_diff_hispanic, 1)) {
+#           # Combine the sentences if the differences are equal
+#           sentence <- paste0("In ", year, ", Black and Hispanic people spent an average of ",
+#                              abs(round(los_diff_black, 1)),
+#                              if (los_diff_black > 0) " more years" else " less years",
+#                              " ", type, " compared to White people.")
+#         } else {
+#           # Separate sentences if the differences are not equal
+#           black_sentence <- paste0("In ", year, ", Black people spent an average of ",
+#                                    abs(round(los_diff_black, 1)),
+#                                    if (los_diff_black > 0) " more years" else " less years",
+#                                    " ", type)
+#           hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#                                       abs(round(los_diff_hispanic, 1)),
+#                                       if (los_diff_hispanic > 0) " more years" else " less years",
+#                                       " ", type)
+#           sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
+#         }
+#       } else if (!is.na(los_diff_black)) {
+#         sentence <- paste0("In ", year, ", Black people spent an average of ",
+#                            abs(round(los_diff_black, 1)),
+#                            if (los_diff_black > 0) " more years" else " less years",
+#                            " ", type, " compared to White people.")
+#       } else if (!is.na(los_diff_hispanic)) {
+#         sentence <- paste0("In ", year, ", Hispanic people spent an average of ",
+#                            abs(round(los_diff_hispanic, 1)),
+#                            if (los_diff_hispanic > 0) " more years" else " less years",
+#                            " ", type, " compared to White people.")
+#       } else {
+#         sentence <- "" # No significant differences
+#       }
+#
+#       return(sentence)
+#     } else {
+#       return("Invalid comparison variable.")
+#     }
+#   })
+#
+#   # Assign state names to list
+#   all_sentences <- setNames(all_sentences, states)
+#
+#   return(all_sentences)
+# }
+
 
 # fnc_disparities_sentences <- function(state_var, df, type, compare_var, los_col) {
 #

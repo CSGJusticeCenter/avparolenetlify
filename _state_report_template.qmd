@@ -293,7 +293,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 # Disparities
 
-## Disparities in Parole Eligibility
+## Disparities in Parole Release
 
 ::: {.panel-tabset .custom-tabs}
 
