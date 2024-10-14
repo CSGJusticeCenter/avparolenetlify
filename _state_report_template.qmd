@@ -127,7 +127,7 @@ div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 
 <br><div class="divider"></div>
 
-## 2023 Projection Methodology
+## Estimation Methodology
 
 `r paste(state_imputation_notes, collapse = ", ")`
 
@@ -341,7 +341,7 @@ if (file.exists(pe_rri_infographic_male)) {
 
 
 
-## Years in Prison After Parole Eligibility
+## Years in Prison Past Parole Eligibility
 
 ::: {.panel-tabset .custom-tabs}
 
@@ -381,9 +381,10 @@ if (!all(is.na(df1$avg_years_to_estimated_pey))) {
 }
 ```
 
+`r paste(state_sentence_avg_past_pe_race_offense, collapse = ", ")`
+
 ```{r state_scatter_avg_past_pe_race_offense}
-# `r paste(state_sentence_avg_past_pe_race_offense, collapse = ", ")`
-# div(id = "visualization", state_scatter_avg_past_pe_race_offense)
+div(id = "visualization", state_scatter_avg_past_pe_race_offense)
 ```
 
 ### Sex
@@ -418,10 +419,10 @@ if (!all(is.na(df1$avg_years_to_estimated_pey))) {
 }
 ```
 
+`r paste(state_sentence_avg_past_pe_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_avg_past_pe_sex_offense}
-# `r paste(state_sentence_avg_past_pe_sex_offense, collapse = ", ")`
-# div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
+div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
 ```
 
 :::
@@ -478,7 +479,7 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 `r paste(state_sentence_los_race_offense, collapse = ", ")`
 
 ```{r state_scatter_los_race_offense}
-# div(id = "visualization", state_scatter_los_race_offense)
+div(id = "visualization", state_scatter_los_race_offense)
 ```
 
 ### Sex 
@@ -489,10 +490,10 @@ div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
 ```
 
+`r paste(state_sentence_los_sex_offense, collapse = ", ")`
 
 ```{r state_scatter_los_sex_offense}
-# `r paste(state_sentence_los_sex_offense, collapse = ", ")`
-# div(id = "visualization", state_scatter_los_sex_offense)
+div(id = "visualization", state_scatter_los_sex_offense)
 ```
 
 :::

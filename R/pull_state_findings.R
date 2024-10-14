@@ -625,6 +625,7 @@ if (state_for_report %in% names(all_lollipop_los_sex)) {
 
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_sex_offense.rds"))
 
 # SENTENCE: "By offense type, disparities were observed in time served by race
 #            and ethnicity. For Robbery offenses, Hispanic, any race individuals
@@ -637,6 +638,12 @@ if (state_for_report %in% names(all_sentence_los_race_offense)) {
   state_sentence_los_race_offense <- no_sentence
 }
 
+if (state_for_report %in% names(all_sentence_los_sex_offense)) {
+  state_sentence_los_sex_offense <-
+    all_sentence_los_sex_offense[[state_for_report]]
+} else {
+  state_sentence_los_sex_offense <- no_sentence
+}
 
 
 
@@ -669,71 +676,64 @@ if (state_for_report %in% names(all_sentence_avg_past_pe_sex)) {
 
 
 
+#### STILL NEED TO CLEAN THIS CODE
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_past_pe_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_past_pe_sex_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_los_sex_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_los_race_offense.rds"))
 
 
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_race_offense.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_sex_offense.rds"))
+
+if (state_for_report %in% names(all_sentence_avg_past_pe_race_offense)) {
+  state_sentence_avg_past_pe_race_offense <-
+    all_sentence_avg_past_pe_race_offense[[state_for_report]]
+} else {
+  state_sentence_avg_past_pe_race_offense <- no_sentence
+}
 
 
+if (state_for_report %in% names(all_sentence_avg_past_pe_sex_offense)) {
+  state_sentence_avg_past_pe_sex_offense <-
+    all_sentence_avg_past_pe_sex_offense[[state_for_report]]
+} else {
+  state_sentence_avg_past_pe_sex_offense <- no_sentence
+}
 
 
-#
+if (state_for_report %in% names(all_scatter_avg_past_pe_race_offense)) {
+  state_scatter_avg_past_pe_race_offense <-
+    all_scatter_avg_past_pe_race_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_avg_past_pe_race_offense <- no_data_text
+}
 
-#
-# if (state_for_report %in% names(all_scatter_los_race_offense)) {
-#   state_scatter_los_race_offense <-
-#     all_scatter_los_race_offense[[state_for_report]] |>
-#     hc_size(height = 600)
-# } else {
-#   state_scatter_los_race_offense <- no_data_text
-# }
-#
-# if (state_for_report %in% names(all_sentence_avg_past_pe_race_offense)) {
-#   state_sentence_avg_past_pe_race_offense <-
-#     all_sentence_avg_past_pe_race_offense[[state_for_report]]
-# } else {
-#   state_sentence_avg_past_pe_race_offense <- no_sentence
-# }
-#
-# if (state_for_report %in% names(all_scatter_avg_past_pe_race_offense)) {
-#   state_scatter_avg_past_pe_race_offense <-
-#     all_scatter_avg_past_pe_race_offense[[state_for_report]] |>
-#     hc_size(height = 600)
-# } else {
-#   state_scatter_avg_past_pe_race_offense <- no_data_text
-# }
-#
-# # SENTENCE: "By offense type, disparities were observed in time served by sex
-# #            and ethnicity. For Robbery offenses, Hispanic, any sex individuals
-# #            had 4.47 more years on average compared to Other sex(s), non-Hispanic
-# #            individuals, who had the shortest time served for these offenses."
-# if (state_for_report %in% names(all_sentence_los_sex_offense)) {
-#   state_sentence_los_sex_offense <-
-#     all_sentence_los_sex_offense[[state_for_report]]
-# } else {
-#   state_sentence_los_sex_offense <- no_sentence
-# }
-#
-# if (state_for_report %in% names(all_scatter_los_sex_offense)) {
-#   state_scatter_los_sex_offense <-
-#     all_scatter_los_sex_offense[[state_for_report]] |>
-#     hc_size(height = 600)
-# } else {
-#   state_scatter_los_sex_offense <- no_data_text
-# }
-#
-#
-# if (state_for_report %in% names(all_sentence_avg_past_pe_sex_offense)) {
-#   state_sentence_avg_past_pe_sex_offense <-
-#     all_sentence_avg_past_pe_sex_offense[[state_for_report]]
-# } else {
-#   state_sentence_avg_past_pe_sex_offense <- no_sentence
-# }
-#
-# if (state_for_report %in% names(all_scatter_avg_past_pe_sex_offense)) {
-#   state_scatter_avg_past_pe_sex_offense <-
-#     all_scatter_avg_past_pe_sex_offense[[state_for_report]] |>
-#     hc_size(height = 600)
-# } else {
-#   state_scatter_avg_past_pe_sex_offense <- no_data_text
-# }
-#
+
+if (state_for_report %in% names(all_scatter_avg_past_pe_sex_offense)) {
+  state_scatter_avg_past_pe_sex_offense <-
+    all_scatter_avg_past_pe_sex_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_avg_past_pe_sex_offense <- no_data_text
+}
+
+
+if (state_for_report %in% names(all_scatter_los_sex_offense)) {
+  state_scatter_los_sex_offense <-
+    all_scatter_los_sex_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_los_sex_offense <- no_data_text
+}
+
+
+if (state_for_report %in% names(all_scatter_los_race_offense)) {
+  state_scatter_los_race_offense <-
+    all_scatter_los_race_offense[[state_for_report]] |>
+    hc_size(height = 600)
+} else {
+  state_scatter_los_race_offense <- no_data_text
+}
 
