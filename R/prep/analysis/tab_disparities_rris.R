@@ -92,7 +92,7 @@ all_sentence_rri_black <- map(.x = states, .f = function(x) {
     } else if (round(df1$rri, 0) < 1) {
       percent_less <- round((1 - df1$rri) * 100, 1)
       final_sentence <- paste0("In 2020, <span style='color:#49a7a1; font-weight:bold;'>Black people</span> were <span style='color:#49a7a1; font-weight:bold;'>",
-                               percent_less, "% less likely</span> to be incarcerated in state prison compared to <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
+                               percent_less, "percent less likely</span> to be incarcerated in state prison compared to <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
     } else {
       final_sentence <- paste0("")
     }
@@ -125,7 +125,7 @@ all_sentence_rri_hispanic <- map(.x = states, .f = function(x) {
     } else if (round(df1$rri, 0) < 1) {
       percent_less <- round((1 - df1$rri) * 100, 1)
       final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were <span style='color:#55b4e5; font-weight:bold;'>",
-                               percent_less, "% less likely</span> to be incarcerated in state prison compared to <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".",
+                               percent_less, "percent less likely</span> to be incarcerated in state prison compared to <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".",
                                "<br><span style='color: gray; font-size: 0.8em;'><i>Hispanic RRI should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity.</i></span>")
     } else {
       final_sentence <- paste0("")

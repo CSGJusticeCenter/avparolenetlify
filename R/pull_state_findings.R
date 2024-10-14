@@ -597,8 +597,7 @@ if (state_for_report %in% names(all_sentence_los_race)) {
 # TITLE: Average Length of Stay by Race, Ethnicity, and Offense Type
 if (state_for_report %in% names(all_lollipop_los_race)) {
   state_lollipop_los_race <-
-    all_lollipop_los_race[[state_for_report]] |>
-    hc_size(height = 100)
+    all_lollipop_los_race[[state_for_report]]
 } else {
   state_lollipop_los_race <- no_data_text
 }
@@ -618,7 +617,7 @@ if (state_for_report %in% names(all_sentence_los_sex)) {
 if (state_for_report %in% names(all_lollipop_los_sex)) {
   state_lollipop_los_sex <-
     all_lollipop_los_sex[[state_for_report]] |>
-    hc_size(height = 100)
+    hc_size(height = 150)
 } else {
   state_lollipop_los_sex <- no_data_text
 }
