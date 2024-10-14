@@ -319,6 +319,14 @@ if (file.exists(pe_rri_infographic_hispanic)) {
 
 ### Sex
 
+<br>
+
+```{r pe_rri_infographic_male}
+if (file.exists(pe_rri_infographic_male)) {
+    knitr::include_graphics(pe_rri_infographic_male)
+}
+```
+
 `r paste(state_sentence_pe_rri_male, collapse = ", ")`
 
 :::

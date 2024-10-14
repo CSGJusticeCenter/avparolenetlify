@@ -53,7 +53,7 @@ census_state_race_population <- census_state_race_population |>
 # Merge the census data with prison population data by state and race.
 # The prison data (`bjs_prison_pop_by_race_2020`) contains the number of people incarcerated by race in each state.
 # After merging, the result will have both population and prison population data.
-merged_data <- census_state_race_population %>%
+merged_data <- census_state_race_population |>
   inner_join(bjs_prison_pop_by_race_2020, by = c("state", "race")) |>
   rename(prison_population = n) |>
   # Calculate the incarceration rate per 100,000 people for each racial group in each state.
@@ -63,17 +63,17 @@ merged_data <- census_state_race_population %>%
 # Reference Rate Calculation:
 # To compute Relative Rate Index (RRI), we first select the incarceration rate for White, non-Hispanic people
 # in each state, which will serve as the baseline or reference rate for other groups.
-reference_rate <- merged_data %>%
-  filter(race == "White, non-Hispanic") %>%
-  select(state, incarceration_rate) %>%
+reference_rate <- merged_data |>
+  filter(race == "White, non-Hispanic") |>
+  select(state, incarceration_rate) |>
   rename(reference_rate = incarceration_rate)  # Rename for clarity.
 
 # Calculate RRI (Relative Rate Index) by dividing the incarceration rate of each racial group by the reference rate.
 # This gives us a comparison of how much more or less likely other racial groups are incarcerated compared to Whites.
-all_rri_data <- merged_data %>%
-  inner_join(reference_rate, by = "state") %>%
+all_rri_data <- merged_data |>
+  inner_join(reference_rate, by = "state") |>
   mutate(rri = incarceration_rate / reference_rate,
-         rri = round(rri, 1)) %>%  # Calculate the RRI.
+         rri = round(rri, 1)) |>  # Calculate the RRI.
   select(state, race, rri)
 
 
@@ -81,15 +81,15 @@ states <- unique(all_rri_data$state)
 all_sentence_rri_black <- map(.x = states, .f = function(x) {
 
   # Filter the RRI data for the specific state.
-  df1 <- all_rri_data %>%
+  df1 <- all_rri_data |>
     filter(state == x, race == "Black, non-Hispanic")
 
   # Generate the sentence based on RRI value.
   if (nrow(df1) > 0) {
-    if (df1$rri > 1) {
+    if (round(df1$rri, 0) > 1) {
       final_sentence <- paste0("In 2020, <span style='color:#49a7a1; font-weight:bold;'>Black people</span> were incarcerated in state prison at a rate <span style='color:#49a7a1; font-weight:bold;'>",
                                round(df1$rri, 1), " times higher</span> than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
-    } else if (df1$rri < 1) {
+    } else if (round(df1$rri, 0) < 1) {
       percent_less <- round((1 - df1$rri) * 100, 1)
       final_sentence <- paste0("In 2020, <span style='color:#49a7a1; font-weight:bold;'>Black people</span> were <span style='color:#49a7a1; font-weight:bold;'>",
                                percent_less, "% less likely</span> to be incarcerated in state prison compared to <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
@@ -113,15 +113,16 @@ states <- unique(all_rri_data$state)
 all_sentence_rri_hispanic <- map(.x = states, .f = function(x) {
 
   # Filter the RRI data for the specific state.
-  df1 <- all_rri_data %>%
+  df1 <- all_rri_data |>
     filter(state == x, race == "Hispanic, any race")
 
   # Generate the sentence based on RRI value.
   if (nrow(df1) > 0) {
-    if (df1$rri > 1) {
+    if (round(df1$rri, 0) > 1) {
       final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison at a rate <span style='color:#55b4e5; font-weight:bold;'>",
-                               round(df1$rri, 1), " times higher</span> than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
-    } else if (df1$rri < 1) {
+                               round(df1$rri, 1), " times higher</span> than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".",
+                               "<br><span style='color: gray; font-size: 0.8em;'><i>Hispanic RRI should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity.</i></span>")
+    } else if (round(df1$rri, 0) < 1) {
       percent_less <- round((1 - df1$rri) * 100, 1)
       final_sentence <- paste0("In 2020, <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were <span style='color:#55b4e5; font-weight:bold;'>",
                                percent_less, "% less likely</span> to be incarcerated in state prison compared to <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".",
@@ -166,7 +167,8 @@ if (whichimage == "person-2745706-bw"){
 rri_incarceration <- all_rri_data |>
   filter(race != "White, non-Hispanic" &
            race != "Other race(s), non-Hispanic") |>
-  select(state, race, rri)
+  select(state, race, rri) |>
+  filter(rri > 1 | rri < 1)
 
 rri_incarceration_black <- rri_incarceration |>
   filter(race == "Black, non-Hispanic")
@@ -180,7 +182,7 @@ empty_color   <- "#FFFFFF"
 default_ncols <- 15
 
 # Create infographics and save them as PNGs for each state (Black RRI)
-# Takes 5 minutes to run
+# Takes 10 minutes to run
 states <- unique(rri_incarceration_black$state)
 map(.x = states, .f = function(x) {
   df_state <- rri_incarceration_black |>
@@ -203,7 +205,7 @@ map(.x = states, .f = function(x) {
 })
 
 # Create infographics and save them as PNGs for each state (Hispanic RRI)
-# Takes 5 minutes to run
+# Takes 10 minutes to run
 states <- unique(rri_incarceration_hispanic$state)
 map(.x = states, .f = function(x) {
   df_state <- rri_incarceration_hispanic |>
@@ -232,259 +234,11 @@ map(.x = states, .f = function(x) {
 # Save Data
 # ---------------------------------------------------------------------------- #
 
-
-
-
-
-
-
-
-# Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
-# of 1+ years except life
-ncrp_yearendpop_race <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
-  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
-  # remove states with high missingness for race and ethnicity
-
-# Get total prison pop by state and rptyear
-prison_pop_by_race <- ncrp_yearendpop_race |>
-  filter(rptyear == select_year & race %in% c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) |>
-  group_by(state, race) |>
-  summarise(total_prison_pop = n(), .groups = "drop")
-
-# Get current PE pop by state and rptyear
-prison_pop_past_parole_elig_by_race <- ncrp_yearendpop_race |>
-  filter(rptyear == select_year & race %in% c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")) |>
-  filter(parelig_status == "Current") |>
-  group_by(state, race) |>
-  summarise(n = n(), .groups = "drop")
-
-# Merge with parole eligibility data
-merged_prison_pop_data <- prison_pop_by_race %>%
-  left_join(prison_pop_past_parole_elig_by_race, by = c("state", "race")) %>%
-  rename(past_pe_population = n) |>
-  # Calculate rate of people past parole eligibility per 100,000
-  mutate(past_pe_rate = past_pe_population / total_prison_pop #* 100000
-         )
-
-# Calculate the reference rate for White, non-Hispanic individuals
-reference_past_pe_rate <- merged_prison_pop_data %>%
-  filter(race == "White, non-Hispanic") %>%
-  select(state, past_pe_rate) %>%
-  rename(reference_past_pe_rate = past_pe_rate)
-
-# Calculate RRI for other racial groups
-all_pe_rri_data <- merged_prison_pop_data %>%
-  inner_join(reference_past_pe_rate, by = "state") %>%
-  mutate(rri = past_pe_rate / reference_past_pe_rate,
-         rri = round(rri, 1)) %>%
-  select(state, race, rri)
-
-states <- unique(all_pe_rri_data$state)
-
-# RRI for Black people
-# SENTENCE
-# Generate sentence for each state
-all_sentence_pe_rri_black <- map(.x = states, .f = function(x) {
-
-  # Filter the RRI data for the specific state.
-  df1 <- all_pe_rri_data %>%
-    filter(state == x, race == "Black, non-Hispanic")
-
-  # Generate the sentence only if the RRI for Black people is greater than 1.
-  if (nrow(df1) > 0 && df1$rri > 1) {
-    final_sentence <- paste0("In ", select_year, ", <span style='color:#49a7a1; font-weight:bold;'>Black people</span> were incarcerated in state prison past parole eligibility at a rate <span style='color:#49a7a1; font-weight:bold;'>",
-                             round(df1$rri, 1), " times</span> higher than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
-  } else {
-    final_sentence <- paste0("")
-  }
-
-  return(final_sentence)
-})
-
-# Assign state names to the generated sentences for each state.
-all_sentence_pe_rri_black <- setNames(all_sentence_pe_rri_black, states)
-all_sentence_pe_rri_black$Georgia
-
-# SENTENCE
-# Generate sentence for each state
-states <- unique(all_pe_rri_data$state)
-all_sentence_pe_rri_hispanic <- map(.x = states, .f = function(x) {
-
-  # Filter the RRI data for the specific state.
-  df1 <- all_pe_rri_data %>%
-    filter(state == x, race == "Hispanic, any race")
-
-  # Generate the sentence only if the RRI for Hispanic people is greater than 1.
-  if (nrow(df1) > 0 && df1$rri > 1) {
-    final_sentence <- paste0("In ", select_year, ", <span style='color:#55b4e5; font-weight:bold;'>Hispanic people</span> were incarcerated in state prison past parole eligibility at a rate <span style='color:#55b4e5; font-weight:bold;'>",
-                             round(df1$rri, 1), "</span> times higher than <span style='color:#d97d68; font-weight:bold;'>White people</span>, when accounting for population sizes in ", x, ".")
-  } else {
-    final_sentence <- paste0("")
-  }
-
-  return(final_sentence)
-})
-
-# Assign state names to the generated sentences for each state.
-all_sentence_pe_rri_hispanic <- setNames(all_sentence_pe_rri_hispanic, states)
-all_sentence_pe_rri_hispanic$Wyoming
-
-
-
-
-
-# Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
-# of 1+ years except life
-ncrp_yearendpop_sex <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
-
-# Get total prison pop by state and rptyear
-prison_pop_by_sex <- ncrp_yearendpop_sex |>
-  filter(rptyear == select_year) |>
-  group_by(state, sex) |>
-  summarise(total_prison_pop = n(), .groups = "drop")
-
-# Get current PE pop by state and rptyear
-prison_pop_past_parole_elig_by_sex <- ncrp_yearendpop_sex |>
-  filter(rptyear == select_year) |>
-  filter(parelig_status == "Current") |>
-  group_by(state, sex) |>
-  summarise(n = n(), .groups = "drop")
-
-# Merge with parole eligibility data
-merged_prison_pop_data <- prison_pop_by_sex %>%
-  left_join(prison_pop_past_parole_elig_by_sex, by = c("state", "sex")) %>%
-  rename(past_pe_population = n) |>
-  # Calculate rate of people past parole eligibility per 100,000
-  mutate(past_pe_rate = past_pe_population / total_prison_pop #* 100000
-  )
-
-# Calculate the reference rate for females
-reference_past_pe_rate <- merged_prison_pop_data %>%
-  filter(sex == "Female") %>%
-  select(state, past_pe_rate) %>%
-  rename(reference_past_pe_rate = past_pe_rate)
-
-# Calculate RRI for other racial groups
-all_pe_rri_data_male <- merged_prison_pop_data %>%
-  inner_join(reference_past_pe_rate, by = "state") %>%
-  mutate(rri = past_pe_rate / reference_past_pe_rate,
-         rri = round(rri, 1)) %>%
-  select(state, sex, rri)
-
-states <- unique(all_pe_rri_data_male$state)
-
-# RRI for females
-# SENTENCE
-# Generate sentence for each state
-all_sentence_pe_rri_male <- map(.x = states, .f = function(x) {
-
-  # Filter the RRI data for the specific state.
-  df1 <- all_pe_rri_data_male %>%
-    filter(state == x, sex == "Male")
-
-  # Generate the sentence based on RRI value.
-  if (nrow(df1) > 0) {
-    if (df1$rri > 1) {
-      final_sentence <- paste0("In ", select_year, ", <span style='color:#49a7a1; font-weight:bold;'>males </span> were incarcerated in state prison past parole eligibility at a rate <span style='color:#49a7a1; font-weight:bold;'>",
-                               round(df1$rri, 1), " times</span> higher than <span style='color:#d97d68; font-weight:bold;'>females</span>, when accounting for prison populations in ", x, ".")
-    } else if (df1$rri < 1) {
-      percent_less <- round((1 - df1$rri) * 100, 1)
-      final_sentence <- paste0("In ", select_year, ", <span style='color:#49a7a1; font-weight:bold;'>males </span> were <span style='color:#49a7a1; font-weight:bold;'>",
-                               percent_less, "% lesslikely</span>  to be incarcerated in state prison past parole eligibility compared to <span style='color:#d97d68; font-weight:bold;'>females</span>, when accounting for prison populations in ", x, ".")
-    } else {
-      final_sentence <- paste0("")
-    }
-  } else {
-    final_sentence <- paste0("")
-  }
-
-  return(final_sentence)
-})
-
-# Assign state names to the generated sentences for each state.
-all_sentence_pe_rri_male <- setNames(all_sentence_pe_rri_male, states)
-all_sentence_pe_rri_male$Georgia
-all_sentence_pe_rri_male$`North Dakota`
-
-
-# ---------------------------------------------------------------------------- #
-# PEOPLE INFOGRAPHICS FOR RRI's
-# ---------------------------------------------------------------------------- #
-
-pe_rri_incarceration <- all_pe_rri_data |>
-  filter(race != "White, non-Hispanic" &
-           race != "Other race(s), non-Hispanic") |>
-  select(state, race, rri)
-
-pe_rri_incarceration_black <- pe_rri_incarceration |>
-  filter(race == "Black, non-Hispanic")
-
-pe_rri_incarceration_hispanic <- pe_rri_incarceration |>
-  filter(race == "Hispanic, any race")
-
-# Create infographics and save them as PNGs for each state (Black RRI)
-# Takes 5 minutes to run
-states <- unique(pe_rri_incarceration_black$state)
-map(.x = states, .f = function(x) {
-  df_state <- pe_rri_incarceration_black |>
-    filter(state == x)
-
-  fnc_create_infographic(df_state$rri, color4)
-
-  # Save the infographic
-  ggsave(file.path(app_folder, paste0("pe_rri_infographic_black_", x, ".png")),
-         plot = last_plot(), width = 8, height = 6, dpi = 300)
-
-  # Load the saved image
-  img <- image_read(file.path(app_folder, paste0("pe_rri_infographic_black_", x, ".png")))
-
-  # Crop the image
-  img_cropped <- image_trim(img)
-
-  # Save the cropped image
-  image_write(img_cropped, file.path(app_folder, paste0("pe_rri_infographic_black_", x, ".png")))
-})
-
-# Create infographics and save them as PNGs for each state (Hispanic RRI)
-states <- unique(pe_rri_incarceration_hispanic$state)
-map(.x = states, .f = function(x) {
-  df_state <- pe_rri_incarceration_hispanic |>
-    filter(state == x)
-
-  fnc_create_infographic(df_state$rri, color2)
-
-  # Save the infographic
-  ggsave(file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")),
-         plot = last_plot(), width = 8, height = 6, dpi = 300)
-
-  # Load the saved image
-  img <- image_read(file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")))
-
-  # Crop the image
-  img_cropped <- image_trim(img)
-
-  # Save the cropped image
-  image_write(img_cropped, file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")))
-})
-
-
-
-
-
-# ---------------------------------------------------------------------------- #
-# Save Data
-# ---------------------------------------------------------------------------- #
-
 # Define the data objects and their corresponding file names
 data_files <- list(
   all_sentence_rri_black       = "all_sentence_rri_black.rds",
   all_sentence_rri_hispanic    = "all_sentence_rri_hispanic.rds",
-  all_rri_data                 = "all_rri_data.rds",
-
-  all_sentence_pe_rri_black    = "all_sentence_pe_rri_black.rds",
-  all_sentence_pe_rri_hispanic = "all_sentence_pe_rri_hispanic.rds",
-  all_sentence_pe_rri_male     = "all_sentence_pe_rri_male.rds",
-  all_pe_rri_data              = "all_pe_rri_data.rds"
+  all_rri_data                 = "all_rri_data.rds"
 )
 
 # Loop through the list and save each data object to its corresponding file

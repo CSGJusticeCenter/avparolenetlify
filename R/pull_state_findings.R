@@ -538,6 +538,8 @@ pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pe_rri_i
                                       state_for_report, ".png")
 pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_hispanic_",
                                       state_for_report, ".png")
+pe_rri_infographic_male <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_male_",
+                                      state_for_report, ".png")
 
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
 #            times</b> higher than White non-Hispanic people, when accounting for
