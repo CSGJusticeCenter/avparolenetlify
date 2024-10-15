@@ -73,7 +73,8 @@ app_folder <- file.path(sp_data_path, "data", "analysis", "app")
 deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
 # Most recent year of NCRP data and BJS data
-select_year <- 2020
+select_year <- 2019
+pop_select_year <- 2020
 bjs_data_year <- 2020
 
 

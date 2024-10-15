@@ -79,140 +79,177 @@ state_notes <- state_notes_raw |>
 #------------------------------------------------------------------------------#
 # NCRP
 # Seba Guzman's Imputed Data
-# 2014 to 2020
+# 2010 to 2020
 #------------------------------------------------------------------------------#
 
-# Define file paths for release and year-end population files (update paths if necessary)
+# Read and combine files for releases and year-end population, both regular and consolidated
+combine_files <- function(files) {
+  bind_rows(lapply(files, fnc_read_and_add_year))
+}
+
 release_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
-
 yearendpop_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
+release_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+                                         pattern = "ncrp_releases_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
+yearendpop_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+                                            pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
+
+ncrp_releases_combined                <- combine_files(release_files)
+ncrp_releases_consolidated_combined   <- combine_files(release_consolidated_files) # Seba working on it as of 10/15/24
+ncrp_yearendpop_combined              <- combine_files(yearendpop_files)
+ncrp_yearendpop_consolidated_combined <- combine_files(yearendpop_consolidated_files)
+
+# Transform the data for releases and year-end population
+ncrp_releases                <- fnc_transform_ncrp_data(ncrp_releases_combined)
+ncrp_releases_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined) # eba working on it as of 10/15/24
+ncrp_yearendpop              <- fnc_transform_ncrp_data(ncrp_yearendpop_combined)
+ncrp_yearendpop_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
 
 
-# Read and combine release files
-ncrp_releases_combined <- bind_rows(lapply(release_files, fnc_read_and_add_year))
 
-# Read and combine yearendpop files
-ncrp_yearendpop_combined <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_year))
-
-# Transform the combined release data
-# Recategorize parole eligibility (PE) metrics - Combine past and current to get all who are currently eligible
-# Factor variables
-# Warning OK - changes "NA" to actual NA
-        # Warning message:
-        #   There were 2 warnings in `mutate()`.
-        # The first warning was:
-        #   ℹ In argument: `time_between_admisson_release = as.numeric(relyr) - as.numeric(admityr)`.
-        # Caused by warning:
-        #   ! NAs introduced by coercion
-ncrp_releases <- ncrp_releases_combined |>
-  mutate(# Save raw sentence length
-         sentlgth_raw = sentlgth,
-         # Trim white space
-         offdetail    = trimws(offdetail),
-         # Rename variable
-         time_between_ped_rptyear = years_to_estimated_pey,
-         # Calculate time served
-         time_between_admisson_release =  as.numeric(relyr) - as.numeric(admityr),
-         # Calculate time between PE and release
-         time_between_ped_release = as.numeric(relyr) - as.numeric(estimated_pey),
-         # Recategorize PE status
-         parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
-                                    estimated_pey_status == "missing" ~ "Missing",
-                                    estimated_pey_status == "future" ~ "Future",
-                                    TRUE ~ estimated_pey_status)) |>
-  # Replace NAs and "NAs" with "No Data"
-  mutate_at(vars(race, agerlse, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
-  fnc_create_fbi_index() |> # Recategorize offense types
-  fnc_create_admtype() |>   # Recategorize admission types
-  mutate(
-    # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
-    calc_sent_lgth = case_when(
-      calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
-      calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
-      calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
-      calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
-      calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
-      calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
-      is.na(calc_sent_lgth_compl) & is.na(relyr) ~ "Life, LWOP, Life plus additional years, Death",
-      calc_sent_lgth_compl == 200 ~ "Unknown", # 200 was categorized as Unknown
-      TRUE ~ "Unknown"), # Negative values and all else Unknown
-    # If sentlgth is missing, use calc_sent_lgth_compl (imputed by Seba Guzman) category
-    sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
-                         TRUE ~ sentlgth),
-    # Factor variables in this order for charts
-    race = factor(race, levels = c("Unknown",
-                                   "Other race(s), non-Hispanic",
-                                   "White, non-Hispanic",
-                                   "Hispanic, any race",
-                                   "Black, non-Hispanic")),
-    agerlse = factor(agerlse, levels = c("18-24 years",
-                                         "25-34 years",
-                                         "35-44 years",
-                                         "45-54 years",
-                                         "55+ years",
-                                         "Unknown")),
-    sentlgth = factor(sentlgth, levels = c("< 1 year",
-                                           "1-1.9 years",
-                                           "2-4.9 years",
-                                           "5-9.9 years",
-                                           "10-24.9 years",
-                                           ">=25 years",
-                                           "Life, LWOP, Life plus additional years, Death",
-                                           "Unknown")))
-
-# Similarly transform the year-end population data
-# Calculate PE metrics
-# Combine past and current to get all who are currently eligible
-# Factor variables
-ncrp_yearendpop <- ncrp_yearendpop_combined |>
-  mutate(sentlgth_raw = sentlgth,
-         offdetail = trimws(offdetail),
-         time_between_ped_rptyear = as.numeric(years_to_estimated_pey),
-         parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
-                                    estimated_pey_status == "missing" ~ "Missing",
-                                    estimated_pey_status == "future" ~ "Future",
-                                    TRUE ~ estimated_pey_status)) |>
-  # Replace NAs and "NAs" with "No Data"
-  mutate_at(vars(race, ageyrend, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
-  fnc_create_fbi_index() |> # Redo offense types
-  fnc_create_admtype() |>   # Redo admission types
-  mutate(
-    # If sentlgth is missing, use calc_sent_lgth_compl
-    # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
-    calc_sent_lgth = case_when(
-      calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
-      calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
-      calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
-      calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
-      calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
-      calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
-      is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
-      calc_sent_lgth_compl == 200 ~ "Unknown",
-      TRUE ~ "Unknown"),
-    sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
-                         TRUE ~ sentlgth),
-    # Factor variables
-    race = factor(race, levels = c("Unknown",
-                                   "Other race(s), non-Hispanic",
-                                   "White, non-Hispanic",
-                                   "Hispanic, any race",
-                                   "Black, non-Hispanic")),
-    ageyrend = factor(ageyrend, levels = c("18-24 years",
-                                           "25-34 years",
-                                           "35-44 years",
-                                           "45-54 years",
-                                           "55+ years",
-                                         "Unknown")),
-    sentlgth = factor(sentlgth, levels = c("< 1 year",
-                                           "1-1.9 years",
-                                           "2-4.9 years",
-                                           "5-9.9 years",
-                                           "10-24.9 years",
-                                           ">=25 years",
-                                           "Life, LWOP, Life plus additional years, Death",
-                                           "Unknown")))
+# # Define file paths for release and year-end population files (update paths if necessary)
+# release_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+#                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
+#
+# yearendpop_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+#                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
+#
+#
+# release_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+#                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
+#
+# yearendpop_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
+#                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
+#
+#
+#
+# # Read and combine release files
+# ncrp_releases_combined              <- bind_rows(lapply(release_files, fnc_read_and_add_year))
+# ncrp_releases_consolidated_combined <- bind_rows(lapply(release_consolidated_files, fnc_read_and_add_year))
+#
+# # Read and combine yearendpop files
+# ncrp_yearendpop_combined              <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_year))
+# ncrp_yearendpop_consolidated_combined <- bind_rows(lapply(yearendpop_consolidated_files, fnc_read_and_add_year))
+#
+# # Transform the combined release data
+# # Recategorize parole eligibility (PE) metrics - Combine past and current to get all who are currently eligible
+# # Factor variables
+# # Warning OK - changes "NA" to actual NA
+#         # Warning message:
+#         #   There were 2 warnings in `mutate()`.
+#         # The first warning was:
+#         #   ℹ In argument: `time_between_admisson_release = as.numeric(relyr) - as.numeric(admityr)`.
+#         # Caused by warning:
+#         #   ! NAs introduced by coercion
+# ncrp_releases <- ncrp_releases_combined |>
+#   mutate(# Save raw sentence length
+#          sentlgth_raw = sentlgth,
+#          # Trim white space
+#          offdetail    = trimws(offdetail),
+#          # Rename variable
+#          time_between_ped_rptyear = years_to_estimated_pey,
+#          # Calculate time served
+#          time_between_admisson_release =  as.numeric(relyr) - as.numeric(admityr),
+#          # Calculate time between PE and release
+#          time_between_ped_release = as.numeric(relyr) - as.numeric(estimated_pey),
+#          # Recategorize PE status
+#          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
+#                                     estimated_pey_status == "missing" ~ "Missing",
+#                                     estimated_pey_status == "future" ~ "Future",
+#                                     TRUE ~ estimated_pey_status)) |>
+#   # Replace NAs and "NAs" with "No Data"
+#   mutate_at(vars(race, agerlse, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
+#   fnc_create_fbi_index() |> # Recategorize offense types
+#   fnc_create_admtype() |>   # Recategorize admission types
+#   mutate(
+#     # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
+#     calc_sent_lgth = case_when(
+#       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
+#       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
+#       calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
+#       calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
+#       calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
+#       calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
+#       is.na(calc_sent_lgth_compl) & is.na(relyr) ~ "Life, LWOP, Life plus additional years, Death",
+#       calc_sent_lgth_compl == 200 ~ "Unknown", # 200 was categorized as Unknown
+#       TRUE ~ "Unknown"), # Negative values and all else Unknown
+#     # If sentlgth is missing, use calc_sent_lgth_compl (imputed by Seba Guzman) category
+#     sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
+#                          TRUE ~ sentlgth),
+#     # Factor variables in this order for charts
+#     race = factor(race, levels = c("Unknown",
+#                                    "Other race(s), non-Hispanic",
+#                                    "White, non-Hispanic",
+#                                    "Hispanic, any race",
+#                                    "Black, non-Hispanic")),
+#     agerlse = factor(agerlse, levels = c("18-24 years",
+#                                          "25-34 years",
+#                                          "35-44 years",
+#                                          "45-54 years",
+#                                          "55+ years",
+#                                          "Unknown")),
+#     sentlgth = factor(sentlgth, levels = c("< 1 year",
+#                                            "1-1.9 years",
+#                                            "2-4.9 years",
+#                                            "5-9.9 years",
+#                                            "10-24.9 years",
+#                                            ">=25 years",
+#                                            "Life, LWOP, Life plus additional years, Death",
+#                                            "Unknown")))
+#
+# # Similarly transform the year-end population data
+# # Calculate PE metrics
+# # Combine past and current to get all who are currently eligible
+# # Factor variables
+# ncrp_yearendpop <- ncrp_yearendpop_combined |>
+#   mutate(sentlgth_raw = sentlgth,
+#          offdetail = trimws(offdetail),
+#          time_between_ped_rptyear = as.numeric(years_to_estimated_pey),
+#          parelig_status = case_when(estimated_pey_status %in% c("past", "current_year") ~ "Current",
+#                                     estimated_pey_status == "missing" ~ "Missing",
+#                                     estimated_pey_status == "future" ~ "Future",
+#                                     TRUE ~ estimated_pey_status)) |>
+#   # Replace NAs and "NAs" with "No Data"
+#   mutate_at(vars(race, ageyrend, sex, admtype, sentlgth, offdetail), ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
+#   fnc_create_fbi_index() |> # Redo offense types
+#   fnc_create_admtype() |>   # Redo admission types
+#   mutate(
+#     # If sentlgth is missing, use calc_sent_lgth_compl
+#     # Categorize calc_sent_lgth_compl to reflect same categories as sentlgth
+#     calc_sent_lgth = case_when(
+#       calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
+#       calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
+#       calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
+#       calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
+#       calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
+#       calc_sent_lgth_compl >= 25 & calc_sent_lgth_compl != 200 ~ ">=25 years",
+#       is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
+#       calc_sent_lgth_compl == 200 ~ "Unknown",
+#       TRUE ~ "Unknown"),
+#     sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth,
+#                          TRUE ~ sentlgth),
+#     # Factor variables
+#     race = factor(race, levels = c("Unknown",
+#                                    "Other race(s), non-Hispanic",
+#                                    "White, non-Hispanic",
+#                                    "Hispanic, any race",
+#                                    "Black, non-Hispanic")),
+#     ageyrend = factor(ageyrend, levels = c("18-24 years",
+#                                            "25-34 years",
+#                                            "35-44 years",
+#                                            "45-54 years",
+#                                            "55+ years",
+#                                          "Unknown")),
+#     sentlgth = factor(sentlgth, levels = c("< 1 year",
+#                                            "1-1.9 years",
+#                                            "2-4.9 years",
+#                                            "5-9.9 years",
+#                                            "10-24.9 years",
+#                                            ">=25 years",
+#                                            "Life, LWOP, Life plus additional years, Death",
+#                                            "Unknown")))
 
 
 
@@ -473,6 +510,8 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 data_files <- list(
   ncrp_yearendpop               = "ncrp_yearendpop.rds",
   ncrp_releases                 = "ncrp_releases.rds",
+  ncrp_yearendpop_consolidated  = "ncrp_yearendpop_consolidated.rds",
+  ncrp_releases_consolidated    = "ncrp_releases_consolidated.rds",
   bjs_prison_pop_by_race_2020   = "bjs_prison_pop_by_race_2020.rds",
   bjs_prison_pop_by_race_2022   = "bjs_prison_pop_by_race_2022.rds",
   bjs_prison_pop_by_sex_2022    = "bjs_prison_pop_by_sex_2022.rds",

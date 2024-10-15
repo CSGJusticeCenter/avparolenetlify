@@ -122,6 +122,7 @@ avg_current_pe_race <- ncrp_current_pe |>
   # change negative to positive, negative means past parole eligibility year
   group_by(state, race) |>
   summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
+            total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
             people = n(),
             .groups = "drop")
 
