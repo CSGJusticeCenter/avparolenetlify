@@ -32,9 +32,9 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection TBD)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection TBD)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Parole Board<br>Members"))
 )
@@ -70,7 +70,7 @@ div(id = "small-visualization", state_pie_pe_type)
 `r paste(state_sentence_pop_pe_by_year, collapse = ", ")`
 
 ```{r state_stackedbar_pop_pe_by_year}
-div(id = "small-visualization", state_stackedbar_pop_pe_by_year)
+div(id = "visualization", state_stackedbar_pop_pe_by_year)
 ```
 
 <br><div class="transparentdivider"></div>
@@ -293,7 +293,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 # Disparities
 
-## Disparities in Parole Eligibility
+## Disparities in Parole Release
 
 ::: {.panel-tabset .custom-tabs}
 

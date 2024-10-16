@@ -10,6 +10,8 @@ format:
     toc: false
 ---
 
+THIS PAGE USES 2020 NCRP DATA. 2023 PROJECTIONS TBD (10/16/2025)
+
 While the most recent available data from the National Corrections Reporting Program (NCRP) is from 2020, we've projected the numbers for 2023 to offer a more current view of how many people are in prison beyond their parole eligibility and how this impacts prison populations.  
 
 ```{r setup, include=FALSE}
@@ -21,7 +23,7 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
-source("R/prep/config.R")
+source("R/config.R")
 
 load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
