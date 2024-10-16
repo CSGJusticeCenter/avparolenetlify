@@ -8,7 +8,7 @@
 common_style <- list(
   fontFamily = "Graphik",
   color = "black",
-  fontSize = "12px",
+  fontSize = "1em",
   fontWeight = "regular"
 )
 
@@ -21,7 +21,7 @@ common_style <- list(
 #' @export
 common_chart_style <- list(
   fontFamily = "Graphik",
-  fontSize = "12px",
+  fontSize = "1em",
   color = "black"
 )
 
@@ -47,8 +47,8 @@ common_title_style <- list(
 base_hc_theme <- hc_theme(
   colors = c(color1, color2, color3, color4, color5),
   chart = list(style = common_chart_style),
-  title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-  subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
+  title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "1.2em"))),
+  subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "1em"))),
   legend = list(
     align = "center",
     verticalAlign = "top",
@@ -82,7 +82,7 @@ base_hc_theme <- hc_theme(
   caption = list(
     align = "left",
     style = list(
-      fontSize = "10px",
+      fontSize = "0.8em",
       color = "#555555"
     )
   ),
@@ -97,50 +97,50 @@ base_hc_theme <- hc_theme(
   )
 )
 
-hc_theme_map <- hc_theme_merge(
-  hc_theme_smpl(),
-  base_hc_theme,
-  hc_theme(
-    chart = list(style = modifyList(common_chart_style, list(fontSize = "14px"))),
-    title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "22px"))),
-    plotOptions = list(
-      series = list(states = list(inactive = list(opacity = 1))),
-      line = list(marker = list(enabled = TRUE)),
-      spline = list(marker = list(enabled = TRUE)),
-      area = list(marker = list(enabled = TRUE)),
-      areaspline = list(marker = list(enabled = TRUE))
-    ),
-    legend = list(
-      itemStyle = modifyList(common_style, list(fontSize = "16px"))
-    )
-  )
-)
-
-hc_theme_with_line <- hc_theme(
-  colors = c(color1, color2, color3, color4, color5),
-  chart = list(style = common_chart_style),
-  title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "16px"))),
-  subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "14px"))),
-  legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
-  xAxis = list(
-    labels = list(enabled = TRUE, style = common_style),
-    tickmarkPlacement = 'on',
-    tickLength = 5,
-    tickWidth = 1,
-    tickColor = "white",
-    lineColor = "black"
-  ),
-  yAxis = list(
-    labels = list(enabled = TRUE, style = common_style)
-  ),
-  plotOptions = list(
-    column = list(
-      dataLabels = list(
-        style = list(color = "black")
-      )
-    )
-  )
-)
+# hc_theme_map <- hc_theme_merge(
+#   hc_theme_smpl(),
+#   base_hc_theme,
+#   hc_theme(
+#     chart = list(style = modifyList(common_chart_style, list(fontSize = "16px"))),
+#     title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "22px"))),
+#     plotOptions = list(
+#       series = list(states = list(inactive = list(opacity = 1))),
+#       line = list(marker = list(enabled = TRUE)),
+#       spline = list(marker = list(enabled = TRUE)),
+#       area = list(marker = list(enabled = TRUE)),
+#       areaspline = list(marker = list(enabled = TRUE))
+#     ),
+#     legend = list(
+#       itemStyle = modifyList(common_style, list(fontSize = "1em"))
+#     )
+#   )
+# )
+#
+# hc_theme_with_line <- hc_theme(
+#   colors = c(color1, color2, color3, color4, color5),
+#   chart = list(style = common_chart_style),
+#   title = list(align = "center", style = modifyList(common_title_style, list(fontSize = "1.2em"))),
+#   subtitle = list(align = "center", style = modifyList(common_title_style, list(fontSize = "1em"))),
+#   legend = list(align = "center", verticalAlign = "top", itemStyle = common_style),
+#   xAxis = list(
+#     labels = list(enabled = TRUE, style = common_style),
+#     tickmarkPlacement = 'on',
+#     tickLength = 5,
+#     tickWidth = 1,
+#     tickColor = "white",
+#     lineColor = "black"
+#   ),
+#   yAxis = list(
+#     labels = list(enabled = TRUE, style = common_style)
+#   ),
+#   plotOptions = list(
+#     column = list(
+#       dataLabels = list(
+#         style = list(color = "black")
+#       )
+#     )
+#   )
+# )
 
 # Define a function to add accessibility and plot options to a highchart object
 # fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {

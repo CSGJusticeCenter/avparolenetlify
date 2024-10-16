@@ -3,15 +3,19 @@
 /* Overview */
 /******************************************************************************/
 
+/*
 html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
+*/
 
+/*
 #main-content {
   overflow-y: auto;
 }
+*/
 
 body {
   width: 100vw; /*Adjusts to different screen sizes*/

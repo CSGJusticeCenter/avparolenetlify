@@ -299,8 +299,8 @@ map_percent <- highchart(height = 625) |>
     dataLabels = list(enabled = TRUE,
                       useHTML = TRUE,
                       formatter = JS("function() {return '<div style=\"text-align:center;\">' +
-                            '<span style=\"font-weight:bold; font-size: 14px; text-align:center;\">' + this.point.state_abb + '</span><br>' +
-                            '<span style=\"font-weight:normal; font-size: 14px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';}"),
+                            '<span style=\"font-weight:bold; font-size: 16px; text-align:center;\">' + this.point.state_abb + '</span><br>' +
+                            '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';}"),
                       textOutline = "none",
                       y = 0),
     nullColor = lightgray,
@@ -331,19 +331,7 @@ map_percent <- highchart(height = 625) |>
   hc_xAxis(title = "") |>
   hc_yAxis(title = "") |>
 
-  hc_tooltip(
-    borderWidth = 1,
-    borderRadius = 0,
-    backgroundColor = 'rgba(255, 255, 255, 1)',
-    formatter = JS("function() {
-          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
-          this.point.tooltip +
-          '</div>';}"
-    ),
-    useHTML = TRUE
-  ) |>
-
-  hc_add_theme(hc_theme_map) |>
+  hc_add_theme(base_hc_theme) |>
 
   hc_plotOptions(series = list(
     animation = FALSE,
@@ -379,37 +367,21 @@ map_percent <- highchart(height = 625) |>
     formatter = JS("function() {
           return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
           '<div style=\"text-align:left;\">' +
-          '<span style=\"font-weight:normal; font-size: 14px;\">' + this.point.tooltip + '</span>' +
+          '<span style=\"font-weight:normal; font-size: 1em;\">' + this.point.tooltip + '</span>' +
           '</div></div>';
     }")
   ) |>
 
   hc_title(text = "Percentage of People in Prison Past Parole Eligibility<br>2023 Projections",
-           align = "center") |>
+           align = "center",
+           style = list(fontSize = "1.75em", fontWeight = "bold")) |>
 
   hc_exporting(
     enabled = TRUE,
     filename = paste0(gsub(" ", "_", tolower("Map Past Parole Eligibility by State 2023"))),
-    scale = 1,  # Ensure the exported image matches screen size exactly
-    sourceWidth = 800,  # Set the width same as screen
-    sourceHeight = 600,  # Set the height same as screen
-    chartOptions = list(
-      plotOptions = list(
-        series = list(
-          dataLabels = list(
-            align = "center",
-            verticalAlign = "middle",
-            style = list(
-              fontWeight = "bold",
-              fontSize = "14px",
-              textOutline = "none",
-              align = "center"
-            )
-          )
-        )
-      )
-    )
-  ) |>
+    scale = 1,
+    sourceWidth = 800,
+    sourceHeight = 600) |>
   hc_caption(text = ncrp_source,
              y = -10)
 map_percent
