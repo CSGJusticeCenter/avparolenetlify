@@ -77,6 +77,7 @@ select_year <- 2019
 pop_select_year <- 2020
 bjs_data_year <- 2020
 latest_reliable_ncrp_year <- 2019
+census_year <- 2020
 
 #------------------------------------------------------------------------------#
 # Fonts

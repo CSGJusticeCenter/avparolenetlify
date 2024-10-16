@@ -13,15 +13,19 @@
 # Time Served - Sentences
 # ---------------------------------------------------------------------------- #
 
+# Calculate time served
+ncrp_releases_timeserved <- fnc_filter_population(ncrp_releases) |>
+  mutate(time_between_admission_release =  as.numeric(relyr) - as.numeric(admityr))
+
 # Calculate average time served by race, ethnicity, and state
 # Remove states without parole systems and with high missingness
 # (states_to_exclude created in prep/import_format.R)
-los_race <- fnc_filter_population(ncrp_releases) |>
+los_race <- ncrp_releases_timeserved |>
   filter(rptyear == select_year) |>
   # Only include these racial and ethnic groups
   filter(race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic")) |>
   group_by(state, race) |>
-  summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
+  summarise(average_los = mean(time_between_admission_release, na.rm = TRUE),
             .groups = "drop")
 
 # SENTENCE: "In 2020, Black people spent an average of 0.7 more years in prison,
@@ -31,11 +35,11 @@ all_sentence_los_race <- fnc_generate_los_disparity_sentences(los_race, "in pris
 all_sentence_los_race$Georgia
 
 # Calculate average time served by sex and state
-los_sex <- fnc_filter_population(ncrp_releases) |>
+los_sex <- ncrp_releases_timeserved |>
   filter(rptyear == select_year) |>
   filter(sex != "Unknown") |>
   group_by(state, sex) |>
-  summarise(average_los = mean(time_between_admisson_release, na.rm = TRUE),
+  summarise(average_los = mean(time_between_admission_release, na.rm = TRUE),
             .groups = "drop")
 
 # SENTENCE: "In 2020, females spent an average of 1 year fewer in prison compared

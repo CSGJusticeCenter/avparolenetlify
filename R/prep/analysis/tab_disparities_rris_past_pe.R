@@ -119,6 +119,27 @@ all_sentence_pe_rri_hispanic$Georgia
 # PEOPLE INFOGRAPHICS FOR RRI's
 # ---------------------------------------------------------------------------- #
 
+# Image setup
+whichimage <- "person-2745706-bw"
+wd <- getwd()
+
+# Make sure you have the correct image path
+if (whichimage == "person-2745706-bw"){
+  px_h <- 521
+  px_w <- 323
+  ex_h <- 0.005
+  ex_w <- 0.02
+  img_ar_hw <- (px_h*(1+ex_h)) / (px_w*(1+ex_w))
+  img_ar_wh <- (px_w*(1+ex_w)) / (px_h*(1+ex_h))
+  rawimg <- readPNG(file.path(wd, glue("img/{whichimage}.png")))
+  img <- ifelse(rawimg == 0, 1, 0)
+}
+
+# Set up colors
+light_color  <- darkgray
+empty_color   <- "#FFFFFF"
+default_ncols <- 15
+
 pe_rri_incarceration <- all_pe_rri_data |>
   filter(race != "White, non-Hispanic" &
            race != "Other race(s), non-Hispanic") |>
@@ -141,17 +162,17 @@ map(.x = states, .f = function(x) {
   fnc_create_infographic(df_state$rri, color4)
 
   # Save the infographic
-  ggsave(file.path(app_folder, paste0("pe_rri_infographic_black_", x, ".png")),
+  ggsave(file.path(app_folder, paste0("pngs/pe_rri_infographic_black_", x, ".png")),
          plot = last_plot(), width = 8, height = 6, dpi = 300)
 
   # Load the saved image
-  img <- image_read(file.path(app_folder, paste0("pe_rri_infographic_black_", x, ".png")))
+  img <- image_read(file.path(app_folder, paste0("pngs/pe_rri_infographic_black_", x, ".png")))
 
   # Crop the image
   img_cropped <- image_trim(img)
 
   # Save the cropped image
-  image_write(img_cropped, file.path(app_folder, paste0("pe_rri_infographic_black_", x, ".png")))
+  image_write(img_cropped, file.path(app_folder, paste0("pngs/pe_rri_infographic_black_", x, ".png")))
 })
 
 # Create infographics and save them as PNGs for each state (Hispanic RRI)
@@ -163,17 +184,17 @@ map(.x = states, .f = function(x) {
   fnc_create_infographic(df_state$rri, color2)
 
   # Save the infographic
-  ggsave(file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")),
+  ggsave(file.path(app_folder, paste0("pngs/pe_rri_infographic_hispanic_", x, ".png")),
          plot = last_plot(), width = 8, height = 6, dpi = 300)
 
   # Load the saved image
-  img <- image_read(file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")))
+  img <- image_read(file.path(app_folder, paste0("pngs/pe_rri_infographic_hispanic_", x, ".png")))
 
   # Crop the image
   img_cropped <- image_trim(img)
 
   # Save the cropped image
-  image_write(img_cropped, file.path(app_folder, paste0("pe_rri_infographic_hispanic_", x, ".png")))
+  image_write(img_cropped, file.path(app_folder, paste0("pngs/pe_rri_infographic_hispanic_", x, ".png")))
 })
 
 
@@ -281,17 +302,17 @@ map(.x = states, .f = function(x) {
   fnc_create_infographic(df_state$rri, color4)
 
   # Save the infographic
-  ggsave(file.path(app_folder, paste0("pe_rri_infographic_male_", x, ".png")),
+  ggsave(file.path(app_folder, paste0("pngs/pe_rri_infographic_male_", x, ".png")),
          plot = last_plot(), width = 8, height = 6, dpi = 300)
 
   # Load the saved image
-  img <- image_read(file.path(app_folder, paste0("pe_rri_infographic_male_", x, ".png")))
+  img <- image_read(file.path(app_folder, paste0("pngs/pe_rri_infographic_male_", x, ".png")))
 
   # Crop the image
   img_cropped <- image_trim(img)
 
   # Save the cropped image
-  image_write(img_cropped, file.path(app_folder, paste0("pe_rri_infographic_male_", x, ".png")))
+  image_write(img_cropped, file.path(app_folder, paste0("pngs/pe_rri_infographic_male_", x, ".png")))
 })
 
 # ---------------------------------------------------------------------------- #

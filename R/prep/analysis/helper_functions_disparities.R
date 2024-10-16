@@ -5,7 +5,7 @@ fnc_get_census_data <- function(state) {
       state = state,
       variables = race_vars,
       summary_var = "P3_001N",
-      year = select_year,
+      year = census_year,
       geometry = FALSE) %>%
     clean_names() %>%
     select(-geoid) %>%

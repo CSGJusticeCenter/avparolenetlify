@@ -530,15 +530,15 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.r
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_male.rds"))
 
-rri_infographic_black       <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_black_",
+rri_infographic_black       <- paste0(sp_data_path, "/data/analysis/app/pngs/rri_infographic_black_",
                                       state_for_report, ".png")
-rri_infographic_hispanic    <- paste0(sp_data_path, "/data/analysis/app/rri_infographic_hispanic_",
+rri_infographic_hispanic    <- paste0(sp_data_path, "/data/analysis/app/pngs/rri_infographic_hispanic_",
                                       state_for_report, ".png")
-pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_black_",
+pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_black_",
                                       state_for_report, ".png")
-pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_hispanic_",
+pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_hispanic_",
                                       state_for_report, ".png")
-pe_rri_infographic_male <- paste0(sp_data_path, "/data/analysis/app/pe_rri_infographic_male_",
+pe_rri_infographic_male     <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_male_",
                                       state_for_report, ".png")
 
 # SENTENCE: "In STATE, X people are incarcerated at a rate X
