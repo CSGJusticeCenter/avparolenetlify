@@ -97,18 +97,17 @@ yearendpop_consolidated_files <- list.files(path = file.path(sp_data_path, "data
                                             pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
 
 ncrp_releases_combined                <- combine_files(release_files)
-ncrp_releases_consolidated_combined   <- combine_files(release_consolidated_files) # Seba working on it as of 10/15/24
+# ncrp_releases_consolidated_combined   <- combine_files(release_consolidated_files) # Seba working on it as of 10/15/24
 ncrp_yearendpop_combined              <- combine_files(yearendpop_files)
-ncrp_yearendpop_consolidated_combined <- combine_files(yearendpop_consolidated_files)
+# ncrp_yearendpop_consolidated_combined <- combine_files(yearendpop_consolidated_files)
 
 # Transform the data for releases and year-end population
 ncrp_releases                <- fnc_transform_ncrp_data(ncrp_releases_combined)
-ncrp_releases_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined) # eba working on it as of 10/15/24
+# ncrp_releases_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined) # Seba working on it as of 10/15/24
 ncrp_yearendpop              <- fnc_transform_ncrp_data(ncrp_yearendpop_combined)
-ncrp_yearendpop_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
+# ncrp_yearendpop_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
 
-
-
+ncrp_yearendpop_not_consolidated <- ncrp_yearendpop
 # # Define file paths for release and year-end population files (update paths if necessary)
 # release_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
 #                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
@@ -116,22 +115,10 @@ ncrp_yearendpop_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_consolid
 # yearendpop_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
 #                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
 #
-#
-# release_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
-#                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
-#
-# yearendpop_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
-#                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
-#
-#
-#
 # # Read and combine release files
 # ncrp_releases_combined              <- bind_rows(lapply(release_files, fnc_read_and_add_year))
-# ncrp_releases_consolidated_combined <- bind_rows(lapply(release_consolidated_files, fnc_read_and_add_year))
-#
 # # Read and combine yearendpop files
 # ncrp_yearendpop_combined              <- bind_rows(lapply(yearendpop_files, fnc_read_and_add_year))
-# ncrp_yearendpop_consolidated_combined <- bind_rows(lapply(yearendpop_consolidated_files, fnc_read_and_add_year))
 #
 # # Transform the combined release data
 # # Recategorize parole eligibility (PE) metrics - Combine past and current to get all who are currently eligible
@@ -262,11 +249,12 @@ ncrp_yearendpop_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_consolid
 # new offenses and sentence lengths not less than one year and not life
 # Filter for states with more than 50% missing in admtype or sentlgth
 states_with_high_missing <- ncrp_yearendpop %>%
-  filter(rptyear >= 2018) |>
-  group_by(state, rptyear) %>%
+  filter(rptyear == select_year) |>
+  group_by(state) %>%
   summarize(
     perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
-    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1)) %>%
+    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1),
+    .groups = "drop") %>%
   filter(perc_missing_admtype > 50 | perc_missing_sentlgth > 50)
 
 # Get states that have abolished parole and keep it as a dataframe
@@ -283,16 +271,15 @@ states_to_exclude <- states_with_high_missing %>%
 
 # May be needed, filter the resulting dataframe for a specific year (e.g., 2020) ##############################
 states_to_exclude <- states_with_high_missing %>%
-  filter(rptyear == 2020) %>%
   select(state) %>%
   bind_rows(abolished_states) %>%
-  distinct() %>%
-  bind_rows(tibble(state = "Alabama"))
+  distinct()
+  # bind_rows(tibble(state = "Alabama"))
 
 # States with high missingness for race and ethnicity
 states_with_high_missing_race <- ncrp_yearendpop |>
-  filter(rptyear >= 2018) |>
-  group_by(state, rptyear) |>
+  filter(rptyear == select_year) |>
+  group_by(state) |>
   summarize(
     perc_missing_race = round(mean(race == "Unknown" | is.na(race)) * 100, 1),
     .groups = "drop") |>
@@ -511,7 +498,7 @@ data_files <- list(
   ncrp_yearendpop               = "ncrp_yearendpop.rds",
   ncrp_releases                 = "ncrp_releases.rds",
   ncrp_yearendpop_consolidated  = "ncrp_yearendpop_consolidated.rds",
-  ncrp_releases_consolidated    = "ncrp_releases_consolidated.rds",
+  # ncrp_releases_consolidated    = "ncrp_releases_consolidated.rds",
   bjs_prison_pop_by_race_2020   = "bjs_prison_pop_by_race_2020.rds",
   bjs_prison_pop_by_race_2022   = "bjs_prison_pop_by_race_2022.rds",
   bjs_prison_pop_by_sex_2022    = "bjs_prison_pop_by_sex_2022.rds",

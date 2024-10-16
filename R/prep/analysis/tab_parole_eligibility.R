@@ -46,9 +46,6 @@
 # Only includes states with parole systems and without high misingness
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
 
-# Check to see which states are included
-unique(ncrp_yearendpop_filtered$state)
-
 # Total prison population by state and year
 total_pe_pop <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
@@ -101,9 +98,9 @@ all_pie_pe_type <- map(.x = states, .f = function(x) {
 all_pie_pe_type <- setNames(all_pie_pe_type, states)
 all_pie_pe_type$Georgia
 
-# SENTENCE: In 2020, 76 percent of people in prison were currently past their
+# SENTENCE: In YEAR, 76 percent of people in prison were currently past their
 #           parole eligibility. Another 23 percent will reach
-#           their parole eligibility after 2020.
+#           their parole eligibility after YEAR.
 all_sentence_pe_type <- map(states, function(x) {
   df <- pe_status_pop |>
     filter(state == x, rptyear == select_year)
@@ -154,7 +151,7 @@ pe_pop_prop <- current_pe_pop |>
   left_join(total_pe_pop, by = c("state", "rptyear")) |>
   mutate(prop = n / total_n)
 
-# SENTENCE: "From 2014 to 2020, the percent of people in prison past parole eligibility increased by 14 percent."
+# SENTENCE: "From 2014 to YEAR, the percent of people in prison past parole eligibility increased by 14 percent."
 # Loop through each unique state
 states <- unique(pe_pop_prop$state)
 all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
@@ -162,7 +159,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
   # Filter data for the current state
   df <- pe_pop_prop |>
     filter(state == x) |>
-    filter(rptyear >= 2010)
+    filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year)
 
   # Extract the earliest and latest years for each state
   earliest_year <- min(df$rptyear)
@@ -208,7 +205,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
   # Filter the data for the current state and only analyze data from 2010 onwards
   df1 <- pe_pop_prop |>
     filter(state == x) |>
-    filter(rptyear >= 2010) |>
+    filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year) |>
     mutate(rptyear_fac = factor(rptyear))  # Convert years to a factor for the x-axis
 
   # Define chart title and accessibility text
@@ -269,16 +266,20 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Prepare data for people in prison past their parole eligibility date by race, sex, and age
-
 current_pe <- ncrp_yearendpop_filtered |>
   filter(parelig_status == "Current")
+
+# Use unconsolidated file for age - ageyrend not in consolidated file
+current_pe_unconsolidated <- fnc_filter_pe_population_criteria(ncrp_yearendpop_not_consolidated) |>
+  filter(parelig_status == "Current")
+
 # Race data: Exclude states with high missingness in race categories
 current_ped_race     <- fnc_summarize_data(current_pe, "race") |>
   # Exclude states with high missingness for race and ethnicity
   # Prints off which states are missing data
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 current_ped_sex      <- fnc_summarize_data(current_pe, "sex")
-current_ped_ageyrend <- fnc_summarize_data(current_pe, "ageyrend")
+current_ped_ageyrend <- fnc_summarize_data(current_pe_unconsolidated, "ageyrend")
 
 # ---------------------------------------------------------------------------- #
 # Race
@@ -304,7 +305,7 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
 all_bar_parole_eligibility_race$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison past parole eligibility were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 60 percent of people in prison past parole eligibility were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 
@@ -345,7 +346,7 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 all_bar_parole_eligibility_sex <- setNames(all_bar_parole_eligibility_sex, states)
 all_bar_parole_eligibility_sex$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison past parole eligibility were male."
+# SENTENCE: "In YEAR, 60 percent of people in prison past parole eligibility were male."
 # Generate sentence for each state
 all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 
@@ -386,7 +387,7 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 all_bar_parole_eligibility_ageyrend <- setNames(all_bar_parole_eligibility_ageyrend, states)
 all_bar_parole_eligibility_ageyrend$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison past parole eligibility were male."
+# SENTENCE: "In YEAR, 60 percent of people in prison past parole eligibility were male."
 # Generate sentence for each state
 all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 
@@ -450,7 +451,7 @@ all_bar_ped_fbi_index <- map(.x = states,  .f = function(x) {
 all_bar_ped_fbi_index <- setNames(all_bar_ped_fbi_index, states)
 all_bar_ped_fbi_index$Georgia
 
-# SENTENCE: In 2020, 69 percent of people in prison past parole eligibility were
+# SENTENCE: In YEAR, 69 percent of people in prison past parole eligibility were
 #           in prison for violent offenses and 31 percent for nonviolent offenses.
 #           Most people who were incarcerated past parole eligibility were serving
 #           time for aggravated or simple assault (21%) and robbery (20%) offenses.
@@ -531,7 +532,7 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 all_bar_parole_eligibility_sentlgth <- setNames(all_bar_parole_eligibility_sentlgth, states)
 all_bar_parole_eligibility_sentlgth$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison past parole eligibility were male."
+# SENTENCE: "In YEAR, 60 percent of people in prison past parole eligibility were male."
 # Generate sentence for each state
 all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 

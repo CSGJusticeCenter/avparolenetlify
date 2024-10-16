@@ -183,7 +183,7 @@ if (state_for_report %in% names(all_bar_parole_eligibility_ageyrend)) {
 
 # OFFENSE TYPE ------------------
 
-# SENTENCE: In 2020, 61% of people in prison past their parole consideration year
+# SENTENCE: In YEAR, 61% of people in prison past their parole consideration year
 #           were in prison for violent offenses. The breakdown of criminal
 #           offenses of people in prison past their parole consideration year
 #           reveals a varied landscape, with the majority of people incarcerated
@@ -412,7 +412,7 @@ if (state_for_report %in% names(all_line_releases_by_year)) {
   state_line_releases_by_year <- no_data_text
 }
 
-# SENTENCE: In 2020, 40% of people eligible for parole were released during
+# SENTENCE: In YEAR, 40% of people eligible for parole were released during
 #           their eligibility year. This represents a 3% decrease compared to 2010.
 if (state_for_report %in% names(all_sentence_pe_proportion_released)) {
   state_sentence_pe_proportion_released <-
@@ -584,7 +584,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_los_race.rds")
 load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_los_sex.rds"))
 
 # SENTENCE: "Hispanic, any race individuals faced the longest average time
-#            served in prison in 2020, with an average of 3.8 years.
+#            served in prison in YEAR, with an average of 3.8 years.
 #            White, non-Hispanic individuals experienced shorter prison stays,
 #            averaging 2.3 years compared to their counterparts."
 if (state_for_report %in% names(all_sentence_los_race)) {
@@ -603,7 +603,7 @@ if (state_for_report %in% names(all_lollipop_los_race)) {
 }
 
 # SENTENCE: "Hispanic, any sex individuals faced the longest average time
-#            served in prison in 2020, with an average of 3.8 years.
+#            served in prison in YEAR, with an average of 3.8 years.
 #            White, non-Hispanic individuals experienced shorter prison stays,
 #            averaging 2.3 years compared to their counterparts."
 if (state_for_report %in% names(all_sentence_los_sex)) {
