@@ -146,7 +146,8 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = bjs_source)
+                                   source     = bjs_source,
+                                   year       = bjs_data_year)
 
   return(highcharts)
 })
@@ -154,14 +155,15 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 all_bar_population_race <- setNames(all_bar_population_race, states)
 all_bar_population_race$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = bjs_prison_pop_by_race_2020,
                                                  x_var      = "race",
-                                                 type       = "in prison")
+                                                 type       = "in prison",
+                                                 year       = bjs_data_year)
 
   return(sentences)
 })
@@ -193,7 +195,8 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = bjs_source)
+                                   source     = bjs_source,
+                                   year       = bjs_data_year)
 
   return(highcharts)
 })
@@ -201,14 +204,15 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
 all_bar_population_sex <- setNames(all_bar_population_sex, states)
 all_bar_population_sex$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_sex <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = bjs_prison_pop_by_sex_2022,
                                                  x_var      = "sex",
-                                                 type       = "in prison")
+                                                 type       = "in prison",
+                                                 year       = bjs_data_year)
 
   return(sentences)
 })
@@ -223,7 +227,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Summarize age data for the prison population for each state
-ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop, "ageyrend")
+ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop, "ageyrend", year = pop_select_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_ageyrend$state)
@@ -240,7 +244,8 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_source)
+                                   source     = ncrp_source,
+                                   year       = pop_select_year)
 
   return(highcharts)
 })
@@ -248,14 +253,15 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
 all_bar_population_ageyrend <- setNames(all_bar_population_ageyrend, states)
 all_bar_population_ageyrend$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = ncrp_population_ageyrend,
                                                  x_var      = "ageyrend",
-                                                 type       = "in prison")
+                                                 type       = "in prison",
+                                                 year       = pop_select_year)
 
   return(sentences)
 })
@@ -269,7 +275,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Summarize offense data for the prison population for each state
-ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop, "fbi_index")
+ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop, "fbi_index", year = pop_select_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_fbi_index$state)
@@ -286,7 +292,8 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_source)
+                                   source     = ncrp_source,
+                                   year       = pop_select_year)
 
   return(highcharts)
 })
@@ -294,14 +301,15 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
 all_bar_population_fbi_index <- setNames(all_bar_population_fbi_index, states)
 all_bar_population_fbi_index$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = ncrp_population_fbi_index,
                                                  x_var      = "fbi_index",
-                                                 type       = "in prison")
+                                                 type       = "in prison",
+                                                 year       = pop_select_year)
 
   return(sentences)
 })
@@ -315,7 +323,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Process sentence length data for the prison population
-ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop, "sentlgth")
+ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop, "sentlgth", year = pop_select_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_sentlgth$state)
@@ -332,7 +340,8 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_source)
+                                   source     = ncrp_source,
+                                   year       = pop_select_year)
 
   return(highcharts)
 })
@@ -340,14 +349,15 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
 all_bar_population_sentlgth <- setNames(all_bar_population_sentlgth, states)
 all_bar_population_sentlgth$Georgia
 
-# SENTENCE: "In 2020, 60 percent of people in prison were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = ncrp_population_sentlgth,
                                                  x_var      = "sentlgth",
-                                                 type       = "in prison")
+                                                 type       = "in prison",
+                                                 year       = pop_select_year)
 
   return(sentences)
 })

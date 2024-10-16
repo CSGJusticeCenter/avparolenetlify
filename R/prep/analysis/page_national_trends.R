@@ -394,7 +394,7 @@ map_percent
 data_files <- list(
   map_percent                       = "map_percent.rds",
   parole_eligibility_table          = "parole_eligibility_table.rds",
-  parole_eligibility_table_download = "bjs_prison_pop_by_race_2020.rds"
+  parole_eligibility_table_download = "parole_eligibility_table_download.rds"
 )
 
 # Loop through the list and save each data object to its corresponding file

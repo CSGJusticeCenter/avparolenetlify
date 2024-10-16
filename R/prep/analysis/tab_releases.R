@@ -22,15 +22,15 @@ ncrp_releases_filtered <- fnc_filter_population(ncrp_releases)
 
 # Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
-  filter(rptyear >= 2010) |>
+  filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year) |>
   group_by(state, rptyear) |>
   summarise(total = n(), .groups = "drop")
 
 # Get unique states to iterate over
 states <- unique(ncrp_releases_by_year$state)
 
-# SENTENCE: "From 2014 to 2020, people released from prison decreased 7 percent,
-#            dropping from 19,723 in 2014 to 18,298 in 2020."
+# SENTENCE: "From 2014 to YEAR, people released from prison decreased 7 percent,
+#            dropping from 19,723 in 2014 to 18,298 in YEAR."
 # Generate sentence for each state
 all_sentence_releases <- map(.x = states, .f = function(x) {
   # Filter release data for the specific state
@@ -131,7 +131,7 @@ ncrp_pe_releases_by_year <- ncrp_releases_filtered |>
 
 # Calculate the number of parole eligible people in prison by state and year
 ncrp_pe_population_not_released_by_year <- fnc_filter_population(ncrp_yearendpop) |>
-  filter(rptyear >= 2010) |>
+  filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year) |>
   filter(parelig_status == "Current") |>
   group_by(state, rptyear) |>
   summarise(total_parole_eligible_population_not_released = n(), .groups = "drop")
@@ -238,7 +238,7 @@ ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
 # Get unique states to iterate over
 states <- unique(ncrp_pe_proportion_released$state)
 
-# SENTENCE: "In 2020, 34 percent of people eligible for parole were released
+# SENTENCE: "In YEAR, 34 percent of people eligible for parole were released
 #            during their eligibility year. This represents a 3 percent decrease
 #            compared to 2014."
 # Generate sentence for each state
@@ -374,7 +374,7 @@ states <- unique(release_types$state)
 # SENTENCE: "Conditional release involves an individual’s release under specific
 #            conditions and supervision, whereas unconditional release means
 #            the individual is released without further obligations or restrictions.
-#            In 2020, 45 percent of people released from prison were conditional releases."
+#            In YEAR, 45 percent of people released from prison were conditional releases."
 # Generate sentence for each state
 all_sentence_release_type <- map(.x = states,  .f = function(x) {
   df1 <- release_types |>
@@ -425,7 +425,7 @@ rm(states)
 # Get unique states to iterate over
 states <- unique(prison_releases_race$state)
 
-# SENTENCE: "In 2020, 52 percent of people released from prison were Black, non-Hispanic."
+# SENTENCE: "In YEAR, 52 percent of people released from prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_releases_race <- map(.x = states,  .f = function(x) {
 
@@ -474,7 +474,7 @@ rm(states)
 # Get unique states to iterate over
 states <- unique(prison_releases_sex$state)
 
-# SENTENCE: "In 2020, 88 percent of people released from prison were male."
+# SENTENCE: "In YEAR, 88 percent of people released from prison were male."
 # Generate sentence for each state
 all_sentence_releases_sex <- map(.x = states,  .f = function(x) {
 
@@ -518,7 +518,7 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
 all_bar_releases_agerlse <- setNames(all_bar_releases_agerlse, states)
 all_bar_releases_agerlse$Georgia
 
-# SENTENCE: "In 2020, 36 percent of people released from prison were
+# SENTENCE: "In YEAR, 36 percent of people released from prison were
 #            between the ages of 25 to 34 years old."
 # Generate sentence for each state
 all_sentence_releases_agerlse <- map(.x = states,  .f = function(x) {
@@ -564,7 +564,7 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
 all_bar_releases_fbi_index <- setNames(all_bar_releases_fbi_index, states)
 all_bar_releases_fbi_index$Georgia
 
-# SENTENCE: "In 2020, 27 percent of people released from prison were for people
+# SENTENCE: "In YEAR, 27 percent of people released from prison were for people
 #            incarcerated for property offenses."
 # Generate sentence for each state
 all_sentence_releases_fbi_index <- map(.x = states,  .f = function(x) {
