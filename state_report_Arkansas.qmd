@@ -16,16 +16,10 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
-source("R/prep/config.R")
-
 state_for_report <- "Arkansas"
 
-source("R/prep/pull_state_findings.R")
-
-rri_infographic_black <- paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_black_", state_for_report, ".png")
-rri_infographic_hispanic <- paste0(config$sp_data_path, "/data/analysis/app/rri_infographic_hispanic_", state_for_report, ".png")
-pe_rri_infographic_black <- paste0(config$sp_data_path, "/data/analysis/app/pe_rri_infographic_black_", state_for_report, ".png")
-pe_rri_infographic_hispanic <- paste0(config$sp_data_path, "/data/analysis/app/pe_rri_infographic_hispanic_", state_for_report, ".png")
+source("R/config.R")
+source("R/pull_state_findings.R")
 ```
 
 <div id="state-body-section">
@@ -35,12 +29,12 @@ div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
   div(id = "highlight-text", formattable::comma(num_people_current, digits = 0)),
-  div(id = "highlight-text", paste0(round(num_people_current_perc * 100, 0), "%")),
+  div(id = "highlight-text", paste0(round(num_people_current_perc, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection TBD)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection TBD)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Parole Board<br>Members"))
 )
@@ -76,10 +70,11 @@ div(id = "small-visualization", state_pie_pe_type)
 `r paste(state_sentence_pop_pe_by_year, collapse = ", ")`
 
 ```{r state_stackedbar_pop_pe_by_year}
-div(id = "small-visualization", state_stackedbar_pop_pe_by_year)
+div(id = "visualization", state_stackedbar_pop_pe_by_year)
 ```
 
-<br><div class="transparentdivider"></div>
+<br>
+<div class="divider"></div>
 
 ### Demographics
 
@@ -111,7 +106,8 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 
 :::
 
-<br><div class="transparentdivider"></div>
+<br>
+<div class="divider"></div>
 
 ### Offense Types
 
@@ -121,7 +117,8 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
-<br><div class="transparentdivider"></div>
+<br>
+<div class="divider"></div>
 
 ### Sentence Lengths
 
@@ -131,9 +128,10 @@ div(id = "visualization", state_bar_ped_fbi_index)
 div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 ```
 
-<br><div class="divider"></div>
+<br>
+<div class="divider"></div>
 
-## 2023 Projection Methodology
+## Estimation Methodology
 
 `r paste(state_imputation_notes, collapse = ", ")`
 
@@ -299,43 +297,41 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 # Disparities
 
-## Disparities in Incarceration
+## Disparities in Parole Release
 
-::: {.panel-tabset .custom-tabs}
+::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
 
-Racial and ethnic disparities in prison incarceration represents the accumulation of disparities across the system.  
- 
 <br>
 
-```{r rri_infographic_black}
-if (file.exists(rri_infographic_black)) {
-  knitr::include_graphics(rri_infographic_black)
+```{r pe_rri_infographic_black}
+if (file.exists(pe_rri_infographic_black)) {
+  knitr::include_graphics(pe_rri_infographic_black)
 }
-# if (file.exists(rri_infographic_black)) {
-#   knitr::asis_output('<span class="black-non-hispanic">Black, Non-Hispanic</span>')
-# }
 ```
 
-`r paste(state_sentence_rri_black, collapse = ", ")`
+`r paste(state_sentence_pe_rri_black, collapse = ", ")`
 
-```{r rri_infographic_hispanic}
-if (file.exists(rri_infographic_hispanic)) {
-    knitr::include_graphics(rri_infographic_hispanic)
+```{r pe_rri_infographic_hispanic}
+if (file.exists(pe_rri_infographic_hispanic)) {
+    knitr::include_graphics(pe_rri_infographic_hispanic)
 }
-# if (file.exists(rri_infographic_hispanic)) {
-#   knitr::asis_output('<span class="hispanic">Hispanic, Any Race</span>')
-# }
 ```
 
-`r paste(state_sentence_rri_hispanic, collapse = ", ")`
+`r paste(state_sentence_pe_rri_hispanic, collapse = ", ")`
 
 ### Sex
 
-Sex disparities in prison incarceration represents the accumulation of disparities across the system.  
-
 <br>
+
+```{r pe_rri_infographic_male}
+if (file.exists(pe_rri_infographic_male)) {
+    knitr::include_graphics(pe_rri_infographic_male)
+}
+```
+
+`r paste(state_sentence_pe_rri_male, collapse = ", ")`
 
 :::
 
@@ -344,9 +340,139 @@ Sex disparities in prison incarceration represents the accumulation of dispariti
 
 
 
+
+
+
+
+
+## Years in Prison Past Parole Eligibility
+
+::: {.panel-tabset .custom-tabs-disp}
+
+### Race and Ethnicity
+
+`r paste(state_sentence_avg_past_pe_race, collapse = ", ")`
+
+```{r state_parole_release_disparities, results='asis'}
+df1 <- avg_current_pe_race |>
+  filter(state == state_for_report)
+
+# Check if all avg_years_to_estimated_pey are NA
+if (!all(is.na(df1$avg_years_to_estimated_pey))) {
+  html_output <- div(
+    id = "grid-container",
+    # style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
+        style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
+    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", 
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
+        ),
+    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", 
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
+        ),
+    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", 
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
+        ),
+
+    div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
+    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
+    div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
+  )
+  cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
+  cat(as.character(html_output))
+  br()
+} else {
+  cat("")
+}
+```
+
+`r paste(state_sentence_avg_past_pe_race_offense, collapse = ", ")`
+
+```{r state_scatter_avg_past_pe_race_offense}
+div(id = "visualization", state_scatter_avg_past_pe_race_offense)
+```
+
+### Sex
+
+`r paste(state_sentence_avg_past_pe_sex, collapse = ", ")`
+
+```{r state_pe_release_total_years_sex, results='asis'}
+df1 <- avg_current_pe_sex |>
+  filter(state == state_for_report)
+
+# Check if all avg_years_to_estimated_pey are NA
+if (!all(is.na(df1$avg_years_to_estimated_pey))) {
+  html_output <- div(
+    id = "grid-container",
+    style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
+    # First column: Years for Male, Second column: Years for Female
+    div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
+        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Male"], 1), " Years")
+    ),
+    div(style = "color: #55b4e5; font-size: 24px; font-weight: bold; margin: 0;", 
+        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Female"], 1), " Years")
+    ),
+    # First column: Male label, Second column: Female label
+    div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
+    div(style = "color: #55b4e5; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
+  )
+  cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
+  cat(as.character(html_output))
+  br()
+} else {
+  cat("")
+}
+```
+
+`r paste(state_sentence_avg_past_pe_sex_offense, collapse = ", ")`
+
+```{r state_scatter_avg_past_pe_sex_offense}
+div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
+```
+
+:::
+
+<br>
+<div class="divider"></div>
+
+## Disparities in Incarceration
+
+::: {.panel-tabset .custom-tabs-disp}
+
+<br>
+
+### Race and Ethnicity
+
+<br>
+
+```{r rri_infographic_black}
+if (file.exists(rri_infographic_black)) {
+  knitr::include_graphics(rri_infographic_black)
+}
+```
+
+`r paste(state_sentence_rri_black, collapse = ", ")`
+
+```{r rri_infographic_hispanic}
+if (file.exists(rri_infographic_hispanic)) {
+    knitr::include_graphics(rri_infographic_hispanic)
+}
+```
+
+`r paste(state_sentence_rri_hispanic, collapse = ", ")`
+
+### Sex
+
+<br>
+
+TBD. Not sure if we will be keping this Disparities in Incarceration section.
+
+:::
+
+<div class="divider"></div>
+
 ## Time Served
 
-::: {.panel-tabset .custom-tabs}
+::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
 
@@ -380,149 +506,15 @@ div(id = "visualization", state_scatter_los_sex_offense)
 
 <div class="divider"></div>
 
-
-## Disparities in Parole Eligibility
-
-::: {.panel-tabset .custom-tabs}
-
-### Race and Ethnicity
-
-<br>
-
-```{r pe_rri_infographic_black}
-if (file.exists(pe_rri_infographic_black)) {
-  knitr::include_graphics(pe_rri_infographic_black)
-}
-```
-
-`r paste(state_sentence_pe_rri_black, collapse = ", ")`
-
-```{r pe_rri_infographic_hispanic}
-if (file.exists(pe_rri_infographic_hispanic)) {
-    knitr::include_graphics(pe_rri_infographic_hispanic)
-}
-```
-
-`r paste(state_sentence_pe_rri_hispanic, collapse = ", ")`
-
-### Sex
-
-:::
-
-<br>
-<div class="divider"></div>
-
-
-
-
-
-
-
-
-## Years in Prison After Parole Eligibility
-
-::: {.panel-tabset .custom-tabs}
-
-### Race and Ethnicity
-
-`r paste(state_sentence_avg_pe_release_race, collapse = ", ")`
-
-```{r state_parole_release_disparities, results='asis'}
-df1 <- avg_pe_release_race |>
-  filter(state == state_for_report)
-
-# Check if all average_avg_pe_release are NA
-if (!all(is.na(df1$average_avg_pe_release))) {
-  html_output <- div(
-    id = "grid-container",
-    style = "display: grid; grid-template-columns: repeat(4, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "Black, non-Hispanic"], 1), " Years")
-        ),
-    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "Hispanic, any race"], 1), " Years")
-        ),
-    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "White, non-Hispanic"], 1), " Years")
-        ),
-    div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;", 
-        paste0(round(df1$average_avg_pe_release[df1$race == "Other race(s), non-Hispanic"], 1), " Years")
-        ),
-
-    div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
-    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
-    div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White")),
-    div(style = "color: #938ebf; text-align: center; font-size: 16px; font-weight: bold;", HTML("Other"))
-  )
-  cat(as.character(div(id = "bold-text", "Avg. Years in Prison Past Parole Eligibility", br())))
-  cat(as.character(html_output))
-  br()
-} else {
-  cat("")
-}
-```
-
-```{r state_lollipop_avg_pe_release_race}
-# div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_avg_pe_release_race)
-```
-
-`r paste(state_sentence_avg_pe_release_race_offense, collapse = ", ")`
-
-```{r state_scatter_avg_pe_release_race_offense}
-div(id = "visualization", state_scatter_avg_pe_release_race_offense)
-```
-
-### Sex
-
-`r paste(state_sentence_avg_pe_release_sex, collapse = ", ")`
-
-```{r state_pe_release_total_years_sex, results='asis'}
-df1 <- avg_pe_release_sex |>
-  filter(state == state_for_report)
-
-# Check if all average_avg_pe_release are NA
-if (!all(is.na(df1$average_avg_pe_release))) {
-  html_output <- div(
-    id = "grid-container",
-    style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
-    # First column: Years for Male, Second column: Years for Female
-    div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$average_avg_pe_release[df1$sex == "Male"], 1), " Years")
-    ),
-    div(style = "color: #55b4e5; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$average_avg_pe_release[df1$sex == "Female"], 1), " Years")
-    ),
-    # First column: Male label, Second column: Female label
-    div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
-    div(style = "color: #55b4e5; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
-  )
-  cat(as.character(div(id = "bold-text", "Avg. Years in Prison Past Parole Eligibility", br())))
-  cat(as.character(html_output))
-  br()
-} else {
-  cat("")
-}
-```
-
-`r paste(state_sentence_avg_pe_release_sex_offense, collapse = ", ")`
-
-```{r state_scatter_avg_pe_release_sex_offense}
-div(id = "visualization", state_scatter_avg_pe_release_sex_offense)
-```
-
-:::
-
-<br>
-<div class="divider"></div>
-
-
 ## How Disparities Are Calculated
+
+The Relative Rate Index (RRI) is a tool used to compare the rates at which different groups experience incarceration, parole eligibility, or other criminal justice system outcomes. In this report, we use the RRI to highlight disparities in parole release and incarceration across race, ethnicity, and sex. An RRI greater than 1 means that the group experiences the event at a higher rate, while an RRI less than 1 means they experience it at a lower rate.
+
+State data broken down by race, ethnicity, and sex were pulled from National Corrections Reporting Program, 1991-2020: Selected Variables (NCRP). Then, the rate of people readmitted to parole was calculated within each racial and ethnic group based on the Census Public Use Microdata Sample (PUMS). The relative rate index is calculated by dividing the rate for Black individuals or Hispanic individuals by the rate for White individuals.  
 
 While White, Black, and Hispanic are not the only race and ethnicity categories found in the U.S., NCRP only provides four categories: White, Black, Hispanic, and Other. Further categories will be added in future data collections by the CSG Justice Center. Additionally, the term Hispanic is used here to maintain consistency with the data source material.
 
-State data broken down by race and ethnicity were pulled from National Corrections Reporting Program, 1991-2020: Selected Variables (NCRP). Then, the rate of people readmitted to parole was calculated within each racial and ethnic group based on the Census Public Use Microdata Sample (PUMS). The relative rate index is calculated by dividing the rate for Black individuals or Hispanic individuals by the rate for White individuals.  
-
-*States vary in how they collect and report information about race and ethnicity. Some states use the race or ethnicity recorded by intake officers, while other states allow individuals to identify their own race and ethnicity. Furthermore, some states combine race and ethnicity into one category, while others separate them into two distinct items. These differences can result in an incomplete count of Hispanic individuals and those of mixed race in state reports. The US Census allows individuals to self-identify their race and ethnicity separately. The variation in practices across states and between state and Federal data reporting systems may result in a deflated RRI for Hispanic individuals. These differences can result in an incomplete count of Hispanic individuals and those of mixed race in state reports. Conversely, it can result in an overcount of people of other races, especially non-Hispanic White people.*
+States vary in how they collect and report information about race and ethnicity. Some states use the race or ethnicity recorded by intake officers, while other states allow individuals to identify their own race and ethnicity. Furthermore, some states combine race and ethnicity into one category, while others separate them into two distinct items. The U.S. Census allows individuals to self-identify their race and ethnicity separately. The variation in practices across states and between state and federal data reporting systems may result in a deflated RRI for Hispanic individuals. These differences can result in an incomplete count of Hispanic individuals and those of mixed race in state reports. Conversely, it can result in an overcount of people of other races, especially non-Hispanic White people.
 
 :::
 
