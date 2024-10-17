@@ -11,25 +11,15 @@ ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
   filter(rptyear == select_year &
            parelig_status == "Current")
 
-# Get average time between PE and release by state and sex
-avg_current_pe_sex <- ncrp_current_pe |>
-  filter(!is.na(sex)) |>
-  # change negative to positive, negative means past parole eligibility year
-  group_by(state, sex) |>
-  summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
-            people = n(),
-            .groups = "drop")
-
 # Get average time between PE and release by state and race
 avg_current_pe_race <- ncrp_current_pe |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   filter(race %in% c("White, non-Hispanic",
-                     "Hispanic, any race",
                      "Black, non-Hispanic")) |>
   mutate(race = factor(race,
                        levels = c("Black, non-Hispanic",
-                                  "Hispanic, any race",
                                   "White, non-Hispanic")),
+         # all are negative or zero since they are past parole eligibility
          years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
   group_by(race) |>
@@ -42,11 +32,9 @@ avg_current_pe_race <- ncrp_current_pe |>
 avg_current_pe_race_by_state <- ncrp_current_pe |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   filter(race %in% c("White, non-Hispanic",
-                     "Hispanic, any race",
                      "Black, non-Hispanic")) |>
   mutate(race = factor(race,
                        levels = c("Black, non-Hispanic",
-                                  "Hispanic, any race",
                                   "White, non-Hispanic")),
          years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
@@ -56,13 +44,43 @@ avg_current_pe_race_by_state <- ncrp_current_pe |>
             people = n(),
             .groups = "drop")
 
+temp <- avg_current_pe_race_by_state |>
+  select(state, race, avg_years_to_estimated_pey) |>
+  spread(race, avg_years_to_estimated_pey) %>%
+  mutate(diff_avg_years = `Black, non-Hispanic` - `White, non-Hispanic`)
 
 
 
+# Get average time between PE and release by state and race and offense
+avg_current_pe_race_offense <- ncrp_current_pe |>
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
+  mutate(group = case_when(
+    fbi_index %in% c("Murder or Nonnegligent Manslaughter",
+                     "Negligent Manslaughter",
+                     "Rape or Sexual Assault",
+                     "Robbery",
+                     "Aggravated or Simple Assault",
+                     "Other Violent Offenses") ~ "Violent",
+    fbi_index %in% c("Drug", "Public Order", "Property") ~ "Nonviolent",
+    TRUE ~ "Other or Unknown")) |>
+  filter(race %in% c("White, non-Hispanic",
+                     "Black, non-Hispanic")) |>
+  mutate(race = factor(race,
+                       levels = c("Black, non-Hispanic",
+                                  "White, non-Hispanic")),
+         years_to_estimated_pey = abs(years_to_estimated_pey)) |>
+  # change negative to positive, negative means past parole eligibility year
+  group_by(race, group) |>
+  summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
+            total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
+            people = n(),
+            .groups = "drop")
 
 
-
-
+temp <- avg_current_pe_race_offense |>
+  select(race, group, avg_years_to_estimated_pey) |>
+  spread(race, avg_years_to_estimated_pey) %>%
+  mutate(diff_avg_years = `Black, non-Hispanic` - `White, non-Hispanic`)
 
 
 

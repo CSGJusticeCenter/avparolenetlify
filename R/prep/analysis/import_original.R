@@ -99,7 +99,7 @@ ncrp_yearendpop <- da38492.0004 %>% clean_names() %>%
     offgeneral     = str_sub(offgeneral, 5, -1),
     offdetail      = str_sub(offdetail, 5, -1),
     race           = str_sub(race, 5, -1),
-    education    = str_sub(education, 5, -1),
+    education      = str_sub(education, 5, -1),
     admtype        = str_sub(admtype, 5, -1),
     sex            = str_sub(sex, 5, -1),
     sentlgth       = str_sub(sentlgth, 5, -1),
