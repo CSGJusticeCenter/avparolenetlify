@@ -235,40 +235,68 @@ table th, table td {
 
 
 
+
 /* Custom tabs - Do not take up the entire width */
 .custom-tabs .nav-tabs {
   display: inline-flex; /* Use inline-flex to shrink the width */
-  justify-content: center; /* Center the tabs horizontally */
+  justify-content: center; /* Moves tabs to the center instead of spread out */
   width: auto; /* Set width to auto to only take up necessary space */
   margin: 0 auto; /* Center the entire tab set within its container */
 }
 
-/* Ensure the tabs are styled correctly but don't span the full width */
-  .custom-tabs .nav-item {
-    flex: none; /* Disable flex-grow to prevent tabs from expanding */
-      text-align: center; /* Center text within each tab */
-  }
+.custom-tabs .nav-item {
+  flex: none;
+}
 
 .custom-tabs .nav-link {
-  display: flex; /* Use flexbox for centering */
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    height: 30px;
-  width: 200px; /* Allow each tab to take up only as much space as needed */
-    text-align: center; /* Ensure the text is centered within the tab */
-    padding: 0; /* Remove any padding to ensure proper centering */
-    font-size: 0.8em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 200px;
+  font-size: 0.8em;
 }
 
 .custom-tabs .nav-link.active, .custom-tabs .show>.nav-link {
   color: #fff;
-    background-color: #969696;
+  background-color: #969696;
+}
+
+.custom-tabs .tab-content > div {
+    min-height: 375px;
 }
 
 
+.custom-tabs-disp .nav-tabs {
+  display: inline-flex; /* Use inline-flex to shrink the width */
+  justify-content: center; /* Moves tabs to the center instead of spread out */
+  width: auto; /* Set width to auto to only take up necessary space */
+  margin: 0 auto; /* Center the entire tab set within its container */
+}
 
+.custom-tabs-disp .nav-item {
+  flex: none;
+}
 
+.custom-tabs-disp .nav-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 200px;
+  font-size: 0.8em;
+}
 
+.custom-tabs-disp .nav-link.active, .custom-tabs-disp .show>.nav-link {
+  color: #fff;
+  background-color: #969696;
+}
+
+/*
+.custom-tabs-disp .tab-content > div {
+    min-height: 375px;
+}
+*/
 
 /******************************************************************************/
 /* Sections */

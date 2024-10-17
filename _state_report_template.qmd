@@ -73,7 +73,8 @@ div(id = "small-visualization", state_pie_pe_type)
 div(id = "visualization", state_stackedbar_pop_pe_by_year)
 ```
 
-<br><div class="transparentdivider"></div>
+<br>
+<div class="divider"></div>
 
 ### Demographics
 
@@ -105,7 +106,8 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 
 :::
 
-<br><div class="transparentdivider"></div>
+<br>
+<div class="divider"></div>
 
 ### Offense Types
 
@@ -115,7 +117,8 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 div(id = "visualization", state_bar_ped_fbi_index)
 ```
 
-<br><div class="transparentdivider"></div>
+<br>
+<div class="divider"></div>
 
 ### Sentence Lengths
 
@@ -125,7 +128,8 @@ div(id = "visualization", state_bar_ped_fbi_index)
 div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 ```
 
-<br><div class="divider"></div>
+<br>
+<div class="divider"></div>
 
 ## Estimation Methodology
 
@@ -295,7 +299,7 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 ## Disparities in Parole Release
 
-::: {.panel-tabset .custom-tabs}
+::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
 
@@ -343,7 +347,7 @@ if (file.exists(pe_rri_infographic_male)) {
 
 ## Years in Prison Past Parole Eligibility
 
-::: {.panel-tabset .custom-tabs}
+::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
 
@@ -432,7 +436,7 @@ div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
 
 ## Disparities in Incarceration
 
-::: {.panel-tabset .custom-tabs}
+::: {.panel-tabset .custom-tabs-disp}
 
 <br>
 
@@ -466,7 +470,7 @@ if (file.exists(rri_infographic_hispanic)) {
 
 ## Time Served
 
-::: {.panel-tabset .custom-tabs}
+::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
 

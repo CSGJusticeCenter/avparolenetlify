@@ -135,8 +135,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
                "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Percentage of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
                       "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>- Number of People:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
-                      paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>",
-                            "<span style='color: gray; font-style: italic;'>Click on the state to view the state report.</span>"))),
+                      paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>"))),
 
       all_na == TRUE & abolished_parole == "N" ~
         paste0("<b>", state, "</b><br>",
@@ -158,8 +157,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
                "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Percentage of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
                       "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>- Number of People:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
-                      paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>",
-                            "<span style='color: gray; font-style: italic;'>Click on the state to view the state report.</span>")))
+                      paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>")))
     ),
 
     tooltip = str_replace_all(tooltip, "NA%", "No Data"),
@@ -326,7 +324,9 @@ map_percent <- highchart(height = 625) |>
             symbolHeight = 15,
             symbolWidth = 15,
             x = 10,
-            y = -40) |>
+            y = -40,
+            itemMarginTop = 2,
+            itemMarginBottom = 2) |>
 
   hc_xAxis(title = "") |>
   hc_yAxis(title = "") |>

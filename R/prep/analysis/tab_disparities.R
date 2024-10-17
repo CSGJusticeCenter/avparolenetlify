@@ -97,6 +97,7 @@ ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
 # Get average time between PE and release by state and sex
 avg_current_pe_sex <- ncrp_current_pe |>
   filter(!is.na(sex)) |>
+  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
   group_by(state, sex) |>
   summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
