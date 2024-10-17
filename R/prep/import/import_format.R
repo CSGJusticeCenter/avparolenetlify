@@ -73,7 +73,9 @@ state_notes <- state_notes_raw |>
          # combine methodology info and citations
          methodology_notes = paste(estimation_note, matching_note, rules_note,
                                    last_year_note, year_excluded_note, projection_note, sep = "<br><br>"),
-         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>")) |>
+         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"),
+         methodology_notes = gsub("<br><br><br>", "<br>", methodology_notes),
+         citation = gsub("<br><br><br>", "<br><br>", citation)) |>
   filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))############################################
 
 
