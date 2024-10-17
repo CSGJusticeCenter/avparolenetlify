@@ -71,8 +71,10 @@ state_notes <- state_notes_raw |>
          source_note2    = gsub("\u00B2", "\u00B3", source_note2),
          source_note3    = gsub("\u00B3", "\u2074", source_note3),
          # combine methodology info and citations
-         methodology_notes = paste(estimation_note, matching_note, rules_note, projection_note, sep = "<br><br>"),
-         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"))
+         methodology_notes = paste(estimation_note, matching_note, rules_note,
+                                   last_year_note, year_excluded_note, projection_note, sep = "<br><br>"),
+         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>")) |>
+  filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))############################################
 
 
 
@@ -102,7 +104,8 @@ ncrp_yearendpop_combined              <- combine_files(yearendpop_files)
 # ncrp_yearendpop_consolidated_combined <- combine_files(yearendpop_consolidated_files)
 
 # Transform the data for releases and year-end population
-ncrp_releases                <- fnc_transform_ncrp_data(ncrp_releases_combined)
+ncrp_releases <- fnc_transform_ncrp_data(ncrp_releases_combined) |>
+  mutate(time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
 # ncrp_releases_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined) # Seba working on it as of 10/15/24
 ncrp_yearendpop              <- fnc_transform_ncrp_data(ncrp_yearendpop_combined)
 # ncrp_yearendpop_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
@@ -495,18 +498,19 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  ncrp_yearendpop               = "ncrp_yearendpop.rds",
-  ncrp_releases                 = "ncrp_releases.rds",
-  ncrp_yearendpop_consolidated  = "ncrp_yearendpop_consolidated.rds",
-  # ncrp_releases_consolidated    = "ncrp_releases_consolidated.rds",
-  bjs_prison_pop_by_race_2020   = "bjs_prison_pop_by_race_2020.rds",
-  bjs_prison_pop_by_race_2022   = "bjs_prison_pop_by_race_2022.rds",
-  bjs_prison_pop_by_sex_2022    = "bjs_prison_pop_by_sex_2022.rds",
-  bjs_prison_pop_by_rptyear     = "bjs_prison_pop_by_rptyear.rds",
-  hex_gj                        = "hex_gj.rds",
-  state_notes                   = "state_notes.rds",
-  states_to_exclude             = "states_to_exclude.rds",
-  states_with_high_missing_race = "states_with_high_missing_race.rds"
+  ncrp_yearendpop                  = "ncrp_yearendpop.rds",
+  ncrp_releases                    = "ncrp_releases.rds",
+  # ncrp_yearendpop_consolidated   = "ncrp_yearendpop_consolidated.rds",
+  # ncrp_releases_consolidated     = "ncrp_releases_consolidated.rds",
+  ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
+  bjs_prison_pop_by_race_2020      = "bjs_prison_pop_by_race_2020.rds",
+  bjs_prison_pop_by_race_2022      = "bjs_prison_pop_by_race_2022.rds",
+  bjs_prison_pop_by_sex_2022       = "bjs_prison_pop_by_sex_2022.rds",
+  bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
+  hex_gj                           = "hex_gj.rds",
+  state_notes                      = "state_notes.rds",
+  states_to_exclude                = "states_to_exclude.rds",
+  states_with_high_missing_race    = "states_with_high_missing_race.rds"
 )
 
 # Loop through the list and save each data object to its corresponding file

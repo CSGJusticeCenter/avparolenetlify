@@ -407,7 +407,8 @@ if (state_for_report %in% names(all_sentence_releases)) {
 if (state_for_report %in% names(all_line_releases_by_year)) {
   state_line_releases_by_year <-
     all_line_releases_by_year[[state_for_report]] |>
-    hc_size(height = 300)
+    hc_size(height = 300) |>
+    hc_colors(c(color5))
 } else {
   state_line_releases_by_year <- no_data_text
 }
@@ -459,7 +460,8 @@ if (state_for_report %in% names(all_sentence_releases_race)) {
 if (state_for_report %in% names(all_bar_releases_race)) {
   state_bar_releases_race <-
     all_bar_releases_race[[state_for_report]] |>
-    hc_size(height = 300)
+    hc_size(height = 300) |>
+    hc_colors(c(color5))
 } else {
   state_bar_releases_race <- no_visualization
 }
@@ -474,7 +476,8 @@ if (state_for_report %in% names(all_sentence_releases_sex)) {
 if (state_for_report %in% names(all_bar_releases_sex)) {
   state_bar_releases_sex <-
     all_bar_releases_sex[[state_for_report]] |>
-    hc_size(height = 300)
+    hc_size(height = 300) |>
+    hc_colors(c(color5))
 } else {
   state_bar_releases_sex <- no_visualization
 }
@@ -489,7 +492,8 @@ if (state_for_report %in% names(all_sentence_releases_agerlse)) {
 if (state_for_report %in% names(all_bar_releases_agerlse)) {
   state_bar_releases_agerlse <-
     all_bar_releases_agerlse[[state_for_report]] |>
-    hc_size(height = 300)
+    hc_size(height = 300) |>
+    hc_colors(c(color5))
 } else {
   state_bar_releases_agerlse <- no_visualization
 }
@@ -506,7 +510,8 @@ if (state_for_report %in% names(all_sentence_releases_fbi_index)) {
 if (state_for_report %in% names(all_bar_releases_fbi_index)) {
   state_bar_releases_fbi_index <-
     all_bar_releases_fbi_index[[state_for_report]] |>
-    hc_size(height = 400)
+    hc_size(height = 400) |>
+    hc_colors(c(color5))
 } else {
   state_bar_releases_fbi_index <- no_visualization
 }

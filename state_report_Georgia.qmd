@@ -464,6 +464,8 @@ if (file.exists(rri_infographic_hispanic)) {
 
 <br>
 
+TBD. Not sure if we will be keping this Disparities in Incarceration section.
+
 :::
 
 <div class="divider"></div>

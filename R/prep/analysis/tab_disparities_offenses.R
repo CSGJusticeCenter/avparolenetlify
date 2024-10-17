@@ -13,7 +13,7 @@ ncrp_releases_disparities <-
 los_race_by_offense_type <- fnc_calc_los_by_var(
   df = ncrp_releases_disparities, var = "race",
   filter_values = c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"),
-  time_var = "time_between_admisson_release") |>
+  time_var = "time_between_admission_release") |>
   mutate(avg_los = avg_time)
 
 # Time served by race and offense
@@ -45,7 +45,7 @@ all_scatter_los_race_offense$Georgia
 los_sex_by_offense_type <- fnc_calc_los_by_var(
     df = ncrp_releases_disparities, var = "sex",
     filter_values = c("Male", "Female"),
-    time_var = "time_between_admisson_release") |>
+    time_var = "time_between_admission_release") |>
   mutate(avg_los = avg_time)
 
 # Time served by race and offense

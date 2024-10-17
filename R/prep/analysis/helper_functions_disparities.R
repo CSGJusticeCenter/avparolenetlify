@@ -65,17 +65,19 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
       # Generate sentence for female vs male comparison
       df_female <- df1 |> dplyr::filter(sex == "Female")
       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
-        los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
-        abs_los_diff_female <- round(abs(los_diff_female), 1)  # round to one decimal place
+        # los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
+        # abs_los_diff_female <- round(abs(los_diff_female), 1)  # round to one decimal place#########################################
+        los_diff_female <- round(df_female[[los_col]], 1) - round(df_male[[los_col]], 1)
+        abs_los_diff_female <- abs(los_diff_female)  # Already rounded difference
 
         if (!is.na(los_diff_female)) {
           if (los_diff_female > 0) {
-            sentence <- paste0("In ", year, ", females spent an average of ",
+            sentence <- paste0("In ", year, ", females spent on average ",
                                abs_los_diff_female,
                                if (abs_los_diff_female == 1) " more year" else " more years",
                                " ", type, " compared to males in ", state_var, ".")
           } else if (los_diff_female < 0) {
-            sentence <- paste0("In ", year, ", females spent an average of ",
+            sentence <- paste0("In ", year, ", females spent on average ",
                                abs_los_diff_female,
                                if (abs_los_diff_female == 1) " less year" else " less years",
                                " ", type, " compared to males in ", state_var, ".")
@@ -122,10 +124,10 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 
         if (!is.na(los_diff_black)) {
           if (los_diff_black > 0) {
-            black_sentence <- paste0("Black people spent an average of ",
+            black_sentence <- paste0("Black people spent on average ",
                                      abs_los_diff_black, " more years ", type)
           } else if (los_diff_black < 0) {
-            black_sentence <- paste0("Black people spent an average of ",
+            black_sentence <- paste0("Black people spent on average ",
                                      abs_los_diff_black,
                                      if (abs_los_diff_black == 1) " less year" else " less years",
                                      " ", type)
@@ -141,10 +143,10 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 
         if (!is.na(los_diff_hispanic)) {
           if (los_diff_hispanic > 0) {
-            hispanic_sentence <- paste0("Hispanic people spent an average of ",
+            hispanic_sentence <- paste0("Hispanic people spent on average ",
                                         abs_los_diff_hispanic, " more years ", type)
           } else if (los_diff_hispanic < 0) {
-            hispanic_sentence <- paste0("Hispanic people spent an average of ",
+            hispanic_sentence <- paste0("Hispanic people spent on average ",
                                         abs_los_diff_hispanic,
                                         if (abs_los_diff_hispanic == 1) " less year" else " less years",
                                         " ", type)
@@ -155,7 +157,7 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
       # Combine both sentences, or indicate no significant differences
       if (black_sentence != "" && hispanic_sentence != "") {
         if (abs_los_diff_black == abs_los_diff_hispanic) {
-          sentence <- paste0("In ", year, ", Black people and Hispanic people spent an average of ",
+          sentence <- paste0("In ", year, ", Black people and Hispanic people spent on average ",
                              abs_los_diff_black, " more years ", type, " compared to White people.")
         } else {
           sentence <- paste0("In ", year, ", ", black_sentence, ", and ",
@@ -214,12 +216,12 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #         if (!is.na(los_diff_female)) {
 #           abs_los_diff_female <- round(abs(los_diff_female), 1)
 #           if (los_diff_female > 0) {
-#             sentence <- paste0("In ", select_year, ", females spent an average of ",
+#             sentence <- paste0("In ", select_year, ", females spent on average ",
 #                                abs_los_diff_female,
 #                                if (abs_los_diff_female == 1) " more year" else " more years",
 #                                " ", type, " compared to males in ", state_var, ".")
 #           } else if (los_diff_female < 0) {
-#             sentence <- paste0("In ", select_year, ", females spent an average of ",
+#             sentence <- paste0("In ", select_year, ", females spent on average ",
 #                                abs_los_diff_female,
 #                                if (abs_los_diff_female == 1) " less year" else " less years",
 #                                " ", type, " compared to males in ", state_var, ".")
@@ -263,10 +265,10 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
 #         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
 #         if (!is.na(los_diff_black) && los_diff_black > 0) {
-#           black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
+#           black_sentence <- paste0("In ", select_year, ", Black people spent on average ",
 #                                    round(los_diff_black, 1), " more years ", type)
 #         } else if (!is.na(los_diff_black) && los_diff_black < 0) {
-#           black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
+#           black_sentence <- paste0("In ", select_year, ", Black people spent on average ",
 #                                    round(abs(los_diff_black), 1),
 #                                    if (abs(los_diff_black) == 1) " less year" else " less years",
 #                                    " ", type)
@@ -278,10 +280,10 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
 #         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
 #         if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
-#           hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#           hispanic_sentence <- paste0("Hispanic people spent on average ",
 #                                       round(los_diff_hispanic, 1), " more years ", type)
 #         } else if (!is.na(los_diff_hispanic) && los_diff_hispanic < 0) {
-#           hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#           hispanic_sentence <- paste0("Hispanic people spent on average ",
 #                                       round(abs(los_diff_hispanic), 1),
 #                                       if (abs(los_diff_hispanic) == 1) " less year" else " less years",
 #                                       " ", type)
@@ -343,12 +345,12 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #         if (!is.na(los_diff_female)) {
 #           abs_los_diff_female <- round(abs(los_diff_female), 1)
 #           if (los_diff_female > 0) {
-#             sentence <- paste0("In ", year, ", females spent an average of ",
+#             sentence <- paste0("In ", year, ", females spent on average ",
 #                                abs_los_diff_female,
 #                                if (abs_los_diff_female == 1) " more year" else " more years",
 #                                " ", type, " compared to males in ", state_var, ".")
 #           } else if (los_diff_female < 0) {
-#             sentence <- paste0("In ", year, ", females spent an average of ",
+#             sentence <- paste0("In ", year, ", females spent on average ",
 #                                abs_los_diff_female,
 #                                if (abs_los_diff_female == 1) " less year" else " less years",
 #                                " ", type, " compared to males in ", state_var, ".")
@@ -403,29 +405,29 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #       if (!is.na(los_diff_black) && !is.na(los_diff_hispanic)) {
 #         if (round(los_diff_black, 1) == round(los_diff_hispanic, 1)) {
 #           # Combine the sentences if the differences are equal
-#           sentence <- paste0("In ", year, ", Black and Hispanic people spent an average of ",
+#           sentence <- paste0("In ", year, ", Black and Hispanic people spent on average ",
 #                              abs(round(los_diff_black, 1)),
 #                              if (los_diff_black > 0) " more years" else " less years",
 #                              " ", type, " compared to White people.")
 #         } else {
 #           # Separate sentences if the differences are not equal
-#           black_sentence <- paste0("In ", year, ", Black people spent an average of ",
+#           black_sentence <- paste0("In ", year, ", Black people spent on average ",
 #                                    abs(round(los_diff_black, 1)),
 #                                    if (los_diff_black > 0) " more years" else " less years",
 #                                    " ", type)
-#           hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#           hispanic_sentence <- paste0("Hispanic people spent on average ",
 #                                       abs(round(los_diff_hispanic, 1)),
 #                                       if (los_diff_hispanic > 0) " more years" else " less years",
 #                                       " ", type)
 #           sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
 #         }
 #       } else if (!is.na(los_diff_black)) {
-#         sentence <- paste0("In ", year, ", Black people spent an average of ",
+#         sentence <- paste0("In ", year, ", Black people spent on average ",
 #                            abs(round(los_diff_black, 1)),
 #                            if (los_diff_black > 0) " more years" else " less years",
 #                            " ", type, " compared to White people.")
 #       } else if (!is.na(los_diff_hispanic)) {
-#         sentence <- paste0("In ", year, ", Hispanic people spent an average of ",
+#         sentence <- paste0("In ", year, ", Hispanic people spent on average ",
 #                            abs(round(los_diff_hispanic, 1)),
 #                            if (los_diff_hispanic > 0) " more years" else " less years",
 #                            " ", type, " compared to White people.")
@@ -474,12 +476,12 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #       if (!is.na(los_diff_female)) {
 #         abs_los_diff_female <- round(abs(los_diff_female), 1)
 #         if (los_diff_female > 0) {
-#           sentence <- paste0("In ", select_year, ", females spent an average of ",
+#           sentence <- paste0("In ", select_year, ", females spent on average ",
 #                              abs_los_diff_female,
 #                              if (abs_los_diff_female == 1) " year more" else " years more",
 #                              " ", type," compared to males in ", state_var, ".")
 #         } else if (los_diff_female < 0) {
-#           sentence <- paste0("In ", select_year, ", females spent an average of ",
+#           sentence <- paste0("In ", select_year, ", females spent on average ",
 #                              abs_los_diff_female,
 #                              if (abs_los_diff_female == 1) " year fewer" else " years fewer",
 #                              " ", type," compared to males in ", state_var, ".")
@@ -523,7 +525,7 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #     if (nrow(df_black) > 0 && nrow(df_white) > 0) {
 #       los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
 #       if (!is.na(los_diff_black) && los_diff_black > 0) {
-#         black_sentence <- paste0("In ", select_year, ", Black people spent an average of ",
+#         black_sentence <- paste0("In ", select_year, ", Black people spent on average ",
 #                                  round(los_diff_black, 1), " more years ", type)
 #       }
 #     }
@@ -533,7 +535,7 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #     if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
 #       los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
 #       if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
-#         hispanic_sentence <- paste0("Hispanic people spent an average of ",
+#         hispanic_sentence <- paste0("Hispanic people spent on average ",
 #                                     round(los_diff_hispanic, 1), " more years ", type)
 #       }
 #     }
@@ -594,10 +596,10 @@ fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state
            ))
 
   # Generate accessibility text based on the data
-  accessibility_text <- paste0("This chart shows the average time served for different ",
+  accessibility_text <- paste0("The chart below the average time served for different ",
                                group_var, " groups in ", state_name, ". ",
-                               group_labels[1], " spent an average of ", df1$average_los[df1$group_num == 1],
-                               " years, followed by ", group_labels[2], " with an average of ", df1$average_los[df1$group_num == 2],
+                               group_labels[1], " spent on average ", df1$average_los[df1$group_num == 1],
+                               " years, followed by ", group_labels[2], " with on average ", df1$average_los[df1$group_num == 2],
                                " years, and ", group_labels[3], " with ", df1$average_los[df1$group_num == 3],
                                " years.")
 
@@ -766,7 +768,7 @@ fnc_calc_los_by_var <- function(df,
 #     # If no disparities exist, return default message
 #     if (nrow(df_disparity_filtered) == 0) {
 #       time_description <- ifelse(time_var == "time_served", "time served in prison", "time spent in prison past parole eligibility")
-#       return(paste0("This chart shows the average ", time_description, " by offense type and ", grouping_var, " in 2020."))
+#       return(paste0("The chart below the average ", time_description, " by offense type and ", grouping_var, " in 2020."))
 #     }
 #
 #     # Remove "Other Violent Offenses" if it has the largest disparity
@@ -788,9 +790,9 @@ fnc_calc_los_by_var <- function(df,
 #     # Construct the sentence
 #     time_description <- ifelse(time_var == "avg_los", "time served in prison", "time spent in prison past parole eligibility")
 #     sentence <- paste0(
-#       "This chart shows the average ", time_description, " by offense type and ", grouping_var, " in 2020. ",
+#       "The chart below the average ", time_description, " by offense type and ", grouping_var, " in 2020. ",
 #       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ", group_longest,
-#       " people spent an average of ", disparity_diff, " more years in prison compared to ", group_shortest, " people."
+#       " people spent on average ", disparity_diff, " more years in prison compared to ", group_shortest, " people."
 #     )
 #
 #     return(sentence)
@@ -889,7 +891,7 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
       ifelse(grouping_var == "race", "race and ethnicity", grouping_var), " in 2020. ",
       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
       group_longest, ifelse(grouping_var == "race", " people", ""),  # Add 'people' only if grouping_var is 'race'
-      " spent an average of ", disparity_diff, " more years in prison compared to ",
+      " spent on average ", disparity_diff, " more years in prison compared to ",
       group_shortest, ifelse(grouping_var == "race", " people", ""), "."
     )
 
@@ -941,11 +943,11 @@ fnc_create_scatter_charts_by_state <- function(df,
              ))
 
     # Generate accessibility text based on the data
-    accessibility_text <- paste0("This chart shows the ", accessibility_measure, " for different ",
+    accessibility_text <- paste0("The chart below the ", accessibility_measure, " for different ",
                                  ifelse(group_var == "sex", "gender", "race and ethnicity"),
                                  " groups in ", state_name, ". ",
-                                 group_labels[1], " spent an average of ", df1$avg_time[df1$fbi_index_num == 1],
-                                 " years, followed by ", group_labels[2], " with an average of ", df1$avg_time[df1$fbi_index_num == 2],
+                                 group_labels[1], " spent on average ", df1$avg_time[df1$fbi_index_num == 1],
+                                 " years, followed by ", group_labels[2], " with on average ", df1$avg_time[df1$fbi_index_num == 2],
                                  " years, and ", group_labels[3], " with ", df1$avg_time[df1$fbi_index_num == 3], " years.")
 
     max_los <- max(df1$avg_time, na.rm = TRUE)
@@ -1236,10 +1238,10 @@ fnc_create_infographic <- function(rri_raw, infographic_color) {
 #            ))
 #
 #   # Generate accessibility text based on the data
-#   accessibility_text <- paste0("This chart shows the average length of stay for different ",
+#   accessibility_text <- paste0("The chart below the average length of stay for different ",
 #                                group_var, " groups in ", state_name, ". ",
-#                                group_labels[1], " spent an average of ", df1$avg_time[df1$fbi_index_num == 1],
-#                                " years, followed by ", group_labels[2], " with an average of ", df1$avg_time[df1$fbi_index_num == 2],
+#                                group_labels[1], " spent on average ", df1$avg_time[df1$fbi_index_num == 1],
+#                                " years, followed by ", group_labels[2], " with on average ", df1$avg_time[df1$fbi_index_num == 2],
 #                                " years, and ", group_labels[3], " with ", df1$avg_time[df1$fbi_index_num == 3],
 #                                " years.")
 #
