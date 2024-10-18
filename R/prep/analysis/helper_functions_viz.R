@@ -250,7 +250,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                formatter = JS(
                  "function() {
                     var label = this.value;
-                    var maxLength = 15;
+                    var maxLength = 23;
                     if (label.length > maxLength) {
                       var words = label.split(' ');
                       var result = [];
