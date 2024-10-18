@@ -23,6 +23,7 @@ versions <- c("V2", "V1", "V1", "V1", "V1", "V1", "V1")
 # 10/1/2024
 # Loop through each year and ICPSR code to load and process the data
 # SAVES TO SHAREPOINT
+# Note that Seba renamed to v1 manually
 for (i in seq_along(years)) {
   load(paste0(config$sp_data_path, "/data/raw/NCRP/ICPSR_", icpsr_codes[i], "-",
               versions[i], "/ICPSR_", icpsr_codes[i], "/DS0001/", icpsr_codes[i], "-0001-Data.rda"))
@@ -38,19 +39,19 @@ for (i in seq_along(years)) {
     select(rptyear, state, everything())
 
   # Create the file name with the full path
-  file_name <- paste0("ncrp_term_records_", years[i], "_v1", ".csv")
+  file_name <- paste0("ncrp_term_records_", years[i], "_", format(Sys.Date(), "%Y%m%d"), ".xlsx")
   full_file_path <- file.path(paste0(config$sp_data_path, "/data/analysis/clean_files"), file_name)
 
   # Save the data frame to a separate Excel file
-  write.csv(ncrp_term_records, full_file_path)
+  write.xlsx(ncrp_term_records, full_file_path)
 
   # Remove the loaded data to free up memory
   rm(list = data_name)
 }
 
 
-# Just do 2018 since the data was updated on NCRP on October 18, 2024
-# We contacted NCRP to let them know the data was missing
+# Just do 2018 since the data was updated on NCRP
+# 10/17/2024
 load(paste0(config$sp_data_path, "/data/raw/NCRP/ICPSR_37973-V2/ICPSR_37973/DS0001/37973-0001-Data.rda"))
 
 ncrp_term_records_2018 <- da37973.0001 |>

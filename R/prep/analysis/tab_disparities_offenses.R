@@ -11,7 +11,8 @@ ncrp_releases_disparities <-
 
 # Average time served by race and offense
 los_race_by_offense_type <- fnc_calc_los_by_var(
-  df = ncrp_releases_disparities, var = "race",
+  df = ncrp_releases_disparities |> fnc_filter_exclude_high_missing_race(states_with_high_missing_race),
+  var = "race",
   filter_values = c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"),
   time_var = "time_between_admission_release") |>
   mutate(avg_los = avg_time)
@@ -83,7 +84,7 @@ ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
 
 # Average time past parole eligibility as of select_year by race and offense
 avg_current_pe_offense_race <- fnc_calc_los_by_var(
-  df = ncrp_current_pe,
+  df = ncrp_current_pe |> fnc_filter_exclude_high_missing_race(states_with_high_missing_race),
   var = "race",
   filter_values = c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"),
   time_var = "years_to_estimated_pey") |>

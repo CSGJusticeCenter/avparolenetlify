@@ -206,13 +206,13 @@ fnc_hc_pie <- function(df, variable, title, accessibility_text, year = select_ye
 }
 
 
-fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_source) {
+fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_source, orientation = "vertical") {
 
   df1 <- df |>
     filter(state == state_var) |>
     fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var))
 
-  # Conditionally arrange by prop if x_var is "race" "fbi_index" or "sex"
+  # Conditionally arrange by prop if x_var is "race", "fbi_index", or "sex"
   # Don't arrange if sentence length or age since these need to be in order
   if (x_var %in% c("race", "fbi_index", "sex")) {
     df1 <- df1 |> arrange(desc(prop))
@@ -226,9 +226,15 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 
   xaxis_order <- df1[[x_var]]
 
+  # Determine the chart type based on the orientation parameter
+  chart_type <- ifelse(orientation == "horizontal", "bar", "column")
+
+  # Adjust label alignment based on orientation
+  label_alignment <- ifelse(orientation == "horizontal", "right", "center")
+
   highcharts <- highchart() |>
     hc_add_series(df1,
-                  type = "column",
+                  type = chart_type,  # Use the determined chart type here
                   hcaes(x = !!sym(x_var),
                         y = !!sym(y_var)),
                   dataLabels = list(enabled = TRUE,
@@ -270,7 +276,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                   }"
                ),
                style = list(fontSize = "14px", fontFamily = "Graphik",
-                            textAlign = "center" )
+                            textAlign = label_alignment)  # Adjust alignment here
              )) |>
     hc_yAxis(max = 100,
              labels = list(
@@ -294,6 +300,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 
   return(highcharts)
 }
+
 
 fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type, year = select_year) {
 

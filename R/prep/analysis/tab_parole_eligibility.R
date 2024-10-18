@@ -437,13 +437,14 @@ states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Offense Type"
-  highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = current_ped_fbi_index,
-                                   x_var      = "fbi_index",
-                                   y_var      = "prop",
-                                   metric     = this_metric,
-                                   type       = "the prison population past parole eligibility",
-                                   title_type = "People in Prison Past Parole Eligibility")
+  highcharts <- fnc_hc_columnchart(state_var   = x,
+                                   df          = current_ped_fbi_index,
+                                   x_var       = "fbi_index",
+                                   y_var       = "prop",
+                                   metric      = this_metric,
+                                   type        = "the prison population past parole eligibility",
+                                   title_type  = "People in Prison Past Parole Eligibility",
+                                   orientation = "horizontal")
 
   return(highcharts)
 })

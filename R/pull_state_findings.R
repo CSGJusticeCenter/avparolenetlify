@@ -4,13 +4,13 @@
 #------------------------------------------------------------------------------#
 
 # no data text
-no_data_text <- paste0("Data is not available. ", state_for_report,
-                       " did not submit this data to the National Corrections Reporting Program in ",
-                       select_year, ".")
+no_data_text <- HTML(paste0("<br><br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br><br>Data is not available. ",
+                       state_for_report, " submitted incomplete or missing data to National Corrections Reporting Program in ",
+                       select_year, ".<br><br>"))
 no_sentence <- ""
-no_visualization <- paste0("Data is not available. ", state_for_report,
-                           " did not submit this data to the National Corrections Reporting Program in ",
-                           select_year, ".")
+no_visualization <- HTML(paste0("<br><br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br><br>Data is not available. ",
+                       state_for_report, " submitted incomplete or missing data to the National Corrections Reporting Program in ",
+                       select_year, ".<br><br>"))
 
 
 
@@ -199,7 +199,7 @@ if (state_for_report %in% names(all_sentence_parole_eligibility_fbi_index)) {
 if (state_for_report %in% names(all_bar_ped_fbi_index)) {
   state_bar_ped_fbi_index <-
     all_bar_ped_fbi_index[[state_for_report]] |>
-    hc_size(height = 400) |>
+    hc_size(height = 500) |>
     hc_colors(c(color4))
 } else {
   state_bar_ped_fbi_index <- no_data_text
@@ -346,7 +346,7 @@ if (state_for_report %in% names(all_bar_population_fbi_index)) {
   state_bar_population_fbi_index <-
     all_bar_population_fbi_index[[state_for_report]] |>
     hc_colors(c(color2)) |>
-    hc_size(height = 400)
+    hc_size(height = 500)
 } else {
   state_bar_population_fbi_index <- no_visualization
 }
@@ -510,7 +510,7 @@ if (state_for_report %in% names(all_sentence_releases_fbi_index)) {
 if (state_for_report %in% names(all_bar_releases_fbi_index)) {
   state_bar_releases_fbi_index <-
     all_bar_releases_fbi_index[[state_for_report]] |>
-    hc_size(height = 400) |>
+    hc_size(height = 500) |>
     hc_colors(c(color5))
 } else {
   state_bar_releases_fbi_index <- no_visualization

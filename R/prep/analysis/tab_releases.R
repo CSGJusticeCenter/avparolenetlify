@@ -397,7 +397,10 @@ rm(states)
 
 # Race and Ethnicity
 # Filter releases for valid race data and generate visualizations and summary sentences
-prison_releases_race <- fnc_summarize_data(ncrp_releases_filtered, "race")
+prison_releases_race <- fnc_summarize_data(ncrp_releases_filtered, "race") |>
+  # Exclude states with high missingness for race and ethnicity
+  # Prints off which states are missing data
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 
 # Get unique states to iterate over
 states <- unique(prison_releases_race$state)
@@ -420,6 +423,7 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_bar_releases_race <- setNames(all_bar_releases_race, states)
 all_bar_releases_race$Georgia
+all_bar_releases_race$Louisiana
 rm(states)
 
 # Get unique states to iterate over
@@ -557,7 +561,8 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "released from prison",
-                                   title_type = "People Released from Prison")
+                                   title_type = "People Released from Prison",
+                                   orientation = "horizontal")
 
 })
 # Assign state names to list

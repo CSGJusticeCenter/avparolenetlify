@@ -21,6 +21,9 @@ ncrp_releases_timeserved <- fnc_filter_population(ncrp_releases) |>
 # Remove states without parole systems and with high missingness
 # (states_to_exclude created in prep/import_format.R)
 los_race <- ncrp_releases_timeserved |>
+  # Exclude states with high missingness for race and ethnicity
+  # Prints off which states are missing data
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   filter(rptyear == select_year) |>
   # Only include these racial and ethnic groups
   filter(race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic")) |>
@@ -33,6 +36,7 @@ los_race <- ncrp_releases_timeserved |>
 #            prison compared to White people."
 all_sentence_los_race <- fnc_generate_los_disparity_sentences(los_race, "in prison", "race", "average_los")
 all_sentence_los_race$Georgia
+all_sentence_los_race$Louisiana
 
 # Calculate average time served by sex and state
 los_sex <- ncrp_releases_timeserved |>
@@ -68,6 +72,7 @@ all_lollipop_los_race <- map(.x = states_race, .f = function(x) {
 })
 all_lollipop_los_race <- setNames(all_lollipop_los_race, states_race)
 all_lollipop_los_race$Georgia
+all_lollipop_los_race$Louisiana
 
 # Generate charts by sex
 states_sex <- unique(los_sex$state)

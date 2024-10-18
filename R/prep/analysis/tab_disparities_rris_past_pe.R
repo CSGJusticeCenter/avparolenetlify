@@ -2,7 +2,6 @@
 # Past Parole Eligibility
 # ---------------------------------------------------------------------------- #
 
-
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
 ncrp_yearendpop_race <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>

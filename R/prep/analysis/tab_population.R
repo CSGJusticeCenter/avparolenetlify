@@ -285,15 +285,16 @@ states <- unique(ncrp_population_fbi_index$state)
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Offense Type"
-  highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = ncrp_population_fbi_index,
-                                   x_var      = "fbi_index",
-                                   y_var      = "prop",
-                                   metric     = this_metric,
-                                   type       = "the prison population",
-                                   title_type = "People in Prison",
-                                   source     = ncrp_source,
-                                   year       = pop_select_year)
+  highcharts <- fnc_hc_columnchart(state_var   = x,
+                                   df          = ncrp_population_fbi_index,
+                                   x_var       = "fbi_index",
+                                   y_var       = "prop",
+                                   metric      = this_metric,
+                                   type        = "the prison population",
+                                   title_type  = "People in Prison",
+                                   source      = ncrp_source,
+                                   year        = pop_select_year,
+                                   orientation = "horizontal")
 
   return(highcharts)
 })
