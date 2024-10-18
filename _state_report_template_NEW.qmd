@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
-state_for_report <- "Georgia"
+state_for_report <- "this_state"
 
 source("R/config.R")
 source("R/pull_state_findings_NEW.R")

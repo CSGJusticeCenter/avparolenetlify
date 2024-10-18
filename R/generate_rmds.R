@@ -18,13 +18,13 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rd
 wd <- getwd()
 
 # Get list of states for reports - only states with parole and complete PE data
-states <- "Louisiana"
+states <- c("Georgia", "Louisiana")
 # states <- parole_eligibility_table |>
 #   filter(!is.na(current_perc)) |>
 #   pull(state)
 
 # Read in original qmd
-orig_qmd <- read_lines("_state_report_template.qmd")
+orig_qmd <- read_lines("_state_report_template_NEW.qmd")
 
 # Replace state name
 states_qmd <- as.character(states)

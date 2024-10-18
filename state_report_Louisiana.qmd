@@ -19,7 +19,22 @@ knitr::opts_chunk$set(
 state_for_report <- "Louisiana"
 
 source("R/config.R")
-source("R/pull_state_findings.R")
+source("R/pull_state_findings_NEW.R")
+
+# Function to display data
+fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualization", final_text = no_data_text) {
+  # Check if both sentence and chart are missing
+  no_data <- is.null(sentence) || is.null(chart) 
+  
+  # Display the sentence and chart if available
+  if (!no_data) {
+    cat(sentence)
+    div(id = chart_type, chart)
+  } else {
+    # Show "no data" message only once if both are missing
+    final_text
+  }
+}
 ```
 
 <div id="state-body-section">
@@ -60,17 +75,9 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 
 ## In Prison Past Parole Eligibility
 
-`r paste(state_sentence_pe_type, collapse = ", ")`
-
-```{r state_pie_pe_type}
-#div(id = "small-visualization", state_stackedbar_pe_type)
-div(id = "small-visualization", state_pie_pe_type)
-```
-
-`r paste(state_sentence_pop_pe_by_year, collapse = ", ")`
-
-```{r state_stackedbar_pop_pe_by_year}
-div(id = "visualization", state_stackedbar_pop_pe_by_year)
+```{r results = 'asis', state_sentence_pe_type}
+fnc_display_sentence_chart(state_sentence_pe_type, state_pie_pe_type); br()
+fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_stackedbar_pop_pe_by_year)
 ```
 
 <br>
@@ -82,26 +89,23 @@ div(id = "visualization", state_stackedbar_pop_pe_by_year)
 
 #### Race and Ethnicity
 
-`r paste(state_sentence_parole_eligibility_race, collapse = ", ")`
-
-```{r state_bar_parole_eligibility_race}
-div(id = "small-visualization", state_bar_parole_eligibility_race)
+```{r results = 'asis', state_sentence_parole_eligibility_race}
+fnc_display_sentence_chart(state_sentence_parole_eligibility_race, state_bar_parole_eligibility_race,
+                           chart_type = "small-visualization")
 ```
 
 #### Sex
 
-`r paste(state_sentence_parole_eligibility_sex, collapse = ", ")`
-
-```{r state_bar_parole_eligibility_sex}
-div(id = "small-visualization", state_bar_parole_eligibility_sex)
+```{r results = 'asis', state_sentence_parole_eligibility_sex}
+fnc_display_sentence_chart(state_sentence_parole_eligibility_sex, state_bar_parole_eligibility_sex,
+                           chart_type = "small-visualization")
 ```
 
 #### Age
 
-`r paste(state_sentence_parole_eligibility_ageyrend, collapse = ", ")`
-
-```{r state_bar_parole_eligibility_ageyrend}
-div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
+```{r results = 'asis', state_sentence_parole_eligibility_ageyrend}
+fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar_parole_eligibility_ageyrend,
+                           chart_type = "small-visualization")
 ```
 
 :::
@@ -111,10 +115,8 @@ div(id = "small-visualization", state_bar_parole_eligibility_ageyrend)
 
 ### Offense Types
 
-`r paste(state_sentence_parole_eligibility_fbi_index, collapse = ", ")`
-
-```{r state_bar_ped_fbi_index}
-div(id = "visualization", state_bar_ped_fbi_index)
+```{r results = 'asis', state_sentence_parole_eligibility_fbi_index}
+fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_bar_ped_fbi_index)
 ```
 
 <br>
@@ -122,10 +124,8 @@ div(id = "visualization", state_bar_ped_fbi_index)
 
 ### Sentence Lengths
 
-`r paste(state_sentence_parole_eligibility_sentlgth, collapse = ", ")`
-
-```{r state_bar_parole_eligibility_sentlgth}
-div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
+```{r results = 'asis', state_sentence_parole_eligibility_sentlgth}
+fnc_display_sentence_chart(state_sentence_parole_eligibility_sentlgth, state_bar_parole_eligibility_sentlgth)
 ```
 
 <br>
@@ -139,67 +139,67 @@ div(id = "small-visualization", state_bar_parole_eligibility_sentlgth)
 
 
 
+
+
+
+```{r}
+####################################################################################################################
+```
+
 # Prison Population
 
 ## Prison Population Trends
 
-`r paste(state_sentence_population, collapse = ", ")`
-
-```{r state_line_population_by_year}
-div(id = "visualization", state_line_population_by_year)
-# <a href="https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables" style="font-size: 0.7em; color: gray;">Source: BJS Prisoners Series</a>
+```{r results = 'asis', state_sentence_population}
+fnc_display_sentence_chart(state_sentence_population, state_line_population_by_year)
 ```
 
-<br><div class="divider"></div>
+<br>
+<div class="divider"></div>
 
-## Demographics
+### Demographics
 
 ::: {.panel-tabset .custom-tabs}
 
 #### Race and Ethnicity
 
-`r paste(state_sentence_population_race, collapse = ", ")`
-
-```{r state_bar_population_race}
-div(id = "small-visualization", state_bar_population_race)
+```{r results = 'asis', state_sentence_population_race}
+fnc_display_sentence_chart(state_sentence_population_race, state_bar_population_race,
+                           chart_type = "small-visualization")
 ```
 
 #### Sex
 
-`r paste(state_sentence_population_sex, collapse = ", ")`
-
-```{r state_bar_population_sex}
-div(id = "small-visualization", state_bar_population_sex)
+```{r results = 'asis', state_sentence_population_sex}
+fnc_display_sentence_chart(state_sentence_population_sex, state_bar_population_sex,
+                           chart_type = "small-visualization")
 ```
 
 #### Age
 
-`r paste(state_sentence_population_ageyrend, collapse = ", ")`
-
-```{r state_bar_population_ageyrend}
-div(id = "small-visualization", state_bar_population_ageyrend)
+```{r results = 'asis', state_sentence_population_ageyrend}
+fnc_display_sentence_chart(state_sentence_population_ageyrend, state_bar_population_ageyrend,
+                           chart_type = "small-visualization")
 ```
 
 :::
 
-<br><div class="divider"></div>
+<br>
+<div class="divider"></div>
 
-## Offense Types
+### Offense Types
 
-`r paste(state_sentence_population_fbi_index, collapse = ", ")`
-
-```{r state_bar_population_fbi_index}
-div(id = "visualization", state_bar_population_fbi_index)
+```{r results = 'asis', state_sentence_population_fbi_index}
+fnc_display_sentence_chart(state_sentence_population_fbi_index, state_bar_population_fbi_index)
 ```
 
-<br><div class="divider"></div>
+<br>
+<div class="divider"></div>
 
-## Sentence Lengths
+### Sentence Lengths
 
-`r paste(state_sentence_population_sentlgth, collapse = ", ")`
-
-```{r state_bar_population_sentlgth}
-div(id = "visualization", state_bar_population_sentlgth)
+```{r results = 'asis', state_sentence_population_sentlgth}
+fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_population_sentlgth)
 ```
 
 
@@ -213,22 +213,18 @@ div(id = "visualization", state_bar_population_sentlgth)
 
 
 
+
+```{r}
+####################################################################################################################
+```
 
 # Prison Releases
 
 ## Prison Release Trends
 
-`r paste(state_sentence_releases, collapse = ", ")`
-
-```{r state_line_releases_by_year}
-div(id = "visualization", state_line_releases_by_year)
-```
-<br>
-
-`r paste(state_sentence_pe_proportion_released, collapse = ", ")`
-
-```{r state_stackedbar_parole_eligibility_release}
-div(id = "visualization", state_stackedbar_parole_eligibility_release)
+```{r results = 'asis', state_sentence_releases}
+fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year); br()
+fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_parole_eligibility_release)
 ```
 
 <br>
@@ -236,54 +232,47 @@ div(id = "visualization", state_stackedbar_parole_eligibility_release)
 
 ## Conditional Releases
 
-`r paste(state_sentence_release_type, collapse = ", ")`
-
-```{r state_pie_release_type}
-div(id = "visualization", state_pie_release_type)
+```{r results = 'asis', state_sentence_release_type }
+fnc_display_sentence_chart(state_sentence_release_type, state_pie_release_type)
 ```
 
 <br>
 <div class="divider"></div>
 
-## Demographics
+### Demographics
 
 ::: {.panel-tabset .custom-tabs}
 
 #### Race and Ethnicity
 
-`r paste(state_sentence_releases_race, collapse = ", ")`
-
-```{r state_bar_releases_race}
-div(id = "small-visualization", state_bar_releases_race)
+```{r results = 'asis', state_sentence_releases_race}
+fnc_display_sentence_chart(state_sentence_releases_race, state_bar_releases_race,
+                           chart_type = "small-visualization")
 ```
-  
+
 #### Sex
-  
-`r paste(state_sentence_releases_sex, collapse = ", ")`
 
-```{r state_bar_releases_sex}
-div(id = "small-visualization", state_bar_releases_sex)
+```{r results = 'asis', state_sentence_releases_sex}
+fnc_display_sentence_chart(state_sentence_releases_sex, state_bar_releases_sex,
+                           chart_type = "small-visualization")
 ```
-  
-#### Age
-  
-`r paste(state_sentence_releases_agerlse, collapse = ", ")`
 
-```{r state_bar_releases_agerlse}
-div(id = "small-visualization", state_bar_releases_agerlse)
+#### Age
+
+```{r results = 'asis', state_sentence_releases_agerlse}
+fnc_display_sentence_chart(state_sentence_releases_agerlse, state_bar_releases_agerlse,
+                           chart_type = "small-visualization")
 ```
 
 :::
-
+  
 <br>
 <div class="divider"></div>
 
-## Offense Types
+### Offense Types
 
-`r paste(state_sentence_releases_fbi_index, collapse = ", ")`
-
-```{r state_bar_releases_fbi_index}
-div(id = "visualization", state_bar_releases_fbi_index)
+```{r results = 'asis', state_sentence_releases_fbi_index}
+fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases_fbi_index)
 ```
 
 
@@ -294,6 +283,12 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 
 
+
+
+
+```{r}
+####################################################################################################################
+```
 
 # Disparities
 
@@ -303,13 +298,14 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 ### Race and Ethnicity
 
-<br>
-
-```{r}
+```{r results = 'asis'}
 # Check if both Black and Hispanic data are missing
 no_data_black <- !file.exists(pe_rri_infographic_black) 
 no_data_hispanic <- !file.exists(pe_rri_infographic_hispanic) 
 
+if (file.exists(pe_rri_infographic_black)) {
+  HTML("<br>")
+}
 if (file.exists(pe_rri_infographic_black)) {
   knitr::include_graphics(pe_rri_infographic_black)
 }
@@ -331,27 +327,30 @@ if (no_data_black && no_data_hispanic) {
 
 ### Sex
 
-<br>
+```{r results = 'asis'}
+no_data_male <- !file.exists(pe_rri_infographic_male) 
 
-```{r pe_rri_infographic_male}
 if (file.exists(pe_rri_infographic_male)) {
-    knitr::include_graphics(pe_rri_infographic_male)
+  HTML("<br>")
+}
+if (file.exists(pe_rri_infographic_male)) {
+  knitr::include_graphics(pe_rri_infographic_male)
+}
+if (!no_data_male) {
+  HTML(paste0(state_sentence_pe_rri_male, "<br>"))
+}
+
+if (no_data_male) {
+  no_data_text
 }
 ```
 
-`r paste(state_sentence_pe_rri_male, collapse = ", ")`
-
 :::
+
+
 
 <br>
 <div class="divider"></div>
-
-
-
-
-
-
-
 
 ## Years in Prison Past Parole Eligibility
 
@@ -359,25 +358,28 @@ if (file.exists(pe_rri_infographic_male)) {
 
 ### Race and Ethnicity
 
-`r paste(state_sentence_avg_past_pe_race, collapse = ", ")`
-
-```{r state_parole_release_disparities, results='asis'}
+```{r results = 'asis'}
 df1 <- avg_current_pe_race |>
   filter(state == state_for_report)
 
-# Check if all avg_years_to_estimated_pey are NA
-if (!all(is.na(df1$avg_years_to_estimated_pey))) {
-  html_output <- div(
+no_data <- nrow(df1) == 0
+
+if (!no_data) {
+  HTML(paste0("<br>", state_sentence_avg_past_pe_race, "<br>"))
+}
+
+if (!no_data) {
+    html_output <- div(
     id = "grid-container",
     # style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
         style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
-    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;", 
+    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
         paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
         ),
-    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;", 
+    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
         paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
         ),
-    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;", 
+    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
         paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
         ),
 
@@ -385,30 +387,38 @@ if (!all(is.na(df1$avg_years_to_estimated_pey))) {
     div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
     div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
   )
+  cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
-  br()
-} else {
+}
+
+if (!is.null(state_scatter_avg_past_pe_race_offense)) {
+  HTML(paste0("<br>", state_sentence_avg_past_pe_race_offense, "<br><br>"))
+}
+
+if (!is.null(state_scatter_avg_past_pe_race_offense)) {
+  div(id = "visualization", state_scatter_avg_past_pe_race_offense)
+}
+
+if (no_data) {
   no_data_text
 }
 ```
 
-`r paste(state_sentence_avg_past_pe_race_offense, collapse = ", ")`
-
-```{r state_scatter_avg_past_pe_race_offense}
-div(id = "visualization", state_scatter_avg_past_pe_race_offense)
-```
 
 ### Sex
 
-`r paste(state_sentence_avg_past_pe_sex, collapse = ", ")`
-
-```{r state_pe_release_total_years_sex, results='asis'}
+```{r results = 'asis'}
 df1 <- avg_current_pe_sex |>
   filter(state == state_for_report)
 
-# Check if all avg_years_to_estimated_pey are NA
-if (!all(is.na(df1$avg_years_to_estimated_pey))) {
+no_data <- nrow(df1) == 0
+
+if (!no_data) {
+  HTML(paste0("<br>", state_sentence_avg_past_pe_sex, "<br>"))
+}
+
+if (!no_data) {
   html_output <- div(
     id = "grid-container",
     style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
@@ -423,21 +433,28 @@ if (!all(is.na(df1$avg_years_to_estimated_pey))) {
     div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
     div(style = "color: #55b4e5; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
   )
+  cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
-  br()
-} else {
-  cat("")
+}
+
+if (!is.null(state_scatter_avg_past_pe_sex_offense)) {
+  HTML(paste0("<br>", state_sentence_avg_past_pe_sex_offense, "<br><br>"))
+}
+
+if (!is.null(state_scatter_avg_past_pe_sex_offense)) {
+  div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
+}
+
+if (no_data) {
+  no_data_text
 }
 ```
 
-`r paste(state_sentence_avg_past_pe_sex_offense, collapse = ", ")`
-
-```{r state_scatter_avg_past_pe_sex_offense}
-div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
-```
-
 :::
+
+
+
 
 <br>
 <div class="divider"></div>
@@ -446,36 +463,61 @@ div(id = "visualization", state_scatter_avg_past_pe_sex_offense)
 
 ::: {.panel-tabset .custom-tabs-disp}
 
-<br>
-
 ### Race and Ethnicity
 
-<br>
+```{r results = 'asis'}
+# Check if both Black and Hispanic data are missing
+no_data_black <- !file.exists(rri_infographic_black) 
+no_data_hispanic <- !file.exists(rri_infographic_hispanic) 
 
-```{r rri_infographic_black}
+if (file.exists(rri_infographic_black)) {
+  HTML("<br>")
+}
 if (file.exists(rri_infographic_black)) {
   knitr::include_graphics(rri_infographic_black)
 }
-```
-
-`r paste(state_sentence_rri_black, collapse = ", ")`
-
-```{r rri_infographic_hispanic}
+if (!no_data_black) {
+  HTML(paste0(state_sentence_rri_black, "<br><br>"))
+}
 if (file.exists(rri_infographic_hispanic)) {
-    knitr::include_graphics(rri_infographic_hispanic)
+  knitr::include_graphics(rri_infographic_hispanic)
+}
+if (!no_data_hispanic) {
+  HTML(paste0(state_sentence_rri_hispanic, "<br>"))
+}
+
+if (no_data_black && no_data_hispanic) {
+  no_data_text
 }
 ```
 
-`r paste(state_sentence_rri_hispanic, collapse = ", ")`
-
 ### Sex
 
-<br>
-
-TBD. Not sure if we will be keping this Disparities in Incarceration section.
+TBD. Not sure if we are keeping this section.
+```{r results = 'asis'}
+# no_data_male <- !file.exists(rri_infographic_male) 
+# 
+# if (file.exists(rri_infographic_male)) {
+#   HTML("<br>")
+# }
+# if (file.exists(rri_infographic_male)) {
+#   knitr::include_graphics(rri_infographic_male)
+# }
+# if (!no_data_male) {
+#   HTML(paste0(state_sentence_rri_male, "<br>"))
+# }
+# 
+# if (no_data_male) {
+#   no_data_text
+# }
+```
 
 :::
 
+
+
+
+<br>
 <div class="divider"></div>
 
 ## Time Served
@@ -484,60 +526,70 @@ TBD. Not sure if we will be keping this Disparities in Incarceration section.
 
 ### Race and Ethnicity
 
-```{r}
-# Check if both Race and Offense data are missing
-no_data_race <- is.null(state_sentence_los_race) || state_sentence_los_race == no_sentence
-no_data_race_offense <- is.null(state_sentence_los_race_offense) || state_sentence_los_race_offense == no_sentence
+```{r results='asis'}
+no_data <- is.null(state_sentence_los_race)
 
-# Display Race LOS visualization and sentence if available
-if (!no_data_race) {
-  HTML(state_sentence_los_race)
+if (!no_data) {
+  HTML(paste0("<br>", state_sentence_los_race, "<br><br>"))
 }
-div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
 
-# Display Race and Offense LOS visualization and sentence if available
-if (!no_data_race_offense) {
-  HTML(state_sentence_los_race_offense)
+if (!no_data) {
+  div(id = "small-visualization", state_lollipop_los_race)
 }
-div(id = "visualization", state_scatter_los_race_offense)
 
-# Show "no data" message only once if both are missing
-if (no_data_race && no_data_race_offense) {
+if (!is.null(state_scatter_los_race_offense)) {
+  HTML(paste0("<br>", state_sentence_los_race_offense, "<br><br>"))
+}
+
+if (!is.null(state_scatter_los_race_offense)) {
+  div(id = "visualization", state_scatter_los_race_offense)
+}
+
+if (no_data) {
   no_data_text
 }
 ```
 
 
-### Sex 
 
-```{r}
-# Check if both sex and Offense data are missing
-no_data_sex <- is.null(state_sentence_los_sex) || state_sentence_los_sex == no_sentence
-no_data_sex_offense <- is.null(state_sentence_los_sex_offense) || state_sentence_los_sex_offense == no_sentence
+### Sex
 
-# Display sex LOS visualization and sentence if available
-if (!no_data_sex) {
-  HTML(state_sentence_los_sex)
+```{r results='asis'}
+no_data <- is.null(state_sentence_los_sex)
+
+if (!no_data) {
+  HTML(paste0("<br>", state_sentence_los_sex, "<br><br>"))
 }
-div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
 
-# Display sex and Offense LOS visualization and sentence if available
-if (!no_data_sex_offense) {
-  HTML(state_sentence_los_sex_offense)
+if (!no_data) {
+  div(id = "small-visualization", state_lollipop_los_sex)
 }
-div(id = "visualization", state_scatter_los_sex_offense)
 
-# Show "no data" message only once if both are missing
-if (no_data_sex && no_data_sex_offense) {
+if (!is.null(state_scatter_los_sex_offense)) {
+  HTML(paste0("<br>", state_sentence_los_sex_offense, "<br><br>"))
+}
+
+if (!is.null(state_scatter_los_sex_offense)) {
+  div(id = "visualization", state_scatter_los_sex_offense)
+}
+
+if (no_data) {
   no_data_text
 }
 ```
 
 :::
 
+
+
+
+
+<br>
 <div class="divider"></div>
 
-## How Disparities Are Calculated
+### How Disparities Are Calculated
+
+<br>
 
 The Relative Rate Index (RRI) is a tool used to compare the rates at which different groups experience incarceration, parole eligibility, or other criminal justice system outcomes. In this report, we use the RRI to highlight disparities in parole release and incarceration across race, ethnicity, and sex. An RRI greater than 1 means that the group experiences the event at a higher rate, while an RRI less than 1 means they experience it at a lower rate.
 
@@ -549,6 +601,15 @@ States vary in how they collect and report information about race and ethnicity.
 
 :::
 
+
+
+
+
+```{r}
+####################################################################################################################
+```
+
+<br>
 <div class="divider"></div>
 
 ## Endnotes
@@ -558,6 +619,12 @@ States vary in how they collect and report information about race and ethnicity.
 Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program).
 
 </div>
+
+
+
+
+
+
 
 ---
 title: "`r state_for_report`"
