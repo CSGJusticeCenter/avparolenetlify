@@ -262,10 +262,11 @@ table th, table td {
   background-color: #969696;
 }
 
+/*
 .custom-tabs .tab-content > div {
     min-height: 375px;
 }
-
+*/
 
 .custom-tabs-disp .nav-tabs {
   display: inline-flex; /* Use inline-flex to shrink the width */

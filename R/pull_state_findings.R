@@ -4,9 +4,12 @@
 #------------------------------------------------------------------------------#
 
 # no data text
-no_data_text <- HTML(paste0("<br><br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br><br>Data is not available. ",
-                       state_for_report, " submitted incomplete or missing data to National Corrections Reporting Program in ",
-                       select_year, ".<br><br>"))
+no_data_text <- HTML(paste0("<div style='text-align:center;'>
+               <br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br><br>
+               Data is not available. ", state_for_report,
+                            " submitted incomplete or missing data to the National Corrections Reporting Program in ",
+                            select_year, ".<br><br>
+             </div>"))
 no_sentence <- ""
 no_visualization <- HTML(paste0("<br><br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br><br>Data is not available. ",
                        state_for_report, " submitted incomplete or missing data to the National Corrections Reporting Program in ",
@@ -604,7 +607,7 @@ if (state_for_report %in% names(all_lollipop_los_race)) {
   state_lollipop_los_race <-
     all_lollipop_los_race[[state_for_report]]
 } else {
-  state_lollipop_los_race <- no_data_text
+  state_lollipop_los_race <- no_sentence
 }
 
 # SENTENCE: "Hispanic, any sex individuals faced the longest average time
@@ -624,7 +627,7 @@ if (state_for_report %in% names(all_lollipop_los_sex)) {
     all_lollipop_los_sex[[state_for_report]] |>
     hc_size(height = 150)
 } else {
-  state_lollipop_los_sex <- no_data_text
+  state_lollipop_los_sex <- no_sentence
 }
 
 
@@ -711,7 +714,7 @@ if (state_for_report %in% names(all_scatter_avg_past_pe_race_offense)) {
     all_scatter_avg_past_pe_race_offense[[state_for_report]] |>
     hc_size(height = 600)
 } else {
-  state_scatter_avg_past_pe_race_offense <- no_data_text
+  state_scatter_avg_past_pe_race_offense <- no_sentence
 }
 
 
@@ -720,7 +723,7 @@ if (state_for_report %in% names(all_scatter_avg_past_pe_sex_offense)) {
     all_scatter_avg_past_pe_sex_offense[[state_for_report]] |>
     hc_size(height = 600)
 } else {
-  state_scatter_avg_past_pe_sex_offense <- no_data_text
+  state_scatter_avg_past_pe_sex_offense <- no_sentence
 }
 
 
@@ -729,7 +732,7 @@ if (state_for_report %in% names(all_scatter_los_sex_offense)) {
     all_scatter_los_sex_offense[[state_for_report]] |>
     hc_size(height = 600)
 } else {
-  state_scatter_los_sex_offense <- no_data_text
+  state_scatter_los_sex_offense <- no_sentence
 }
 
 
@@ -738,6 +741,6 @@ if (state_for_report %in% names(all_scatter_los_race_offense)) {
     all_scatter_los_race_offense[[state_for_report]] |>
     hc_size(height = 600)
 } else {
-  state_scatter_los_race_offense <- no_data_text
+  state_scatter_los_race_offense <- no_sentence
 }
 

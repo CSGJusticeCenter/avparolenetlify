@@ -228,7 +228,7 @@ div(id = "visualization", state_line_releases_by_year)
 `r paste(state_sentence_pe_proportion_released, collapse = ", ")`
 
 ```{r state_stackedbar_parole_eligibility_release}
-div(id = "small-visualization", state_stackedbar_parole_eligibility_release)
+div(id = "visualization", state_stackedbar_parole_eligibility_release)
 ```
 
 <br>
@@ -305,21 +305,29 @@ div(id = "visualization", state_bar_releases_fbi_index)
 
 <br>
 
-```{r pe_rri_infographic_black}
+```{r}
+# Check if both Black and Hispanic data are missing
+no_data_black <- !file.exists(pe_rri_infographic_black) 
+no_data_hispanic <- !file.exists(pe_rri_infographic_hispanic) 
+
 if (file.exists(pe_rri_infographic_black)) {
   knitr::include_graphics(pe_rri_infographic_black)
 }
-```
+if (!no_data_black) {
+  HTML(state_sentence_pe_rri_black)
+}
 
-`r paste(state_sentence_pe_rri_black, collapse = ", ")`
-
-```{r pe_rri_infographic_hispanic}
 if (file.exists(pe_rri_infographic_hispanic)) {
-    knitr::include_graphics(pe_rri_infographic_hispanic)
+  knitr::include_graphics(pe_rri_infographic_hispanic)
+}
+if (!no_data_hispanic) {
+  HTML(state_sentence_pe_rri_hispanic)
+}
+
+if (no_data_black && no_data_hispanic) {
+  no_data_text
 }
 ```
-
-`r paste(state_sentence_pe_rri_hispanic, collapse = ", ")`
 
 ### Sex
 
@@ -381,7 +389,7 @@ if (!all(is.na(df1$avg_years_to_estimated_pey))) {
   cat(as.character(html_output))
   br()
 } else {
-  cat("")
+  no_data_text
 }
 ```
 
@@ -476,30 +484,53 @@ TBD. Not sure if we will be keping this Disparities in Incarceration section.
 
 ### Race and Ethnicity
 
-`r paste(state_sentence_los_race, collapse = ", ")`
+```{r}
+# Check if both Race and Offense data are missing
+no_data_race <- is.null(state_sentence_los_race) || state_sentence_los_race == no_sentence
+no_data_race_offense <- is.null(state_sentence_los_race_offense) || state_sentence_los_race_offense == no_sentence
 
-```{r state_lollipop_los_race}
+# Display Race LOS visualization and sentence if available
+if (!no_data_race) {
+  HTML(state_sentence_los_race)
+}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_race)
-```
 
-`r paste(state_sentence_los_race_offense, collapse = ", ")`
-
-```{r state_scatter_los_race_offense}
+# Display Race and Offense LOS visualization and sentence if available
+if (!no_data_race_offense) {
+  HTML(state_sentence_los_race_offense)
+}
 div(id = "visualization", state_scatter_los_race_offense)
+
+# Show "no data" message only once if both are missing
+if (no_data_race && no_data_race_offense) {
+  no_data_text
+}
 ```
+
 
 ### Sex 
 
-`r paste(state_sentence_los_sex, collapse = ", ")`
+```{r}
+# Check if both sex and Offense data are missing
+no_data_sex <- is.null(state_sentence_los_sex) || state_sentence_los_sex == no_sentence
+no_data_sex_offense <- is.null(state_sentence_los_sex_offense) || state_sentence_los_sex_offense == no_sentence
 
-```{r state_lollipop_los_sex}
+# Display sex LOS visualization and sentence if available
+if (!no_data_sex) {
+  HTML(state_sentence_los_sex)
+}
 div(id = "visualization", style = "margin: 0 auto; text-align: center;width: 400px", state_lollipop_los_sex)
-```
 
-`r paste(state_sentence_los_sex_offense, collapse = ", ")`
-
-```{r state_scatter_los_sex_offense}
+# Display sex and Offense LOS visualization and sentence if available
+if (!no_data_sex_offense) {
+  HTML(state_sentence_los_sex_offense)
+}
 div(id = "visualization", state_scatter_los_sex_offense)
+
+# Show "no data" message only once if both are missing
+if (no_data_sex && no_data_sex_offense) {
+  no_data_text
+}
 ```
 
 :::
