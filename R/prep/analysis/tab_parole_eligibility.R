@@ -248,7 +248,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
     hc_exporting(enabled = TRUE,
                  filename = paste0(gsub(" ", "_", tolower(title)), "_",
                                    min(df1$rptyear), "_", max(df1$rptyear))) |>
-    hc_caption(text = ncrp_source) |>
+    hc_caption(text = ncrp_csg_source) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)

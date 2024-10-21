@@ -83,25 +83,25 @@ fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_stackedbar_pop_p
 <br>
 <div class="divider"></div>
 
-### Demographics
+## Demographics
 
 ::: {.panel-tabset .custom-tabs}
 
-#### Race and Ethnicity
+### Race and Ethnicity
 
 ```{r results = 'asis', state_sentence_parole_eligibility_race}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_race, state_bar_parole_eligibility_race,
                            chart_type = "small-visualization")
 ```
 
-#### Sex
+### Sex
 
 ```{r results = 'asis', state_sentence_parole_eligibility_sex}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_sex, state_bar_parole_eligibility_sex,
                            chart_type = "small-visualization")
 ```
 
-#### Age
+### Age
 
 ```{r results = 'asis', state_sentence_parole_eligibility_ageyrend}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar_parole_eligibility_ageyrend,
@@ -113,7 +113,7 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar
 <br>
 <div class="divider"></div>
 
-### Offense Types
+## Offense Types
 
 ```{r results = 'asis', state_sentence_parole_eligibility_fbi_index}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_bar_ped_fbi_index)
@@ -122,7 +122,7 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_ba
 <br>
 <div class="divider"></div>
 
-### Sentence Lengths
+## Sentence Lengths
 
 ```{r results = 'asis', state_sentence_parole_eligibility_sentlgth}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_sentlgth, state_bar_parole_eligibility_sentlgth)
@@ -135,7 +135,14 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_sentlgth, state_bar
 
 `r paste(state_imputation_notes, collapse = ", ")`
 
+<br>
+<div class="divider"></div>
 
+## Endnotes
+
+`r paste(state_citation, collapse = ", ")`
+
+Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “Prisoners - Statistical Tables,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners](https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners).
 
 
 
@@ -157,25 +164,25 @@ fnc_display_sentence_chart(state_sentence_population, state_line_population_by_y
 <br>
 <div class="divider"></div>
 
-### Demographics
+## Demographics
 
 ::: {.panel-tabset .custom-tabs}
 
-#### Race and Ethnicity
+### Race and Ethnicity
 
 ```{r results = 'asis', state_sentence_population_race}
 fnc_display_sentence_chart(state_sentence_population_race, state_bar_population_race,
                            chart_type = "small-visualization")
 ```
 
-#### Sex
+### Sex
 
 ```{r results = 'asis', state_sentence_population_sex}
 fnc_display_sentence_chart(state_sentence_population_sex, state_bar_population_sex,
                            chart_type = "small-visualization")
 ```
 
-#### Age
+### Age
 
 ```{r results = 'asis', state_sentence_population_ageyrend}
 fnc_display_sentence_chart(state_sentence_population_ageyrend, state_bar_population_ageyrend,
@@ -187,7 +194,7 @@ fnc_display_sentence_chart(state_sentence_population_ageyrend, state_bar_populat
 <br>
 <div class="divider"></div>
 
-### Offense Types
+## Offense Types
 
 ```{r results = 'asis', state_sentence_population_fbi_index}
 fnc_display_sentence_chart(state_sentence_population_fbi_index, state_bar_population_fbi_index)
@@ -196,7 +203,7 @@ fnc_display_sentence_chart(state_sentence_population_fbi_index, state_bar_popula
 <br>
 <div class="divider"></div>
 
-### Sentence Lengths
+## Sentence Lengths
 
 ```{r results = 'asis', state_sentence_population_sentlgth}
 fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_population_sentlgth)
@@ -239,25 +246,25 @@ fnc_display_sentence_chart(state_sentence_release_type, state_pie_release_type)
 <br>
 <div class="divider"></div>
 
-### Demographics
+## Demographics
 
 ::: {.panel-tabset .custom-tabs}
 
-#### Race and Ethnicity
+### Race and Ethnicity
 
 ```{r results = 'asis', state_sentence_releases_race}
 fnc_display_sentence_chart(state_sentence_releases_race, state_bar_releases_race,
                            chart_type = "small-visualization")
 ```
 
-#### Sex
+### Sex
 
 ```{r results = 'asis', state_sentence_releases_sex}
 fnc_display_sentence_chart(state_sentence_releases_sex, state_bar_releases_sex,
                            chart_type = "small-visualization")
 ```
 
-#### Age
+### Age
 
 ```{r results = 'asis', state_sentence_releases_agerlse}
 fnc_display_sentence_chart(state_sentence_releases_agerlse, state_bar_releases_agerlse,
@@ -269,7 +276,7 @@ fnc_display_sentence_chart(state_sentence_releases_agerlse, state_bar_releases_a
 <br>
 <div class="divider"></div>
 
-### Offense Types
+## Offense Types
 
 ```{r results = 'asis', state_sentence_releases_fbi_index}
 fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases_fbi_index)
@@ -587,11 +594,11 @@ if (no_data) {
 <br>
 <div class="divider"></div>
 
-### How Disparities Are Calculated
+## Notes on Disparities
 
-<br>
+Interpret small numbers with caution, as they may introduce variability and lead to less reliable estimates. We do not report on people of "Other race(s), non-Hispanic" because the numbers are generally smaller, and disparities analyses require sufficient sample sizes to produce meaningful comparisons. In the NCRP data, people of "Other race(s)" may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Due to the small numbers in these groups, reporting could lead to unreliable or misleading results.
 
-The Relative Rate Index (RRI) is a tool used to compare the rates at which different groups experience incarceration, parole eligibility, or other criminal justice system outcomes. In this report, we use the RRI to highlight disparities in parole release and incarceration across race, ethnicity, and sex. An RRI greater than 1 means that the group experiences the event at a higher rate, while an RRI less than 1 means they experience it at a lower rate.
+The Relative Rate Index (RRI) is a tool used to compare the rates at which different groups experience incarceration, parole eligibility, or other criminal justice system outcomes. In this report, we use the RRI to highlight disparities in parole release and incarceration across race, ethnicity, and sex. An RRI greater than one means that the group experiences the event at a higher rate, while an RRI less than one means they experience it at a lower rate.
 
 State data broken down by race, ethnicity, and sex were pulled from National Corrections Reporting Program, 1991-2020: Selected Variables (NCRP). Then, the rate of people readmitted to parole was calculated within each racial and ethnic group based on the Census Public Use Microdata Sample (PUMS). The relative rate index is calculated by dividing the rate for Black individuals or Hispanic individuals by the rate for White individuals.  
 
@@ -608,15 +615,6 @@ States vary in how they collect and report information about race and ethnicity.
 ```{r}
 ####################################################################################################################
 ```
-
-<br>
-<div class="divider"></div>
-
-## Endnotes
-
-`r paste(state_citation, collapse = ", ")`
-
-Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “National Prisoner Statistics (NPS) Program,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps-program).
 
 </div>
 

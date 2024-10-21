@@ -140,7 +140,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Race and Ethnicity"
   highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = bjs_prison_pop_by_race_2020,
+                                   df         = bjs_prison_pop_by_race_2020 |> mutate(prop = prop*100),
                                    x_var      = "race",
                                    y_var      = "prop",
                                    metric     = this_metric,
@@ -160,7 +160,7 @@ all_bar_population_race$Georgia
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
-                                                 df         = bjs_prison_pop_by_race_2020,
+                                                 df         = bjs_prison_pop_by_race_2020 |> mutate(prop = prop*100),
                                                  x_var      = "race",
                                                  type       = "in prison",
                                                  year       = bjs_data_year)
@@ -244,7 +244,7 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_source,
+                                   source     = ncrp_csg_source,
                                    year       = pop_select_year)
 
   return(highcharts)
@@ -292,7 +292,7 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
                                    metric      = this_metric,
                                    type        = "the prison population",
                                    title_type  = "People in Prison",
-                                   source      = ncrp_source,
+                                   source      = ncrp_csg_source,
                                    year        = pop_select_year,
                                    orientation = "horizontal")
 
@@ -341,7 +341,7 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_source,
+                                   source     = ncrp_csg_source,
                                    year       = pop_select_year)
 
   return(highcharts)

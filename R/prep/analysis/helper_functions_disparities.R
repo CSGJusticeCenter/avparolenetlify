@@ -318,7 +318,7 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #'
 #' @return A highcharter plot object showing a lollipop chart with the LOS disparities.
 #'
-fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state_name, height = 200, year = select_year, source = ncrp_source) {
+fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state_name, height = 200, year = select_year, source = ncrp_csg_source) {
 
   # Determine the title based on the group_var
   chart_title <- if (group_var == "sex") {
@@ -642,7 +642,7 @@ fnc_create_scatter_charts_by_state <- function(df,
                                                group_labels,
                                                colors,
                                                year = 2020,
-                                               source = ncrp_source) {
+                                               source = ncrp_csg_source) {
 
   # Get unique states to iterate over
   states <- unique(df$state)

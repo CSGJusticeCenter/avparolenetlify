@@ -100,7 +100,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5)) |>
-    hc_caption(text = ncrp_source) |>
+    hc_caption(text = ncrp_csg_source) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -182,7 +182,7 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
                                  borderWidth = 3,
                                  minPointLength = 4)) |>
     fnc_add_hc_accessibility(hc_accessibility_text) |>
-    hc_caption(text = ncrp_source)
+    hc_caption(text = ncrp_csg_source)
 
   return(highcharts)
 })
@@ -350,7 +350,7 @@ rm(states)
 #                                  borderWidth = 3,
 #                                  minPointLength = 4)) |>
 #     fnc_add_hc_accessibility(hc_accessibility_text) |>
-#     hc_caption(text = ncrp_source)
+#     hc_caption(text = ncrp_csg_source)
 #
 #   return(highcharts)
 # })
@@ -498,7 +498,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_colors(c(color4, color2)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
-    hc_caption(text = ncrp_source) |>
+    hc_caption(text = ncrp_csg_source) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)

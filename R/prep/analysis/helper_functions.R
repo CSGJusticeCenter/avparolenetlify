@@ -403,7 +403,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #'
 #' @return A Highcharts pie chart object.
 #' @export
-fnc_hc_pie <- function(df, variable, title, accessibility_text, year = select_year, source = ncrp_source) {
+fnc_hc_pie <- function(df, variable, title, accessibility_text, year = select_year, source = ncrp_csg_source) {
   highchart() |>
     hc_chart(type = "pie") |>
     hc_plotOptions(pie = list(
@@ -451,7 +451,7 @@ fnc_hc_pie <- function(df, variable, title, accessibility_text, year = select_ye
 #'
 #' @return A Highcharts column or bar chart object.
 #' @export
-fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_source, orientation = "vertical") {
+fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_csg_source, orientation = "vertical") {
 
   df1 <- df |>
     filter(state == state_var) |>
