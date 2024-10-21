@@ -349,6 +349,13 @@ hc_theme_with_line <- hc_theme(
   yAxis = list(
     labels = list(enabled = TRUE, style = common_style)
   ),
+  caption = list(
+    align = "left",
+    style = list(
+      fontSize = "10px",
+      color = "#555555"
+    )
+  ),
   plotOptions = list(
     column = list(
       dataLabels = list(

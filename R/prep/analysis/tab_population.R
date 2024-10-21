@@ -244,7 +244,7 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_csg_source,
+                                   source     = ncrp_source,
                                    year       = pop_select_year)
 
   return(highcharts)
@@ -292,7 +292,7 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
                                    metric      = this_metric,
                                    type        = "the prison population",
                                    title_type  = "People in Prison",
-                                   source      = ncrp_csg_source,
+                                   source      = ncrp_source,
                                    year        = pop_select_year,
                                    orientation = "horizontal")
 
@@ -341,7 +341,7 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
-                                   source     = ncrp_csg_source,
+                                   source     = ncrp_source,
                                    year       = pop_select_year)
 
   return(highcharts)

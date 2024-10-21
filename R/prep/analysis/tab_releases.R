@@ -100,7 +100,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5)) |>
-    hc_caption(text = ncrp_csg_source) |>
+    hc_caption(text = ncrp_source) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -498,7 +498,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_colors(c(color4, color2)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
-    hc_caption(text = ncrp_csg_source) |>
+    hc_caption(text = ncrp_source) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -558,7 +558,8 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "released from prison",
-                                   title_type = "People Released from Prison")
+                                   title_type = "People Released from Prison",
+                                   source     = ncrp_source)
 
   return(highcharts)
 })
@@ -608,7 +609,8 @@ all_bar_releases_sex <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "released from prison",
-                                   title_type = "People Released from Prison")
+                                   title_type = "People Released from Prison",
+                                   source     = ncrp_source)
 
 
 })
@@ -657,7 +659,8 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "released from prison",
-                                   title_type = "People Released from Prison")
+                                   title_type = "People Released from Prison",
+                                   source     = ncrp_source)
   return(highcharts)
 })
 # Assign state names to list
@@ -697,14 +700,15 @@ states <- unique(prison_releases_fbi_index$state)
 all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Offense Type"
-  highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = prison_releases_fbi_index,
-                                   x_var      = "fbi_index",
-                                   y_var      = "prop",
-                                   metric     = this_metric,
-                                   type       = "released from prison",
-                                   title_type = "People Released from Prison",
-                                   orientation = "horizontal")
+  highcharts <- fnc_hc_columnchart(state_var   = x,
+                                   df          = prison_releases_fbi_index,
+                                   x_var       = "fbi_index",
+                                   y_var       = "prop",
+                                   metric      = this_metric,
+                                   type        = "released from prison",
+                                   title_type  = "People Released from Prison",
+                                   orientation = "horizontal",
+                                   source      = ncrp_source)
 
 })
 # Assign state names to list

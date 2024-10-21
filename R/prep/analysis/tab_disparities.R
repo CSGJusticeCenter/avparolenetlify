@@ -70,7 +70,8 @@ all_lollipop_los_race <- map(.x = states_race, .f = function(x) {
     group_var = "race",
     group_labels = c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race"),
     colors = c(color1, color4, color2),
-    state_name = x
+    state_name = x,
+    source = ncrp_source
   )
 })
 all_lollipop_los_race <- setNames(all_lollipop_los_race, states_race)
@@ -85,7 +86,8 @@ all_lollipop_los_sex <- map(.x = states_sex, .f = function(x) {
     group_var = "sex",
     group_labels = c("Male", "Female"),
     colors = c(color4, color2),
-    state_name = x
+    state_name = x,
+    source = ncrp_source
   )
 })
 all_lollipop_los_sex <- setNames(all_lollipop_los_sex, states_sex)
@@ -188,7 +190,8 @@ all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
   group_var = "race",
   measure = "avg_los",
   group_labels = c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race"),
-  colors = c(color1, color4, color2)
+  colors = c(color1, color4, color2),
+  source = ncrp_source
 )
 all_scatter_los_race_offense$Georgia
 
@@ -223,7 +226,8 @@ all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
   group_var = "sex",
   measure = "avg_los",
   group_labels = c("Male", "Female"),
-  colors = c(color4, color2)
+  colors = c(color4, color2),
+  source = ncrp_source
 )
 all_scatter_los_sex_offense$Georgia
 
@@ -265,7 +269,8 @@ all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
   group_var = "race",
   measure = "avg_time_past_pe",
   group_labels = c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race"),
-  colors = c(color1, color4, color2)
+  colors = c(color1, color4, color2),
+  source = ncrp_csg_source
 )
 all_scatter_avg_past_pe_race_offense$Georgia
 
@@ -298,7 +303,8 @@ all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(
   group_var = "sex",
   measure = "avg_time_past_pe",
   group_labels = c("Male", "Female"),
-  colors = c(color4, color2)
+  colors = c(color4, color2),
+  source = ncrp_csg_source
 )
 all_scatter_avg_past_pe_sex_offense$Georgia
 
