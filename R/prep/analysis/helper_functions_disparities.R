@@ -1,3 +1,14 @@
+#' Retrieve Census Data by State
+#'
+#' Retrieves decennial census data for a specified state, focusing on race and ethnicity variables.
+#' The function uses the `tidycensus` package to get race-specific population estimates and
+#' formats the data accordingly.
+#'
+#' @param state A string representing the state for which to retrieve census data.
+#'
+#' @return A data frame containing race-specific population estimates for the specified state,
+#' with columns cleaned and race categories recoded.
+#' @export
 fnc_get_census_data <- function(state) {
   df <-
     tidycensus::get_decennial(
@@ -35,7 +46,104 @@ fnc_get_census_data <- function(state) {
 #'
 #' @details This function can compare average LOS between males and females, or between races
 #' (White, Black, and Hispanic) within a state.
-#'
+# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
+#   # Get unique states to iterate over
+#   states <- unique(df$state)
+#
+#   # Generate sentence for each state
+#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
+#
+#     # Check for the comparison variable ("sex" or "race")
+#     if (compare_var == "race") {
+#
+#       # Filter and categorize races within the data
+#       df1 <- df |>
+#         dplyr::ungroup() |>
+#         dplyr::mutate(race = dplyr::case_when(
+#           race == "White, non-Hispanic" ~ "White",
+#           race == "Black, non-Hispanic" ~ "Black",
+#           race == "Hispanic, any race" ~ "Hispanic"
+#         )) |>
+#         dplyr::filter(state == state_var)
+#
+#       # Handle missing data for the state
+#       if (nrow(df1) == 0) {
+#         return(paste0("No data available for ", state_var, "."))
+#       }
+#
+#       # Focus on comparisons with White individuals
+#       df_white <- df1 |> dplyr::filter(race == "White")
+#
+#       # Initialize variables to hold sentences for each race comparison
+#       black_sentence <- ""
+#       hispanic_sentence <- ""
+#
+#       # Generate sentence for Black vs White comparison using rounded values
+#       df_black <- df1 |> dplyr::filter(race == "Black")
+#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
+#         los_diff_black <- round(df_black[[los_col]], 1) - round(df_white[[los_col]], 1)
+#         abs_los_diff_black <- round(abs(los_diff_black), 1)  # round to one decimal place
+#
+#         if (!is.na(los_diff_black)) {
+#           if (los_diff_black > 0) {
+#             black_sentence <- paste0("Black people who were still incarcerated spent on average ",
+#                                      abs_los_diff_black, " more years ", type)
+#           } else if (los_diff_black < 0) {
+#             black_sentence <- paste0("Black people who were still incarcerated spent on average ",
+#                                      abs_los_diff_black,
+#                                      if (abs_los_diff_black == 1) " less year" else " less years",
+#                                      " ", type)
+#           }
+#         }
+#       }
+#
+#       # Generate sentence for Hispanic vs White comparison using rounded values
+#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
+#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
+#         los_diff_hispanic <- round(df_hispanic[[los_col]], 1) - round(df_white[[los_col]], 1)
+#         abs_los_diff_hispanic <- round(abs(los_diff_hispanic), 1)  # round to one decimal place
+#
+#         if (!is.na(los_diff_hispanic)) {
+#           if (los_diff_hispanic > 0) {
+#             hispanic_sentence <- paste0("Hispanic people who were still incarcerated spent on average ",
+#                                         abs_los_diff_hispanic, " more years ", type)
+#           } else if (los_diff_hispanic < 0) {
+#             hispanic_sentence <- paste0("Hispanic people who were still incarcerated spent on average ",
+#                                         abs_los_diff_hispanic,
+#                                         if (abs_los_diff_hispanic == 1) " less year" else " less years",
+#                                         " ", type)
+#           }
+#         }
+#       }
+#
+#       # Combine both sentences, or indicate no significant differences
+#       if (black_sentence != "" && hispanic_sentence != "") {
+#         if (abs_los_diff_black == abs_los_diff_hispanic) {
+#           sentence <- paste0("In ", year, ", Black people and Hispanic people who were still incarcerated spent on average ",
+#                              abs_los_diff_black, " more years ", type, " compared to White people.")
+#         } else {
+#           sentence <- paste0("In ", year, ", ", black_sentence, ", and ",
+#                              hispanic_sentence, " compared to White people.")
+#         }
+#       } else if (black_sentence != "") {
+#         sentence <- paste0("In ", year, ", ", black_sentence, " compared to White people.")
+#       } else if (hispanic_sentence != "") {
+#         sentence <- paste0("In ", year, ", ", hispanic_sentence, " compared to White people.")
+#       } else {
+#         sentence <- "" # No significant differences
+#       }
+#
+#       return(sentence)
+#     } else {
+#       return("Invalid comparison variable.")
+#     }
+#   })
+#
+#   # Assign state names to list
+#   all_sentences <- setNames(all_sentences, states)
+#
+#   return(all_sentences)
+# }
 fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
   # Get unique states to iterate over
   states <- unique(df$state)
@@ -65,22 +173,24 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
       # Generate sentence for female vs male comparison
       df_female <- df1 |> dplyr::filter(sex == "Female")
       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
-        # los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
-        # abs_los_diff_female <- round(abs(los_diff_female), 1)  # round to one decimal place#########################################
         los_diff_female <- round(df_female[[los_col]], 1) - round(df_male[[los_col]], 1)
         abs_los_diff_female <- abs(los_diff_female)  # Already rounded difference
 
         if (!is.na(los_diff_female)) {
           if (los_diff_female > 0) {
-            sentence <- paste0("In ", year, ", females spent on average ",
-                               abs_los_diff_female,
+            sentence <- paste0("In ", year, ", females ",
+                               if (type == "in prison") "released" else "who were still incarcerated",
+                               " spent on average ", abs_los_diff_female,
                                if (abs_los_diff_female == 1) " more year" else " more years",
-                               " ", type, " compared to males in ", state_var, ".")
+                               " ", if (type == "in prison") "in prison" else "past parole eligibility",
+                               " compared to males in ", state_var, ".")
           } else if (los_diff_female < 0) {
-            sentence <- paste0("In ", year, ", females spent on average ",
-                               abs_los_diff_female,
+            sentence <- paste0("In ", year, ", females ",
+                               if (type == "in prison") "released" else "who were still incarcerated",
+                               " spent on average ", abs_los_diff_female,
                                if (abs_los_diff_female == 1) " less year" else " less years",
-                               " ", type, " compared to males in ", state_var, ".")
+                               " ", if (type == "in prison") "in prison" else "past parole eligibility",
+                               " compared to males in ", state_var, ".")
           }
         }
       }
@@ -89,7 +199,7 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
       if (sentence != "") {
         return(sentence)
       } else {
-        return(paste0("Females and males spent the same average number of years ", type, "."))
+        return(paste0("Females and males spent the same average number of years ", if (type == "in prison") "in prison." else "past parole eligibility."))
       }
 
     } else if (compare_var == "race") {
@@ -124,13 +234,16 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 
         if (!is.na(los_diff_black)) {
           if (los_diff_black > 0) {
-            black_sentence <- paste0("Black people spent on average ",
-                                     abs_los_diff_black, " more years ", type)
+            black_sentence <- paste0("Black people ",
+                                     if (type == "in prison") "released" else "who were still incarcerated",
+                                     " spent on average ", abs_los_diff_black,
+                                     " more years ", if (type == "in prison") "in prison" else "past parole eligibility")
           } else if (los_diff_black < 0) {
-            black_sentence <- paste0("Black people spent on average ",
-                                     abs_los_diff_black,
+            black_sentence <- paste0("Black people ",
+                                     if (type == "in prison") "released" else "who were still incarcerated",
+                                     " spent on average ", abs_los_diff_black,
                                      if (abs_los_diff_black == 1) " less year" else " less years",
-                                     " ", type)
+                                     " ", if (type == "in prison") "in prison" else "past parole eligibility")
           }
         }
       }
@@ -143,13 +256,16 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 
         if (!is.na(los_diff_hispanic)) {
           if (los_diff_hispanic > 0) {
-            hispanic_sentence <- paste0("Hispanic people spent on average ",
-                                        abs_los_diff_hispanic, " more years ", type)
+            hispanic_sentence <- paste0("Hispanic people ",
+                                        if (type == "in prison") "released" else "who were still incarcerated",
+                                        " spent on average ", abs_los_diff_hispanic,
+                                        " more years ", if (type == "in prison") "in prison" else "past parole eligibility")
           } else if (los_diff_hispanic < 0) {
-            hispanic_sentence <- paste0("Hispanic people spent on average ",
-                                        abs_los_diff_hispanic,
+            hispanic_sentence <- paste0("Hispanic people ",
+                                        if (type == "in prison") "released" else "who were still incarcerated",
+                                        " spent on average ", abs_los_diff_hispanic,
                                         if (abs_los_diff_hispanic == 1) " less year" else " less years",
-                                        " ", type)
+                                        " ", if (type == "in prison") "in prison" else "past parole eligibility")
           }
         }
       }
@@ -157,8 +273,11 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
       # Combine both sentences, or indicate no significant differences
       if (black_sentence != "" && hispanic_sentence != "") {
         if (abs_los_diff_black == abs_los_diff_hispanic) {
-          sentence <- paste0("In ", year, ", Black people and Hispanic people spent on average ",
-                             abs_los_diff_black, " more years ", type, " compared to White people.")
+          sentence <- paste0("In ", year, ", Black people and Hispanic people ",
+                             if (type == "in prison") "released" else "who were still incarcerated",
+                             " spent on average ", abs_los_diff_black,
+                             " more years ", if (type == "in prison") "in prison" else "past parole eligibility",
+                             " compared to White people.")
         } else {
           sentence <- paste0("In ", year, ", ", black_sentence, ", and ",
                              hispanic_sentence, " compared to White people.")
@@ -183,379 +302,6 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
   return(all_sentences)
 }
 
-# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col) {
-#   # Get unique states to iterate over
-#   states <- unique(df$state)
-#
-#   # Generate sentence for each state
-#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
-#
-#     # Check for the comparison variable ("sex" or "race")
-#     if (compare_var == "sex") {
-#
-#       # Filter data for the specified state
-#       df1 <- df |>
-#         dplyr::ungroup() |>
-#         dplyr::filter(state == state_var)
-#
-#       # Handle missing data for the state
-#       if (nrow(df1) == 0) {
-#         return(paste0("No data available for ", state_var))
-#       }
-#
-#       # Focus on comparisons with males
-#       df_male <- df1 |> dplyr::filter(sex == "Male")
-#
-#       # Initialize an empty sentence variable
-#       sentence <- ""
-#
-#       # Generate sentence for female vs male comparison
-#       df_female <- df1 |> dplyr::filter(sex == "Female")
-#       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
-#         los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
-#         if (!is.na(los_diff_female)) {
-#           abs_los_diff_female <- round(abs(los_diff_female), 1)
-#           if (los_diff_female > 0) {
-#             sentence <- paste0("In ", select_year, ", females spent on average ",
-#                                abs_los_diff_female,
-#                                if (abs_los_diff_female == 1) " more year" else " more years",
-#                                " ", type, " compared to males in ", state_var, ".")
-#           } else if (los_diff_female < 0) {
-#             sentence <- paste0("In ", select_year, ", females spent on average ",
-#                                abs_los_diff_female,
-#                                if (abs_los_diff_female == 1) " less year" else " less years",
-#                                " ", type, " compared to males in ", state_var, ".")
-#           }
-#         }
-#       }
-#
-#       # Return the generated sentence, or indicate no disparity found
-#       if (sentence != "") {
-#         return(sentence)
-#       } else {
-#         return(paste0("Females and males spent the same average number of years ", type, "."))
-#       }
-#
-#     } else if (compare_var == "race") {
-#
-#       # Filter and categorize races within the data
-#       df1 <- df |>
-#         dplyr::ungroup() |>
-#         dplyr::mutate(race = dplyr::case_when(
-#           race == "White, non-Hispanic" ~ "White",
-#           race == "Black, non-Hispanic" ~ "Black",
-#           race == "Hispanic, any race" ~ "Hispanic"
-#         )) |>
-#         dplyr::filter(state == state_var)
-#
-#       # Handle missing data for the state
-#       if (nrow(df1) == 0) {
-#         return(paste0("No data available for ", state_var, "."))
-#       }
-#
-#       # Focus on comparisons with White individuals
-#       df_white <- df1 |> dplyr::filter(race == "White")
-#
-#       # Initialize variables to hold sentences for each race comparison
-#       black_sentence <- ""
-#       hispanic_sentence <- ""
-#
-#       # Generate sentence for Black vs White comparison
-#       df_black <- df1 |> dplyr::filter(race == "Black")
-#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
-#         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
-#         if (!is.na(los_diff_black) && los_diff_black > 0) {
-#           black_sentence <- paste0("In ", select_year, ", Black people spent on average ",
-#                                    round(los_diff_black, 1), " more years ", type)
-#         } else if (!is.na(los_diff_black) && los_diff_black < 0) {
-#           black_sentence <- paste0("In ", select_year, ", Black people spent on average ",
-#                                    round(abs(los_diff_black), 1),
-#                                    if (abs(los_diff_black) == 1) " less year" else " less years",
-#                                    " ", type)
-#         }
-#       }
-#
-#       # Generate sentence for Hispanic vs White comparison
-#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
-#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
-#         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
-#         if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
-#           hispanic_sentence <- paste0("Hispanic people spent on average ",
-#                                       round(los_diff_hispanic, 1), " more years ", type)
-#         } else if (!is.na(los_diff_hispanic) && los_diff_hispanic < 0) {
-#           hispanic_sentence <- paste0("Hispanic people spent on average ",
-#                                       round(abs(los_diff_hispanic), 1),
-#                                       if (abs(los_diff_hispanic) == 1) " less year" else " less years",
-#                                       " ", type)
-#         }
-#       }
-#
-#       # Combine both sentences, or indicate no significant differences
-#       if (black_sentence != "" && hispanic_sentence != "") {
-#         sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
-#       } else if (black_sentence != "") {
-#         sentence <- paste0(black_sentence, " compared to White people.")
-#       } else if (hispanic_sentence != "") {
-#         sentence <- paste0(hispanic_sentence, " compared to White people.")
-#       } else {
-#         sentence <- "" # No significant differences
-#       }
-#
-#       return(sentence)
-#     } else {
-#       return("Invalid comparison variable.")
-#     }
-#   })
-#
-#   # Assign state names to list
-#   all_sentences <- setNames(all_sentences, states)
-#
-#   return(all_sentences)
-# }
-# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
-#   # Get unique states to iterate over
-#   states <- unique(df$state)
-#
-#   # Generate sentence for each state
-#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
-#
-#     # Check for the comparison variable ("sex" or "race")
-#     if (compare_var == "sex") {
-#
-#       # Filter data for the specified state
-#       df1 <- df |>
-#         dplyr::ungroup() |>
-#         dplyr::filter(state == state_var)
-#
-#       # Handle missing data for the state
-#       if (nrow(df1) == 0) {
-#         return(paste0("No data available for ", state_var))
-#       }
-#
-#       # Focus on comparisons with males
-#       df_male <- df1 |> dplyr::filter(sex == "Male")
-#
-#       # Initialize an empty sentence variable
-#       sentence <- ""
-#
-#       # Generate sentence for female vs male comparison
-#       df_female <- df1 |> dplyr::filter(sex == "Female")
-#       if (nrow(df_female) > 0 && nrow(df_male) > 0) {
-#         los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
-#         if (!is.na(los_diff_female)) {
-#           abs_los_diff_female <- round(abs(los_diff_female), 1)
-#           if (los_diff_female > 0) {
-#             sentence <- paste0("In ", year, ", females spent on average ",
-#                                abs_los_diff_female,
-#                                if (abs_los_diff_female == 1) " more year" else " more years",
-#                                " ", type, " compared to males in ", state_var, ".")
-#           } else if (los_diff_female < 0) {
-#             sentence <- paste0("In ", year, ", females spent on average ",
-#                                abs_los_diff_female,
-#                                if (abs_los_diff_female == 1) " less year" else " less years",
-#                                " ", type, " compared to males in ", state_var, ".")
-#           }
-#         }
-#       }
-#
-#       # Return the generated sentence, or indicate no disparity found
-#       if (sentence != "") {
-#         return(sentence)
-#       } else {
-#         return(paste0("Females and males spent the same average number of years ", type, "."))
-#       }
-#
-#     } else if (compare_var == "race") {
-#
-#       # Filter and categorize races within the data
-#       df1 <- df |>
-#         dplyr::ungroup() |>
-#         dplyr::mutate(race = dplyr::case_when(
-#           race == "White, non-Hispanic" ~ "White",
-#           race == "Black, non-Hispanic" ~ "Black",
-#           race == "Hispanic, any race" ~ "Hispanic"
-#         )) |>
-#         dplyr::filter(state == state_var)
-#
-#       # Handle missing data for the state
-#       if (nrow(df1) == 0) {
-#         return(paste0("No data available for ", state_var, "."))
-#       }
-#
-#       # Focus on comparisons with White individuals
-#       df_white <- df1 |> dplyr::filter(race == "White")
-#
-#       # Initialize variables to hold sentences for each race comparison
-#       black_sentence <- ""
-#       hispanic_sentence <- ""
-#
-#       # Generate sentence for Black vs White comparison
-#       df_black <- df1 |> dplyr::filter(race == "Black")
-#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
-#         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
-#       }
-#
-#       # Generate sentence for Hispanic vs White comparison
-#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
-#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
-#         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
-#       }
-#
-#       # Handle cases where both Black and Hispanic comparisons exist
-#       if (!is.na(los_diff_black) && !is.na(los_diff_hispanic)) {
-#         if (round(los_diff_black, 1) == round(los_diff_hispanic, 1)) {
-#           # Combine the sentences if the differences are equal
-#           sentence <- paste0("In ", year, ", Black and Hispanic people spent on average ",
-#                              abs(round(los_diff_black, 1)),
-#                              if (los_diff_black > 0) " more years" else " less years",
-#                              " ", type, " compared to White people.")
-#         } else {
-#           # Separate sentences if the differences are not equal
-#           black_sentence <- paste0("In ", year, ", Black people spent on average ",
-#                                    abs(round(los_diff_black, 1)),
-#                                    if (los_diff_black > 0) " more years" else " less years",
-#                                    " ", type)
-#           hispanic_sentence <- paste0("Hispanic people spent on average ",
-#                                       abs(round(los_diff_hispanic, 1)),
-#                                       if (los_diff_hispanic > 0) " more years" else " less years",
-#                                       " ", type)
-#           sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
-#         }
-#       } else if (!is.na(los_diff_black)) {
-#         sentence <- paste0("In ", year, ", Black people spent on average ",
-#                            abs(round(los_diff_black, 1)),
-#                            if (los_diff_black > 0) " more years" else " less years",
-#                            " ", type, " compared to White people.")
-#       } else if (!is.na(los_diff_hispanic)) {
-#         sentence <- paste0("In ", year, ", Hispanic people spent on average ",
-#                            abs(round(los_diff_hispanic, 1)),
-#                            if (los_diff_hispanic > 0) " more years" else " less years",
-#                            " ", type, " compared to White people.")
-#       } else {
-#         sentence <- "" # No significant differences
-#       }
-#
-#       return(sentence)
-#     } else {
-#       return("Invalid comparison variable.")
-#     }
-#   })
-#
-#   # Assign state names to list
-#   all_sentences <- setNames(all_sentences, states)
-#
-#   return(all_sentences)
-# }
-
-
-# fnc_disparities_sentences <- function(state_var, df, type, compare_var, los_col) {
-#
-#   # Check for the comparison variable ("sex" or "race")
-#   if (compare_var == "sex") {
-#
-#     # Filter data for the specified state
-#     df1 <- df |>
-#       ungroup() |>
-#       filter(state == state_var)
-#
-#     # Handle missing data for the state
-#     if (nrow(df1) == 0) {
-#       return(paste0("No data available for ", state_var))
-#     }
-#
-#     # Focus on comparisons with males
-#     df_male <- df1 |> filter(sex == "Male")
-#
-#     # Initialize an empty sentence variable
-#     sentence <- ""
-#
-#     # Generate sentence for female vs male comparison
-#     df_female <- df1 |> filter(sex == "Female")
-#     if (nrow(df_female) > 0 && nrow(df_male) > 0) {
-#       los_diff_female <- df_female[[los_col]] - df_male[[los_col]]
-#       if (!is.na(los_diff_female)) {
-#         abs_los_diff_female <- round(abs(los_diff_female), 1)
-#         if (los_diff_female > 0) {
-#           sentence <- paste0("In ", select_year, ", females spent on average ",
-#                              abs_los_diff_female,
-#                              if (abs_los_diff_female == 1) " year more" else " years more",
-#                              " ", type," compared to males in ", state_var, ".")
-#         } else if (los_diff_female < 0) {
-#           sentence <- paste0("In ", select_year, ", females spent on average ",
-#                              abs_los_diff_female,
-#                              if (abs_los_diff_female == 1) " year fewer" else " years fewer",
-#                              " ", type," compared to males in ", state_var, ".")
-#         }
-#       }
-#     }
-#
-#     # Return the generated sentence, or indicate no disparity found
-#     if (sentence != "") {
-#       return(sentence)
-#     } else {
-#       sentence <- paste0("Females and males spent the same average number of years ", type, ".") # No significant differences
-#     }
-#
-#   } else if (compare_var == "race") {
-#
-#     # Filter and categorize races within the data
-#     df1 <- df |>
-#       ungroup() |>
-#       mutate(race = case_when(
-#         race == "White, non-Hispanic" ~ "White",
-#         race == "Black, non-Hispanic" ~ "Black",
-#         race == "Hispanic, any race" ~ "Hispanic"
-#       )) |>
-#       filter(state == state_var)
-#
-#     # Handle missing data for the state
-#     if (nrow(df1) == 0) {
-#       return(paste0("No data available for ", state_var, "."))
-#     }
-#
-#     # Focus on comparisons with White individuals
-#     df_white <- df1 |> filter(race == "White")
-#
-#     # Initialize variables to hold sentences for each race comparison
-#     black_sentence <- ""
-#     hispanic_sentence <- ""
-#
-#     # Generate sentence for Black vs White comparison
-#     df_black <- df1 |> filter(race == "Black")
-#     if (nrow(df_black) > 0 && nrow(df_white) > 0) {
-#       los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
-#       if (!is.na(los_diff_black) && los_diff_black > 0) {
-#         black_sentence <- paste0("In ", select_year, ", Black people spent on average ",
-#                                  round(los_diff_black, 1), " more years ", type)
-#       }
-#     }
-#
-#     # Generate sentence for Hispanic vs White comparison
-#     df_hispanic <- df1 |> filter(race == "Hispanic")
-#     if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
-#       los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
-#       if (!is.na(los_diff_hispanic) && los_diff_hispanic > 0) {
-#         hispanic_sentence <- paste0("Hispanic people spent on average ",
-#                                     round(los_diff_hispanic, 1), " more years ", type)
-#       }
-#     }
-#
-#     # Combine both sentences, or indicate no significant differences
-#     if (black_sentence != "" && hispanic_sentence != "") {
-#       sentence <- paste0(black_sentence, ", and ", hispanic_sentence, " compared to White people.")
-#     } else if (black_sentence != "") {
-#       sentence <- paste0(black_sentence, " compared to White people.")
-#     } else if (hispanic_sentence != "") {
-#       sentence <- paste0(hispanic_sentence, " compared to White people.")
-#     } else {
-#       sentence <- "" # No significant differences
-#     }
-#
-#     return(sentence)
-#   } else {
-#     return("Invalid comparison variable.")
-#   }
-# }
 
 
 #' Create Lollipop Chart for Race or Sex Disparities
@@ -694,7 +440,19 @@ fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state
 }
 
 
-# Common Function to calculate LOS for race or sex
+#' Calculate Length of Stay (LOS) by Variable
+#'
+#' This function calculates the average length of stay (LOS) for people released from prison, grouped by a specified variable (e.g., race, offense type, etc.) and filtered by specific values. It also returns the count of people released in each group.
+#'
+#' @param df A data frame containing the population data.
+#' @param var A string representing the column name of the variable to group by (e.g., race, sex, etc.).
+#' @param filter_values A vector of values used to filter the specified variable.
+#' @param time_var A string representing the column name of the time-related variable (e.g., length of stay).
+#' @param state_col A string representing the column name for the state (default: "state").
+#' @param fbi_col A string representing the column name for the FBI index or offense type (default: "fbi_index").
+#'
+#' @return A data frame containing the average length of stay (LOS) and the count of people released, grouped by the specified variable, state, and offense type.
+#' @export
 fnc_calc_los_by_var <- function(df,
                                 var,
                                 filter_values,
@@ -706,103 +464,25 @@ fnc_calc_los_by_var <- function(df,
     group_by(!!sym(state_col), !!sym(var), !!sym(fbi_col)) |>
     summarise(
       avg_time = mean(!!sym(time_var), na.rm = TRUE),
-      people_released = n(),
+      people = n(),
       .groups = "drop"
     )
 }
 
-# fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "avg_los") {
-#   # Get unique states to iterate over
-#   states <- unique(data$state)
-#
-#   # Generate sentence for each state
-#   all_sentences <- purrr::map(.x = states, .f = function(x) {
-#     df1 <- data |>
-#       dplyr::filter(state == x & fbi_index != "Unknown")
-#
-#     # Handling missing data
-#     if (nrow(df1) == 0) {
-#       return(paste0("No data available for ", x))
-#     }
-#
-#     # Calculate the difference in average LOS between groups for each offense type
-#     df_disparity <- df1 %>%
-#       dplyr::group_by(fbi_index) %>%
-#       dplyr::reframe(
-#         max_los = max(!!rlang::sym(time_var)),
-#         min_los = min(!!rlang::sym(time_var)),
-#         diff_los = max_los - min_los,
-#         group_longest = .data[[grouping_var]][which.max(!!rlang::sym(time_var))],
-#         group_shortest = .data[[grouping_var]][which.min(!!rlang::sym(time_var))]
-#       ) %>%
-#       dplyr::arrange(dplyr::desc(diff_los))
-#
-#     # Adjust group names for race or sex, depending on grouping_var
-#     if (grouping_var == "race") {
-#       df_disparity <- df_disparity %>%
-#         dplyr::mutate(
-#           group_longest = dplyr::case_when(
-#             group_longest == "Black, non-Hispanic" ~ "Black",
-#             group_longest == "White, non-Hispanic" ~ "White",
-#             group_longest == "Hispanic, any race" ~ "Hispanic",
-#             TRUE ~ group_longest
-#           ),
-#           group_shortest = dplyr::case_when(
-#             group_shortest == "Black, non-Hispanic" ~ "Black",
-#             group_shortest == "White, non-Hispanic" ~ "White",
-#             group_shortest == "Hispanic, any race" ~ "Hispanic",
-#             TRUE ~ group_shortest
-#           )
-#         )
-#     }
-#
-#     # Filter for Black or Hispanic vs. White (or Male vs. Female for sex)
-#     if (grouping_var == "race") {
-#       df_disparity_filtered <- df_disparity %>%
-#         dplyr::filter(group_shortest == "White" & group_longest %in% c("Black", "Hispanic"))
-#     } else {
-#       df_disparity_filtered <- df_disparity %>%
-#         dplyr::filter(group_shortest == "Female" & group_longest == "Male")
-#     }
-#
-#     # If no disparities exist, return default message
-#     if (nrow(df_disparity_filtered) == 0) {
-#       time_description <- ifelse(time_var == "time_served", "time served in prison", "time spent in prison past parole eligibility")
-#       return(paste0("The chart below the average ", time_description, " by offense type and ", grouping_var, " in 2020."))
-#     }
-#
-#     # Remove "Other Violent Offenses" if it has the largest disparity
-#     if (df_disparity_filtered$fbi_index[1] == "Other Violent Offenses" & nrow(df_disparity_filtered) > 1) {
-#       df_disparity_filtered <- df_disparity_filtered %>% dplyr::slice(2)
-#     }
-#
-#     # Get the largest remaining disparity
-#     largest_disparity <- df_disparity_filtered %>% dplyr::slice(1)
-#
-#     # Extract values for the sentence
-#     offense_type <- largest_disparity$fbi_index
-#     group_longest <- largest_disparity$group_longest
-#     los_longest <- round(largest_disparity$max_los, 1)
-#     group_shortest <- largest_disparity$group_shortest
-#     los_shortest <- round(largest_disparity$min_los, 1)
-#     disparity_diff <- round(largest_disparity$diff_los, 1)
-#
-#     # Construct the sentence
-#     time_description <- ifelse(time_var == "avg_los", "time served in prison", "time spent in prison past parole eligibility")
-#     sentence <- paste0(
-#       "The chart below the average ", time_description, " by offense type and ", grouping_var, " in 2020. ",
-#       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ", group_longest,
-#       " people spent on average ", disparity_diff, " more years in prison compared to ", group_shortest, " people."
-#     )
-#
-#     return(sentence)
-#   })
-#
-#   # Assign state names to list
-#   all_sentences <- setNames(all_sentences, states)
-#
-#   return(all_sentences)
-# }
+
+#' Generate Sentences Describing Offense Disparities
+#'
+#' This function generates descriptive sentences that highlight disparities in average length of stay (LOS)
+#' between different groups (e.g., race or sex) for each offense type within a state. It calculates the
+#' disparity between the group with the longest LOS and the group with the shortest LOS, and constructs
+#' a sentence summarizing the largest observed disparity.
+#'
+#' @param data A data frame containing the population data, including information on offense types and length of stay.
+#' @param grouping_var A string representing the column name for the group variable (e.g., "race", "sex") (default: "race").
+#' @param time_var A string representing the time-related variable to use (e.g., "avg_los", "time_served") (default: "avg_los").
+#'
+#' @return A named list of sentences, where each state has a sentence describing the largest disparity in length of stay between groups.
+#' @export
 fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "avg_los") {
   # Get unique states to iterate over
   states <- unique(data$state)
@@ -906,6 +586,56 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
 }
 
 
+fnc_xaxis_labels_right <- list(
+  useHTML = TRUE,
+  enabled = TRUE,
+  formatter = JS(
+    "function() {
+                    var label = this.value;
+                    var maxLength = 23;
+                    if (label.length > maxLength) {
+                      var words = label.split(' ');
+                      var result = [];
+                      var line = [];
+                      var lineLength = 0;
+
+                      words.forEach(function(word) {
+                        if (lineLength + word.length > maxLength) {
+                          result.push(line.join(' '));
+                          line = [];
+                          lineLength = 0;
+                        }
+                        line.push(word);
+                        lineLength += word.length + 1;
+                      });
+                      if (line.length > 0) {
+                        result.push(line.join(' '));
+                      }
+                      return result.join('<br>');
+                    } else {
+                      return label;
+                    }
+                  }"
+  ),
+  style = list(fontSize = "1em", fontFamily = "Graphik",
+               textAlign = "right" )
+)
+
+
+#' Create Scatter Charts by State
+#'
+#' This function generates scatter charts for each state, showing the average time served or years past parole eligibility by offense type and a grouping variable (e.g., race or sex). The charts include custom tooltips, color schemes, and accessibility text.
+#'
+#' @param df A data frame containing the data for each state, including variables for offense types, grouping (e.g., race, sex), and time served.
+#' @param group_var A string representing the column name of the grouping variable (e.g., "race", "sex").
+#' @param measure A string representing the measure to plot on the x-axis (e.g., "avg_los" for average length of stay, or "years past parole eligibility").
+#' @param group_labels A character vector containing labels for the groups to be used in the chart (e.g., c("White", "Black", "Hispanic")).
+#' @param colors A character vector containing colors for each group in the chart.
+#' @param year An integer representing the year of the data (default: 2020).
+#' @param source A string representing the data source to be displayed as a caption on the chart.
+#'
+#' @return A named list of Highcharts objects, where each state has its own scatter chart showing the average time served or years past parole eligibility by offense type and grouping variable.
+#' @export
 fnc_create_scatter_charts_by_state <- function(df,
                                                group_var,
                                                measure,
@@ -999,14 +729,29 @@ fnc_create_scatter_charts_by_state <- function(df,
       ) |>
       hc_title(text = chart_title) |>
       hc_exporting(enabled = TRUE) |>
+      # hc_tooltip(
+      #   pointFormat = paste0(
+      #     '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
+      #     'Offense: {point.name}<br/>',
+      #     tooltip_format,
+      #     'People in Prison: {point.people}<br/>'
+      #   )
+      # ) |>
       hc_tooltip(
-        headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
-        pointFormat = paste0(
-          '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
-          'Offense: {point.name}<br/>',
-          tooltip_format,
-          'People Released: {point.people_released}<br/>'
-        )
+        borderWidth = 1,
+        borderRadius = 0,
+        backgroundColor = '#FFFFFF', # Fully opaque white background
+        outside = TRUE, # Ensure tooltip is rendered outside
+        useHTML = TRUE,
+        formatter = JS("function() {
+      return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 5px;\">' +
+      '<div style=\"text-align:left;\">' +
+      '<span style=\"font-weight:bold;\">' + this.series.name + '</span><br/>' +
+      '<span>Offense: ' + this.point.name + '</span><br/>' +
+      '<span>Average Years Past Parole Eligibility: ' + this.point.x.toFixed(1) + '</span><br/>' +
+      '<span>People in Prison: ' + this.point.people + '</span>' +
+      '</div></div>';
+    }")
       ) |>
       hc_legend(verticalAlign = "top",
                 layout = "horizontal") |>
@@ -1219,97 +964,6 @@ fnc_create_infographic <- function(rri_raw, infographic_color) {
 
   print(final_plot)  # Display the final infographic plot
 }
-
-
-# fnc_create_scatter_chart <- function(df, group_var, group_labels, colors, state_name, year = select_year, source = ncrp_source) {
-#
-#   # Filter data for the specified state
-#   df1 <- df |>
-#     ungroup() |>
-#     filter(state == state_name & fbi_index != "Unknown") |>
-#     mutate(fbi_index = fct_rev(as.factor(fbi_index))) |>
-#     arrange(desc(avg_time)) |>
-#     mutate(avg_time = round(avg_time, 1),
-#            fbi_index_num = as.numeric(as.factor(fbi_index)),
-#            color = case_when(
-#              !!sym(group_var) == group_labels[1] ~ colors[1],
-#              !!sym(group_var) == group_labels[2] ~ colors[2],
-#              !!sym(group_var) == group_labels[3] ~ colors[3] # NA for the third if only 2 groups
-#            ))
-#
-#   # Generate accessibility text based on the data
-#   accessibility_text <- paste0("The chart below the average length of stay for different ",
-#                                group_var, " groups in ", state_name, ". ",
-#                                group_labels[1], " spent on average ", df1$avg_time[df1$fbi_index_num == 1],
-#                                " years, followed by ", group_labels[2], " with on average ", df1$avg_time[df1$fbi_index_num == 2],
-#                                " years, and ", group_labels[3], " with ", df1$avg_time[df1$fbi_index_num == 3],
-#                                " years.")
-#
-#   max_los <- max(df1$avg_time, na.rm = TRUE)
-#
-#   # Create a named list for y-axis labels (replaces the deprecated named vector)
-#   y_labels <- as.list(setNames(unique(as.factor(df1$fbi_index)), unique(as.numeric(as.factor(df1$fbi_index)))))
-#
-#   # Initialize the highchart object
-#   highcharts <- highchart()
-#
-#   # Add scatter series for each group with appropriate marker symbols
-#   for (i in seq_along(group_labels)) {
-#     highcharts <- highcharts |>
-#       hc_add_series(
-#         df1 %>% filter(!!sym(group_var) == group_labels[i]),
-#         type = 'scatter',
-#         color = colors[i],
-#         hcaes(x = avg_time, y = fbi_index_num, group = !!sym(group_var), name = fbi_index),
-#         marker = list(
-#           radius = 5,
-#           symbol = ifelse(i == 1, "square", ifelse(i == 2, "circle", "diamond"))
-#         )
-#       )
-#   }
-#
-#   # Add y-axis and x-axis customizations
-#   highcharts <- highcharts |>
-#     hc_add_theme(base_hc_theme) |>
-#     hc_yAxis(
-#       title = list(text = ""),
-#       labels = fnc_xaxis_labels_right,
-#       majorGridLineColor = "transparent",
-#       gridLineColor = "transparent",
-#       lineColor = "transparent",
-#       majorGridLineColor = "transparent",
-#       minorGridLineColor = "transparent",
-#       tickColor = "white",
-#       categories = y_labels
-#     ) |>
-#     hc_xAxis(
-#       lineColor = "black",
-#       tickColor = "white",
-#       title = list(text = "Average Time Served (Years)",
-#                    style = list(color = "black")),
-#       labels = list(style = list(color = "black")),
-#       gridLineDashStyle = "Dash",  # Add dashed grid lines
-#       gridLineWidth = 1,           # Ensure grid lines are visible
-#       gridLineColor = lightgray       # Set grid line color
-#     ) |>
-#     hc_title(text = paste0("Average Time Served by Offense and Race and Ethnicity, ", year)) |>
-#     hc_exporting(enabled = TRUE) |>
-#     hc_tooltip(
-#       headerFormat = '<span style="font-size: 10px">{point.key}</span><br/>',
-#       pointFormat = paste0(
-#         '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>',
-#         'Offense: {point.name}<br/>',
-#         'Average LOS: {point.x: .1f} years<br/>',
-#         'People Released: {point.people_released}<br/>'
-#       )
-#     ) |>
-#     hc_legend(verticalAlign = "top",
-#               layout = "horizontal") |>
-#     fnc_add_hc_accessibility(accessibility_text) |>
-#     hc_caption(text = source)
-#   return(highcharts)
-# }
-
 
 
 

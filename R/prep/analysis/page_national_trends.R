@@ -382,7 +382,7 @@ map_percent <- highchart(height = 625) |>
     scale = 1,
     sourceWidth = 800,
     sourceHeight = 600) |>
-  hc_caption(text = ncrp_source,
+  hc_caption(text = ncrp_csg_source,
              y = -10)
 map_percent
 

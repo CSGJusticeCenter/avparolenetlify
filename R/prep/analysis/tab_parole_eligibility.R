@@ -159,7 +159,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
   # Filter data for the current state
   df <- pe_pop_prop |>
     filter(state == x) |>
-    filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year)
+    filter(rptyear >= 2010 & max(rptyear)) #############################################
 
   # Extract the earliest and latest years for each state
   earliest_year <- min(df$rptyear)
@@ -205,7 +205,7 @@ all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
   # Filter the data for the current state and only analyze data from 2010 onwards
   df1 <- pe_pop_prop |>
     filter(state == x) |>
-    filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year) |>
+    filter(rptyear >= 2010 & max(rptyear)) |>
     mutate(rptyear_fac = factor(rptyear))  # Convert years to a factor for the x-axis
 
   # Define chart title and accessibility text

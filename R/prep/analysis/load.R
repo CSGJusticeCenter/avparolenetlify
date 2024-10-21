@@ -4,6 +4,7 @@
 
 load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))

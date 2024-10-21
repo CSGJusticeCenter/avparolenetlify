@@ -65,7 +65,7 @@ ncrp_term_records_2018 <- da37973.0001 |>
   select(rptyear, state, everything())
 
 # Create the file name with the full path
-file_name <- paste0("ncrp_terms_", "2018", "_", "v2.csv")
+file_name <- paste0("ncrp_terms_", "2018", "_", "v1.csv")
 full_file_path <- file.path(paste0(config$sp_data_path, "/data/analysis/clean_files"), file_name)
 
 # Save the data frame to a separate Excel file

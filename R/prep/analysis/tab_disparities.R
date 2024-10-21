@@ -34,7 +34,10 @@ los_race <- ncrp_releases_timeserved |>
 # SENTENCE: "In 2020, Black people spent an average of 0.7 more years in prison,
 #            and Hispanic people spent an average of 1.5 more years in
 #            prison compared to White people."
-all_sentence_los_race <- fnc_generate_los_disparity_sentences(los_race, "in prison", "race", "average_los")
+all_sentence_los_race <- fnc_generate_los_disparity_sentences(los_race,
+                                                              "in prison",
+                                                              "race",
+                                                              "average_los")
 all_sentence_los_race$Georgia
 all_sentence_los_race$Louisiana
 
@@ -87,6 +90,8 @@ all_lollipop_los_sex <- map(.x = states_sex, .f = function(x) {
 })
 all_lollipop_los_sex <- setNames(all_lollipop_los_sex, states_sex)
 all_lollipop_los_sex$Georgia
+
+
 
 
 # ---------------------------------------------------------------------------- #
@@ -146,6 +151,160 @@ all_sentence_avg_past_pe_race <- fnc_generate_los_disparity_sentences(df = avg_c
 all_sentence_avg_past_pe_race$Georgia
 
 
+
+
+
+
+# ---------------------------------------------------------------------------- #
+# Time Served by Offense and Race
+# ---------------------------------------------------------------------------- #
+
+# Filter releases to states we want to include
+# and select year
+ncrp_releases_disparities <-
+  fnc_filter_population(ncrp_releases) |>
+  filter(rptyear == select_year)
+
+# Average time served by race and offense
+los_race_by_offense_type <- fnc_calc_los_by_var(
+  df = ncrp_releases_disparities |> fnc_filter_exclude_high_missing_race(states_with_high_missing_race),
+  var = "race",
+  filter_values = c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"),
+  time_var = "time_between_admission_release") |>
+  mutate(avg_los = avg_time)
+
+# Time served by race and offense
+# SENTENCE:  "This chart shows the average time served by offense type and race in 2020. The largest disparity
+#             was observed among robbery offenses, where Hispanic people spent an
+#             average of 3.6 more years in prison compared to White people."
+all_sentence_los_race_offense <- fnc_generate_offense_disparity_sentence(los_race_by_offense_type,
+                                                                         "race",
+                                                                         "avg_los")
+all_sentence_los_race_offense$Georgia
+
+# VISUALIZATION: Average Time Served by Race, Ethnicity and Offense
+all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
+  df = los_race_by_offense_type,
+  group_var = "race",
+  measure = "avg_los",
+  group_labels = c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race"),
+  colors = c(color1, color4, color2)
+)
+all_scatter_los_race_offense$Georgia
+
+
+
+
+# ---------------------------------------------------------------------------- #
+# Time Served by Offense and Sex
+# ---------------------------------------------------------------------------- #
+
+# Average time served by sex and offense
+los_sex_by_offense_type <- fnc_calc_los_by_var(
+  df = ncrp_releases_disparities, var = "sex",
+  filter_values = c("Male", "Female"),
+  time_var = "time_between_admission_release") |>
+  mutate(avg_los = avg_time)
+
+# Time served by race and offense
+# SENTENCE:  "This chart shows the average time spent in prison past parole
+#             eligibility by offense type and sex in 2020. The largest disparity
+#             was observed among murder or nonnegligent manslaughter offenses,
+#             where males spent an average of 3.6 more years in prison
+#             compared to females."
+all_sentence_los_sex_offense <- fnc_generate_offense_disparity_sentence(los_sex_by_offense_type,
+                                                                        "sex",
+                                                                        "avg_los")
+all_sentence_los_sex_offense$Georgia
+
+# VISUALIZATION: Average Time Served by Sex and Offense
+all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
+  df = los_sex_by_offense_type,
+  group_var = "sex",
+  measure = "avg_los",
+  group_labels = c("Male", "Female"),
+  colors = c(color4, color2)
+)
+all_scatter_los_sex_offense$Georgia
+
+
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Race and Ethnicity
+# ---------------------------------------------------------------------------- #
+
+# Filter to states with parole systems
+# Remove missing data
+ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
+  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
+  filter(rptyear == select_year &
+           parelig_status == "Current" &
+           !is.na(fbi_index) & fbi_index != "Unknown" & !is.na(years_to_estimated_pey))
+
+# Average time past parole eligibility as of select_year by race and offense
+avg_current_pe_offense_race <- fnc_calc_los_by_var(
+  df = ncrp_current_pe |> fnc_filter_exclude_high_missing_race(states_with_high_missing_race),
+  var = "race",
+  filter_values = c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"),
+  time_var = "years_to_estimated_pey") |>
+  mutate(avg_time_past_pe = avg_time)
+
+# SENTENCE: "This chart shows the average time spent in prison past parole
+#            eligibility by offense type and race and ethnicity in 2020.
+#            The largest disparity was observed among negligent manslaughter
+#            offenses, where Hispanic people spent an average of 2.2 more years
+#            in prison compared to White people."
+all_sentence_avg_past_pe_race_offense <- fnc_generate_offense_disparity_sentence(avg_current_pe_offense_race,
+                                                                                 "race",
+                                                                                 "avg_time_past_pe")
+all_sentence_avg_past_pe_race_offense$Georgia
+
+# VISUALIZATION: Average Time Past Parole Eligibility by Race, Ethnicity, and Offense
+all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
+  df = avg_current_pe_offense_race,
+  group_var = "race",
+  measure = "avg_time_past_pe",
+  group_labels = c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race"),
+  colors = c(color1, color4, color2)
+)
+all_scatter_avg_past_pe_race_offense$Georgia
+
+
+
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison After Parole Eligibility by Sex
+# ---------------------------------------------------------------------------- #
+
+# Average time past parole eligibility as of select_year by sex and offense
+avg_current_pe_offense_sex <- fnc_calc_los_by_var(
+  df = ncrp_current_pe,
+  var = "sex",
+  filter_values = c("Male", "Female"),
+  time_var = "years_to_estimated_pey") |>
+  mutate(avg_time_past_pe = avg_time)
+
+# SENTENCE: "This chart shows the average time spent in prison past parole
+#            eligibility by offense type and sex in 2020. The largest disparity
+#            was observed among rape or sexual assault offenses, where males
+#            spent an average of 2.6 more years in prison compared to females."
+all_sentence_avg_past_pe_sex_offense <- fnc_generate_offense_disparity_sentence(avg_current_pe_offense_sex,
+                                                                                "sex",
+                                                                                "avg_time_past_pe")
+all_sentence_avg_past_pe_sex_offense$Georgia
+
+# VISUALIZATION: Avergae Time Past Parole Eligibility by Sex and Offense
+all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(
+  df = avg_current_pe_offense_sex,
+  group_var = "sex",
+  measure = "avg_time_past_pe",
+  group_labels = c("Male", "Female"),
+  colors = c(color4, color2)
+)
+all_scatter_avg_past_pe_sex_offense$Georgia
+
+
+
+
 # ---------------------------------------------------------------------------- #
 # Save Data
 # ---------------------------------------------------------------------------- #
@@ -161,111 +320,21 @@ data_files <- list(
   all_lollipop_los_sex          = "all_lollipop_los_sex.rds",
 
   all_sentence_avg_past_pe_race = "all_sentence_avg_past_pe_race.rds",
-  all_sentence_avg_past_pe_sex  = "all_sentence_avg_past_pe_sex.rds"
+  all_sentence_avg_past_pe_sex  = "all_sentence_avg_past_pe_sex.rds",
+
+  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds",
+  all_sentence_los_sex_offense          = "all_sentence_los_sex_offense.rds",
+  all_scatter_los_race_offense          = "all_scatter_los_race_offense.rds",
+  all_scatter_los_sex_offense           = "all_scatter_los_sex_offense.rds",
+
+  all_sentence_avg_past_pe_race_offense = "all_sentence_avg_past_pe_race_offense.rds",
+  all_sentence_avg_past_pe_sex_offense  = "all_sentence_avg_past_pe_sex_offense.rds",
+  all_scatter_avg_past_pe_race_offense  = "all_scatter_avg_past_pe_race_offense.rds",
+  all_scatter_avg_past_pe_sex_offense   = "all_scatter_avg_past_pe_sex_offense.rds"
 )
 
 # Loop through the list and save each data object to its corresponding file
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
-
-
-
-
-
-# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
-#   # Get unique states to iterate over
-#   states <- unique(df$state)
-#
-#   # Generate sentence for each state
-#   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
-#
-#     if (compare_var == "race") {
-#
-#       # Filter and categorize races within the data
-#       df1 <- df |>
-#         dplyr::ungroup() |>
-#         dplyr::mutate(race = dplyr::case_when(
-#           race == "White, non-Hispanic" ~ "White",
-#           race == "Black, non-Hispanic" ~ "Black",
-#           race == "Hispanic, any race" ~ "Hispanic"
-#         )) |>
-#         dplyr::filter(state == state_var)
-#
-#       # Handle missing data for the state
-#       if (nrow(df1) == 0) {
-#         return(paste0("No data available for ", state_var, "."))
-#       }
-#
-#       # Focus on comparisons with White individuals
-#       df_white <- df1 |> dplyr::filter(race == "White")
-#
-#       # Initialize variables to hold sentences for each race comparison
-#       black_sentence <- ""
-#       hispanic_sentence <- ""
-#
-#       # Generate sentence for Black vs White comparison
-#       df_black <- df1 |> dplyr::filter(race == "Black")
-#       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
-#         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
-#         if (!is.na(los_diff_black)) {
-#           abs_los_diff_black <- round(abs(los_diff_black), 1)
-#           if (los_diff_black > 0) {
-#             black_sentence <- paste0("Black people spent an average of ",
-#                                      abs_los_diff_black, " more years ", type)
-#           } else if (los_diff_black < 0) {
-#             black_sentence <- paste0("Black people spent an average of ",
-#                                      abs_los_diff_black,
-#                                      if (abs_los_diff_black == 1) " less year" else " less years",
-#                                      " ", type)
-#           }
-#         }
-#       }
-#
-#       # Generate sentence for Hispanic vs White comparison
-#       df_hispanic <- df1 |> dplyr::filter(race == "Hispanic")
-#       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
-#         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
-#         if (!is.na(los_diff_hispanic)) {
-#           abs_los_diff_hispanic <- round(abs(los_diff_hispanic), 1)
-#           if (los_diff_hispanic > 0) {
-#             hispanic_sentence <- paste0("Hispanic people spent an average of ",
-#                                         abs_los_diff_hispanic, " more years ", type)
-#           } else if (los_diff_hispanic < 0) {
-#             hispanic_sentence <- paste0("Hispanic people spent an average of ",
-#                                         abs_los_diff_hispanic,
-#                                         if (abs_los_diff_hispanic == 1) " less year" else " less years",
-#                                         " ", type)
-#           }
-#         }
-#       }
-#
-#       # Combine both sentences, or indicate no significant differences
-#       if (black_sentence != "" && hispanic_sentence != "") {
-#         if (abs_los_diff_black == abs_los_diff_hispanic) {
-#           sentence <- paste0("In ", year, ", Black people and Hispanic people spent an average of ",
-#                              abs_los_diff_black, " more years ", type, " compared to White people.")
-#         } else {
-#           sentence <- paste0("In ", year, ", ", black_sentence, ", and ",
-#                              hispanic_sentence, " compared to White people.")
-#         }
-#       } else if (black_sentence != "") {
-#         sentence <- paste0("In ", year, ", ", black_sentence, " compared to White people.")
-#       } else if (hispanic_sentence != "") {
-#         sentence <- paste0("In ", year, ", ", hispanic_sentence, " compared to White people.")
-#       } else {
-#         sentence <- "" # No significant differences
-#       }
-#
-#       return(sentence)
-#     } else {
-#       return("Invalid comparison variable.")
-#     }
-#   })
-#
-#   # Assign state names to list
-#   all_sentences <- setNames(all_sentences, states)
-#
-#   return(all_sentences)
-# }
 

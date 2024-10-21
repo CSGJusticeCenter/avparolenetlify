@@ -263,7 +263,8 @@ state_sentence_release_type <- all_sentence_release_type[[state_for_report]]
 
 state_pie_release_type <- apply_chart_settings(
   all_pie_release_type[[state_for_report]],
-  height = 300
+  height = 300,
+  color = c(color5, color3)
 )
 
 state_sentence_releases_race <- all_sentence_releases_race[[state_for_report]]

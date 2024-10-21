@@ -138,5 +138,6 @@ lightgray <- "#d7d7d7"
 #------------------------------------------------------------------------------#
 
 # Format sources
+ncrp_csg_source <- "National Corrections Reporting Program and CSG Justice Center estimates"
 ncrp_source     <- "National Corrections Reporting Program"
 bjs_source      <- "BJS Prisoners in the United States"

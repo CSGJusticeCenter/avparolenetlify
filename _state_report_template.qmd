@@ -539,7 +539,7 @@ if (no_data_sex && no_data_sex_offense) {
 
 ## How Disparities Are Calculated
 
-The Relative Rate Index (RRI) is a tool used to compare the rates at which different groups experience incarceration, parole eligibility, or other criminal justice system outcomes. In this report, we use the RRI to highlight disparities in parole release and incarceration across race, ethnicity, and sex. An RRI greater than 1 means that the group experiences the event at a higher rate, while an RRI less than 1 means they experience it at a lower rate.
+The Relative Rate Index (RRI) is a tool used to compare the rates at which different groups experience incarceration, parole eligibility, or other criminal justice system outcomes. In this report, we use the RRI to highlight disparities in parole release and incarceration across race, ethnicity, and sex. An RRI greater than one means that the group experiences the event at a higher rate, while an RRI less than one means they experience it at a lower rate.
 
 State data broken down by race, ethnicity, and sex were pulled from National Corrections Reporting Program, 1991-2020: Selected Variables (NCRP). Then, the rate of people readmitted to parole was calculated within each racial and ethnic group based on the Census Public Use Microdata Sample (PUMS). The relative rate index is calculated by dividing the rate for Black individuals or Hispanic individuals by the rate for White individuals.  
 

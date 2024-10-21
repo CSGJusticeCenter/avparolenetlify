@@ -22,7 +22,7 @@ ncrp_releases_filtered <- fnc_filter_population(ncrp_releases)
 
 # Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
-  filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year) |>
+  filter(rptyear >= 2010 & max(rptyear)) |>
   group_by(state, rptyear) |>
   summarise(total = n(), .groups = "drop")
 
@@ -122,65 +122,41 @@ rm(states)
 #   so, determine this below.
 # ---------------------------------------------------------------------------- #
 
-# Calculate the number of parole eligible people released by state and year
-ncrp_pe_releases_by_year <- ncrp_releases_filtered |>
+# Filter NCRP releases to people in prison for new crimes and sentence lengths
+# not less than one year or life
+ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases)
+
+# Get number of people past PE and released and get people released on PE
+ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
   filter(rptyear >= 2010) |>
-  filter(parelig_status == "Current") |>
+  filter(estimated_pey_status %in% c("past", "current_year")) |>
+  group_by(state, rptyear, estimated_pey_status) |>
+  summarise(n = n(), .groups = "drop") |>
   group_by(state, rptyear) |>
-  summarise(total_parole_eligible_releases = n(), .groups = "drop")
-
-# Calculate the number of parole eligible people in prison by state and year
-ncrp_pe_population_not_released_by_year <- fnc_filter_population(ncrp_yearendpop) |>
-  filter(rptyear >= 2010 & rptyear <= latest_reliable_ncrp_year) |>
-  filter(parelig_status == "Current") |>
-  group_by(state, rptyear) |>
-  summarise(total_parole_eligible_population_not_released = n(), .groups = "drop")
-
-# Calculate the number of parole-eligible people released and not released by state and year
-ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
-  left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
-  mutate(total_parole_eligible_population =
-           total_parole_eligible_releases + total_parole_eligible_population_not_released,
-         prop_parole_eligible_released =
-           total_parole_eligible_releases / total_parole_eligible_population,
-         prop_parole_eligible_not_released =
-           total_parole_eligible_population_not_released / total_parole_eligible_population) |>
-  select(state, rptyear,
-         prop_parole_eligible_not_released,
-         prop_parole_eligible_released) |>
-  pivot_longer(
-    cols = c(prop_parole_eligible_not_released, prop_parole_eligible_released),
-    names_to = "status",
-    values_to = "proportion"
-  ) |>
-  mutate(status = case_when(
-    status == "prop_parole_eligible_not_released" ~ "Not Released",
-    status == "prop_parole_eligible_released" ~ "Released")
-  )
+  mutate(prop = n/sum(n),
+         estimated_pey_status = case_when(
+           estimated_pey_status == "past" ~ "Past Parole Eligibility",
+           estimated_pey_status == "current_year" ~ "On Parole Eligibility"
+         ))
 
 # Get unique states to iterate over
-states <- unique(ncrp_pe_proportion_released$state)
+states <- unique(ncrp_pe_releases_by_year$state)
 
-# VISUALIZATION: Percentage of PE People Released or Not Released on Parole Eligibility by Year
+# VISUALIZATION: Percentage of Parole-Eligible People Released Past Their Parole Eligibility Year
 # Generate chart for each state
 all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
 
-  df1 <- ncrp_pe_proportion_released |>
+  df1 <- ncrp_pe_releases_by_year |>
     filter(state == x)
 
-  title <- "Percentage of Parole-Eligible People Released or Not Released on Their Parole Eligibility"
-  # Accessibility text providing context for screen readers
-  hc_accessibility_text <- paste0(
-    "This chart shows the percentage of parole-eligible people who were released or not released in ",
-    x, " from ", min(df1$rptyear), " to ", max(df1$rptyear),
-    ". The categories represented are 'Released' and 'Not Released'. Each bar in the chart represents a year, ",
-    "with proportions stacked to show how many were released versus not released."
-  )
+  title <- "People Released on Parole Eligibility Year vs. Past Parole Eligibility Year"
+  # Accessibility text providing context for screen readers ###################################################################?
+  hc_accessibility_text <- ""
 
   highcharts <- df1 |>
     hchart(
       type = "column",
-      hcaes(x = rptyear, y = proportion, group = status)
+      hcaes(x = rptyear, y = prop, group = estimated_pey_status)
     ) |>
     hc_yAxis(title = list(text = ""),
              max = 1,
@@ -215,87 +191,253 @@ all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_elig
 all_stackedbar_parole_eligibility_release$Georgia
 rm(states)
 
-# Merge data together
-ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
-  left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
-  mutate(total_parole_eligible_population =
-           total_parole_eligible_releases + total_parole_eligible_population_not_released,
-         prop_parole_elgible_released =
-           total_parole_eligible_releases/total_parole_eligible_population) |>
-  select(state, rptyear,
-         total_parole_eligible_population_not_released,
-         total_parole_eligible_releases) |>
-  pivot_longer(
-    cols = c(total_parole_eligible_population_not_released, total_parole_eligible_releases),
-    names_to = "status",
-    values_to = "n"
-  ) |>
-  mutate(status = case_when(
-    status == "total_parole_eligible_population_not_released" ~ "Not Released",
-    status == "total_parole_eligible_releases" ~ "Released"
-  ))
-
 # Get unique states to iterate over
-states <- unique(ncrp_pe_proportion_released$state)
+states <- unique(ncrp_pe_releases_by_year$state)
 
-# SENTENCE: "In YEAR, 34 percent of people eligible for parole were released
-#            during their eligibility year. This represents a 3 percent decrease
-#            compared to 2014."
+# SENTENCE:
 # Generate sentence for each state
 all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
+  df1 <- ncrp_pe_releases_by_year %>%
+    filter(state == x)
 
-  df1 <- ncrp_pe_proportion_released %>%
-    filter(state == x) %>%
-    group_by(rptyear, status) %>%
-    summarize(total = sum(n, na.rm = TRUE), .groups = "drop") %>%
-    pivot_wider(names_from = status, values_from = total, values_fill = list(total = 0)) %>%
-    mutate(proportion_released = Released / (Released + `Not Released`) * 100) %>%
-    arrange(rptyear)
+  # Find the earliest (2010) and latest (2020) years
+  earliest_year <- 2010
+  latest_year <- 2020
 
-  # Handling case with only one year of data
-  if (nrow(df1) == 1) {
-    latest_year <- df1$rptyear[1]
-    latest_value <- df1$proportion_released[1]
-    sentence <- paste0(
-      "In ", latest_year, ", ", round(latest_value, 1),
-      " percent of people eligible for parole were released during their eligibility year."
-    )
-    return(sentence)
+  # Filter data for 2010 and 2020
+  df_earliest <- df1 %>% filter(rptyear == earliest_year)
+  df_latest <- df1 %>% filter(rptyear == latest_year)
+
+  # Check if both years have data
+  if (nrow(df_earliest) == 0 || nrow(df_latest) == 0) {
+    # Return a message if data is missing for 2010 or 2020
+    sentence <- paste0("Data for ", earliest_year, " or ", latest_year, " is missing for ", x, ".")
+  } else {
+    # Get the proportion for 'Past Parole Eligibility' for both years
+    prop_past_parole_2010 <- df_earliest %>%
+      filter(estimated_pey_status == "Past Parole Eligibility") %>%
+      pull(prop)
+
+    prop_past_parole_2020 <- df_latest %>%
+      filter(estimated_pey_status == "Past Parole Eligibility") %>%
+      pull(prop)
+
+    # Check if the proportions exist
+    if (length(prop_past_parole_2010) == 0 || length(prop_past_parole_2020) == 0) {
+      sentence <- paste0("Proportion data for Past Parole Eligibility is missing for ", earliest_year, " or ", latest_year, " in ", x, ".")
+    } else {
+      # Calculate percentage change between 2010 and 2020
+      prop_change <- (prop_past_parole_2020 - prop_past_parole_2010) / prop_past_parole_2010 * 100
+
+      # Generate sentence with appropriate increase/decrease
+      if (prop_change > 0) {
+        sentence <- paste0(
+          "In ", latest_year, ", ", round(prop_past_parole_2020 * 100, 0),
+          " percent of parole-eligible people released in ", x, " were released past their parole eligibility year, ",
+          "which is an increase of ", round(prop_change, 0), " percent from ", earliest_year, "."
+        )
+      } else {
+        sentence <- paste0(
+          "In ", latest_year, ", ", round(prop_past_parole_2020 * 100, 0),
+          " percent of parole-eligible people released in ", x, " were released past their parole eligibility year, ",
+          "which is a decrease of ", round(abs(prop_change), 0), " percent from ", earliest_year, "."
+        )
+      }
+    }
   }
-
-  # Handling missing data
-  if (nrow(df1) < 2) {
-    return(paste0("Insufficient data for ", x))
-  }
-
-  # Get the latest and earliest years
-  latest_year <- tail(df1$rptyear, 1)
-  earliest_year <- head(df1$rptyear, 1)
-
-  # Get the values for the latest and earliest years
-  latest_value <- tail(df1$proportion_released, 1)
-  earliest_value <- head(df1$proportion_released, 1)
-
-  # Calculate the percentage change
-  percentage_change <- latest_value - earliest_value
-
-  # Determine if the change is an increase or decrease
-  change_type <- ifelse(percentage_change >= 0, "increase", "decrease")
-
-  # Construct the sentence
-  sentence <- paste0(
-    "In ", latest_year, ", ", round(latest_value, 0),
-    " percent of people eligible for parole were released during their eligibility year. ",
-    "This represents a ", round(abs(percentage_change), 0), " percent ", change_type,
-    " compared to ", earliest_year, "."
-  )
 
   return(sentence)
 })
+
 # Assign state names to list
 all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
 all_sentence_pe_proportion_released$Georgia
 rm(states)
+
+
+
+
+
+
+
+
+
+# # Filter NCRP releases to people in prison for new crimes and sentence lengths
+# # not less than one year or life
+# ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases)
+#
+# # Calculate the number of parole eligible people released by state and year
+# ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
+#   filter(rptyear >= 2010) |>
+#   filter(estimated_pey_status %in% c("past")) |> # NOT CURRENT, BUT PAST
+#   group_by(state, rptyear) |>
+#   summarise(total_parole_eligible_releases = n(), .groups = "drop")
+#
+# # Calculate the number of parole eligible people in prison by state and year
+# ncrp_pe_population_not_released_by_year <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
+#   filter(rptyear >= 2010 & max(rptyear)) |>
+#   filter(estimated_pey_status %in% c("past")) |> # NOT CURRENT, BUT PAST
+#   group_by(state, rptyear) |>
+#   summarise(total_parole_eligible_population_not_released = n(), .groups = "drop")
+#
+# # Calculate the number of parole-eligible people released and not released by state and year
+# ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
+#   left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
+#   mutate(total_parole_eligible_population =
+#            total_parole_eligible_releases + total_parole_eligible_population_not_released,
+#          prop_parole_eligible_released =
+#            total_parole_eligible_releases / total_parole_eligible_population,
+#          prop_parole_eligible_not_released =
+#            total_parole_eligible_population_not_released / total_parole_eligible_population) |>
+#   select(state, rptyear,
+#          prop_parole_eligible_not_released,
+#          prop_parole_eligible_released) |>
+#   pivot_longer(
+#     cols = c(prop_parole_eligible_not_released, prop_parole_eligible_released),
+#     names_to = "status",
+#     values_to = "proportion"
+#   ) |>
+#   mutate(status = case_when(
+#     status == "prop_parole_eligible_not_released" ~ "Not Released",
+#     status == "prop_parole_eligible_released" ~ "Released")
+#   )
+
+# # Get unique states to iterate over
+# states <- unique(ncrp_pe_proportion_released$state)
+#
+# # VISUALIZATION: Percentage of Parole-Eligible People Released Past Their Parole Eligibility Year
+# # Generate chart for each state
+# all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- ncrp_pe_proportion_released |>
+#     filter(state == x)
+#
+#   title <- "Percentage of Parole-Eligible People Released Past Their Parole Eligibility Year"
+#   # Accessibility text providing context for screen readers ###################################################################?
+#   hc_accessibility_text <- paste0(
+#     "This chart shows the percentage of people released past parole eligibility ",
+#     x, " from ", min(df1$rptyear), " to ", max(df1$rptyear),
+#     ". The categories represented are 'Released' and 'Not Released'. Each bar in the chart represents a year, ",
+#     "with proportions stacked to show how many were released versus not released."
+#   )
+#
+#   highcharts <- df1 |>
+#     hchart(
+#       type = "column",
+#       hcaes(x = rptyear, y = proportion, group = status)
+#     ) |>
+#     hc_yAxis(title = list(text = ""),
+#              max = 1,
+#              labels = list(formatter = JS("function() { return (this.value * 100) + '%'; }"))) |>
+#     hc_xAxis(categories = unique(df1$rptyear),
+#              title = "") |>
+#     hc_add_theme(base_hc_theme) |>
+#     hc_colors(c(color3, color5)) |>
+#     hc_legend(enabled = TRUE) |>
+#     hc_tooltip(formatter = JS("
+#       function() {
+#         return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+#           (this.y * 100).toFixed(0) + '%</b><br/>';
+#       }
+#     ")) |>
+#     hc_exporting(enabled = TRUE,
+#                  filename = paste0(gsub(" ", "_", tolower(title)), "_",
+#                                    min(df1$rptyear), "_", max(df1$rptyear))) |>
+#     hc_title(text = paste0(title, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
+#     hc_plotOptions(series = list(stacking = "normal",
+#                                  animation = FALSE,
+#                                  cursor = "pointer",
+#                                  borderWidth = 3,
+#                                  minPointLength = 4)) |>
+#     fnc_add_hc_accessibility(hc_accessibility_text) |>
+#     hc_caption(text = ncrp_source)
+#
+#   return(highcharts)
+# })
+# # Assign state names to list
+# all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
+# all_stackedbar_parole_eligibility_release$Georgia
+# rm(states)
+# # Merge data together
+# ncrp_pe_proportion_released <- ncrp_pe_population_not_released_by_year |>
+#   left_join(ncrp_pe_releases_by_year, by = c("state", "rptyear")) |>
+#   mutate(total_parole_eligible_population =
+#            total_parole_eligible_releases + total_parole_eligible_population_not_released,
+#          prop_parole_elgible_released =
+#            total_parole_eligible_releases/total_parole_eligible_population) |>
+#   select(state, rptyear,
+#          total_parole_eligible_population_not_released,
+#          total_parole_eligible_releases) |>
+#   pivot_longer(
+#     cols = c(total_parole_eligible_population_not_released, total_parole_eligible_releases),
+#     names_to = "status",
+#     values_to = "n"
+#   ) |>
+#   mutate(status = case_when(
+#     status == "total_parole_eligible_population_not_released" ~ "Not Released",
+#     status == "total_parole_eligible_releases" ~ "Released"
+#   ))
+# # Get unique states to iterate over
+# states <- unique(ncrp_pe_proportion_released$state)
+#
+# # SENTENCE: "In YEAR, 34 percent of people eligible for parole were released
+# #            during their eligibility year. This represents a 3 percent decrease
+# #            compared to 2014."
+# # Generate sentence for each state
+# all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
+#
+#   df1 <- ncrp_pe_proportion_released %>%
+#     filter(state == x) %>%
+#     group_by(rptyear, status) %>%
+#     summarize(total = sum(n, na.rm = TRUE), .groups = "drop") %>%
+#     pivot_wider(names_from = status, values_from = total, values_fill = list(total = 0)) %>%
+#     mutate(proportion_released = Released / (Released + `Not Released`) * 100) %>%
+#     arrange(rptyear)
+#
+#   # Handling case with only one year of data
+#   if (nrow(df1) == 1) {
+#     latest_year <- df1$rptyear[1]
+#     latest_value <- df1$proportion_released[1]
+#     sentence <- paste0(
+#       "In ", latest_year, ", ", round(latest_value, 1),
+#       " percent of people eligible for parole were released during their eligibility year."
+#     )
+#     return(sentence)
+#   }
+#
+#   # Handling missing data
+#   if (nrow(df1) < 2) {
+#     return(paste0("Insufficient data for ", x))
+#   }
+#
+#   # Get the latest and earliest years
+#   latest_year <- tail(df1$rptyear, 1)
+#   earliest_year <- head(df1$rptyear, 1)
+#
+#   # Get the values for the latest and earliest years
+#   latest_value <- tail(df1$proportion_released, 1)
+#   earliest_value <- head(df1$proportion_released, 1)
+#
+#   # Calculate the percentage change
+#   percentage_change <- latest_value - earliest_value
+#
+#   # Determine if the change is an increase or decrease
+#   change_type <- ifelse(percentage_change >= 0, "increase", "decrease")
+#
+#   # Construct the sentence
+#   sentence <- paste0(
+#     "In ", latest_year, ", ", round(latest_value, 0),
+#     " percent of people eligible for parole were released during their eligibility year. ",
+#     "This represents a ", round(abs(percentage_change), 0), " percent ", change_type,
+#     " compared to ", earliest_year, "."
+#   )
+#
+#   return(sentence)
+# })
+# # Assign state names to list
+# all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
+# all_sentence_pe_proportion_released$Georgia
+# rm(states)
 
 
 
