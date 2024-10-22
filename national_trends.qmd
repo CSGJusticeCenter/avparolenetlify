@@ -96,7 +96,7 @@ div(
 </div>
 <br>
 <div style="font-size: 0.7em; color: black; text-align: left;">
-<p>*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year. 
+*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.  
 **Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population that remains eligible for parole release under the previous system.
 </div>
 <br>
