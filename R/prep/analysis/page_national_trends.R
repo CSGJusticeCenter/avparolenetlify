@@ -106,6 +106,7 @@ all_states <- state.name
 # Define the gradient colors for categories
 gradient_colors <- c(green1, green2, green3, green4, blue)
 
+# Prepare tooltips and map data
 # Prepare data for national maps
 map_data <- filtered_parole_elig_table_analysis_year |>
 
@@ -129,13 +130,10 @@ map_data <- filtered_parole_elig_table_analysis_year |>
                "Louisiana is listed among the states with parole systems, despite<br>
                its recent abolition of parole, due to a substantial population<br>
                that remains eligible for parole release under the previous system.<br>",
-               "<b>People in Prison Past Their Parole Eligibility</b><br>",
-               "<b>2023 Projection</b><br>",
-               "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
-               "<tr><td style='padding-right: 1px; border: 1px solid white; margin: 0; padding: 0;'>Prison Population Percentage: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
-               paste0(round(current_perc, 0), "%</b></td></tr>",
-                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>Number of People: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
-                      paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>"))),
+               "Percentage of People: ",
+               paste0(round(current_perc, 0), "%<br>"),
+               "Number of People: ",
+               formattable::comma(current_count_rounded, 0)),
 
       all_na == TRUE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
@@ -151,13 +149,10 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
       all_na == FALSE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
-               "<b>People in Prison Past Their Parole Eligibility</b><br>",
-               "<b>2023 Projection</b><br>",
-               "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
-               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>Prison Population Percentage: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
-               paste0(round(current_perc, 0), "%</b></td></tr>",
-                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>Number of People: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
-                      paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>")))
+               "Percentage of People: ",
+               paste0(round(current_perc, 0), "%<br>"),
+               "Number of People: ",
+               formattable::comma(current_count_rounded, 0))
     ),
 
     tooltip = str_replace_all(tooltip, "NA%", "No Data"),
@@ -170,6 +165,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
+
 
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1
