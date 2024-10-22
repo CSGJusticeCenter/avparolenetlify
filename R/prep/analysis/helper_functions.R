@@ -301,6 +301,11 @@ base_hc_theme <- hc_theme(
     tickColor = "transparent"
   ),
   plotOptions = list(
+    series = list(
+      events = list(
+        legendItemClick = JS("function() { return false; }")  # Disables clicking on legend items
+      )
+    ),
     column = list(
       dataLabels = list(
         style = common_style

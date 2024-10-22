@@ -1,18 +1,31 @@
 
-source("R/config.R")
-
+# Set up
+# source("R/config.R")
 # source("R/prep/helper_functions.R")
+# source("R/prep/helper_functions_disparities.R")
 # source("R/prep/import_format.R")
-# source("R/prep/page_national_trends.R")
-# source("R/prep/tab_parole_eligibility.R")
-# source("R/prep/tab_population.R")
-# source("R/prep/tab_releases.R")
-# source("R/prep/tab_disparities_rris.R")
-# source("R/prep/tab_disparities_time_served.R")
-# source("R/prep/tab_disparities_years_past_pe.R")
 
-# Load parole eligibility (PE) table
-load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+# Load Data
+# load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex_2022.rds"))
+
+# source("R/prep/analysis/page_national_trends.R")
+# source("R/prep/analysis/tab_parole_eligibility.R")
+# source("R/prep/analysis/tab_population.R")
+# source("R/prep/analysis/tab_releases.R")
+# source("R/prep/analysis/tab_disparities.R")
+# source("R/prep/analysis/tab_disparities_rris.R")
+
+
 
 # Save working directory
 wd <- getwd()

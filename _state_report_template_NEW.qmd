@@ -91,21 +91,21 @@ fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_stackedbar_pop_p
 
 ```{r results = 'asis', state_sentence_parole_eligibility_race}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_race, state_bar_parole_eligibility_race,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 ### Sex
 
 ```{r results = 'asis', state_sentence_parole_eligibility_sex}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_sex, state_bar_parole_eligibility_sex,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 ### Age
 
 ```{r results = 'asis', state_sentence_parole_eligibility_ageyrend}
 fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar_parole_eligibility_ageyrend,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 :::
@@ -172,21 +172,21 @@ fnc_display_sentence_chart(state_sentence_population, state_line_population_by_y
 
 ```{r results = 'asis', state_sentence_population_race}
 fnc_display_sentence_chart(state_sentence_population_race, state_bar_population_race,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 ### Sex
 
 ```{r results = 'asis', state_sentence_population_sex}
 fnc_display_sentence_chart(state_sentence_population_sex, state_bar_population_sex,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 ### Age
 
 ```{r results = 'asis', state_sentence_population_ageyrend}
 fnc_display_sentence_chart(state_sentence_population_ageyrend, state_bar_population_ageyrend,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 :::
@@ -254,21 +254,21 @@ fnc_display_sentence_chart(state_sentence_release_type, state_pie_release_type)
 
 ```{r results = 'asis', state_sentence_releases_race}
 fnc_display_sentence_chart(state_sentence_releases_race, state_bar_releases_race,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 ### Sex
 
 ```{r results = 'asis', state_sentence_releases_sex}
 fnc_display_sentence_chart(state_sentence_releases_sex, state_bar_releases_sex,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 ### Age
 
 ```{r results = 'asis', state_sentence_releases_agerlse}
 fnc_display_sentence_chart(state_sentence_releases_agerlse, state_bar_releases_agerlse,
-                           chart_type = "visualization")
+                           chart_type = "small-visualization")
 ```
 
 :::
@@ -541,7 +541,7 @@ if (!no_data) {
 }
 
 if (!no_data) {
-  div(id = "visualization", state_lollipop_los_race)
+  div(id = "small-visualization", state_lollipop_los_race)
 }
 
 if (!is.null(state_scatter_los_race_offense)) {
@@ -569,7 +569,7 @@ if (!no_data) {
 }
 
 if (!no_data) {
-  div(id = "visualization", state_lollipop_los_sex)
+  div(id = "small-visualization", state_lollipop_los_sex)
 }
 
 if (!is.null(state_scatter_los_sex_offense)) {

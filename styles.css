@@ -313,6 +313,15 @@ table th, table td {
   margin-right: 100px; /* Adds right margin */
 }
 
+/* For small screens (less than 600px wide) */
+/* Don't make small visualization small when the screen is small */
+@media only screen and (max-width: 600px) {
+  #small-visualization {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 #highlight-visualization {
   margin: 0 auto; /* Centers visualization container */
   text-align: center; /* Centers text inside */
