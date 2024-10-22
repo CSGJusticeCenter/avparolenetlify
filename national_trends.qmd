@@ -152,19 +152,24 @@ reactable(
     na = "-" 
   ),
   columns = list(
+    # state = colDef(
+    #   name = "State", 
+    #   align = "left", 
+    #   width = 175,
+    #   cell = function(value, index) {
+    #     # Check if current_perc is NA or if discretionary parole is abolished
+    #     if (!is.na(parole_eligibility_table$current_perc[index])) {
+    #       url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
+    #       tags$a(href = url, target = "_blank", style = "color:black;", value)
+    #     } else {
+    #       return(value)
+    #     }
+    #   }
+    # ),
     state = colDef(
       name = "State", 
       align = "left", 
-      width = 175,
-      cell = function(value, index) {
-        # Check if current_perc is NA or if discretionary parole is abolished
-        if (!is.na(parole_eligibility_table$current_perc[index])) {
-          url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
-          tags$a(href = url, target = "_blank", style = "color:black;", value)
-        } else {
-          return(value)
-        }
-      }
+      width = 175
     ),
     current_perc = colDef(
       name = "Percentage of People in Prison",
