@@ -33,12 +33,23 @@ body {
   padding: 0;
 }
 
-@media (max-width: 480px) {
-  body {
-    padding: 5px; /* Reduce padding for smaller devices */
+/* Media query for screens smaller than 768px (mobile devices) */
+@media (max-width: 768px) {
+  .nav-tabs {
+    display: block; /* Changes the display to block for stacking */
+    width: 100%; /* Ensures the container stretches to full width */
+  }
+
+  .nav-tabs .nav-item {
+    width: 100%; /* Ensures each tab takes up the full width */
+    margin-bottom: 5px; /* Adds spacing between stacked tabs */
+  }
+
+  .nav-tabs .nav-link {
+    width: 100%; /* Ensures the tab link stretches across the full width */
+    text-align: center; /* Center the text inside the tab */
   }
 }
-
 .container {
   width: 100%;
   max-width: 900px; /* Adjust the maximum width for the content container */

@@ -490,8 +490,8 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
 
   # Construct the sentence for the FBI index breakdown
   fbi_sentence <- paste0("Most people who were incarcerated past parole eligibility were serving time for ",
-                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1], 0), "%) and ",
-                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2], 0), "%) offenses.")
+                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1], 0), " percent) and ",
+                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2], 0), " percent) offenses.")
 
   # Combine the sentences
   sentences <- paste0(group_sentence, " ", fbi_sentence)
