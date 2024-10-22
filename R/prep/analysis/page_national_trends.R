@@ -8,7 +8,7 @@
 #######################################
 
 
-#------ Parole Eligibility Table ------#
+#-----Parole Eligibility Table ------#
 
 # Get total prison population by state and year
 total_pop_by_year <- ncrp_yearendpop |>
@@ -67,7 +67,7 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
 
 
 
-#------ Parole Board Members by State ------#
+#-----Parole Board Members by State ------#
 
 # Get parole status information by state
 # Get number of parole board members
@@ -76,7 +76,7 @@ states_parole <- state_notes |>
 
 
 
-#------ Parole Eligibility Table ------#
+#-----Parole Eligibility Table ------#
 
 # Only include states that abolished parole + Lousiana (high PE population)
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
@@ -98,7 +98,7 @@ parole_eligibility_table_download <- parole_eligibility_table |>
 
 
 
-#------ Parole Eligibility Maps Data ------#
+#-----Parole Eligibility Maps Data ------#
 
 # Create a vector of all state names
 all_states <- state.name
@@ -125,38 +125,38 @@ map_data <- filtered_parole_elig_table_analysis_year |>
     tooltip = case_when(
 
       state == "Louisiana" ~
-        paste0("<b>", state, "</b><br>",
+        paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                "Louisiana is listed among the states with parole systems, despite<br>
                its recent abolition of parole, due to a substantial population<br>
                that remains eligible for parole release under the previous system.<br>",
                "<b>People in Prison Past Their Parole Eligibility</b><br>",
-               "<span style='color: gray; font-weight: bold;'>2023 Projection</span>",
+               "<b>2023 Projection</b><br>",
                "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
-               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Percentage of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+               "<tr><td style='padding-right: 1px; border: 1px solid white; margin: 0; padding: 0;'>Prison Population Percentage: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
-                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>- Number of People:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>Number of People: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                       paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>"))),
 
       all_na == TRUE & abolished_parole == "N" ~
-        paste0("<b>", state, "</b><br>",
+        paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                "Parole eligibility data is not available.<br>"),
 
       all_na == TRUE & abolished_parole == "Y" ~
-        paste0("<b>", state, "</b><br>",
+        paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                state, " abolished discretionary parole.<br>"),
 
       all_na == FALSE & abolished_parole == "Y" ~
-        paste0("<b>", state, "</b><br>",
+        paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                state, " abolished discretionary parole.<br>"),
 
       all_na == FALSE & abolished_parole == "N" ~
-        paste0("<b>", state, "</b><br>",
+        paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                "<b>People in Prison Past Their Parole Eligibility</b><br>",
-               "<span style='color: gray; font-weight: bold;'>2023 Projection</span>",
+               "<b>2023 Projection</b><br>",
                "<table style='border-collapse: collapse; margin: 0; padding: 0;'>",
-               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>- Percentage of the Prison Population:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+               "<tr><td style='padding-right: 5px; border: 1px solid white; margin: 0; padding: 0;'>Prison Population Percentage: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                paste0(round(current_perc, 0), "%</b></td></tr>",
-                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>- Number of People:</td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
+                      "<tr><td style='border: 1px solid white; margin: 0; padding: 0;'>Number of People: </td><td style='border: 1px solid white; margin: 0; padding: 0;'><b>",
                       paste(formattable::comma(current_count_rounded, 0), "</b></td></tr></table>")))
     ),
 
@@ -299,7 +299,7 @@ map_percent <- highchart(height = 625) |>
     outside = TRUE, # Ensure tooltip is rendered outside
     useHTML = TRUE,
     formatter = JS("function() {
-          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 15px;\">' +
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 5px;\">' +
           '<div style=\"text-align:left;\">' +
           '<span style=\"font-weight:normal; font-size: 1em;\">' + this.point.tooltip + '</span>' +
           '</div></div>';
