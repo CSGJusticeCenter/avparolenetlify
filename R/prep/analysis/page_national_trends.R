@@ -203,7 +203,7 @@ map_data_breaks <- map_data |>
       TRUE ~ data_category
     ),
     gradient_color = case_when(
-      is.na(gradient_color) & data_category == "Missing Data" ~ lightgray,
+      is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,
       is.na(gradient_color) & data_category == "Abolished Parole" ~ yellow,
       state == "Louisiana" ~ yellow,
       TRUE ~ gradient_color
@@ -235,7 +235,7 @@ map_percent <- highchart(height = 625) |>
                             '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';}"),
                       textOutline = "none",
                       y = 0),
-    nullColor = lightgray,
+    nullColor = darkgray,
     borderColor = "#FFFFFF",
     accessibility = list(
       enabled = TRUE,
@@ -249,7 +249,7 @@ map_percent <- highchart(height = 625) |>
                  list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
                  list(from = 5, to = 5, color = yellow, name = "Abolished Parole"),
-                 list(from = 6, to = 6, color = lightgray, name = "Missing Data")
+                 list(from = 6, to = 6, color = darkgray, name = "Missing Data")
                )) |>
 
   hc_legend(align = "right",
