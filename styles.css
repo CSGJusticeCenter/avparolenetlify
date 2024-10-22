@@ -37,27 +37,25 @@ body {
   padding: 0; /* Removes padding */
 }
 
-/* Media query for screens smaller than 768px (mobile devices) */
+/*
 @media (max-width: 768px) {
-  body {
-    padding: 5px; /* Reduce padding for smaller devices */
-  }
 
   .nav-tabs {
-    display: block; /* Stacks tabs vertically */
-    width: 100%; /* Ensures the tab container takes full width */
+    display: block;
+    width: 100%;
   }
 
   .nav-tabs .nav-item {
-    width: 100%; /* Each tab takes up full width */
-    margin-bottom: 5px; /* Adds spacing between stacked tabs */
+    width: 100%;
+    margin-bottom: 5px;
   }
 
   .nav-tabs .nav-link {
-    width: 100%; /* Each tab link stretches across full width */
-    text-align: center; /* Center text in each tab */
+    width: 100%;
+    text-align: center;
   }
 }
+*/
 
 
 /* Container styling */
