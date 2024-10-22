@@ -118,7 +118,7 @@ map_percent |>
 
 ## Parole Eligibility Data by State
 
-The table below provides a detailed projection of the 2023 snapshot of state-level prison populations, including the percentage and number of people who are incarcerated beyond their parole eligibility. It also highlights the number of parole board members for each state.
+The table below provides a detailed projection of the 2023 snapshot of state-level prison populations, specifically the percentage and number of people who are incarcerated beyond their parole eligibility. It also highlights the number of parole board members for each state.
 
 ```{r table}
 # Custom function to create data bars with NA handling
