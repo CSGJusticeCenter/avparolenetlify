@@ -37,7 +37,7 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
 #------------------------------------------------------------------------------#
 
 # Import state-specific notes about parole eligibility and number of parole board members
-state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v1.csv")) |>
+state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
   mutate(
