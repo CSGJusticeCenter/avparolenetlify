@@ -468,6 +468,9 @@ all_bar_ped_fbi_index$Georgia
 #           Most people who were incarcerated past parole eligibility were serving
 #           time for aggravated or simple assault (21%) and robbery (20%) offenses.
 # Generate sentence for each state
+library(dplyr)
+library(purrr)
+
 all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
 
   # Get the top group
@@ -498,16 +501,12 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
     return(paste0("Data for ", x, " is missing."))
   }
 
-  # Determine the number of categories to include based on rounding ties
-  rounded_props <- round(df2$prop, 0)
-  unique_props <- unique(rounded_props)
-
-  # Determine how many to include based on the unique rounded percentages
-  n_categories <- min(length(unique_props), 4) # Get up to the top 4 unique categories
+  # Get the maximum proportion and filter for categories with that value
+  max_prop <- max(round(df2$prop, 0))
 
   top_categories <- df2 %>%
-    filter(round(prop, 0) %in% head(unique_props, n_categories)) %>%
-    slice(1:n_categories)  # Select the top categories
+    filter(round(prop, 0) == max_prop) %>% # Select categories with the highest proportion
+    arrange(desc(prop)) # Ensure they are sorted
 
   # Construct the sentence for the FBI index breakdown
   fbi_sentences <- top_categories %>%
@@ -532,6 +531,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
 all_sentence_parole_eligibility_fbi_index$Georgia
 rm(states)
+
 
 
 
