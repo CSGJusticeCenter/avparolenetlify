@@ -16,12 +16,15 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
+# This will change depending on the state
 state_for_report <- "Louisiana"
 
+# Load config file and pregenerated sentences and visualizations
 source("R/config.R")
-source("R/pull_state_findings_NEW.R")
+source("R/pull_state_findings.R")
 
-# Function to display data
+# Function to display data and sentences
+# Display no data if data is missing
 fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualization", final_text = no_data_text) {
   # Check if both sentence and chart are missing
   no_data <- is.null(sentence) || is.null(chart) 
@@ -77,7 +80,7 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 
 ```{r results = 'asis', state_sentence_pe_type}
 fnc_display_sentence_chart(state_sentence_pe_type, state_pie_pe_type); br()
-fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_stackedbar_pop_pe_by_year)
+fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_bar_pop_pe_by_year)
 ```
 
 <br>

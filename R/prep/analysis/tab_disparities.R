@@ -102,7 +102,7 @@ all_lollipop_los_sex$Georgia
 
 # Filter to states with parole systems
 # Select racial and ethnic groups of interest
-ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
+ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
   filter(rptyear == select_year &
          parelig_status == "Current")
 
@@ -239,7 +239,7 @@ all_scatter_los_sex_offense$Georgia
 
 # Filter to states with parole systems
 # Remove missing data
-ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
+ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
   mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   filter(rptyear == select_year &
            parelig_status == "Current" &

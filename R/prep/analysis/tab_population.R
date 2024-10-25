@@ -227,7 +227,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Summarize age data for the prison population for each state
-ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop, "ageyrend", year = pop_select_year)
+ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop_not_consolidated, "ageyrend", year = pop_select_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_ageyrend$state)
@@ -275,7 +275,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Summarize offense data for the prison population for each state
-ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop, "fbi_index", year = pop_select_year)
+ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop_consolidated, "fbi_index", year = pop_select_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_fbi_index$state)
@@ -324,7 +324,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Process sentence length data for the prison population
-ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop, "sentlgth", year = pop_select_year)
+ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop_consolidated, "sentlgth", year = pop_select_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_sentlgth$state)

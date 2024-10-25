@@ -16,12 +16,15 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
+# This will change depending on the state
 state_for_report <- "Georgia"
 
+# Load config file and pregenerated sentences and visualizations
 source("R/config.R")
-source("R/pull_state_findings_NEW.R")
+source("R/pull_state_findings.R")
 
-# Function to display data
+# Function to display data and sentences
+# Display no data if data is missing
 fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualization", final_text = no_data_text) {
   # Check if both sentence and chart are missing
   no_data <- is.null(sentence) || is.null(chart) 
@@ -47,9 +50,9 @@ div(
   div(id = "highlight-text", paste0(round(num_people_current_perc, 0), "%")),
   div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection TBD)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection TBD)</span>")),
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Parole Board<br>Members"))
 )
@@ -77,7 +80,7 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 
 ```{r results = 'asis', state_sentence_pe_type}
 fnc_display_sentence_chart(state_sentence_pe_type, state_pie_pe_type); br()
-fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_stackedbar_pop_pe_by_year)
+fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_bar_pop_pe_by_year)
 ```
 
 <br>

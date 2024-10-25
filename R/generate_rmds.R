@@ -18,11 +18,11 @@
 # load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_2020.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex_2022.rds"))
 
-# source("R/prep/analysis/page_national_trends.R")
-# source("R/prep/analysis/tab_parole_eligibility.R")
-# source("R/prep/analysis/tab_population.R")
-# source("R/prep/analysis/tab_releases.R")
-# source("R/prep/analysis/tab_disparities.R")
+source("R/prep/analysis/page_national_trends.R")
+source("R/prep/analysis/tab_parole_eligibility.R")
+source("R/prep/analysis/tab_population.R")
+source("R/prep/analysis/tab_releases.R")
+source("R/prep/analysis/tab_disparities.R")
 # source("R/prep/analysis/tab_disparities_rris.R")
 
 
@@ -37,7 +37,7 @@ states <- c("Georgia", "Louisiana")
 #   pull(state)
 
 # Read in original qmd
-orig_qmd <- read_lines("_state_report_template_NEW.qmd")
+orig_qmd <- read_lines("_state_report_template.qmd")
 
 # Replace state name
 states_qmd <- as.character(states)

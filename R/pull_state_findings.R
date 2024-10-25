@@ -63,7 +63,8 @@ num_parole_board_mem <- parole_eligibility_table |> filter(state == state_for_re
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pop_pe_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sex.rds"))
@@ -98,10 +99,15 @@ state_pie_pe_type <- apply_chart_settings(
 
 state_sentence_pop_pe_by_year <- all_sentence_pop_pe_by_year[[state_for_report]]
 
-state_stackedbar_pop_pe_by_year <- apply_chart_settings(
-  all_stackedbar_pop_pe_by_year[[state_for_report]],
-  height = 400
+state_bar_pop_pe_by_year <- apply_chart_settings(
+  all_bar_pop_pe_by_year[[state_for_report]],
+  height = 300,
+  color = color4
 )
+# state_stackedbar_pop_pe_by_year <- apply_chart_settings(
+#   all_stackedbar_pop_pe_by_year[[state_for_report]],
+#   height = 400
+# )
 
 state_sentence_parole_eligibility_race <- all_sentence_parole_eligibility_race[[state_for_report]]
 

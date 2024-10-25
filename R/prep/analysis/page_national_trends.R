@@ -61,8 +61,8 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
          contains("current"), contains("future"), contains("missing")) |>
   filter(rptyear == select_year) |>
   mutate(current_perc           = current_perc * 100,
-         future_perc            = future_perc * 100,
-         missing_perc           = missing_perc * 100,
+         # future_perc            = future_perc * 100,
+         # missing_perc           = missing_perc * 100,
          current_count_rounded = fnc_round_to_power(current_count))
 
 
@@ -120,7 +120,8 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   mutate(
     state_abb = state.abb[match(state, state.name)],
 
-    all_na = ifelse(is.na(current_count) & is.na(future_count) & is.na(missing_count), TRUE, FALSE),
+    all_na = ifelse(is.na(current_count)# & is.na(future_count) & is.na(missing_count)
+                    , TRUE, FALSE),
 
     # Create tooltips
     tooltip = case_when(
