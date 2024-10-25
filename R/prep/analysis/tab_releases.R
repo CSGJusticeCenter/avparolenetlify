@@ -50,7 +50,7 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
   percent_change_abs <- abs(round(percent_change, 0))
 
   # Construct a sentence describing the trend in releases
-  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", people released from prison ",
+  sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the number people released from prison ",
                       change_type, " ", percent_change_abs, " percent, dropping from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")

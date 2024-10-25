@@ -130,27 +130,10 @@ rm(states)
 # PE Prison Population Trends
 # ---------------------------------------------------------------------------- #
 
-# Get the number of people currently eligible for parole who are still incarcerated
-# Group by state and report year, and create a summary count for each group
-current_pe_pop <- ncrp_yearendpop_filtered |>
+# Filter to people past parole eligiblity
+pe_pop_prop <- pe_status_pop |>
   filter(parelig_status == "Current") |>
-  group_by(state, rptyear) |>
-  summarise(n = n(), .groups = "drop") |>
-  mutate(type = "Current")
-
-# Get the total prison population by state and year
-# Group by state and report year, and summarize the total population
-total_pe_pop <- ncrp_yearendpop_filtered |>
-  group_by(state, rptyear) |>
-  summarise(total_n = n(), .groups = "drop") |>
-  mutate(type = "Total Population")
-
-# Merge the PCE population with the total population data by state and year
-# Calculate the prop of people past parole eligibility out of the total prison population
-pe_pop_prop <- current_pe_pop |>
-  left_join(total_pe_pop, by = c("state", "rptyear")) |>
-  mutate(prop = (n / total_n)*100,
-         prop_label = paste0(round(prop, 0), "%"))
+  mutate(prop_label = paste0(round(prop, 0), "%"))
 
 # SENTENCE: "From 2014 to YEAR, the percent of people in prison past parole eligibility increased by 14 percent."
 # Loop through each unique state

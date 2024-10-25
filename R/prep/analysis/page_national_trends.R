@@ -11,13 +11,13 @@
 #-----Parole Eligibility Table ------#
 
 # Get total prison population by state and year
-total_pop_by_year <- ncrp_yearendpop |>
+total_pop_by_year <- ncrp_yearendpop_consolidated |>
   group_by(state, rptyear) |>
   summarise(total_pop = n(), .groups = 'drop')
 
 # Filter data to people in prison for a new court commitment with sentences 1+ years but not life
 # Not including people who are failing supervision (parole return/revocation)
-filtered_ncrp_yearendpop <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
+filtered_ncrp_yearendpop <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated)
 
 # Get total prison population for new court commitments and with sentences 1+ years but not life
 filtered_pop_by_year <- filtered_ncrp_yearendpop |>
