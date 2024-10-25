@@ -468,10 +468,10 @@ all_bar_ped_fbi_index$Georgia
 #           Most people who were incarcerated past parole eligibility were serving
 #           time for aggravated or simple assault (21%) and robbery (20%) offenses.
 # Generate sentence for each state
-all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) {
+all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
 
   # Get the top group
-  df1 <- current_ped_offense_group  |>
+  df1 <- current_ped_offense_group |>
     filter(state == x) |>
     arrange(-prop)
 
@@ -488,31 +488,51 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states,  .f = function(x) 
                            " percent of people in prison past parole eligibility were in prison for violent offenses and ",
                            round(nonviolent_prop, 0), " percent for nonviolent offenses.")
 
-  # Get the top two FBI index categories
+  # Get the top FBI index categories
   df2 <- current_ped_fbi_index |>
     filter(state == x) |>
-    arrange(-prop) |>
-    slice(1:2)
+    arrange(-prop)
 
   # Check if there's missing data in df2
   if (nrow(df2) < 2 || any(is.na(df2$prop[1:2]))) {
     return(paste0("Data for ", x, " is missing."))
   }
 
+  # Determine the number of categories to include based on rounding ties
+  rounded_props <- round(df2$prop, 0)
+  unique_props <- unique(rounded_props)
+
+  # Determine how many to include based on the unique rounded percentages
+  n_categories <- min(length(unique_props), 4) # Get up to the top 4 unique categories
+
+  top_categories <- df2 %>%
+    filter(round(prop, 0) %in% head(unique_props, n_categories)) %>%
+    slice(1:n_categories)  # Select the top categories
+
   # Construct the sentence for the FBI index breakdown
-  fbi_sentence <- paste0("Most people who were incarcerated past parole eligibility were serving time for ",
-                         tolower(df2$fbi_index[1]), " (", round(df2$prop[1], 0), " percent) and ",
-                         tolower(df2$fbi_index[2]), " (", round(df2$prop[2], 0), " percent) offenses.")
+  fbi_sentences <- top_categories %>%
+    mutate(fbi_sentence = paste0(tolower(fbi_index), " (", round(prop, 0), " percent)")) %>%
+    pull(fbi_sentence)
+
+  # Use commas to separate categories, adding "and" before the last item with a space
+  fbi_sentence_final <- if (length(fbi_sentences) > 1) {
+    paste(paste(fbi_sentences[-length(fbi_sentences)], collapse = ", "),
+          ", and ", fbi_sentences[length(fbi_sentences)], sep = "")
+  } else {
+    fbi_sentences
+  }
 
   # Combine the sentences
-  sentences <- paste0(group_sentence, " ", fbi_sentence)
+  sentences <- paste0(group_sentence, " Most people who were incarcerated past parole eligibility were serving time for ", fbi_sentence_final, " offenses.")
 
   return(sentences)
 })
-# Assign state names to list
+
+# Assign state names to the list
 all_sentence_parole_eligibility_fbi_index <- setNames(all_sentence_parole_eligibility_fbi_index, states)
 all_sentence_parole_eligibility_fbi_index$Georgia
 rm(states)
+
 
 
 
