@@ -6,7 +6,7 @@
 # Description:
 #    Parole eligibility map, tables, and other visualizations for national trends page
 #######################################
-
+# Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
 hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
   select(state_abb = iso3166_2) |>
   filter(state_abb != "DC") |>
@@ -174,7 +174,6 @@ map_data <- filtered_parole_elig_table_analysis_year |>
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
-
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1
 breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
@@ -223,10 +222,6 @@ map_data_breaks <- map_data |>
 # create hex map
 map_percent <- highchart(height = 625) |>
 
-  hc_chart(marginTop = 50,
-           marginBottom = 50,
-           marginRight = 50) |>
-
   hc_add_series_map(
     map = hex_gj,
     df = map_data_breaks,
@@ -234,30 +229,30 @@ map_percent <- highchart(height = 625) |>
     value = "data_category_num",
     dataLabels = list(enabled = TRUE,
                       useHTML = TRUE,
-                      formatter = JS("function() {return '<div style=\"text-align:center;\">' +
+                      formatter = JS("function() {
+                          return this.point.abolished_parole == 'Y' ? '' : '<div style=\"text-align:center;\">' +
                             '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.state_abb + '</span><br>' +
-                            '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';}"),
+                            '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';
+                      }"),
                       textOutline = "none",
                       y = 0),
     nullColor = darkgray,
-   # borderColor = "#FFFFFF",
-   borderColor = lightgray,
+    borderColor = "#FFFFFF",
+    # borderColor = lightgray,
     accessibility = list(
       enabled = TRUE,
       keyboardNavigation = list(enabled = TRUE),
       point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) |>
 
-  hc_colorAxis(dataClassColor = "category",
+  hc_colorAxis(dataClassColor="category",
                dataClasses = list(
                  list(from = 1, to = 1, color = green1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
                  list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
                  list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
-                 list(from = 5, to = 5, color = "white", name = "Abolished Discretionary Parole",
-                      marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
+                 list(from = 5, to = 5, color = "white", name = "Abolished Discretionary Parole"),
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
-               )
-  ) |>
+               )) |>
 
   hc_legend(align = "right",
             verticalAlign = "bottom",
@@ -268,18 +263,6 @@ map_percent <- highchart(height = 625) |>
             y = -40,
             itemMarginTop = 2,
             itemMarginBottom = 2) |>
-  # hc_legend(align = "right",
-  #           verticalAlign = "bottom",
-  #           layout = "vertical",
-  #           symbolHeight = 15,
-  #           symbolWidth = 15,
-  #           itemMarginTop = 2,
-  #           itemMarginBottom = 2,
-  #           useHTML = TRUE)  |>
-  # hc_legend(
-  #   symbolStroke = "#000000",      # Outline color for the symbols
-  #   symbolStrokeWidth = 2           # Outline width for the symbols
-  # ) |>
 
   hc_xAxis(title = "") |>
   hc_yAxis(title = "") |>
@@ -335,23 +318,7 @@ map_percent <- highchart(height = 625) |>
     scale = 1,
     sourceWidth = 800,
     sourceHeight = 600) |>
-  hc_caption(text = ncrp_csg_source,
-             y = -10)
+  hc_caption(text = ncrp_csg_source)
 map_percent
 
-#------------------------------------------------------------------------------#
-# Save Data
-#------------------------------------------------------------------------------#
-
-# Define the data objects and their corresponding file names
-data_files <- list(
-  map_percent                       = "map_percent.rds",
-  parole_eligibility_table          = "parole_eligibility_table.rds",
-  parole_eligibility_table_download = "parole_eligibility_table_download.rds"
-)
-
-# Loop through the list and save each data object to its corresponding file
-invisible(lapply(names(data_files), function(obj) {
-  save(list = obj, file = file.path(app_folder, data_files[[obj]]))
-}))
 
