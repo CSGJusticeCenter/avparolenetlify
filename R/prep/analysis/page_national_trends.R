@@ -320,6 +320,7 @@ map_percent <- highchart(height = 625) |>
 
   hc_exporting(
     enabled = TRUE,
+    allowHTML = TRUE,
     filename = paste0(gsub(" ", "_", tolower("Map Past Parole Eligibility by State 2023"))),
     scale = 1,
     sourceWidth = 800,
@@ -337,6 +338,7 @@ data_files <- list(
   map_percent                       = "map_percent.rds",
   parole_eligibility_table          = "parole_eligibility_table.rds",
   parole_eligibility_table_download = "parole_eligibility_table_download.rds"
+
 )
 
 # Loop through the list and save each data object to its corresponding file
