@@ -6,9 +6,29 @@
 # 6 RRIs above 1 for Hispanic/13 below 1
 # ---------------------------------------------------------------------------- #
 
+robina_table_seba <- read_excel("C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole/data/raw/Robina Institute/robina_table.xlsx",
+                           sheet = "Sheet1", skip = 1) |>
+  clean_names() |>
+  select(state = variable_labels,
+         low_min_less_serious = lower_boundary_of_min_sentence_for_less_serious_offenses_as_percent_of_max,
+         upper_min_less_serious = upper_boundary_of_min_sentence_for_less_serious_offenses_as_percent_of_max,
+         low_min_more_serious = lower_boundary_of_min_sentence_for_more_serious_offenses_as_percent_of_max,
+         upper_min_more_serious = upper_boundary_of_min_sentence_for_more_serious_offenses_as_percent_of_max) |>
+  mutate(less_serious_diff = upper_min_less_serious - low_min_less_serious,
+         more_serious_diff = upper_min_more_serious - low_min_more_serious) |>
+  mutate(potential_issue_flag_seba = case_when(
+    less_serious_diff > 0 & more_serious_diff > 0 ~ 1,
+    less_serious_diff == 0 & more_serious_diff == 0 ~ 0,
+    TRUE ~ 0
+  )) |>
+  select(state, potential_issue_flag_seba)
+
+
+
+
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
-ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
+ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   mutate(group = case_when(
     fbi_index %in% c("Murder or Nonnegligent Manslaughter",
@@ -21,7 +41,7 @@ ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |
     TRUE ~ "Other or Unknown"))|>
   filter(race %in% c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic"))
 
-ncrp_releases_filtered <- fnc_filter_pe_population_criteria(ncrp_releases) |>
+ncrp_releases_filtered <- fnc_filter_pe_population_criteria(ncrp_releases_consolidated) |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   mutate(group = case_when(
     fbi_index %in% c("Murder or Nonnegligent Manslaughter",
@@ -37,7 +57,7 @@ ncrp_releases_filtered <- fnc_filter_pe_population_criteria(ncrp_releases) |>
 
 
 fnc_calculate_rris <- function(numerator_data, denominator_data, reference_race = "White, non-Hispanic",
-                               select_year = 2020, numerator_filter = "none", denominator_filter = "none", group_vars) {
+                               select_year = 2019, numerator_filter = "none", denominator_filter = "none", group_vars) {
 
   # Define a helper function to apply the appropriate filter based on input
   apply_filter <- function(data, filter_option) {
@@ -87,53 +107,18 @@ fnc_calculate_rris <- function(numerator_data, denominator_data, reference_race 
   return(rri_data)
 }
 
-# Function to count states with RRIs above and below 1 for each race
 fnc_count_rris <- function(rri_data) {
   counts <- rri_data |>
     filter(race != "White, non-Hispanic") |>
     group_by(race) |>
     summarise(
-      above_1 = sum(rri > 1),
-      below_1 = sum(rri < 1),
-      is_1    = sum(rri == 1)
+      above_1 = sum(rri > 1, na.rm = TRUE),
+      below_1 = sum(rri < 1, na.rm = TRUE),
+      is_1    = sum(rri == 1, na.rm = TRUE)
     )
   return(counts)
 }
 
-# RRI - shows the likelihood of being released past parole eligibility (PE) out of
-# the entire prison population. The numerator represents individuals released after
-# they were past parole eligibility, and the denominator is the entire prison
-# population at the end of the year.
-
-# Strength: Provides a broad comparison, showing likelihood of release past PE for the whole prison population.
-# It captures disparities across the full population, regardless of parole eligibility status.
-# Limitation: The analysis might be diluted by including individuals not yet parole-eligible,
-# which could skew interpretation by mixing in those who aren't eligible for parole.
-# Research Discussion: Isolates parole disparities less clearly since many in the population aren't eligible.
-# Release decisions may also depend on factors like behavior, not just parole eligibility.
-
-# rris_rel_pop_race: Includes the entire prison population, diluting the analysis by
-# mixing in individuals not yet parole-eligible, making it less focused on delays for those eligible.
-
-# Rate is the number of people released past PE out of the entire prison population
-rris_rel_pop_race <- fnc_calculate_rris(
-  numerator_data = ncrp_releases_filtered,
-  numerator_filter = "past",
-  denominator_data = ncrp_yearendpop_filtered,
-  denominator_filter = "none",
-  group_vars = c("state", "race")
-)
-# now also by offense
-rris_rel_pop_race_offense <- fnc_calculate_rris(
-  numerator_data = ncrp_releases_filtered,
-  numerator_filter = "past",
-  denominator_data = ncrp_yearendpop_filtered,
-  denominator_filter = "none",
-  group_vars = c("state", "race", "group")
-)
-
-cat("rris_rel_pop_race:\n")
-print(fnc_count_rris(rris_rel_pop_race))
 
 
 # *** This RRI the likelihood of being incarcerated past parole eligibility out of the
@@ -148,40 +133,38 @@ print(fnc_count_rris(rris_rel_pop_race))
 # Research Discussion: Clearly isolates the effect of parole eligibility,
 # avoiding distortion from individuals not yet eligible.
 
-# Rate is the number of people in prison past PE out of th entire prison population
+# Rate is the number of people in prison past PE out of the entire prison population
 rris_pop_pop_race <- fnc_calculate_rris(
+  numerator_data = ncrp_yearendpop_filtered,
+  numerator_filter = "both",
+  denominator_data = ncrp_yearendpop_filtered,
+  denominator_filter = "none",
+  group_vars = c("state", "race")
+) |>
+  left_join(robina_table_seba, by = "state")
+
+cat("rris_pop_pop_race:\n")
+print(fnc_count_rris(rris_pop_pop_race))
+
+write.csv(rris_pop_pop_race, "rris_pop_pop_race.csv")
+
+rris_pop_pop_race_pastonly <- fnc_calculate_rris(
   numerator_data = ncrp_yearendpop_filtered,
   numerator_filter = "past",
   denominator_data = ncrp_yearendpop_filtered,
   denominator_filter = "none",
   group_vars = c("state", "race")
-)
-# now also by offense
-rris_pop_pop_race_offense <- fnc_calculate_rris(
-  numerator_data = ncrp_yearendpop_filtered,
-  numerator_filter = "past",
-  denominator_data = ncrp_yearendpop_filtered,
-  denominator_filter = "none",
-  group_vars = c("state", "race", "group")
-)
+)|>
+  left_join(robina_table_seba, by = "state")
 
-cat("rris_pop_pop_race:\n")
-print(fnc_count_rris(rris_pop_pop_race))
+cat("rris_pop_pop_race_pastonly:\n")
+print(fnc_count_rris(rris_pop_pop_race_pastonly))
 
+write.csv(rris_pop_pop_race_pastonly, "rris_pop_pop_race_pastonly.csv")
 
 # This dataset calculates the RRI for individuals released past parole eligibility out of everyone released.
 # The numerator includes those released after their parole eligibility date, and
 # the denominator is all individuals who were released during the year.
-
-# Strength: Focuses on the likelihood of release past PE within the group of those actually released,
-# providing a precise look at delayed releases among the released population.
-# Limitation: Doesn’t account for those still incarcerated past PE,
-# which could miss patterns where individuals are not released at all.
-# Research Discussion: Highlights post-eligibility release delays,
-# but misses information on those who remain in prison past eligibility.
-
-# rris_rel_rel_race: Focuses on individuals already released, but misses those still
-# incarcerated past PE, so it doesn’t capture the full picture of delayed releases.
 
 # Rate is the number of people released past PE out of everyone released,
 rris_rel_rel_race <- fnc_calculate_rris(
@@ -190,57 +173,11 @@ rris_rel_rel_race <- fnc_calculate_rris(
   denominator_data = ncrp_releases_filtered,
   denominator_filter = "none",
   group_vars = c("state", "race")
-)
-# now also by offense
-rris_rel_rel_race_offense <- fnc_calculate_rris(
-  numerator_data = ncrp_releases_filtered,
-  numerator_filter = "past",
-  denominator_data = ncrp_releases_filtered,
-  denominator_filter = "none",
-  group_vars = c("state", "race", "group")
-)
+)|>
+  left_join(robina_table_seba, by = "state")
 
 cat("rris_rel_rel_race:\n")
 print(fnc_count_rris(rris_rel_rel_race))
 
 
-# *** The RRI in this dataset compares the likelihood of being released past
-# parole eligibility out of the population past parole eligibility. The numerator
-# includes individuals released after their parole eligibility date, and
-# the denominator is the total population of individuals who are past parole
-# eligibility (whether they were released or not).
-
-# Strength: Isolates those past parole eligibility, combining the entire past-PE population
-# with release data to offer a focused view of delayed release.
-# Limitation: Does not provide insights into those not yet parole-eligible,
-# so may miss broader prison population trends.
-# Research Discussion: Provides clear insights into post-PE release,
-# but less useful for understanding the broader context of parole and prison population dynamics.
-
-# rris_rel_pop_both_race: While it isolates individuals past PE, it combines those still
-# incarcerated with those released, making it less precise in identifying specific release delays.
-
-# Rate is the number of people released past PE out of the prison population past PE
-rris_rel_pop_both_race <- fnc_calculate_rris(
-  numerator_data = ncrp_releases_filtered,
-  numerator_filter = "past",
-  denominator_data = ncrp_yearendpop_filtered,
-  denominator_filter = "both",
-  group_vars = c("state", "race")
-)
-# now also by offense
-rris_rel_pop_both_race_offense <- fnc_calculate_rris(
-  numerator_data = ncrp_releases_filtered,
-  numerator_filter = "past",
-  denominator_data = ncrp_yearendpop_filtered,
-  denominator_filter = "both",
-  group_vars = c("state", "race", "group")
-)
-
-cat("rris_rel_pop_both_race:\n")
-print(fnc_count_rris(rris_rel_pop_both_race))
-
-
-# Overall - rris_pop_pop_race is the best option if you're focused on understanding who remains
-# incarcerated past parole eligibility, as it isolates those eligible for parole, providing a
-# clear view of delays without being diluted by individuals not yet eligible.
+write.csv(rris_rel_rel_race, "rris_rel_rel_race.csv")

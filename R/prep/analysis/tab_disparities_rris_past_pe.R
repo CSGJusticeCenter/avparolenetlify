@@ -258,20 +258,19 @@ all_sentence_pe_rri_male <- map(.x = states, .f = function(x) {
     filter(state == x, sex == "Male")
 
   # Generate the sentence based on RRI value.
-  if (nrow(df1) > 0) {
-    # if (df1$rri > 1) {
+  if (nrow(df1) > 0 && !is.na(df1$rri)) { # Check if rri is not NA
     if (df1$rri > 1) {
       final_sentence <- paste0("In ", select_year, ", <span style='color:#49a7a1; font-weight:bold;'>males </span> were incarcerated in state prison past parole eligibility at a rate <span style='color:#49a7a1; font-weight:bold;'>",
                                df1$rri, " times higher</span> than <span style='color:#55b4e5; font-weight:bold;'>females</span>, when accounting for prison population sizes in ", x, ".")
     } else if (df1$rri < 1) {
-      percent_less <- (1 - df1$rri)*100
+      percent_less <- (1 - df1$rri) * 100
       final_sentence <- paste0("In ", select_year, ", <span style='color:#49a7a1; font-weight:bold;'>males </span> were <span style='color:#49a7a1; font-weight:bold;'>",
-                               percent_less, " percent less likely</span>  to be incarcerated in state prison past parole eligibility compared to <span style='color:#55b4e5; font-weight:bold;'>females</span>, when accounting for prison population sizes in ", x, ".")
+                               percent_less, " percent less likely</span> to be incarcerated in state prison past parole eligibility compared to <span style='color:#55b4e5; font-weight:bold;'>females</span>, when accounting for prison population sizes in ", x, ".")
     } else {
-      final_sentence <- paste0("")
+      final_sentence <- ""
     }
   } else {
-    final_sentence <- paste0("")
+    final_sentence <- ""
   }
 
   return(final_sentence)

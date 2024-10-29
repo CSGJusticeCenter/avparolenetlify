@@ -643,7 +643,7 @@ rm(states)
 # Releases by Age
 # ---------------------------------------------------------------------------- #
 
-prison_releases_agerlse <- fnc_summarize_data(ncrp_releases_filtered, "agerlse")
+prison_releases_agerlse <- fnc_summarize_data(ncrp_releases_filtered, "agerelease")
 
 # Get unique states to iterate over
 states <- unique(prison_releases_agerlse$state)
@@ -655,7 +655,7 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
   this_metric <- "Age"
   highcharts <- fnc_hc_columnchart(state_var  = x,
                                    df         = prison_releases_agerlse,
-                                   x_var      = "agerlse",
+                                   x_var      = "agerelease",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "released from prison",
@@ -674,7 +674,7 @@ all_sentence_releases_agerlse <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = prison_releases_agerlse,
-                                                 x_var      = "agerlse",
+                                                 x_var      = "agerelease",
                                                  type       = "released from prison")
 
 })
