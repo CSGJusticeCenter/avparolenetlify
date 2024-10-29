@@ -114,7 +114,10 @@ parole_eligibility_table1 <- parole_eligibility_table |>
 
 us_hex <- us_hex |>
   left_join(parole_eligibility_table1,
-            by = "state_abb")
+            by = "state_abb") |>
+  mutate(centroid = st_centroid(geometry)) %>%
+  mutate(lng = st_coordinates(centroid)[,1],
+         lat = st_coordinates(centroid)[,2])
 
 us_hex_abolished <- us_hex |>
   filter(abolished_parole == "Y")
@@ -131,7 +134,7 @@ css_fix <- "div.info.legend.leaflet-control br {clear: both;}" # CSS to correct 
 html_fix <- htmltools::tags$style(type = "text/css", css_fix)  # Convert CSS to HTML
 
 # Create a Leaflet map
-leaflet(us_hex) |>
+map_percent <- leaflet(us_hex) |>
   addTiles(options = tileOptions(opacity = 0)) |>
   addPolygons(data = us_hex,
               fillColor = "white",
@@ -187,21 +190,31 @@ leaflet(us_hex) |>
     overlayGroups = c("Abolished Parole"),
     options = layersControlOptions(collapsed = FALSE)
   ) |>
+  hideGroup("Abolished Parole") |>
   htmlwidgets::onRender("
     function(el) {
       // Set a white background for the map container
       document.querySelector('.leaflet-container').style.background = 'white';
-
-      // Uncheck the 'Abolished Parole' layer by default
-      var control = el.layersControl;
-      if (control) {
-        var abolishedLayer = control.getLayers().find(function(layer) {
-          return layer.name === 'Abolished Parole';
-        });
-        if (abolishedLayer) {
-          abolishedLayer.checkbox.checked = false;
-        }
-      }
     }
-  ")
+  ") |>
+  # Add initials as labels at hex centroids
+  addLabelOnlyMarkers(data = us_hex,
+                      ~lng, ~lat,
+                      label = ~state_abb,
+                      labelOptions = labelOptions(
+                        noHide = TRUE,
+                        direction = 'center',
+                        textsize = "12px",
+                        opacity = 1,
+                        style = list(
+                          "color" = "black",                   # Text color
+                          "background-color" = "transparent",  # Transparent background
+                          "border" = "none",                   # Remove border
+                          "padding" = "0px",                   # Remove padding
+                          "box-shadow" = "none",               # Remove shadow
+                          "font-weight" = "bold"               # Make the text bold (optional for visibility)
+                        )
+                      )
+  )
 
+map_percent

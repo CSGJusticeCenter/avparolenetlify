@@ -169,7 +169,8 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
   # create data labels
   mutate(change_label = paste0(round(current_perc, 0), "%"),
-         change_label = str_replace_all(change_label, "NA%", "-"),
+         # change_label = str_replace_all(change_label, "NA%", "-"),
+         change_label = str_replace_all(change_label, "NA%", " "),
 
          currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
@@ -208,8 +209,8 @@ map_data_breaks <- map_data |>
     ),
     gradient_color = case_when(
       is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,
-      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ "white",
-      # state == "Louisiana" ~ "white",
+      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ yellow,
+      # state == "Louisiana" ~ yellow,
       TRUE ~ gradient_color
     ),
     data_category_num = case_when(
@@ -234,18 +235,18 @@ map_percent <- highchart(height = 625) |>
     value = "data_category_num",
     dataLabels = list(enabled = TRUE,
                       useHTML = TRUE,
-                      formatter = JS("function() {return '<div style=\"text-align:center;\">' +
-                            '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.state_abb + '</span><br>' +
-                            '<span style=\"font-weight:normal; font-size: 16px; text-align:center;\">' + this.point.change_label + '</span>' + '</div>';}"),
-                      textOutline = "none",
-                      y = 0),
-    nullColor = darkgray,
-   # borderColor = "#FFFFFF",
-   borderColor = lightgray,
-    accessibility = list(
-      enabled = TRUE,
-      keyboardNavigation = list(enabled = TRUE),
-      point = list(valueDescriptionFormat = "{point.state}, {point.currentperclabel}"))) |>
+                      align = "center",
+                      formatter = JS("function() {
+                          return '<div style=\"text-align:center; font-weight:regular;\">' + this.point.state_abb + '<br>' + this.point.change_label + '</div>';
+                      }"),
+                      style = list(fontSize = "16px",
+                                   fontWeight = "regular",
+                                   align = "center",
+                                   fontFamily = "Graphik",
+                                   textOutline = 0)),
+
+    borderColor = "white",
+    nullColor = darkgray) |>
 
   hc_colorAxis(dataClassColor = "category",
                dataClasses = list(
@@ -253,7 +254,7 @@ map_percent <- highchart(height = 625) |>
                  list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
                  list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
-                 list(from = 5, to = 5, color = "white", name = "Abolished Discretionary Parole",
+                 list(from = 5, to = 5, color = yellow, name = "Abolished Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
                )
@@ -264,22 +265,10 @@ map_percent <- highchart(height = 625) |>
             layout = "vertical",
             symbolHeight = 15,
             symbolWidth = 15,
-            x = 10,
+            x = -10,
             y = -40,
             itemMarginTop = 2,
             itemMarginBottom = 2) |>
-  # hc_legend(align = "right",
-  #           verticalAlign = "bottom",
-  #           layout = "vertical",
-  #           symbolHeight = 15,
-  #           symbolWidth = 15,
-  #           itemMarginTop = 2,
-  #           itemMarginBottom = 2,
-  #           useHTML = TRUE)  |>
-  # hc_legend(
-  #   symbolStroke = "#000000",      # Outline color for the symbols
-  #   symbolStrokeWidth = 2           # Outline width for the symbols
-  # ) |>
 
   hc_xAxis(title = "") |>
   hc_yAxis(title = "") |>
