@@ -141,3 +141,17 @@ lightgray <- "#d7d7d7"
 ncrp_csg_source <- "National Corrections Reporting Program and CSG Justice Center estimates"
 ncrp_source     <- "National Corrections Reporting Program"
 bjs_source      <- "BJS Prisoners in the United States"
+
+
+
+
+
+
+#------------------------------------------------------------------------------#
+# Sources
+#------------------------------------------------------------------------------#
+
+# Define states that won't need to filter
+states_nofilter <- c("Connecticut", "Idaho")
+# TBD - NJ, HI
+# Don't use Alaska, Vermont - too much missingness

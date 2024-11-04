@@ -37,15 +37,17 @@ fnc_filter_pe_population_criteria <- function(data) {
   exclude <- states_to_exclude |>
     pull(state)
 
-  # Filter data based on the admission type, valid sentence lengths, and states that did not abolish parole
+  # Filter data based on criteria, applying admtype and sentlgth filters only if state is not in states_nofilter
   filtered_data <- data |>
-    filter(admtype == "New court commitment") |>
-    filter(sentlgth %in% c("1-1.9 years",
-                           "2-4.9 years",
-                           "5-9.9 years",
-                           "10-24.9 years",
-                           ">=25 years")) |>
-    filter(!(state %in% exclude))
+    filter(!(state %in% exclude)) |>
+    filter(
+      (state %in% states_nofilter) | # Skip filtering if in states_nofilter
+        (admtype == "New court commitment" & sentlgth %in% c("1-1.9 years",
+                                                             "2-4.9 years",
+                                                             "5-9.9 years",
+                                                             "10-24.9 years",
+                                                             ">=25 years"))
+    )
 
   # Return the filtered data
   return(filtered_data)

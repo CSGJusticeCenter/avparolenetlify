@@ -111,13 +111,26 @@ ncrp_releases_consolidated       <- fnc_transform_ncrp_data(ncrp_releases_consol
 ncrp_yearendpop_not_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_combined)
 ncrp_yearendpop_consolidated     <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
 
-
+# Calculate time served for both releases files
 ncrp_releases <- ncrp_releases |>
   mutate(time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
-
 ncrp_releases_consolidated <- ncrp_releases_consolidated |>
   rename(relyr = releaseyr) |>
   mutate(time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
+
+# For states_nofilter, use the data in not consolidated and add it to the consolidated file
+states_nofilter_yearendpop <- ncrp_yearendpop_not_consolidated |>
+  filter(state %in% states_nofilter)
+
+# Remove data for states_nofilter which we extracted from the unconsolidated file
+ncrp_yearendpop_consolidated <- ncrp_yearendpop_consolidated |>
+  filter(!state %in% states_nofilter)
+
+# Combine data
+ncrp_yearendpop_consolidated <- bind_rows(ncrp_yearendpop_consolidated, states_nofilter_yearendpop)
+
+######################### NEED TO DETERMINE ELIG STATUS
+# use earliest_pey1 and earliest_pey1_status for Connecticut and Idaho
 
 #------------------------------------------------------------------------------#
 # States Excluded
@@ -127,13 +140,20 @@ ncrp_releases_consolidated <- ncrp_releases_consolidated |>
 # We need these variables to filter the population to people in prison for
 # new offenses and sentence lengths not less than one year and not life
 # Filter for states with more than 50% missing in admtype or sentlgth
-states_with_high_missing <- ncrp_yearendpop %>%
-  filter(rptyear == select_year) |>
-  group_by(state) %>%
+states_with_high_missing_by_year <- ncrp_yearendpop_consolidated |>
+  group_by(state, rptyear) |>
   summarize(
     perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
     perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1),
-    .groups = "drop") %>%
+    .groups = "drop")
+
+states_with_high_missing <- ncrp_yearendpop_consolidated |>
+  filter(rptyear == select_year) |>
+  group_by(state) |>
+  summarize(
+    perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
+    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1),
+    .groups = "drop") |>
   filter(perc_missing_admtype > 50 | perc_missing_sentlgth > 50)
 
 # Get states that have abolished parole and keep it as a dataframe
@@ -142,21 +162,15 @@ abolished_states <- state_notes |>
   select(state)  # Select only the 'state' column
 
 # Combine both dataframes of states to exclude
-states_to_exclude <- states_with_high_missing %>%
-  select(state) %>%
-  distinct() %>%
-  bind_rows(abolished_states) %>%
-  distinct()  # Remove any duplicates
-
-# May be needed, filter the resulting dataframe for a specific year (e.g., 2020) ##############################
-states_to_exclude <- states_with_high_missing %>%
-  select(state) %>%
-  bind_rows(abolished_states) %>%
-  distinct()
-  # bind_rows(tibble(state = "Alabama"))
+states_to_exclude <- states_with_high_missing |>
+  select(state) |>
+  distinct() |>
+  bind_rows(abolished_states) |>
+  distinct() |>
+  filter(!state %in% states_nofilter) # exclude states that we don't need to filter (CT and ID)
 
 # States with high missingness for race and ethnicity
-states_with_high_missing_race <- ncrp_yearendpop |>
+states_with_high_missing_race <- ncrp_yearendpop_consolidated |>
   filter(rptyear == select_year) |>
   group_by(state) |>
   summarize(
@@ -340,7 +354,7 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   select(state = x, male = x_6, female = x_7) |>
   mutate(state = str_replace(state, "/.*", ""),
          state = str_replace(state, "Alaskab", "Alaska"),
-         state = str_replace(state, "Utahc", "Utah")) %>%
+         state = str_replace(state, "Utahc", "Utah")) |>
   filter(state != "" &
            state != "State" &
            state != "Federal" &
@@ -357,7 +371,6 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   rename(n = population) |>
   mutate(
     prop = (n/sum(n))*100,
-    # yearendpop_ped = sum(n)
     prop_label = paste0(round(prop, 0), "%"),
     n_label = formattable::comma(n, 0)
   ) |>
@@ -375,18 +388,18 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 # Define the data objects and their corresponding file names
 data_files <- list(
   # ncrp_yearendpop                  = "ncrp_yearendpop.rds",
-  # ncrp_releases                    = "ncrp_releases.rds",
+  ncrp_releases                    = "ncrp_releases.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
-  ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds"
-  # ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
-  # bjs_prison_pop_by_race_2020      = "bjs_prison_pop_by_race_2020.rds",
-  # bjs_prison_pop_by_race_2022      = "bjs_prison_pop_by_race_2022.rds",
-  # bjs_prison_pop_by_sex_2022       = "bjs_prison_pop_by_sex_2022.rds",
-  # bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
-  # hex_gj                           = "hex_gj.rds",
-  # state_notes                      = "state_notes.rds",
-  # states_to_exclude                = "states_to_exclude.rds",
-  # states_with_high_missing_race    = "states_with_high_missing_race.rds"
+  ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",
+  ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
+  bjs_prison_pop_by_race_2020      = "bjs_prison_pop_by_race_2020.rds",
+  bjs_prison_pop_by_race_2022      = "bjs_prison_pop_by_race_2022.rds",
+  bjs_prison_pop_by_sex_2022       = "bjs_prison_pop_by_sex_2022.rds",
+  bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
+  hex_gj                           = "hex_gj.rds",
+  state_notes                      = "state_notes.rds",
+  states_to_exclude                = "states_to_exclude.rds",
+  states_with_high_missing_race    = "states_with_high_missing_race.rds"
 )
 
 # Loop through the list and save each data object to its corresponding file

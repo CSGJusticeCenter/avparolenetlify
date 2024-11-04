@@ -2,20 +2,14 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: July 15, 2024 (MAR)
+# Date last updated: November 4, 2024 (MAR)
 # Description:
 #    Parole eligibility map, tables, and other visualizations for national trends page
 #######################################
 
-hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
-  select(state_abb = iso3166_2) |>
-  filter(state_abb != "DC") |>
-  st_transform(3857) |>
-  sf_geojson() |>
-  fromJSON(simplifyVector = FALSE)
-
-
-#-----Parole Eligibility Table ------#
+#------------------------------------------------------------------------------#
+# Parole Eligibility Table
+#------------------------------------------------------------------------------#
 
 # Get total prison population by state and year
 total_pop_by_year <- ncrp_yearendpop_consolidated |>
@@ -68,13 +62,13 @@ filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_
          contains("current"), contains("future"), contains("missing")) |>
   filter(rptyear == select_year) |>
   mutate(current_perc           = current_perc * 100,
-         # future_perc            = future_perc * 100,
-         # missing_perc           = missing_perc * 100,
          current_count_rounded = fnc_round_to_power(current_count))
 
 
 
-#-----Parole Board Members by State ------#
+#------------------------------------------------------------------------------#
+# Parole Board Members by State
+#------------------------------------------------------------------------------#
 
 # Get parole status information by state
 # Get number of parole board members
@@ -83,7 +77,9 @@ states_parole <- state_notes |>
 
 
 
-#-----Parole Eligibility Table ------#
+#------------------------------------------------------------------------------#
+# Parole Eligibility Table
+#------------------------------------------------------------------------------#
 
 # Only include states that abolished parole + Lousiana (high PE population)
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
@@ -493,7 +489,6 @@ data_files <- list(
   map_percent                       = "map_percent.rds",
   parole_eligibility_table          = "parole_eligibility_table.rds",
   parole_eligibility_table_download = "parole_eligibility_table_download.rds"
-
 )
 
 # Loop through the list and save each data object to its corresponding file
