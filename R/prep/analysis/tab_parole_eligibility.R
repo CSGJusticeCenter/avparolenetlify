@@ -97,6 +97,7 @@ all_pie_pe_type <- map(.x = states, .f = function(x) {
 # Assign state names to list
 all_pie_pe_type <- setNames(all_pie_pe_type, states)
 all_pie_pe_type$Georgia
+all_pie_pe_type$Connecticut
 
 # SENTENCE: In YEAR, 76 percent of people in prison were currently past their
 #           parole eligibility. Another 23 percent will reach
@@ -121,6 +122,7 @@ all_sentence_pe_type <- map(states, function(x) {
 # Assign state names to list
 all_sentence_pe_type <- setNames(all_sentence_pe_type, states)
 all_sentence_pe_type$Georgia
+all_sentence_pe_type$Connecticut
 rm(states)
 
 
@@ -181,8 +183,7 @@ all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
 # Assign state names to list
 all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Georgia
-
-
+all_sentence_pop_pe_by_year$Connecticut
 
 
 
@@ -269,6 +270,7 @@ all_bar_pop_pe_by_year <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_bar_pop_pe_by_year <- setNames(all_bar_pop_pe_by_year, states)
 all_bar_pop_pe_by_year$Georgia
+all_bar_pop_pe_by_year$Connecticut
 
 
 

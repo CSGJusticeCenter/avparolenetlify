@@ -4,7 +4,7 @@
 
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
-ncrp_yearendpop_race <- fnc_filter_pe_population_criteria(ncrp_yearendpop) |>
+ncrp_yearendpop_race <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 # remove states with high missingness for race and ethnicity
 
@@ -77,6 +77,7 @@ all_sentence_pe_rri_black <- map(.x = states, .f = function(x) {
 # Assign state names to the generated sentences for each state.
 all_sentence_pe_rri_black <- setNames(all_sentence_pe_rri_black, states)
 all_sentence_pe_rri_black$Georgia
+
 
 # SENTENCE
 # Generate sentence for each state
@@ -210,7 +211,7 @@ map(.x = states, .f = function(x) {
 
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
-ncrp_yearendpop_sex <- fnc_filter_pe_population_criteria(ncrp_yearendpop)
+ncrp_yearendpop_sex <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated)
 
 # Get total prison pop by state and rptyear
 prison_pop_by_sex <- ncrp_yearendpop_sex |>

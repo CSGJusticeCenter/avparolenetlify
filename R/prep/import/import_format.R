@@ -113,10 +113,23 @@ ncrp_yearendpop_consolidated     <- fnc_transform_ncrp_data(ncrp_yearendpop_cons
 
 # Calculate time served for both releases files
 ncrp_releases <- ncrp_releases |>
-  mutate(time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
+  mutate(relyr = as.numeric(relyr),
+         time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
 ncrp_releases_consolidated <- ncrp_releases_consolidated |>
   rename(relyr = releaseyr) |>
-  mutate(time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
+  mutate(relyr = as.numeric(relyr),
+         time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
+
+# For states_nofilter, use the data in not consolidated and add it to the consolidated file
+states_nofilter_releases <- ncrp_releases |>
+  filter(state %in% states_nofilter)
+
+# Remove data for states_nofilter which we extracted from the unconsolidated file
+ncrp_releases_consolidated <- ncrp_releases_consolidated |>
+  filter(!state %in% states_nofilter)
+
+# Combine data
+ncrp_releases_consolidated <- bind_rows(ncrp_releases_consolidated, states_nofilter_releases)
 
 # For states_nofilter, use the data in not consolidated and add it to the consolidated file
 states_nofilter_yearendpop <- ncrp_yearendpop_not_consolidated |>
@@ -387,7 +400,6 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  # ncrp_yearendpop                  = "ncrp_yearendpop.rds",
   ncrp_releases                    = "ncrp_releases.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",

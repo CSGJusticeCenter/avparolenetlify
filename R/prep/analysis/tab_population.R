@@ -63,6 +63,7 @@ all_sentence_population <- map(.x = states, .f = function(x) {
 # Assign state names to list
 all_sentence_population <- setNames(all_sentence_population, states)
 all_sentence_population$Georgia
+all_sentence_population$Connecticut
 
 # VISUALIZATION: Prison Population by Year
 # Generate chart for each state
@@ -119,6 +120,7 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_line_population_by_year <- setNames(all_line_population_by_year, states)
 all_line_population_by_year$Georgia
+all_line_population_by_year$Connecticut
 rm(states)
 
 
@@ -140,7 +142,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Race and Ethnicity"
   highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = bjs_prison_pop_by_race_2020 |> mutate(prop = prop*100),
+                                   df         = bjs_prison_pop_by_race_2020,
                                    x_var      = "race",
                                    y_var      = "prop",
                                    metric     = this_metric,
@@ -154,13 +156,14 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_bar_population_race <- setNames(all_bar_population_race, states)
 all_bar_population_race$Georgia
+all_bar_population_race$Connecticut
 
 # SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
-                                                 df         = bjs_prison_pop_by_race_2020 |> mutate(prop = prop*100),
+                                                 df         = bjs_prison_pop_by_race_2020,
                                                  x_var      = "race",
                                                  type       = "in prison",
                                                  year       = bjs_data_year)
@@ -252,6 +255,7 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_bar_population_ageyrend <- setNames(all_bar_population_ageyrend, states)
 all_bar_population_ageyrend$Georgia
+all_bar_population_ageyrend$Connecticut
 
 # SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
@@ -267,6 +271,7 @@ all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 })
 all_sentence_population_ageyrend <- setNames(all_sentence_population_ageyrend, states)
 all_sentence_population_ageyrend$Georgia
+all_sentence_population_ageyrend$Connecticut
 rm(states)
 
 
@@ -349,6 +354,8 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_bar_population_sentlgth <- setNames(all_bar_population_sentlgth, states)
 all_bar_population_sentlgth$Georgia
+all_bar_population_sentlgth$Connecticut
+all_bar_population_sentlgth$Idaho
 
 # SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state

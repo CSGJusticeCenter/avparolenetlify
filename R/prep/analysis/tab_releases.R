@@ -59,6 +59,8 @@ all_sentence_releases <- map(.x = states, .f = function(x) {
 # Assign state names to list
 all_sentence_releases <- setNames(all_sentence_releases, states)
 all_sentence_releases$Georgia
+all_sentence_releases$Connecticut
+
 rm(states)
 
 # Get unique states to iterate over
@@ -108,6 +110,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
 # Assign state names to list
 all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
 all_line_releases_by_year$Georgia
+all_line_releases_by_year$Connecticut
 rm(states)
 
 
