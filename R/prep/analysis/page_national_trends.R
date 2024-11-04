@@ -222,7 +222,7 @@ map_data_breaks <- map_data |>
   )
 
 # create hex map
-map_percent <- highchart(height = 625) |>
+map_percent <- highchart(height = 600) |>
 
   hc_chart(marginTop = 50,
            marginBottom = 50,
