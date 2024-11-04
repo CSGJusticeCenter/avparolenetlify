@@ -209,8 +209,8 @@ map_data_breaks <- map_data |>
     ),
     gradient_color = case_when(
       is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,
-      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ yellow,
-      # state == "Louisiana" ~ yellow,
+      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ "white",
+      # state == "Louisiana" ~ "white",
       TRUE ~ gradient_color
     ),
     data_category_num = case_when(
@@ -245,8 +245,10 @@ map_percent <- highchart(height = 625) |>
                                    fontFamily = "Graphik",
                                    textOutline = 0)),
 
-    borderColor = "white",
-    nullColor = darkgray) |>
+   # borderColor = "white",
+    borderColor = darkgray,
+    borderWidth = 0.5,
+    nullColor = lightgray) |>
 
   hc_colorAxis(dataClassColor = "category",
                dataClasses = list(
@@ -254,7 +256,7 @@ map_percent <- highchart(height = 625) |>
                  list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
                  list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
-                 list(from = 5, to = 5, color = yellow, name = "Abolished Parole",
+                 list(from = 5, to = 5, color = "white", name = "Abolished Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
                )
@@ -327,6 +329,23 @@ map_percent <- highchart(height = 625) |>
     sourceHeight = 600) |>
   hc_caption(text = ncrp_csg_source,
              y = -10)
+
+# Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
+map_percent <- onRender(map_percent, "
+  function(el, x) {
+    // Add CSS to target the circle symbol of the second legend item
+    var style = document.createElement('style');
+    style.innerHTML = `
+      .highcharts-legend-item:nth-child(5) .highcharts-point {
+        stroke: gray;
+        stroke-width: 1px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+")
+
+# Render the map
 map_percent
 
 #------------------------------------------------------------------------------#

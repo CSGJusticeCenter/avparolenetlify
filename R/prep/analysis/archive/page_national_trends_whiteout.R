@@ -319,6 +319,22 @@ map_percent <- highchart(height = 625) |>
     sourceWidth = 800,
     sourceHeight = 600) |>
   hc_caption(text = ncrp_csg_source)
-map_percent
 
+# Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
+map_percent <- onRender(map_percent, "
+  function(el, x) {
+    // Add CSS to target the circle symbol of the second legend item
+    var style = document.createElement('style');
+    style.innerHTML = `
+      .highcharts-legend-item:nth-child(5) .highcharts-point {
+        stroke: gray;
+        stroke-width: 2px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+")
+
+# Render the map
+map_percent
 
