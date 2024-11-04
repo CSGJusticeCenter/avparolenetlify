@@ -59,8 +59,7 @@ div(
 ```
 
 <br>
-<div id="asterisk-section">
-*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.
+<div id="asterisk-section"> `r footnote_text` </div><br>
 </div>
 
 ::: {.panel-tabset .nav-pills}

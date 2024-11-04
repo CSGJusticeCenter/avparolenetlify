@@ -1,3 +1,12 @@
+
+# Define the footnote based on the state
+footnote_text <- if(state_for_report %in% c("Connecticut", "Idaho")) {
+  "*Includes people with any admission type or sentence length."
+} else {
+  "*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year."
+}
+
+
 #------------------------------------------------------------------------------#
 # Missingness/No Data Text
 #------------------------------------------------------------------------------#
