@@ -501,3 +501,11 @@ invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
 
+# Define file name
+file_name <- "parole_eligibility_by_state_2023_estimates.csv"
+
+# Construct the full path
+file_path <- file.path(app_folder, file_name)
+
+# Example of writing to this path
+write.csv(parole_eligibility_table_download, file_path, row.names = FALSE)

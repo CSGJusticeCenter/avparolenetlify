@@ -103,11 +103,6 @@ div(
 <div id="map-section">
 ```{r map}
 map_percent 
-    # hc_exporting(enabled = TRUE,
-    #              buttons = list(contextButton = list(align = 'right',
-    #                                                  verticalAlign = 'top',
-    #                                                  y = 0,
-    #                                                  x = -5)))
 ```
 </div>
 <br>
@@ -150,20 +145,6 @@ reactable(
     na = "-" 
   ),
   columns = list(
-    # state = colDef(
-    #   name = "State", 
-    #   align = "left", 
-    #   width = 175,
-    #   cell = function(value, index) {
-    #     # Check if current_perc is NA or if discretionary parole is abolished
-    #     if (!is.na(parole_eligibility_table$current_perc[index])) {
-    #       url <- paste0("https://avparoleproject.netlify.app/state_report_", tolower(gsub(" ", "_", value)))
-    #       tags$a(href = url, target = "_blank", style = "color:black;", value)
-    #     } else {
-    #       return(value)
-    #     }
-    #   }
-    # ),
     state = colDef(
       name = "State", 
       align = "left", 
@@ -204,16 +185,26 @@ reactable(
 
 
 ```{r echo=FALSE}
-parole_eligibility_table_download %>%
+# parole_eligibility_table_download |>
+#   download_this(
+#     output_name = "parole_eligibility_by_state_2023_estimates",
+#     output_extension = ".xlsx",
+#     button_label = "Download Table",
+#     button_type = "default",
+#     has_icon = TRUE,
+#     # icon = "fa fa-save",
+#     class = "download-button" 
+#   )
+parole_eligibility_table_download |>
   download_this(
     output_name = "parole_eligibility_by_state_2023_estimates",
-    output_extension = ".csv",
+    output_extension = ".xlsx",
     button_label = "Download Table",
     button_type = "default",
     has_icon = TRUE,
-    icon = "fa fa-save",
-    class = "download-button" 
-  )
+    class = "download-button",
+    style = "background-color: black; color: white; border: 1px solid black; border-radius: 0px; padding: 5px 5px; font-size: 14px;"
+  )  
 ```
 
 <br>
