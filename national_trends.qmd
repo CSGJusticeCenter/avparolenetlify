@@ -102,12 +102,12 @@ div(
 <br>
 <div id="map-section">
 ```{r map}
-map_percent |>
-    hc_exporting(enabled = TRUE,
-                 buttons = list(contextButton = list(align = 'right',
-                                                     verticalAlign = 'top',
-                                                     y = 0,
-                                                     x = -5)))
+map_percent 
+    # hc_exporting(enabled = TRUE,
+    #              buttons = list(contextButton = list(align = 'right',
+    #                                                  verticalAlign = 'top',
+    #                                                  y = 0,
+    #                                                  x = -5)))
 ```
 </div>
 <br>

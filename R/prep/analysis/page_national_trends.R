@@ -245,7 +245,6 @@ map_percent <- highchart(height = 625) |>
                                    fontFamily = "Graphik",
                                    textOutline = 0)),
 
-   # borderColor = "white",
     borderColor = darkgray,
     borderWidth = 0.5,
     nullColor = lightgray) |>
@@ -256,7 +255,7 @@ map_percent <- highchart(height = 625) |>
                  list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
                  list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
-                 list(from = 5, to = 5, color = "white", name = "Abolished Parole",
+                 list(from = 5, to = 5, color = "white", name = "Abolished Disretionary<br>Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
                )
@@ -267,7 +266,7 @@ map_percent <- highchart(height = 625) |>
             layout = "vertical",
             symbolHeight = 15,
             symbolWidth = 15,
-            x = -10,
+            x = 15,
             y = -40,
             itemMarginTop = 2,
             itemMarginBottom = 2) |>
@@ -295,7 +294,7 @@ map_percent <- highchart(height = 625) |>
     linkedDescription =
       paste0("This hexagonal map visualizes the projected proportion of people in prison past their parole eligibility across different U.S. states in 2023. ",
              "States are represented as hexagons, with color gradients indicating different percentage ranges of prison populations past parole eligibility. ",
-             "The map also includes a category for states that have abolished parole and those with missing data."),
+             "The map also includes a category for states that have abolished discretionary parole and those with missing data."),
     landmarkVerbosity = "one"
   ),
   area = list(accessibility = list(description =
@@ -321,14 +320,137 @@ map_percent <- highchart(height = 625) |>
            style = list(fontSize = "1.75em", fontWeight = "bold")) |>
 
   hc_exporting(
-    enabled = TRUE,
-    allowHTML = TRUE,
-    filename = paste0(gsub(" ", "_", tolower("Map Past Parole Eligibility by State 2023"))),
-    scale = 1,
-    sourceWidth = 800,
-    sourceHeight = 600) |>
+      enabled = FALSE) |>
+
   hc_caption(text = ncrp_csg_source,
-             y = -10)
+             y = 0)
+
+map_percent_download <- highchart(height = 625,
+                                  width = 1000) |>
+
+  hc_chart(marginTop = 50,
+           marginBottom = 50,
+           marginRight = 50) |>
+
+  hc_add_series_map(
+    map = hex_gj,
+    df = map_data_breaks,
+    joinBy = "state_abb",
+    value = "data_category_num",
+    dataLabels = list(enabled = TRUE,
+                      useHTML = TRUE,
+                      align = "center",
+                      formatter = JS("function() {
+                          return '<div style=\"text-align:center; font-weight:regular;\">' + this.point.state_abb + '<br>' + this.point.change_label + '</div>';
+                      }"),
+                      style = list(fontSize = "16px",
+                                   fontWeight = "regular",
+                                   align = "center",
+                                   fontFamily = "Graphik",
+                                   textOutline = 0)),
+
+    borderColor = darkgray,
+    borderWidth = 0.5,
+    nullColor = lightgray) |>
+
+  hc_colorAxis(dataClassColor = "category",
+               dataClasses = list(
+                 list(from = 1, to = 1, color = green1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
+                 list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
+                 list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
+                 list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
+                 list(from = 5, to = 5, color = "white", name = "Abolished Disretionary<br>Parole",
+                      marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
+                 list(from = 6, to = 6, color = darkgray, name = "Missing Data")
+               )
+  ) |>
+
+  hc_legend(align = "right",
+            verticalAlign = "bottom",
+            layout = "vertical",
+            symbolHeight = 15,
+            symbolWidth = 15,
+            x = 15,
+            y = -40,
+            itemMarginTop = 2,
+            itemMarginBottom = 2) |>
+
+  hc_xAxis(title = "") |>
+  hc_yAxis(title = "") |>
+
+  hc_add_theme(base_hc_theme) |>
+
+  hc_plotOptions(series = list(
+    animation = FALSE,
+    cursor = "pointer",
+    borderWidth = 3,
+    accessibility = list(
+      enabled = TRUE,
+      keyboardNavigation = list(enabled = TRUE),
+      pointDescriptionFormatter = JS("function(point) {
+        return 'State: ' + point.state_abb + ', Percentage: ' + point.currentperclabel;
+      }")
+    )
+  ),
+  accessibility = list(
+    enabled = TRUE,
+    keyboardNavigation = list(enabled = TRUE),
+    linkedDescription =
+      paste0("This hexagonal map visualizes the projected proportion of people in prison past their parole eligibility across different U.S. states in 2023. ",
+             "States are represented as hexagons, with color gradients indicating different percentage ranges of prison populations past parole eligibility. ",
+             "The map also includes a category for states that have abolished discretionary parole and those with missing data."),
+    landmarkVerbosity = "one"
+  ),
+  area = list(accessibility = list(description =
+                                     paste0("This chart visually compares parole eligibility status across U.S. states, using colors to denote different percentage ranges.")))
+  ) |>
+
+  hc_tooltip(
+    borderWidth = 1,
+    borderRadius = 0,
+    backgroundColor = '#FFFFFF', # Fully opaque white background
+    outside = TRUE, # Ensure tooltip is rendered outside
+    useHTML = TRUE,
+    formatter = JS("function() {
+          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 5px;\">' +
+          '<div style=\"text-align:left;\">' +
+          '<span style=\"font-weight:normal; font-size: 1em;\">' + this.point.tooltip + '</span>' +
+          '</div></div>';
+    }")
+  ) |>
+
+  hc_title(text = "Percentage of People in Prison Past Parole Eligibility<br>2023 Projections",
+           align = "center",
+           style = list(fontSize = "1.75em", fontWeight = "bold")) |>
+
+  # hc_exporting(
+  #   enabled = TRUE,
+  #   allowHTML = TRUE,
+  #   filename = paste0(gsub(" ", "_", tolower("Map Past Parole Eligibility by State 2023"))),
+  #   scale = 1,
+  #   sourceWidth = 800,
+  #   sourceHeight = 600) |>
+
+  hc_exporting(
+    enabled = FALSE) |>
+
+  hc_caption(text = ncrp_csg_source,
+             y = 0)
+
+# Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
+map_percent_download <- onRender(map_percent_download, "
+  function(el, x) {
+    // Add CSS to target the circle symbol of the second legend item
+    var style = document.createElement('style');
+    style.innerHTML = `
+      .highcharts-legend-item:nth-child(5) .highcharts-point {
+        stroke: gray;
+        stroke-width: 1px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+")
 
 # Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
 map_percent <- onRender(map_percent, "
@@ -346,7 +468,21 @@ map_percent <- onRender(map_percent, "
 ")
 
 # Render the map
+map_percent_download
 map_percent
+
+# Save map_percent_download as a temporary HTML file
+saveWidget(map_percent_download, file = "temp.html", selfcontained = TRUE)
+
+# Use webshot to take a screenshot and save it as a PNG
+webshot2::webshot(
+  url = "temp.html",
+  file = file.path(app_folder, "map_percent_download.png"),
+  delay = 1,
+  vwidth = 1200,
+  vheight = 500,
+  cliprect = c(0, 0, 1000, 625)
+)
 
 #------------------------------------------------------------------------------#
 # Save Data
