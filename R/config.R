@@ -74,10 +74,9 @@ deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_find
 
 # Most recent year of NCRP data and BJS data
 select_year <- 2019
-pop_select_year <- 2020
-bjs_data_year <- 2020
+pop_select_year <- 2019
+bjs_data_year <- 2019
 latest_reliable_ncrp_year <- 2019
-census_year <- 2020
 
 #------------------------------------------------------------------------------#
 # Fonts

@@ -130,7 +130,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Get unique states to iterate over
-states <- bjs_prison_pop_by_race_2020 |>
+states <- bjs_prison_pop_by_race_2019 |>
   filter(!state %in% states_to_exclude$state) |>
   distinct(state) |>
   arrange(state) |>
@@ -142,7 +142,7 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Race and Ethnicity"
   highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = bjs_prison_pop_by_race_2020,
+                                   df         = bjs_prison_pop_by_race_2019,
                                    x_var      = "race",
                                    y_var      = "prop",
                                    metric     = this_metric,
@@ -163,7 +163,7 @@ all_bar_population_race$Connecticut
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
-                                                 df         = bjs_prison_pop_by_race_2020,
+                                                 df         = bjs_prison_pop_by_race_2019,
                                                  x_var      = "race",
                                                  type       = "in prison",
                                                  year       = bjs_data_year)
@@ -182,7 +182,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Get unique states to iterate over
-states <- bjs_prison_pop_by_sex_2022 |>
+states <- bjs_prison_pop_by_sex_2019 |>
   filter(!state %in% states_to_exclude$state) |>
   pull(state)
 
@@ -192,7 +192,7 @@ all_bar_population_sex <- map(.x = states,  .f = function(x) {
 
   this_metric <- "Sex"
   highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = bjs_prison_pop_by_sex_2022,
+                                   df         = bjs_prison_pop_by_sex_2019,
                                    x_var      = "sex",
                                    y_var      = "prop",
                                    metric     = this_metric,
@@ -212,7 +212,7 @@ all_bar_population_sex$Georgia
 all_sentence_population_sex <- map(.x = states,  .f = function(x) {
 
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
-                                                 df         = bjs_prison_pop_by_sex_2022,
+                                                 df         = bjs_prison_pop_by_sex_2019,
                                                  x_var      = "sex",
                                                  type       = "in prison",
                                                  year       = bjs_data_year)

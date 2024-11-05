@@ -1,9 +1,10 @@
 
 # Set up
-# source("R/config.R")
-# source("R/prep/helper_functions.R")
-# source("R/prep/helper_functions_disparities.R")
-# source("R/prep/import_format.R")
+source("R/config.R")
+# source("R/prep/import/helper_functions_import.R")
+# source("R/prep/import/import_format.R")
+source("R/prep/analysis/helper_functions.R")
+source("R/prep/analysis/helper_functions_disparities.R")
 
 # Load Data
 # load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
@@ -16,15 +17,14 @@
 # load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_2020.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex_2022.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_2019.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex_2019.rds"))
 
 source("R/prep/analysis/page_national_trends.R")
 source("R/prep/analysis/tab_parole_eligibility.R")
 source("R/prep/analysis/tab_population.R")
 source("R/prep/analysis/tab_releases.R")
 source("R/prep/analysis/tab_disparities.R")
-source("R/prep/analysis/tab_disparities_rris.R")
 source("R/prep/analysis/tab_disparities_rris_past_pe.R")
 
 # Function to replace place-holder text in orig qmd with our replacement values (state names)

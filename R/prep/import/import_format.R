@@ -200,33 +200,22 @@ states_with_high_missing_race <- ncrp_yearendpop_consolidated |>
 # BJS
 #------------------------------------------------------------------------------#
 
-# Import BJS prisoners data for 2020 and 2022 (not sure which one will be used yet).
-# Skipping the first 10 rows due to headers and metadata.
-bjs_prison_pop_by_race_state_2020 <- read.csv(file.path(sp_data_path,
-                                                        "data/raw/BJS Prison Pop/p20st/p20stat02.csv"),
-                                              skip = 10)
-
-bjs_prison_pop_by_race_state_2022 <- read.csv(file.path(sp_data_path,
-                                                        "data/raw/BJS Prison Pop/p22st/p22stat01.csv"),
-                                              skip = 10)
-
-
 # Define a list of filenames for different years along with the specific column needed for the data.
 # The 'col' value in each list corresponds to the column that holds the relevant data in the CSV file.
 file_info <- list(
-  "2010" = list(file = "p10/p10at01.csv", col = "x_3"),
-  "2011" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_1"),
-  "2012" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_5"),
-  "2013" = list(file = "p13/p13t02.csv", col = "x_5"),
-  "2014" = list(file = "p14/CSV tables/p14t02.csv", col = "x_5"),
-  "2015" = list(file = "p15/p15t02.csv", col = "x_6"),
-  "2016" = list(file = "p16/p16t02.csv", col = "x_5"),
-  "2017" = list(file = "p17/p17t02.csv", col = "x_5"),
-  "2018" = list(file = "p18/p18t02.csv", col = "x_5"),
-  "2019" = list(file = "p19/p19t02.csv", col = "x_5"),
-  "2020" = list(file = "p20st/p20stt02.csv", col = "x_4"),
-  "2021" = list(file = "p21st/p21stt02.csv", col = "x_4"),
-  "2022" = list(file = "p22st/p22stt02.csv", col = "x_1")
+  "2010" = list(file = "p10/p10at01.csv", col = "x_3"),                # Prisoners under the jurisdiction
+  "2011" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_1"),  # Total state and federal prisoners
+  "2012" = list(file = "p12tar9112/p12tar9112at06.csv", col = "x_5"),  # Total state and federal prisoners
+  "2013" = list(file = "p13/p13t02.csv", col = "x_5"),                 # Prisoners under the jurisdiction
+  "2014" = list(file = "p14/CSV tables/p14t02.csv", col = "x_5"),      # Prisoners under the jurisdiction
+  "2015" = list(file = "p15/p15t02.csv", col = "x_6"),                 # Prisoners under the jurisdiction
+  "2016" = list(file = "p16/p16t02.csv", col = "x_5"),                 # Prisoners under the jurisdiction
+  "2017" = list(file = "p17/p17t02.csv", col = "x_5"),                 # Prisoners under the jurisdiction
+  "2018" = list(file = "p18/p18t02.csv", col = "x_5"),                 # Prisoners under the jurisdiction
+  "2019" = list(file = "p19/p19t02.csv", col = "x_5"),                 # Prisoners under the jurisdiction
+  "2020" = list(file = "p20st/p20stt02.csv", col = "x_4"),             # Prisoners under the jurisdiction
+  "2021" = list(file = "p21st/p21stt02.csv", col = "x_4"),             # Prisoners under the jurisdiction
+  "2022" = list(file = "p22st/p22stt02.csv", col = "x_1")              # Prisoners under the jurisdiction
 )
 
 # Initialize an empty list to store the cleaned data for each year.
@@ -252,23 +241,34 @@ for (year in names(file_info)) {
 # Combine all the cleaned datasets from different years into a single dataframe.
 bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
 
-# Calculate total BJS prison population for 2020. Clean the 'total' column by removing commas.
-total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
+
+
+
+
+
+# Import BJS prisoners data by race and ethnicity for 2019
+# Skipping the first 10 rows due to headers and metadata.
+# Prisoners under the jurisdiction
+bjs_prison_pop_by_race_state_2019 <- read.csv(file.path(sp_data_path,
+                                                        "data/raw/BJS Prison Pop/p19/p19at02.csv"),
+                                              skip = 10)
+
+# Calculate total BJS prison population for 2019. Clean the 'total' column by removing commas.
+total_bjs_pop_2019 <- bjs_prison_pop_by_race_state_2019 |>
   clean_names() |>
-  filter(jurisdiction == "") |>
+  filter(state_federal == "") |>
   select(x, total) |>
   rename(state = x) |>
   mutate(state = sub("/.*", "", state),
          total = str_replace_all(total, ",", ""),
          total = as.numeric(total))
 
-
-# Process BJS population by race and ethnicity for 2020
+# Process BJS population by race and ethnicity for 2019
 # Warning OK - characters like '~' turned to NA
-bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
+bjs_prison_pop_by_race_2019 <- bjs_prison_pop_by_race_state_2019 |>
   clean_names() |>
-  filter(jurisdiction == "") |>
-  select(-jurisdiction) |>
+  filter(state_federal == "") |>
+  select(-state_federal) |>
   rename(state = x) |>
   mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
   mutate(across(-state, as.numeric)) |>
@@ -291,11 +291,11 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
       race == "unknown" ~ "Unknown",
       race == "did_not_report" ~ "Unknown",
       TRUE ~ race
-  )) |>
+    )) |>
   filter(race != "Unknown" & race != "Total Population") |>
   group_by(state, race) |>
   summarise(n = sum(n, na.rm = TRUE)) |>
-  left_join(total_bjs_pop_2020, by = "state") |>
+  left_join(total_bjs_pop_2019, by = "state") |>
   ungroup() |>
   mutate(prop = (n / total)*100,
          prop_label = paste0(round(prop, 0), "%"),
@@ -303,66 +303,18 @@ bjs_prison_pop_by_race_2020 <- bjs_prison_pop_by_race_state_2020 |>
          population_type = "In Prison") |>
   select(-total)
 
-# Similar to 2020, process total population and population by race and ethnicity for 2022.
-total_bjs_pop_2022 <- bjs_prison_pop_by_race_state_2022 |>
-  clean_names() |>
-  filter(jurisdiction == "") |>
-  select(x, total) |>
-  rename(state = x) |>
-  mutate(total = str_replace_all(total, ",", ""),
-         total = as.numeric(total))
 
-# Pop by Race and Ethnicity
+
+# Import BJS prisoners data by sex for 2019
+# Skipping the first 10 rows due to headers and metadata.
+# Prisoners under the jurisdiction
+bjs_prison_pop_by_sex_2019_raw <- read.csv(file.path(sp_data_path,
+                                                     "data/raw/BJS Prison Pop/p19/p19t02.csv"))
+bjs_prison_pop_by_sex_2019_raw <- bjs_prison_pop_by_sex_2019_raw[-(1:10), ]
+
+# Process BJS population by sex for 2019
 # Warning OK - characters like '~' turned to NA
-bjs_prison_pop_by_race_2022 <- bjs_prison_pop_by_race_state_2022 |>
-  clean_names() |>
-  filter(jurisdiction == "") |>
-  select(-jurisdiction) |>
-  rename(state = x) |>
-  mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
-  mutate(across(-state, as.numeric)) |>
-  pivot_longer(cols = total:did_not_report,
-               names_to = "race",
-               values_to = "n") |>
-  mutate(
-    state = sub("/.*", "", state),
-    race = case_when(
-    race == "total" ~ "Total Population",
-    race == "white_a" ~ "White, non-Hispanic",
-    race == "black_a" ~ "Black, non-Hispanic",
-    race == "hispanic" ~ "Hispanic, any race",
-    race %in% c("american_indian_alaska_native_a",
-                "asian_a",
-                "native_hawaiian_other_pacific_islander_a",
-                "two_or_more_races_a",
-                "other_a") ~ "Other race(s), non-Hispanic",
-    race == "unknown" ~ "Unknown",
-    race == "did_not_report" ~ "Unknown",
-    TRUE ~ race
-  )) |>
-  filter(race != "Unknown" & race != "Total Population") |>
-  group_by(state, race) |>
-  summarise(n = sum(n, na.rm = TRUE)) |>
-  left_join(total_bjs_pop_2022, by = "state") |>
-  ungroup() |>
-  mutate(prop = (n / total)*100,
-         prop_label = paste0(round(prop, 0), "%"),
-         n_label = formattable::comma(n, 0),
-         population_type = "In Prison"
-         ) |>
-  select(-total)|>
-  mutate(state = str_replace(state, "/.*", ""))
-
-
-# Read and clean BJS population data by sex for 2022 ?????????????????????????????????????????????????????? CHECK IF I NEED THIS BEFORE DOING MORE WORK
-# bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(sp_data_path,
-#                                                         "data/raw/BJS Prison Pop/p22st/p22stt02.csv"),
-#                                               skip = 10)
-bjs_prison_pop_by_sex_2022_raw <- read.csv(file.path(sp_data_path,
-                                                     "data/raw/BJS Prison Pop/p22st/p22stt02.csv"))
-bjs_prison_pop_by_sex_2022_raw <- bjs_prison_pop_by_sex_2022_raw[-(1:10), ]
-
-bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
+bjs_prison_pop_by_sex_2019 <- bjs_prison_pop_by_sex_2019_raw  |>
   clean_names() |>
   select(state = x, male = x_6, female = x_7) |>
   mutate(state = str_replace(state, "/.*", ""),
@@ -389,8 +341,9 @@ bjs_prison_pop_by_sex_2022 <- bjs_prison_pop_by_sex_2022_raw  |>
   ) |>
   ungroup() |>
   mutate(sex = case_when(sex == "male" ~ "Male",
-                            sex == "female" ~ "Female",
-                            TRUE ~ sex))
+                         sex == "female" ~ "Female",
+                         TRUE ~ sex))
+
 
 
 
@@ -404,9 +357,8 @@ data_files <- list(
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",
   ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
-  bjs_prison_pop_by_race_2020      = "bjs_prison_pop_by_race_2020.rds",
-  bjs_prison_pop_by_race_2022      = "bjs_prison_pop_by_race_2022.rds",
-  bjs_prison_pop_by_sex_2022       = "bjs_prison_pop_by_sex_2022.rds",
+  bjs_prison_pop_by_race_2019      = "bjs_prison_pop_by_race_2019.rds",
+  bjs_prison_pop_by_sex_2019       = "bjs_prison_pop_by_sex_2019.rds",
   bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
   hex_gj                           = "hex_gj.rds",
   state_notes                      = "state_notes.rds",

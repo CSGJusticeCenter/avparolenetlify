@@ -332,23 +332,13 @@ state_bar_releases_fbi_index <- apply_chart_settings(
 #------------------------------------------------------------------------------#
 
 # Race and Ethnicity
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_black.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_hispanic.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
 
-rri_infographic_black       <- paste0(sp_data_path, "/data/analysis/app/pngs/rri_infographic_black_",
-                                      state_for_report, ".png")
-rri_infographic_hispanic    <- paste0(sp_data_path, "/data/analysis/app/pngs/rri_infographic_hispanic_",
-                                      state_for_report, ".png")
 pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_black_",
                                       state_for_report, ".png")
 pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_hispanic_",
                                       state_for_report, ".png")
-
-state_sentence_rri_black <- all_sentence_rri_black[[state_for_report]]
-
-state_sentence_rri_hispanic <- all_sentence_rri_hispanic[[state_for_report]]
 
 state_sentence_pe_rri_black <- all_sentence_pe_rri_black[[state_for_report]]
 
@@ -356,11 +346,7 @@ state_sentence_pe_rri_hispanic <- all_sentence_pe_rri_hispanic[[state_for_report
 
 
 # Sex
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_rri_male.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_male.rds"))
-
-# rri_infographic_male     <- paste0(sp_data_path, "/data/analysis/app/pngs/rri_infographic_male_",
-#                                       state_for_report, ".png")
 
 pe_rri_infographic_male     <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_male_",
                                       state_for_report, ".png")
