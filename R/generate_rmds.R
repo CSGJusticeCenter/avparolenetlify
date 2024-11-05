@@ -24,8 +24,8 @@ source("R/prep/analysis/tab_parole_eligibility.R")
 source("R/prep/analysis/tab_population.R")
 source("R/prep/analysis/tab_releases.R")
 source("R/prep/analysis/tab_disparities.R")
-# source("R/prep/analysis/tab_disparities_rris.R")
-# source("R/prep/analysis/tab_disparities_rris_past_pe.R")
+source("R/prep/analysis/tab_disparities_rris.R")
+source("R/prep/analysis/tab_disparities_rris_past_pe.R")
 
 # Function to replace place-holder text in orig qmd with our replacement values (state names)
 #    and write out to qmd - name of qmd should include state name
@@ -39,10 +39,10 @@ replace_write_qmd <- function(state) {
 wd <- getwd()
 
 # Get list of states for reports - only states with parole and complete PE data
-states <- c("Georgia", "Louisiana")
-# states <- parole_eligibility_table |>
-#   filter(!is.na(current_perc)) |>
-#   pull(state)
+# states <- c("Georgia", "Louisiana")
+states <- parole_eligibility_table |>
+  filter(!is.na(current_perc)) |>
+  pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")

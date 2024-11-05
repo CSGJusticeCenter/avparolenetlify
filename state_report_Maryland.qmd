@@ -16,12 +16,15 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
+# This will change depending on the state
 state_for_report <- "Maryland"
 
+# Load config file and pregenerated sentences and visualizations
 source("R/config.R")
-source("R/pull_state_findings_NEW.R")
+source("R/pull_state_findings.R")
 
-# Function to display data
+# Function to display data and sentences
+# Display no data if data is missing
 fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualization", final_text = no_data_text) {
   # Check if both sentence and chart are missing
   no_data <- is.null(sentence) || is.null(chart) 
@@ -56,8 +59,7 @@ div(
 ```
 
 <br>
-<div id="asterisk-section">
-*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.
+<div id="asterisk-section"> `r footnote_text` </div><br>
 </div>
 
 ::: {.panel-tabset .nav-pills}
@@ -77,7 +79,7 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 
 ```{r results = 'asis', state_sentence_pe_type}
 fnc_display_sentence_chart(state_sentence_pe_type, state_pie_pe_type); br()
-fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_stackedbar_pop_pe_by_year)
+fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_bar_pop_pe_by_year)
 ```
 
 <br>
@@ -317,7 +319,7 @@ if (file.exists(pe_rri_infographic_black)) {
   knitr::include_graphics(pe_rri_infographic_black)
 }
 if (!no_data_black) {
-  HTML(state_sentence_pe_rri_black)
+  HTML(state_sentence_pe_rri_black, "<br><br>")
 }
 
 if (file.exists(pe_rri_infographic_hispanic)) {

@@ -59,7 +59,7 @@ div(
 ```
 
 <br>
-<div id="asterisk-section"> `r footnote_text` </div>
+<div id="asterisk-section"> `r footnote_text` </div><br>
 </div>
 
 ::: {.panel-tabset .nav-pills}
@@ -319,7 +319,7 @@ if (file.exists(pe_rri_infographic_black)) {
   knitr::include_graphics(pe_rri_infographic_black)
 }
 if (!no_data_black) {
-  HTML(state_sentence_pe_rri_black)
+  HTML(state_sentence_pe_rri_black, "<br><br>")
 }
 
 if (file.exists(pe_rri_infographic_hispanic)) {
