@@ -1,11 +1,33 @@
+# Load Prepared Data
+load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/state_methodology.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
 
-# Define the footnote based on the state
-footnote_text <- if(state_for_report %in% states_nofilter) {
+# # Retrieve the additional asterisk text for the specific state
+# state_add_asterisks <- state_notes |>
+#   filter(state == state_for_report) |>
+#   pull(additional_asterisks)
+
+# Define the base additional asterisk text based on the state conditions
+additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
   "*Includes people with any admission type or sentence length."
 } else {
   "*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year."
 }
 
+# Define the secondary asterisk text based on the state conditions
+additional_asterisks_text1 <- if (state_for_report %in% states_undercounted) {
+  "Due to missing or unreported data, we are likely underestimating the percent of people past their parole eligibility year, especially for people with longer sentences. Results should be interpreted with caution."
+} else {
+  NULL
+}
+
+# Combine all non-NULL and non-empty texts into one, ensuring proper spacing
+additional_asterisks_combined <- c(
+  additional_asterisks_text,
+  if (!is.null(additional_asterisks_text1) && nzchar(additional_asterisks_text1)) additional_asterisks_text1
+) |> paste(collapse = " ")
 
 #------------------------------------------------------------------------------#
 # Missingness/No Data Text
@@ -23,10 +45,6 @@ no_data_text <- HTML(paste0("<div style='text-align:center;'>
 # How Parole Eligibility Is Determined?
 # Citations (import_format.R)
 #------------------------------------------------------------------------------#
-
-# Load Prepared Data
-load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/state_methodology.rds"))
 
 state_citation <- state_notes |>
   filter(state == state_for_report) |>

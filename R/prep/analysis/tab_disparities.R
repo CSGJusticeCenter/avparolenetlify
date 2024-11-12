@@ -14,7 +14,7 @@
 # ---------------------------------------------------------------------------- #
 
 # Calculate time served
-ncrp_releases_timeserved <- fnc_filter_population(ncrp_releases) |>
+ncrp_releases_timeserved <- fnc_filter_population(ncrp_releases_not_consolidated) |>
   mutate(time_between_admission_release =  as.numeric(relyr) - as.numeric(admityr))
 
 # Calculate average time served by race, ethnicity, and state
@@ -164,7 +164,7 @@ all_sentence_avg_past_pe_race$Georgia
 # Filter releases to states we want to include
 # and select year
 ncrp_releases_disparities <-
-  fnc_filter_population(ncrp_releases) |>
+  fnc_filter_population(ncrp_releases_not_consolidated) |>
   filter(rptyear == select_year)
 
 # Average time served by race and offense

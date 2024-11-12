@@ -127,7 +127,7 @@ rm(states)
 
 # Filter NCRP releases to people in prison for new crimes and sentence lengths
 # not less than one year or life
-ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases)
+ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases_not_consolidated)
 
 # Get number of people past PE and released and get people released on PE
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
@@ -267,7 +267,7 @@ rm(states)
 
 # # Filter NCRP releases to people in prison for new crimes and sentence lengths
 # # not less than one year or life
-# ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases)
+# ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases_not_consolidated)
 #
 # # Calculate the number of parole eligible people released by state and year
 # ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>

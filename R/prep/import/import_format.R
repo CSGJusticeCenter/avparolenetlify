@@ -2,25 +2,16 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: October 25, 2024 (MAR)
+# Date last updated: November 12, 2024 (MAR)
 # Description:
-#    This script is responsible for importing, cleaning, and preparing various datasets
-#    for the AV Parole project. It handles the following tasks:
-#    1. Import NCRP data (admissions, population, year-end population) and BJS Prisoners data.
-#    2. Process NCRP data by merging release and year-end files, calculating metrics,
-#       and transforming variables for analysis.
-#    3. Clean and structure BJS Prisoners data by race, ethnicity, and sex for different years.
-#    4. Import hex map for the National Trends page.
-#    5. Load external data from the Robina Institute and Carl Reynold's state notes on parole eligibility (PE).
-#    6. Save cleaned and transformed datasets for use in analyses and visualizations.
+#    This script:
 #######################################
 
 #------------------------------------------------------------------------------#
-# MAP - National Trends Page
+# MAP - National Snapshot Page
 #------------------------------------------------------------------------------#
 
-# Hex map for national trends page
-# Load hexgrid shapefile and select only the 'state_abb' column
+# Load hexgrid shapefile and select the 'state_abb' column
 # Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
 hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
     select(state_abb = iso3166_2) |>
@@ -33,10 +24,11 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
 
 #------------------------------------------------------------------------------#
 # State-Specific Notes for "How is Parole Eligibility Determined?" Section
-# Methodology for Imputation for "State Notes" Section
+# Methodology of Imputation for "State Notes" Section
 #------------------------------------------------------------------------------#
 
-# Import state-specific notes about parole eligibility and number of parole board members
+# Import state-specific notes about parole eligibility, number of parole board members
+# Notes created by Policy Team
 state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
@@ -45,10 +37,12 @@ state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/a
     citation = sapply(citation, fnc_format_citation)) # format citations
 
 # Import state-specific imputation methodology
+# Created by Seba Guzman (CSG Research) in Stata
 state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
 
-# Combine these together
-# Adjust formatting - TBD############################################### will update when Seba has new data
+# Combine state notes and state-specific imputation methodology
+# Adjust formatting - superscript 1 is for "How Parole Eligibility is Determined" so these need
+# to be increased by 1 because this text is near the bottom of the Parole Eligibility tab
 state_notes <- state_notes_raw |>
   left_join(state_methodology, by = "state") |>
   # add period to matching note.
@@ -81,106 +75,92 @@ state_notes <- state_notes_raw |>
 
 
 #------------------------------------------------------------------------------#
-# NCRP
-# Seba Guzman's Imputed Data
-# 2010 to 2020
+# NCRP Data
+# Seba Guzman's Imputed Data for NCRP 2010 to 2020
+# Seba Guzman's Projections for 2021 to 2023
 #------------------------------------------------------------------------------#
 
-# Read and combine files for releases and year-end population, both regular and consolidated
-combine_files <- function(files) {
-  bind_rows(lapply(files, fnc_read_and_add_year))
-}
+# Define states that won't need to filter by admission type and sentence length########################################################################################
+states_nofilter <- c("Connecticut", "Idaho")
 
+# States where we should use the earliest parole eligibility year bc it is the more reliable
+states_earliest_pe <-  c("Connecticut", "Idaho")
+
+# Import projections
+ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_short_2010_2020.dta"))
+
+# These are the NCRP files that were created by Sebastian (CSG Research) in Stata
+# Original NCRP releases and yearendpop files were used to create imputations for missing data regarding
+# parole eligibility and sentence lengths
 release_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                             pattern = "ncrp_releases_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
 yearendpop_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                                pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation.dta", full.names = TRUE)
+
+# Combine files
+ncrp_releases_combined   <- fnc_combine_files(release_files)
+ncrp_yearendpop_combined <- fnc_combine_files(yearendpop_files)
+
+# These are the NCRP files that were created by Sebastian (CSG Research) in Stata
+# Original NCRP releases and yearendpop files AND terms files were used to create imputations for missing data regarding
+# parole eligibility and sentence lengths.
 release_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                                          pattern = "ncrp_releases_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
 yearendpop_consolidated_files <- list.files(path = file.path(sp_data_path, "data/analysis/clean_files/cleaning_processing"),
                                             pattern = "ncrp_yearendpop_\\d{4}_clean_w_imputation_consolidated.dta", full.names = TRUE)
 
-ncrp_releases_combined                <- combine_files(release_files)
-ncrp_releases_consolidated_combined   <- combine_files(release_consolidated_files)
-ncrp_yearendpop_combined              <- combine_files(yearendpop_files)
-ncrp_yearendpop_consolidated_combined <- combine_files(yearendpop_consolidated_files)
+# Combine files
+ncrp_releases_consolidated_combined   <- fnc_combine_files(release_consolidated_files)
+ncrp_yearendpop_consolidated_combined <- fnc_combine_files(yearendpop_consolidated_files)
 
 # Transform the data for releases and year-end population
-ncrp_releases                    <- fnc_transform_ncrp_data(ncrp_releases_combined)
-ncrp_releases_consolidated       <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined)
-ncrp_yearendpop_not_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_combined)
-ncrp_yearendpop_consolidated     <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
+ncrp_releases_not_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_combined, states_earliest_pe)
+ncrp_releases_consolidated       <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined, states_earliest_pe)
+ncrp_yearendpop_not_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_combined, states_earliest_pe)
+ncrp_yearendpop_consolidated     <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined, states_earliest_pe)
 
 # Calculate time served for both releases files
-ncrp_releases <- ncrp_releases |>
+# Warning message OK - replacing "NA" with actual NA
+ncrp_releases_not_consolidated <- ncrp_releases_not_consolidated |>
   mutate(relyr = as.numeric(relyr),
          time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
 ncrp_releases_consolidated <- ncrp_releases_consolidated |>
+  select(-relyr) |> # remove NCRP release year and use Seba Guzman's release year
   rename(relyr = releaseyr) |>
   mutate(relyr = as.numeric(relyr),
          time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
-
-# For states_nofilter, use the data in not consolidated and add it to the consolidated file
-states_nofilter_releases <- ncrp_releases |>
-  filter(state %in% states_nofilter)
-
-# Remove data for states_nofilter which we extracted from the unconsolidated file
-ncrp_releases_consolidated <- ncrp_releases_consolidated |>
-  filter(!state %in% states_nofilter)
-
-# Combine data
-ncrp_releases_consolidated <- bind_rows(ncrp_releases_consolidated, states_nofilter_releases)
-
-# For states_nofilter, use the data in not consolidated and add it to the consolidated file
-states_nofilter_yearendpop <- ncrp_yearendpop_not_consolidated |>
-  filter(state %in% states_nofilter)
-
-# Remove data for states_nofilter which we extracted from the unconsolidated file
-ncrp_yearendpop_consolidated <- ncrp_yearendpop_consolidated |>
-  filter(!state %in% states_nofilter)
-
-# Combine data
-ncrp_yearendpop_consolidated <- bind_rows(ncrp_yearendpop_consolidated, states_nofilter_yearendpop)
-
-######################### NEED TO DETERMINE ELIG STATUS
-# use earliest_pey1 and earliest_pey1_status for Connecticut and Idaho
 
 #------------------------------------------------------------------------------#
 # States Excluded
 #------------------------------------------------------------------------------#
 
-# Determine which states have more than 50% missing in admtype and sentlgth
-# We need these variables to filter the population to people in prison for
-# new offenses and sentence lengths not less than one year and not life
-# Filter for states with more than 50% missing in admtype or sentlgth
-states_with_high_missing_by_year <- ncrp_yearendpop_consolidated |>
-  group_by(state, rptyear) |>
-  summarize(
-    perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
-    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1),
-    .groups = "drop")
-
-states_with_high_missing <- ncrp_yearendpop_consolidated |>
-  filter(rptyear == select_year) |>
-  group_by(state) |>
-  summarize(
-    perc_missing_admtype = round(mean(admtype == "Unknown" | is.na(admtype)) * 100, 1),
-    perc_missing_sentlgth = round(mean(sentlgth == "Unknown" | is.na(sentlgth)) * 100, 1),
-    .groups = "drop") |>
-  filter(perc_missing_admtype > 50 | perc_missing_sentlgth > 50)
-
-# Get states that have abolished parole and keep it as a dataframe
+# Select states that have abolished parole
 abolished_states <- state_notes |>
   filter(abolished_parole == "Y") |>
-  select(state)  # Select only the 'state' column
+  select(state)
+
+# Determine which states have high missingness and should be excluded from analysis/tool
+# File created by Seba Guzman in Stata
+# excl_state_year = 1 means the state for that year should be excluded
+pey_and_hearings_by_state_2010_2020 <-
+  read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/pey_and_hearings_by_state_2010_2020.dta"))
+states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |>
+  filter(excl_state_year == 1) |>
+  filter(year == select_year) |>
+  select(state) |>
+  distinct()
+
+# Determine which states have an asterisks exception########################################################################################
+# states_undercounted <- pey_and_hearings_by_state_2010_2020 |>
+#   filter(excl_state_year == 2) |>
+#   filter(year == select_year)
+# states_undercounted <- c("Iowa", "New Jersey", "Louisiana, Colorado")
+states_undercounted <- c("Colorado")
 
 # Combine both dataframes of states to exclude
 states_to_exclude <- states_with_high_missing |>
-  select(state) |>
-  distinct() |>
   bind_rows(abolished_states) |>
-  distinct() |>
-  filter(!state %in% states_nofilter) # exclude states that we don't need to filter (CT and ID)
+  distinct()
 
 # States with high missingness for race and ethnicity
 states_with_high_missing_race <- ncrp_yearendpop_consolidated |>
@@ -353,16 +333,22 @@ bjs_prison_pop_by_sex_2019 <- bjs_prison_pop_by_sex_2019_raw  |>
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  ncrp_releases                    = "ncrp_releases.rds",
+  ncrp_releases_not_consolidated   = "ncrp_releases_not_consolidated.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",
   ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
+  ncrp_yearendpop_combined         = "ncrp_yearendpop_combined.rds",
+  ncrp_releases_combined           = "ncrp_releases_combined.rds",
+
   bjs_prison_pop_by_race_2019      = "bjs_prison_pop_by_race_2019.rds",
   bjs_prison_pop_by_sex_2019       = "bjs_prison_pop_by_sex_2019.rds",
   bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
+
   hex_gj                           = "hex_gj.rds",
   state_notes                      = "state_notes.rds",
   states_to_exclude                = "states_to_exclude.rds",
+  states_nofilter                  = "states_nofilter.rds",
+  states_undercounted              = "states_undercounted.rds",
   states_with_high_missing_race    = "states_with_high_missing_race.rds"
 )
 

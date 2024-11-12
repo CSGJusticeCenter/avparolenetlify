@@ -59,7 +59,7 @@ div(
 ```
 
 <br>
-<div id="asterisk-section"> `r footnote_text` </div><br>
+<div id="asterisk-section"> `r additional_asterisks_combined` </div><br>
 </div>
 
 ::: {.panel-tabset .nav-pills}
