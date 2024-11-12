@@ -11,30 +11,60 @@
 # Parole Eligibility Table
 #------------------------------------------------------------------------------#
 
-filtered_parole_elig_table_analysis_year <- ncrp_projections |>
-  filter(year == select_year) |>
-  filter(!state %in% states_to_exclude$state) |>
-  mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
-         proj_pcnt_ppey = round(proj_pcnt_ppey, 1))
+# Get total prison population by state and year
+total_pop_by_year <- ncrp_yearendpop_consolidated |>
+  group_by(state, rptyear) |>
+  summarise(total_pop = n(), .groups = 'drop')
 
-proj_past_pe_count_rounded <- ncrp_projections |>
-  filter(year == select_year) |>
-  filter(!state %in% states_to_exclude$state) |>
-  group_by() |>
-  summarise(n = sum(proj_pop_past_pey, na.rm = TRUE)) |>
-  mutate(n_rounded = fnc_round_to_power(n)) |>
-  pull(n_rounded)
+# Filter data to people in prison for a new court commitment with sentences 1+ years but not life
+# Not including people who are failing supervision (parole return/revocation)
+filtered_ncrp_yearendpop <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated)
 
-# Filter out missing values from proj_pcnt_ppey
-valid_data <- ncrp_projections |>
-  filter(year == select_year) |>
-  filter(!is.na(proj_pcnt_ppey))
+# Get total prison population for new court commitments and with sentences 1+ years but not life
+filtered_pop_by_year <- filtered_ncrp_yearendpop |>
+  group_by(state, rptyear) |>
+  summarise(filtered_total_pop = n(), .groups = 'drop')
 
-# Calculate the average percentage of people past parole eligibility
-average_percent_past_pey <- mean(valid_data$proj_pcnt_ppey)
+# Get number of people in prison by parole eligibility status for the specified criteria
+# Get proportion of parole eligibility statuses out of everyone in the filtered population
+filtered_parole_status_by_year <- filtered_ncrp_yearendpop |>
+  group_by(state, rptyear, parelig_status) |>
+  summarise(count = n(), .groups = 'drop') |>
+  left_join(filtered_pop_by_year, by = c("state", "rptyear")) |>
+  mutate(proportion = count / filtered_total_pop)
 
-# Convert this percentage to a "1 in X" estimate
-proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
+# Reshape data for table
+filtered_parole_elig_table_by_year <- filtered_parole_status_by_year |>
+  pivot_longer(cols = c(count, proportion), names_to = "metric", values_to = "value") |>
+  mutate(metric_name = case_when(
+    metric == "count" ~ paste(parelig_status, "count"),
+    metric == "proportion" ~ paste(parelig_status, "perc.")
+  )) |>
+  select(state, rptyear, metric_name, value) |>
+  pivot_wider(names_from = metric_name, values_from = value) |>
+  clean_names()
+
+# Filter to select analysis year specified in the config file
+filtered_parole_elig_table_analysis_year_with_missing_states <- filtered_parole_elig_table_by_year |>
+  filter(rptyear == select_year)
+
+# Find missing states and combine with the original dataframe
+missing_states <- tibble(state = setdiff(state.name, filtered_parole_elig_table_analysis_year_with_missing_states$state),
+                         rptyear = select_year)
+
+# Add missing states to table so we have a complete table of 50 states
+filtered_parole_elig_table_analysis_year <- filtered_parole_elig_table_analysis_year_with_missing_states |>
+  bind_rows(missing_states) |>
+  full_join(total_pop_by_year, by = c("state", "rptyear")) |>
+  full_join(filtered_pop_by_year, by = c("state", "rptyear")) |>
+  arrange(state) |>
+  select(state, rptyear, total_pop, filtered_total_pop,
+         contains("current"), contains("future"), contains("missing")) |>
+  filter(rptyear == select_year) |>
+  mutate(current_perc           = current_perc * 100,
+         current_count_rounded = fnc_round_to_power(current_count))
+
+
 
 #------------------------------------------------------------------------------#
 # Parole Board Members by State
@@ -46,6 +76,7 @@ states_parole <- state_notes |>
   select(state, abolished_parole, members)
 
 
+
 #------------------------------------------------------------------------------#
 # Parole Eligibility Table
 #------------------------------------------------------------------------------#
@@ -54,20 +85,23 @@ states_parole <- state_notes |>
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
   left_join(states_parole, by = "state") |>
   filter(abolished_parole == "N" | state == "Louisiana") |>
-  mutate(proj_pcnt_ppey = round(proj_pcnt_ppey, 1)) |>
-  select(state, proj_pcnt_ppey, proj_pop_past_pey_rounded, members)
+  mutate(current_perc = round(current_perc, 1)) |>
+  select(state, current_perc, current_count_rounded, filtered_total_pop, members)
+
 
 # Rename variables for downloadable table
 parole_eligibility_table_download <- parole_eligibility_table |>
   select(State = state,
-         `2023 Projection: In Prison Past Parole Eligibility (N)` = proj_pop_past_pey_rounded,
-         `2023 Projection: In Prison Past Parole Eligibility (%)` = proj_pcnt_ppey,
+         `In Prison Past Parole Eligibility (N)` = current_count_rounded,
+         `In Prison Past Parole Eligibility (%)` = current_perc,
+         `Prison Population` = filtered_total_pop,
          `Parole Board Members` = members)
 
 
-#------------------------------------------------------------------------------#
-# Parole Eligibility Map
-#------------------------------------------------------------------------------#
+
+
+
+#-----Parole Eligibility Maps Data ------#
 
 # Create a vector of all state names
 all_states <- state.name
@@ -89,7 +123,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   mutate(
     state_abb = state.abb[match(state, state.name)],
 
-    all_na = ifelse(is.na(proj_pop_past_pey_rounded)
+    all_na = ifelse(is.na(current_count)# & is.na(future_count) & is.na(missing_count)
                     , TRUE, FALSE),
 
     # Create tooltips
@@ -101,9 +135,9 @@ map_data <- filtered_parole_elig_table_analysis_year |>
                its recent abolition of parole, due to a substantial population<br>
                that remains eligible for parole release under the previous system.<br>",
                "Percentage of People: ",
-               paste0(round(proj_pcnt_ppey, 0), "%<br>"),
+               paste0(round(current_perc, 0), "%<br>"),
                "Number of People: ",
-               formattable::comma(proj_pop_past_pey_rounded, 0)),
+               formattable::comma(current_count_rounded, 0)),
 
       all_na == TRUE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
@@ -120,9 +154,9 @@ map_data <- filtered_parole_elig_table_analysis_year |>
       all_na == FALSE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                "Percentage of People: ",
-               paste0(round(proj_pcnt_ppey, 0), "%<br>"),
+               paste0(round(current_perc, 0), "%<br>"),
                "Number of People: ",
-               formattable::comma(proj_pop_past_pey_rounded, 0))
+               formattable::comma(current_count_rounded, 0))
     ),
 
     tooltip = str_replace_all(tooltip, "NA%", "No Data"),
@@ -130,17 +164,17 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   ) |>
 
   # create data labels
-  mutate(change_label = paste0(round(proj_pcnt_ppey, 0), "%"),
+  mutate(change_label = paste0(round(current_perc, 0), "%"),
          # change_label = str_replace_all(change_label, "NA%", "-"),
          change_label = str_replace_all(change_label, "NA%", " "),
 
-         currentperclabel = paste0(round(proj_pcnt_ppey, 0), "%"),
+         currentperclabel = paste0(round(current_perc, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
 
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1
-breaks <- quantile(map_data$proj_pcnt_ppey, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+breaks <- quantile(map_data$current_perc, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
 breaks[1] <- 0  # Set the first break to 0
 breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
 breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
@@ -148,9 +182,9 @@ breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 # Process map_data to include gradient color and data category
 map_data_breaks <- map_data |>
   mutate(
-    gradient_color = findInterval(proj_pcnt_ppey, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
-    gradient_color = ifelse(is.na(proj_pcnt_ppey), NA, gradient_colors[gradient_color]),
-    proj_pcnt_ppey = round(proj_pcnt_ppey, 0),
+    gradient_color = findInterval(current_perc, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+    gradient_color = ifelse(is.na(current_perc), NA, gradient_colors[gradient_color]),
+    current_perc = round(current_perc, 0),
     data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
   ) |>
   group_by(gradient_color) |>
@@ -161,7 +195,7 @@ map_data_breaks <- map_data |>
       gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
       gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
       gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
-      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$proj_pcnt_ppey, na.rm = TRUE), "%")
+      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$current_perc, na.rm = TRUE), "%")
     ),
     data_category = case_when(
       is.na(data_category) & abolished_parole == "N" ~ "Missing Data",
@@ -453,7 +487,6 @@ webshot2::webshot(
 # Define the data objects and their corresponding file names
 data_files <- list(
   map_percent                       = "map_percent.rds",
-  proj_past_pe_count_rounded        = "proj_past_pe_count_rounded.rds",
   parole_eligibility_table          = "parole_eligibility_table.rds",
   parole_eligibility_table_download = "parole_eligibility_table_download.rds"
 )
@@ -471,7 +504,3 @@ file_path <- file.path(app_folder, file_name)
 
 # Example of writing to this path
 write.csv(parole_eligibility_table_download, file_path, row.names = FALSE)
-
-
-
-

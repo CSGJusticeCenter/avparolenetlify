@@ -1,25 +1,16 @@
 
-# Set up
+# [ACTION REQUIRED] - check file
 source("R/config.R")
-# source("R/prep/import/helper_functions_import.R")
-# source("R/prep/import/import_format.R")
+
+# Run import R files
+source("R/prep/import/helper_functions_import.R")
+source("R/prep/import/import_format.R")
+
+# Run custom helper functions ('fnc_')
 source("R/prep/analysis/helper_functions.R")
 source("R/prep/analysis/helper_functions_disparities.R")
 
-# Load Data
-# load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_2019.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex_2019.rds"))
-
+# Run R files
 source("R/prep/analysis/page_national_trends.R")
 source("R/prep/analysis/tab_parole_eligibility.R")
 source("R/prep/analysis/tab_population.R")
@@ -53,3 +44,30 @@ walk(states_qmd, replace_write_qmd)
 
 # Render all qmds
 # quarto::quarto_render()
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Load Data
+# load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race_2019.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex_2019.rds"))

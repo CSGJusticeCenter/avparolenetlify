@@ -12,23 +12,22 @@
 #' formatted <- fnc_format_citation(citation)
 #' print(formatted)
 fnc_format_citation <- function(citation) {
-
-  # Italicize the report title: Add * around report title
+  # Italicize the report title
   formatted_citation <- str_replace_all(
     citation,
     "Prison-Release Discretion and Prison Population Size: State Report: [^\\(]+",
     function(x) paste0("*", x, "*")
   )
 
-  # Convert URLs to markdown hyperlinks and ensure the period is outside the link
+  # Convert URLs to markdown hyperlinks
   formatted_citation <- str_replace_all(
     formatted_citation,
-    "(https?://[^\\s]+)\\.",  # Match the URL pattern followed by a period
-    function(x) {
-      url <- str_remove(x, "\\.$")  # Remove the period from the URL
-      paste0("[", url, "](", url, ").")  # Place the period outside the link
-    }
+    "(https?://[^\\s]+)",  # Match the URL pattern
+    function(url) paste0("[", url, "](", url, ")")  # Convert to markdown link
   )
+
+  # Ensure the period is outside the link
+  formatted_citation <- str_replace(formatted_citation, "\\]\\(.*\\)\\.", "].")
 
   return(formatted_citation)
 }

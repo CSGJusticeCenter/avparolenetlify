@@ -42,8 +42,8 @@ for (i in seq_along(years)) {
   file_name <- paste0("ncrp_term_records_", years[i], "_", format(Sys.Date(), "%Y%m%d"), ".xlsx")
   full_file_path <- file.path(paste0(config$sp_data_path, "/data/analysis/clean_files"), file_name)
 
-  # Save the data frame to a separate Excel file
-  write.xlsx(ncrp_term_records, full_file_path)
+  # # Save the data frame to a separate Excel file
+  # write.xlsx(ncrp_term_records, full_file_path)
 
   # Remove the loaded data to free up memory
   rm(list = data_name)
@@ -68,8 +68,8 @@ ncrp_term_records_2018 <- da37973.0001 |>
 file_name <- paste0("ncrp_terms_", "2018", "_", "v1.csv")
 full_file_path <- file.path(paste0(config$sp_data_path, "/data/analysis/clean_files"), file_name)
 
-# Save the data frame to a separate Excel file
-write.csv(ncrp_term_records_2018, full_file_path)
+# # Save the data frame to a separate Excel file
+# write.csv(ncrp_term_records_2018, full_file_path)
 
 
 

@@ -10,7 +10,6 @@ format:
     toc: false
 ---
 
-[This page uses 2019 data for now. Will be replaced with 2023 data when available.]
 While the most recent available data from the National Corrections Reporting Program (NCRP) is from 2020, we've projected the numbers for 2023 to offer a more current view of how many people are in prison beyond their parole eligibility and how this impacts prison populations. These projections are conservative estimates for several reasons. Primarily, we did not fully account for 'good time' credits—time that should be subtracted from an someone's sentence, thereby reducing the time until parole eligibility. Additionally, there are other factors contributing to the conservative nature of these estimates that were not fully captured in our models. As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests, indicating a more significant issue than our conservative estimates reflect.
 
 ```{r setup, include=FALSE}
@@ -25,6 +24,7 @@ knitr::opts_chunk$set(
 source("R/config.R")
 
 load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/proj_past_pe_count_rounded.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
 
@@ -46,23 +46,11 @@ fnc_round <- function(x) {
     round(x, -1)
   }
 }
-
-num_people_current <- sum(parole_eligibility_table$current_count_rounded, na.rm = TRUE)
-num_people_current_rounded <- fnc_round(num_people_current)
 ```
 
 <div id="body-section">
 
 ```{r highlights}
-# Filter the dataframe where current_count_rounded is not NA and abolished_parole is "No"
-# filtered_df <- parole_eligibility_table[!is.na(parole_eligibility_table$current_count_rounded) & parole_eligibility_table$abolished_parole== "N", ]
-
-# Calculate the total current_count_rounded for this filtered data
-total_current_count <- sum(parole_eligibility_table$current_count_rounded, na.rm = TRUE)
-
-# Calculate the national percentage based on filtered_total_pop
-national_percentage <- paste0(round(total_current_count / sum(parole_eligibility_table$filtered_total_pop, na.rm = TRUE) * 100, 0), "%")
-
 div(
   id = "grid-container",
   style = "
@@ -73,24 +61,13 @@ div(
     grid-column-gap: 20px; 
     align-items: end;
   ",
-  div(id = "national-highlight", formattable::comma(num_people_current_rounded, digits = 0)),
+  div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("People In Prison Past Their<br>Parole Eligibility*<br><br>")),
-  div(id = "bold-text", HTML("1 in X Incarcerated People Are In Prison Past Their Parole Eligibility")),
+  div(id = "bold-text", HTML("1 in 2.5 Incarcerated People Are In Prison Past Their Parole Eligibility")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole**<br><br>"))
 )
-# div(
-#   id = "grid-container",
-#   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
-#   div(id = "national-highlight", formattable::comma(num_people_current, digits = 0)),
-#   # div(id = "national-highlight", national_percentage),
-#   img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
-#   div(id = "national-highlight", "34"),
-#   div(id = "bold-text", HTML("In Prison Past Their<br>Parole Eligibility Year")),
-#   div(id = "bold-text", HTML("1 in 3 People Are In Prison Past<br>Their Parole Eligibility Year")),
-#   div(id = "bold-text", HTML("States With<br>Discretionary Parole"))
-# )
 ```
 </div>
 <br>
@@ -131,14 +108,14 @@ data_bars_custom <- function(value) {
       )
 }
 
-parole_eligibility_table <- parole_eligibility_table |> 
-  mutate(filtered_total_pop = as.numeric(filtered_total_pop))
+# parole_eligibility_table <- parole_eligibility_table |> 
+#   mutate(filtered_total_pop = as.numeric(filtered_total_pop))
 
 reactable(
   parole_eligibility_table ,
   pagination = FALSE,
   searchable = TRUE,
-  defaultSorted = c("current_perc", "state"),
+  defaultSorted = c("proj_pcnt_ppey", "state"),
   defaultColDef = colDef(
     headerStyle = list(fontWeight = "normal", fontSize = "1em"),  # Set header font size
     style = list(fontSize = "1em"),  # Set cell font size
@@ -151,23 +128,18 @@ reactable(
       align = "left", 
       width = 175
     ),
-    current_perc = colDef(
+    proj_pcnt_ppey = colDef(
       name = "Percentage of People in Prison",
       align = "left",
       width = 250,
       cell = data_bars_custom,
       defaultSortOrder = "desc"  # Sort descending
     ),
-    current_count_rounded = colDef(
+    proj_pop_past_pey_rounded = colDef(
       name = "Number of People", 
       align = "right",
       format = colFormat(separators = TRUE)
       ),
-    filtered_total_pop = colDef(
-      name = "Prison Population", 
-      align = "right",
-      format = colFormat(separators = TRUE)
-    ),
     members = colDef(
       name = "Parole Board Members*", 
       align = "right"
@@ -176,7 +148,7 @@ reactable(
   columnGroups = list(
     colGroup(
       name = "People In Prison Past Parole Eligibility", 
-      columns = c("current_perc", "current_count_rounded")
+      columns = c("proj_pcnt_ppey", "proj_pop_past_pey_rounded")
     )
   )
 )
@@ -186,16 +158,6 @@ reactable(
 
 
 ```{r echo=FALSE}
-# parole_eligibility_table_download |>
-#   download_this(
-#     output_name = "parole_eligibility_by_state_2023_estimates",
-#     output_extension = ".xlsx",
-#     button_label = "Download Table",
-#     button_type = "default",
-#     has_icon = TRUE,
-#     # icon = "fa fa-save",
-#     class = "download-button" 
-#   )
 parole_eligibility_table_download |>
   download_this(
     output_name = "parole_eligibility_by_state_2023_estimates",

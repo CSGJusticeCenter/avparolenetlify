@@ -44,6 +44,8 @@
 # Function that filters the population data to include only people in prison for new crimes
 # with sentence lengths 1+ years except life
 # Only includes states with parole systems and without high misingness
+# Includes states that may not have filtered by admission type or sentence length
+# These states are in states_nofilter
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated)
 
 # Total prison population by state and year
@@ -132,7 +134,7 @@ rm(states)
 # PE Prison Population Trends
 # ---------------------------------------------------------------------------- #
 
-# Filter to people past parole eligiblity
+# Filter to people past parole eligibility
 pe_pop_prop <- pe_status_pop |>
   filter(parelig_status == "Current") |>
   mutate(prop_label = paste0(round(prop, 0), "%"))
@@ -185,67 +187,6 @@ all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Georgia
 all_sentence_pop_pe_by_year$Connecticut
 
-
-
-# VISUALIZATION: Create a stacked bar chart showing the percentage of people past parole eligibility (PCE)
-# and the remaining total prison population for each state over time
-# all_stackedbar_pop_pe_by_year <- map(.x = states, .f = function(x) {
-#
-#   # Filter the data for the current state and only analyze data from 2010 onwards
-#   df1 <- pe_pop_prop |>
-#     filter(state == x) |>
-#     filter(rptyear >= 2010 & max(rptyear)) |>
-#     mutate(rptyear_fac = factor(rptyear))  # Convert years to a factor for the x-axis
-#
-#   # Define chart title and accessibility text
-#   title <- "Percentage of Prison Population Incarcerated Past Parole Eligibility"
-#   hc_accessibility_text <- paste0("This chart shows the percentage of people past parole eligibility ",
-#                                   "and the remaining prison population for the state of ", x,
-#                                   " from ", min(df1$rptyear), " to ", max(df1$rptyear), ". ",
-#                                   "The bars represent the total prison population, with the portion of people ",
-#                                   "past their parole eligibility highlighted in a different color.")
-#
-#   # Create the highchart visualization
-#   highcharts <- highchart() |>
-#     hc_xAxis(categories = df1$rptyear_fac) |>
-#     hc_yAxis(
-#       title = list(text = ""),
-#       max = 100,
-#       labels = list(format = "{value}%")
-#     ) |>
-#     hc_add_series(
-#       name = "Total Population (Remaining)",
-#       data = (1 - df1$prop) * 100,
-#       type = "column",
-#       stacking = "percent") |>
-#     hc_add_series(
-#       name = "In Prison Past Parole Eligibility",
-#       data = df1$prop * 100,
-#       type = "column",
-#       stacking = "percent") |>
-#     hc_plotOptions(series = list(stacking = "normal",
-#                                  pointWidth = 40,
-#                                  borderWidth = 3,
-#                                  borderColor = "#FFFFFF",
-#                                  minPointLength = 5)) |>
-#     hc_colors(c(color3, color4)) |>
-#     hc_legend(reversed = TRUE) |>
-#     hc_add_theme(base_hc_theme) |>
-#     hc_tooltip(pointFormat = '<b>{series.name}</b>: {point.y:.0f}%') |>
-#     hc_title(text = paste0(title, ", ",
-#                            min(df1$rptyear), "-", max(df1$rptyear))) |>
-#     hc_exporting(enabled = TRUE,
-#                  filename = paste0(gsub(" ", "_", tolower(title)), "_",
-#                                    min(df1$rptyear), "_", max(df1$rptyear))) |>
-#     hc_caption(text = ncrp_csg_source) |>
-#     fnc_add_hc_accessibility(hc_accessibility_text)
-#
-#   return(highcharts)
-# })
-# # Assign state names to list
-# all_stackedbar_pop_pe_by_year <- setNames(all_stackedbar_pop_pe_by_year, states)
-# all_stackedbar_pop_pe_by_year$Georgia
-# rm(states)
 
 # Factor year
 pe_pop_prop <- pe_pop_prop |>

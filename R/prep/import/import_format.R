@@ -27,18 +27,18 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
 # Methodology of Imputation for "State Notes" Section
 #------------------------------------------------------------------------------#
 
+# Import state-specific imputation methodology
+# Created by Seba Guzman (CSG Research) in Stata
+state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
+
 # Import state-specific notes about parole eligibility, number of parole board members
-# Notes created by Policy Team
+# These were created by Policy Team in Release Systems by State Word Document
 state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
   mutate(
     state = str_replace_all(state, "\\*", ""),
     citation = sapply(citation, fnc_format_citation)) # format citations
-
-# Import state-specific imputation methodology
-# Created by Seba Guzman (CSG Research) in Stata
-state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
 
 # Combine state notes and state-specific imputation methodology
 # Adjust formatting - superscript 1 is for "How Parole Eligibility is Determined" so these need
@@ -79,12 +79,6 @@ state_notes <- state_notes_raw |>
 # Seba Guzman's Imputed Data for NCRP 2010 to 2020
 # Seba Guzman's Projections for 2021 to 2023
 #------------------------------------------------------------------------------#
-
-# Define states that won't need to filter by admission type and sentence length########################################################################################
-states_nofilter <- c("Connecticut", "Idaho")
-
-# States where we should use the earliest parole eligibility year bc it is the more reliable
-states_earliest_pe <-  c("Connecticut", "Idaho")
 
 # Import projections
 ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_short_2010_2020.dta"))
@@ -131,8 +125,27 @@ ncrp_releases_consolidated <- ncrp_releases_consolidated |>
          time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
 
 #------------------------------------------------------------------------------#
-# States Excluded
+# States Rules
 #------------------------------------------------------------------------------#
+
+# Import state rules:
+# States to exclude overall, states that don't need the parole eligibility filtered by admission type and sentence length,
+# states that should be interpreted with caution, states to exclude in projections
+state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules_v1.xlsx"))
+
+# Define states that won't need to filter by admission type and sentence length
+# These states have high missingness for these variables but their data can be used
+# without filtering by them because the estimates for people past parole eligibility are reliable enough
+states_nofilter <- state_rules_v1 |>
+  filter(dont_filter_admtype_sentlength == 1)
+
+# States where we should use the earliest parole eligibility year bc it is the more reliable
+states_earliest_pe <- state_rules_v1 |>
+  filter(use_earliest_pey1 == 1)
+
+# States where the people past PEY is likely undercounted
+states_undercounted <- state_rules_v1 |>
+  filter(likely_undercount == 1)
 
 # Select states that have abolished parole
 abolished_states <- state_notes |>
@@ -144,18 +157,11 @@ abolished_states <- state_notes |>
 # excl_state_year = 1 means the state for that year should be excluded
 pey_and_hearings_by_state_2010_2020 <-
   read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/pey_and_hearings_by_state_2010_2020.dta"))
-states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |>
+states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |> #############################################state_rules_v1$exclude_from_tool
   filter(excl_state_year == 1) |>
   filter(year == select_year) |>
   select(state) |>
   distinct()
-
-# Determine which states have an asterisks exception########################################################################################
-# states_undercounted <- pey_and_hearings_by_state_2010_2020 |>
-#   filter(excl_state_year == 2) |>
-#   filter(year == select_year)
-# states_undercounted <- c("Iowa", "New Jersey", "Louisiana, Colorado")
-states_undercounted <- c("Colorado")
 
 # Combine both dataframes of states to exclude
 states_to_exclude <- states_with_high_missing |>
@@ -180,6 +186,7 @@ states_with_high_missing_race <- ncrp_yearendpop_consolidated |>
 # BJS
 #------------------------------------------------------------------------------#
 
+# Get BJS Prisoners Series data from 2010 to 2022
 # Define a list of filenames for different years along with the specific column needed for the data.
 # The 'col' value in each list corresponds to the column that holds the relevant data in the CSV file.
 file_info <- list(
@@ -220,11 +227,6 @@ for (year in names(file_info)) {
 
 # Combine all the cleaned datasets from different years into a single dataframe.
 bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
-
-
-
-
-
 
 # Import BJS prisoners data by race and ethnicity for 2019
 # Skipping the first 10 rows due to headers and metadata.
@@ -333,6 +335,7 @@ bjs_prison_pop_by_sex_2019 <- bjs_prison_pop_by_sex_2019_raw  |>
 
 # Define the data objects and their corresponding file names
 data_files <- list(
+  ncrp_projections                 = "ncrp_projections.rds",
   ncrp_releases_not_consolidated   = "ncrp_releases_not_consolidated.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",

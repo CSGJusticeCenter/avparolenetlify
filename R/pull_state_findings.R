@@ -4,19 +4,14 @@ load(file = paste0(sp_data_path, "/data/analysis/app/state_methodology.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
 
-# # Retrieve the additional asterisk text for the specific state
-# state_add_asterisks <- state_notes |>
-#   filter(state == state_for_report) |>
-#   pull(additional_asterisks)
-
-# Define the base additional asterisk text based on the state conditions
+# Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
 additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
   "*Includes people with any admission type or sentence length."
 } else {
   "*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year."
 }
 
-# Define the secondary asterisk text based on the state conditions
+# Define the secondary asterisk text based on the states that were likely undercounted
 additional_asterisks_text1 <- if (state_for_report %in% states_undercounted) {
   "Due to missing or unreported data, we are likely underestimating the percent of people past their parole eligibility year, especially for people with longer sentences. Results should be interpreted with caution."
 } else {
