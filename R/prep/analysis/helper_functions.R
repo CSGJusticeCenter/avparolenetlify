@@ -2,6 +2,21 @@
 # Analysis Functions
 #-------------------------------------------------------------------------------
 
+# Function to determine select_year based on the state
+fnc_determine_select_year <- function(state_name, which_overall_year) {
+  # Filter for the specified state and pull the year_to_use
+  select_year <- which_overall_year |>
+    filter(state == state_name) |>
+    pull(year_to_use)
+
+  # Return the selected year
+  if (length(select_year) == 0) {
+    stop("State not found in which_overall_year data.")
+  }
+
+  return(select_year)
+}
+
 #' Filter Population Data
 #'
 #' Filters the input data by excluding states with missing data and states that have abolished parole.
@@ -422,7 +437,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #'
 #' @return A Highcharts pie chart object.
 #' @export
-fnc_hc_pie <- function(df, variable, title, accessibility_text, year = select_year, source = ncrp_csg_source) {
+fnc_hc_pie <- function(df, variable, title, accessibility_text, year, source = ncrp_csg_source) {
   highchart() |>
     hc_chart(type = "pie") |>
     hc_plotOptions(pie = list(

@@ -105,16 +105,41 @@ abolished_states <- state_notes |>
 # excl_state_year = 1 means the state for that year should be excluded
 pey_and_hearings_by_state_2010_2020 <-
   read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/pey_and_hearings_by_state_2010_2020.dta"))
-states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |> #############################################state_rules_v1$exclude_from_tool
-  filter(excl_state_year == 1) |>
-  filter(year == select_year) |>
-  select(state) |>
+
+# Determine which year is best by state
+# Some should use 2019 and others should use 2018
+which_overall_year <- pey_and_hearings_by_state_2010_2020 |>
+  select(state, year, excl_state_year) |>
+  group_by(state) |>
+  mutate(year_to_use = case_when(
+    excl_state_year[year == 2018] == 1 & excl_state_year[year == 2019] == 1 ~ NA_integer_,
+    excl_state_year[year == 2018] == 1 ~ 2019,
+    excl_state_year[year == 2019] == 1 ~ 2018,
+    excl_state_year[year == 2018] == 0 & excl_state_year[year == 2019] == 0 ~ 2019
+  )) |>
+  filter(!is.na(year_to_use)) |>
+  select(state, year_to_use) |> distinct()
+
+# Determine which years shouldn't be used by state due to unreliable data
+which_years <- pey_and_hearings_by_state_2010_2020 |>
+  select(state, year, excl_state_year) |>
   distinct()
+
+# Filter states with excl_state_year == 1 for both 2018 and 2019
+states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |>
+  filter(year %in% c(2018, 2019)) |>
+  group_by(state) |>
+  summarise(all_years_missing = all(excl_state_year == 1)) |>
+  filter(all_years_missing) |>
+  select(state) |>
+  ungroup()
 
 # Combine both dataframes of states to exclude
 states_to_exclude <- states_with_high_missing |>
   bind_rows(abolished_states) |>
   distinct()
+
+
 
 #------------------------------------------------------------------------------#
 # NCRP Data
@@ -168,15 +193,16 @@ ncrp_releases_consolidated <- ncrp_releases_consolidated |>
 
 # States with high missingness for race and ethnicity
 states_with_high_missing_race <- ncrp_yearendpop_consolidated |>
-  filter(rptyear == select_year) |>
-  group_by(state) |>
+  group_by(state, rptyear) |>
   summarize(
     perc_missing_race = round(mean(race == "Unknown" | is.na(race)) * 100, 1),
     .groups = "drop") |>
-  filter(perc_missing_race > 50) |>
+  filter(rptyear %in% c(2018, 2019)) |>
+  group_by(state) |>
+  summarise(all_years_missing = all(perc_missing_race > 50)) |>
+  filter(all_years_missing) |>
   select(state) |>
-  distinct()
-
+  ungroup()
 
 
 
@@ -350,7 +376,10 @@ data_files <- list(
   states_to_exclude                = "states_to_exclude.rds",
   states_nofilter                  = "states_nofilter.rds",
   states_undercounted              = "states_undercounted.rds",
-  states_with_high_missing_race    = "states_with_high_missing_race.rds"
+  states_with_high_missing         = "states_with_high_missing.rds",
+  states_with_high_missing_race    = "states_with_high_missing_race.rds",
+  which_overall_year               = "which_overall_year.rds",
+  which_years                      = "which_years.rds"
 )
 
 # Loop through the list and save each data object to its corresponding file

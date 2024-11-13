@@ -78,17 +78,14 @@ sp_data_path <- csg_get_project_path("AVParole")
 app_folder <- file.path(sp_data_path, "data", "analysis", "app")
 deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
-# Select years for analysis using NCRP data and BJS data
-select_year <- 2019
-
-# Year for population data (NCRP)
-pop_select_year <- 2019
-
-# Year for population data (BJS)
-bjs_data_year <- 2019
-
-# #
-# latest_reliable_ncrp_year <- 2019
+# # Select years for analysis using NCRP data and BJS data
+# select_year <- 2019
+#
+# # Year for population data (NCRP)
+# pop_select_year <- 2019
+#
+# # Year for population data (BJS)
+# bjs_data_year <- 2019
 
 #------------------------------------------------------------------------------#
 # Fonts

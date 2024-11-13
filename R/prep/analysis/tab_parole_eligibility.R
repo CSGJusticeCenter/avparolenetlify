@@ -73,6 +73,8 @@ all_pie_pe_type <- map(.x = states, .f = function(x) {
                      "Missing" = darkgray,
                      "Current" = color4)
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   # Filter the dataset for the current state and selected year,
   # ensuring the correct color for each category
   df1 <- pe_status_pop |>
@@ -92,7 +94,12 @@ all_pie_pe_type <- map(.x = states, .f = function(x) {
   title <- "Prison Population by Parole Eligibility Status"
 
   # Create the highchart pie visualization
-  highcharts <- fnc_hc_pie(df1, "parelig_status", title, hc_accessibility_text)
+  highcharts <- fnc_hc_pie(df = df1,
+                           variable = "parelig_status",
+                           title = title,
+                           accessibility_text = hc_accessibility_text,
+                           year = select_year,
+                           source = ncrp_csg_source)
 
   return(highcharts)
 })
@@ -100,11 +107,15 @@ all_pie_pe_type <- map(.x = states, .f = function(x) {
 all_pie_pe_type <- setNames(all_pie_pe_type, states)
 all_pie_pe_type$Georgia
 all_pie_pe_type$Connecticut
+all_pie_pe_type$Hawaii
 
 # SENTENCE: In YEAR, 76 percent of people in prison were currently past their
 #           parole eligibility. Another 23 percent will reach
 #           their parole eligibility after YEAR.
 all_sentence_pe_type <- map(states, function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   df <- pe_status_pop |>
     filter(state == x, rptyear == select_year)
 
@@ -296,7 +307,8 @@ all_line_pop_pe_by_year <- map(.x = states, .f = function(x) {
     select(-last_value_past_pe, -year_to_fill)  # Remove temporary columns
 
   title <- "People in Prison Past Parole Eligibility by Year"
-  hc_accessibility_text <- "This chart shows the percentage of people in prison who are past their parole eligibility date, with projections highlighted in red."
+  hc_accessibility_text <- "This chart shows the percentage of people in prison who are
+  past their parole eligibility year, with projections highlighted in red."
 
   # Create the Highcharts object with updated configurations
   highcharts <- highchart() |>
@@ -685,91 +697,3 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
-
-
-
-
-
-
-# # Filter to people past parole eligibility
-# pe_pop_prop <- pe_status_pop |>
-#   filter(parelig_status == "Current") |>
-#   mutate(prop_label = paste0(round(prop, 0), "%"))
-# pe_pop_prop <- ncrp_projections |>
-#   select(state, year, pcnt_ppey_rules_wf, proj_pcnt_ppey) |>
-#   mutate(pct_past_pe      = case_when(year <= 2020 ~ pcnt_ppey_rules_wf,
-#                                       TRUE ~ NA),
-#          proj_pct_past_pe = case_when(year > 2020 ~ proj_pcnt_ppey,
-#                                       TRUE ~ NA))
-#
-# # SENTENCE: "From 2014 to YEAR, the percent of people in prison past parole eligibility increased by 14 percent."
-# # Loop through each unique state
-# states <- unique(pe_pop_prop$state)
-# all_sentence_pop_pe_by_year <- map(.x = states, .f = function(x) {
-#
-#   # Filter data for the current state
-#   df <- pe_pop_prop |>
-#     filter(state == x) |>
-#     filter(rptyear >= 2010 & max(rptyear)) #############################################
-#
-#   # Extract the earliest and latest years for each state
-#   earliest_year <- min(df$rptyear)
-#   latest_year <- max(df$rptyear)
-#
-#   # Calculate the prop of people past parole eligibility for the earliest and latest years
-#   prop_earliest <- df |>
-#     filter(rptyear == earliest_year) |>
-#     pull(prop)
-#
-#   prop_latest <- df |>
-#     filter(rptyear == latest_year) |>
-#     pull(prop)
-#
-#   # Calculate the change in prop and determine if it increased, decreased, or stayed the same
-#   change <- prop_latest - prop_earliest
-#
-#   # Determine if it increased, decreased, or stayed the same
-#   if (change > 0) {
-#     direction <- paste0("increased by ", abs(round(change, 0)), " percent")
-#   } else if (change < 0) {
-#     direction <- paste0("decreased by ", abs(round(change, 0)), " percent")
-#   } else {
-#     direction <- "stayed the same"
-#   }
-#
-#   # Generate the final sentence
-#   sentence <- paste0(
-#     "From ", earliest_year, " to ", latest_year,
-#     ", the percent of people in prison past parole eligibility ", direction, "."
-#   )
-#
-#   return(sentence)
-# })
-# # Assign state names to list
-# all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
-# all_sentence_pop_pe_by_year$Georgia
-# all_sentence_pop_pe_by_year$Connecticut
-#
-# # Factor year
-# pe_pop_prop <- pe_pop_prop |>
-#   mutate(rptyear = factor(rptyear))
-# VISUALIZATION: Bar charts for parole eligibility by year for each state
-# Generate graph for each state
-# states <- unique(pe_pop_prop$state)
-# all_bar_pop_pe_by_year <- map(.x = states,  .f = function(x) {
-#
-#   this_metric <- "Year"
-#   highcharts <- fnc_hc_columnchart(state_var  = x,
-#                                    df         = pe_pop_prop,
-#                                    x_var      = "rptyear",
-#                                    y_var      = "prop",
-#                                    metric     = this_metric,
-#                                    type       = "the prison population past parole eligibility",
-#                                    title_type = "People in Prison Past Parole Eligibility")
-#
-#   return(highcharts)
-# })
-# # Assign state names to list
-# all_bar_pop_pe_by_year <- setNames(all_bar_pop_pe_by_year, states)
-# all_bar_pop_pe_by_year$Georgia
-# all_bar_pop_pe_by_year$Connecticut
