@@ -21,7 +21,6 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
     fromJSON(simplifyVector = FALSE)
 
 
-
 #------------------------------------------------------------------------------#
 # State-Specific Notes for "How is Parole Eligibility Determined?" Section
 # Methodology of Imputation for "State Notes" Section
@@ -73,6 +72,49 @@ state_notes <- state_notes_raw |>
   filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))############################################
 
 
+#------------------------------------------------------------------------------#
+# States Rules
+#------------------------------------------------------------------------------#
+
+# Import state rules:
+# States to exclude overall, states that don't need the parole eligibility filtered by admission type and sentence length,
+# states that should be interpreted with caution, states to exclude in projections
+state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules_v1.xlsx"))
+
+# Define states that won't need to filter by admission type and sentence length
+# These states have high missingness for these variables but their data can be used
+# without filtering by them because the estimates for people past parole eligibility are reliable enough
+states_nofilter <- state_rules_v1 |>
+  filter(dont_filter_admtype_sentlength == 1)
+
+# States where we should use the earliest parole eligibility year bc it is the more reliable
+states_earliest_pe <- state_rules_v1 |>
+  filter(use_earliest_pey1 == 1)
+
+# States where the people past PEY is likely undercounted
+states_undercounted <- state_rules_v1 |>
+  filter(likely_undercount == 1)
+
+# Select states that have abolished parole
+abolished_states <- state_notes |>
+  filter(abolished_parole == "Y") |>
+  select(state)
+
+# Determine which states have high missingness and should be excluded from analysis/tool
+# File created by Seba Guzman in Stata
+# excl_state_year = 1 means the state for that year should be excluded
+pey_and_hearings_by_state_2010_2020 <-
+  read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/pey_and_hearings_by_state_2010_2020.dta"))
+states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |> #############################################state_rules_v1$exclude_from_tool
+  filter(excl_state_year == 1) |>
+  filter(year == select_year) |>
+  select(state) |>
+  distinct()
+
+# Combine both dataframes of states to exclude
+states_to_exclude <- states_with_high_missing |>
+  bind_rows(abolished_states) |>
+  distinct()
 
 #------------------------------------------------------------------------------#
 # NCRP Data
@@ -123,50 +165,6 @@ ncrp_releases_consolidated <- ncrp_releases_consolidated |>
   rename(relyr = releaseyr) |>
   mutate(relyr = as.numeric(relyr),
          time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
-
-#------------------------------------------------------------------------------#
-# States Rules
-#------------------------------------------------------------------------------#
-
-# Import state rules:
-# States to exclude overall, states that don't need the parole eligibility filtered by admission type and sentence length,
-# states that should be interpreted with caution, states to exclude in projections
-state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules_v1.xlsx"))
-
-# Define states that won't need to filter by admission type and sentence length
-# These states have high missingness for these variables but their data can be used
-# without filtering by them because the estimates for people past parole eligibility are reliable enough
-states_nofilter <- state_rules_v1 |>
-  filter(dont_filter_admtype_sentlength == 1)
-
-# States where we should use the earliest parole eligibility year bc it is the more reliable
-states_earliest_pe <- state_rules_v1 |>
-  filter(use_earliest_pey1 == 1)
-
-# States where the people past PEY is likely undercounted
-states_undercounted <- state_rules_v1 |>
-  filter(likely_undercount == 1)
-
-# Select states that have abolished parole
-abolished_states <- state_notes |>
-  filter(abolished_parole == "Y") |>
-  select(state)
-
-# Determine which states have high missingness and should be excluded from analysis/tool
-# File created by Seba Guzman in Stata
-# excl_state_year = 1 means the state for that year should be excluded
-pey_and_hearings_by_state_2010_2020 <-
-  read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/pey_and_hearings_by_state_2010_2020.dta"))
-states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |> #############################################state_rules_v1$exclude_from_tool
-  filter(excl_state_year == 1) |>
-  filter(year == select_year) |>
-  select(state) |>
-  distinct()
-
-# Combine both dataframes of states to exclude
-states_to_exclude <- states_with_high_missing |>
-  bind_rows(abolished_states) |>
-  distinct()
 
 # States with high missingness for race and ethnicity
 states_with_high_missing_race <- ncrp_yearendpop_consolidated |>

@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 
 # This will change depending on the state
-state_for_report <- "Colorado"
+state_for_report <- "Michigan"
 
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")

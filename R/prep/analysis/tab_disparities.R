@@ -14,7 +14,7 @@
 # ---------------------------------------------------------------------------- #
 
 # Calculate time served
-ncrp_releases_timeserved <- fnc_filter_population(ncrp_releases_not_consolidated) |>
+ncrp_releases_timeserved <- fnc_filter_population(ncrp_releases_not_consolidated) |> #########################################
   mutate(time_between_admission_release =  as.numeric(relyr) - as.numeric(admityr))
 
 # Calculate average time served by race, ethnicity, and state
@@ -102,7 +102,7 @@ all_lollipop_los_sex$Georgia
 
 # Filter to states with parole systems
 # Select racial and ethnic groups of interest
-ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
+ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |> #########################################
   filter(rptyear == select_year &
          parelig_status == "Current")
 
@@ -164,7 +164,7 @@ all_sentence_avg_past_pe_race$Georgia
 # Filter releases to states we want to include
 # and select year
 ncrp_releases_disparities <-
-  fnc_filter_population(ncrp_releases_not_consolidated) |>
+  fnc_filter_population(ncrp_releases_not_consolidated) |> #########################################
   filter(rptyear == select_year)
 
 # Average time served by race and offense
@@ -239,7 +239,7 @@ all_scatter_los_sex_offense$Georgia
 
 # Filter to states with parole systems
 # Remove missing data
-ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
+ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |> #########################################
   mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   filter(rptyear == select_year &
            parelig_status == "Current" &

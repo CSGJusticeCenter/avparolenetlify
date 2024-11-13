@@ -4,7 +4,7 @@
 
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
-ncrp_yearendpop_race <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
+ncrp_yearendpop_race <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |> #########################################
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 # remove states with high missingness for race and ethnicity
 
@@ -211,7 +211,7 @@ map(.x = states, .f = function(x) {
 
 # Filter NCRP year end pop to people in prison for new crimes and with sentence lengths
 # of 1+ years except life
-ncrp_yearendpop_sex <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated)
+ncrp_yearendpop_sex <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) #########################################
 
 # Get total prison pop by state and rptyear
 prison_pop_by_sex <- ncrp_yearendpop_sex |>

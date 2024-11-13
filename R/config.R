@@ -54,7 +54,7 @@ required_packages <- c(
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
   "ggtext", "scales", "base64enc", "glue", "haven", "png", "reshape2", "magick",
-  "downloadthis"
+  "downloadthis", "readxl"
 )
 
 lapply(required_packages, library, character.only = TRUE)
