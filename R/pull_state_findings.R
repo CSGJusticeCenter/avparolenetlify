@@ -3,6 +3,10 @@ load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/state_methodology.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
+
+# Determine select year
+select_year <- fnc_determine_select_year(state_for_report, which_overall_year)
 
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
 additional_asterisks_text <- if (state_for_report %in% states_nofilter) {

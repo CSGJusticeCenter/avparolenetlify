@@ -21,6 +21,7 @@ state_for_report <- "this_state"
 
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")
+source("R/prep/analysis/helper_functions.R")
 source("R/pull_state_findings.R")
 
 # Function to display data and sentences

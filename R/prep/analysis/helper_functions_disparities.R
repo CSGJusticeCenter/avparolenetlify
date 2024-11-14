@@ -46,7 +46,7 @@ fnc_get_census_data <- function(state) {
 #'
 #' @details This function can compare average LOS between males and females, or between races
 #' (White, Black, and Hispanic) within a state.
-# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
+# fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year) {
 #   # Get unique states to iterate over
 #   states <- unique(df$state)
 #
@@ -144,7 +144,7 @@ fnc_get_census_data <- function(state) {
 #
 #   return(all_sentences)
 # }
-fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year = select_year) {
+fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year) {
   # Get unique states to iterate over
   states <- unique(df$state)
 
@@ -318,7 +318,7 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
 #'
 #' @return A highcharter plot object showing a lollipop chart with the LOS disparities.
 #'
-fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state_name, height = 200, year = select_year, source = ncrp_csg_source) {
+fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state_name, height = 200, year, source = ncrp_csg_source) {
 
   # Determine the title based on the group_var
   chart_title <- if (group_var == "sex") {

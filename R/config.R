@@ -78,6 +78,9 @@ sp_data_path <- csg_get_project_path("AVParole")
 app_folder <- file.path(sp_data_path, "data", "analysis", "app")
 deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
+# Projection year
+projection_year <- 2023
+
 # # Select years for analysis using NCRP data and BJS data
 # select_year <- 2019
 #

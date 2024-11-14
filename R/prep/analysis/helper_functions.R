@@ -132,11 +132,11 @@ fnc_filter_exclude_high_missing_race <- function(data, states_with_high_missing_
 #'
 #' @param df A data frame containing the data to summarize.
 #' @param count_column The column to count occurrences for summarization.
-#' @param year The year to filter data by (default: select_year).
+#' @param year The year to filter data by.
 #'
 #' @return A summarized data frame with counts, proportions, and formatted labels.
 #' @export
-fnc_summarize_data <- function(df, count_column, year = select_year) {
+fnc_summarize_data <- function(df, count_column, year) {
   count_column <- sym(count_column)  # Convert the string column name to a symbol
 
   df1 <- df |>
@@ -432,7 +432,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #' @param variable The column in the data frame representing the pie chart categories.
 #' @param title A string representing the chart title.
 #' @param accessibility_text A string of text for accessibility descriptions.
-#' @param year The year for which the chart is being generated (default: select_year).
+#' @param year The year for which the chart is being generated.
 #' @param source The source of the data displayed in the chart.
 #'
 #' @return A Highcharts pie chart object.
@@ -479,13 +479,14 @@ fnc_hc_pie <- function(df, variable, title, accessibility_text, year, source = n
 #' @param metric The label for the metric displayed on the chart.
 #' @param type The type of people represented in the chart (e.g., "people past parole eligibility").
 #' @param title_type The type of chart title.
-#' @param year The year for which the chart is being generated (default: select_year).
+#' @param year The year for which the chart is being generated.
 #' @param source The source of the data displayed in the chart.
 #' @param orientation The chart orientation, either "vertical" (default) or "horizontal".
 #'
 #' @return A Highcharts column or bar chart object.
 #' @export
-fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type, year = select_year, source = ncrp_csg_source, orientation = "vertical") {
+fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type,
+                               year, source = ncrp_csg_source, orientation = "vertical") {
 
   df1 <- df |>
     filter(state == state_var) |>
@@ -562,11 +563,11 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 #' @param df A data frame containing the data to analyze.
 #' @param x_var The variable representing the categories in the chart.
 #' @param type The type of people represented in the sentence (e.g., "people past parole eligibility").
-#' @param year The year for which the sentence is being generated (default: select_year).
+#' @param year The year for which the sentence is being generated.
 #'
 #' @return A descriptive sentence about the top category in the column chart.
 #' @export
-fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type, year = select_year) {
+fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type, year) {
 
   df1 <- df |>
     filter(state == state_var) |>

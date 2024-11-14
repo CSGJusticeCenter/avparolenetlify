@@ -11,14 +11,18 @@
 # Parole Eligibility Table
 #------------------------------------------------------------------------------#
 
+# Get unique states from ncrp_projections
+unique_states <- unique(which_overall_year$state)
+
 filtered_parole_elig_table_analysis_year <- ncrp_projections |>
-  filter(year == select_year) |>
+  filter(year == projection_year) |>
   filter(!state %in% states_to_exclude$state) |>
   mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
-         proj_pcnt_ppey = round(proj_pcnt_ppey, 1))
+         proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
+  select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
 
 proj_past_pe_count_rounded <- ncrp_projections |>
-  filter(year == select_year) |>
+  filter(year == projection_year) |>
   filter(!state %in% states_to_exclude$state) |>
   group_by() |>
   summarise(n = sum(proj_pop_past_pey, na.rm = TRUE)) |>
@@ -26,12 +30,12 @@ proj_past_pe_count_rounded <- ncrp_projections |>
   pull(n_rounded)
 
 # Filter out missing values from proj_pcnt_ppey
-valid_data <- ncrp_projections |>
-  filter(year == select_year) |>
+ncrp_projections_no_nas <- ncrp_projections |>
+  filter(year == projection_year) |>
   filter(!is.na(proj_pcnt_ppey))
 
 # Calculate the average percentage of people past parole eligibility
-average_percent_past_pey <- mean(valid_data$proj_pcnt_ppey)
+average_percent_past_pey <- mean(ncrp_projections_no_nas$proj_pcnt_ppey)
 
 # Convert this percentage to a "1 in X" estimate
 proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
@@ -54,14 +58,13 @@ states_parole <- state_notes |>
 parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
   left_join(states_parole, by = "state") |>
   filter(abolished_parole == "N" | state == "Louisiana") |>
-  mutate(proj_pcnt_ppey = round(proj_pcnt_ppey, 1)) |>
-  select(state, proj_pcnt_ppey, proj_pop_past_pey_rounded, members)
+  select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded, members)
 
 # Rename variables for downloadable table
 parole_eligibility_table_download <- parole_eligibility_table |>
   select(State = state,
          `2023 Projection: In Prison Past Parole Eligibility (N)` = proj_pop_past_pey_rounded,
-         `2023 Projection: In Prison Past Parole Eligibility (%)` = proj_pcnt_ppey,
+         `2023 Projection: In Prison Past Parole Eligibility (%)` = proj_pcnt_ppey_rounded,
          `Parole Board Members` = members)
 
 
@@ -101,7 +104,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
                its recent abolition of parole, due to a substantial population<br>
                that remains eligible for parole release under the previous system.<br>",
                "Percentage of People: ",
-               paste0(round(proj_pcnt_ppey, 0), "%<br>"),
+               paste0(round(proj_pcnt_ppey_rounded, 0), "%<br>"),
                "Number of People: ",
                formattable::comma(proj_pop_past_pey_rounded, 0)),
 
@@ -120,7 +123,7 @@ map_data <- filtered_parole_elig_table_analysis_year |>
       all_na == FALSE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                "Percentage of People: ",
-               paste0(round(proj_pcnt_ppey, 0), "%<br>"),
+               paste0(round(proj_pcnt_ppey_rounded, 0), "%<br>"),
                "Number of People: ",
                formattable::comma(proj_pop_past_pey_rounded, 0))
     ),
@@ -130,17 +133,17 @@ map_data <- filtered_parole_elig_table_analysis_year |>
   ) |>
 
   # create data labels
-  mutate(change_label = paste0(round(proj_pcnt_ppey, 0), "%"),
+  mutate(change_label = paste0(round(proj_pcnt_ppey_rounded, 0), "%"),
          # change_label = str_replace_all(change_label, "NA%", "-"),
          change_label = str_replace_all(change_label, "NA%", " "),
 
-         currentperclabel = paste0(round(proj_pcnt_ppey, 0), "%"),
+         currentperclabel = paste0(round(proj_pcnt_ppey_rounded, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
 
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1
-breaks <- quantile(map_data$proj_pcnt_ppey, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+breaks <- quantile(map_data$proj_pcnt_ppey_rounded, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
 breaks[1] <- 0  # Set the first break to 0
 breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
 breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
@@ -148,9 +151,9 @@ breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 # Process map_data to include gradient color and data category
 map_data_breaks <- map_data |>
   mutate(
-    gradient_color = findInterval(proj_pcnt_ppey, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
-    gradient_color = ifelse(is.na(proj_pcnt_ppey), NA, gradient_colors[gradient_color]),
-    proj_pcnt_ppey = round(proj_pcnt_ppey, 0),
+    gradient_color = findInterval(proj_pcnt_ppey_rounded, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+    gradient_color = ifelse(is.na(proj_pcnt_ppey_rounded), NA, gradient_colors[gradient_color]),
+    proj_pcnt_ppey_rounded = round(proj_pcnt_ppey_rounded, 0),
     data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
   ) |>
   group_by(gradient_color) |>
@@ -161,7 +164,7 @@ map_data_breaks <- map_data |>
       gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
       gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
       gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
-      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$proj_pcnt_ppey, na.rm = TRUE), "%")
+      gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$proj_pcnt_ppey_rounded, na.rm = TRUE), "%")
     ),
     data_category = case_when(
       is.na(data_category) & abolished_parole == "N" ~ "Missing Data",

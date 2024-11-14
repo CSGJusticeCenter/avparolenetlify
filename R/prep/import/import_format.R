@@ -95,7 +95,12 @@ states_earliest_pe <- state_rules_v1 |>
 states_undercounted <- state_rules_v1 |>
   filter(likely_undercount == 1)
 
-# Select states that have abolished parole
+# States that should be on the national snapshot page but not the state reports
+states_national_page_only <- state_rules_v1 |>
+  filter(exclude_from_reports == 1) |>
+  select(state)
+
+# States that have abolished parole
 abolished_states <- state_notes |>
   filter(abolished_parole == "Y") |>
   select(state)
@@ -109,6 +114,7 @@ projections_compl_2010_2020 <-
 # Determine which year is best by state
 # Some should use 2019 and others should use 2018
 which_overall_year <- projections_compl_2010_2020 |>
+  mutate(excl_state_year = if_else(state == "Alabama", 0, excl_state_year)) |>
   select(state, year, excl_state_year) |>
   group_by(state) |>
   mutate(year_to_use = case_when(
@@ -122,6 +128,7 @@ which_overall_year <- projections_compl_2010_2020 |>
 
 # Determine which years shouldn't be used by state due to unreliable data
 which_years <- projections_compl_2010_2020 |>
+  mutate(excl_state_year = if_else(state == "Alabama" & year == 2019, 0, excl_state_year)) |>
   select(state, year, excl_state_year) |>
   distinct()
 
@@ -137,6 +144,7 @@ states_with_high_missing <- projections_compl_2010_2020 |>
 # Combine both dataframes of states to exclude
 states_to_exclude <- states_with_high_missing |>
   bind_rows(abolished_states) |>
+  filter(state != "Alabama") |>
   distinct()
 
 
