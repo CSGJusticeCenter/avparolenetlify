@@ -140,16 +140,18 @@ states <- bjs_prison_pop_by_race_2019 |>
 # Generate graph for each state
 all_bar_population_race <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   this_metric <- "Race and Ethnicity"
   highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = bjs_prison_pop_by_race_2019,
+                                   df         = bjs_prison_pop_by_race_2019, ############### HAWAII USES 2018
                                    x_var      = "race",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
                                    source     = bjs_source,
-                                   year       = bjs_data_year)
+                                   year       = select_year)
 
   return(highcharts)
 })
@@ -157,16 +159,20 @@ all_bar_population_race <- map(.x = states,  .f = function(x) {
 all_bar_population_race <- setNames(all_bar_population_race, states)
 all_bar_population_race$Georgia
 all_bar_population_race$Connecticut
+all_bar_population_race$Hawaii
+
 
 # SENTENCE: "In YEAR, 60 percent of people in prison were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_population_race <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
-                                                 df         = bjs_prison_pop_by_race_2019,
+                                                 df         = bjs_prison_pop_by_race_2019, ############### HAWAII USES 2018
                                                  x_var      = "race",
                                                  type       = "in prison",
-                                                 year       = bjs_data_year)
+                                                 year       = select_year)
 
   return(sentences)
 })
@@ -190,16 +196,18 @@ states <- bjs_prison_pop_by_sex_2019 |>
 # Generate chart for each state
 all_bar_population_sex <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   this_metric <- "Sex"
   highcharts <- fnc_hc_columnchart(state_var  = x,
-                                   df         = bjs_prison_pop_by_sex_2019,
+                                   df         = bjs_prison_pop_by_sex_2019,############### HAWAII USES 2018
                                    x_var      = "sex",
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population",
                                    title_type = "People in Prison",
                                    source     = bjs_source,
-                                   year       = bjs_data_year)
+                                   year       = select_year)
 
   return(highcharts)
 })
@@ -211,11 +219,13 @@ all_bar_population_sex$Georgia
 # Generate sentence for each state
 all_sentence_population_sex <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
-                                                 df         = bjs_prison_pop_by_sex_2019,
+                                                 df         = bjs_prison_pop_by_sex_2019,############### HAWAII USES 2018
                                                  x_var      = "sex",
                                                  type       = "in prison",
-                                                 year       = bjs_data_year)
+                                                 year       = select_year)
 
   return(sentences)
 })
@@ -230,7 +240,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Summarize age data for the prison population for each state
-ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop_not_consolidated, "ageyrend", year = pop_select_year)
+ncrp_population_ageyrend <- fnc_summarize_data(ncrp_yearendpop_not_consolidated, "ageyrend", which_overall_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_ageyrend$state)
@@ -238,6 +248,8 @@ states <- unique(ncrp_population_ageyrend$state)
 # VISUALIZATION: Prison Population by Age
 # Generate chart for each state
 all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Age"
   highcharts <- fnc_hc_columnchart(state_var  = x,
@@ -248,7 +260,7 @@ all_bar_population_ageyrend <- map(.x = states,  .f = function(x) {
                                    type       = "the prison population",
                                    title_type = "People in Prison",
                                    source     = ncrp_source,
-                                   year       = pop_select_year)
+                                   year       = select_year)############### HAWAII USES 2018
 
   return(highcharts)
 })
@@ -261,11 +273,13 @@ all_bar_population_ageyrend$Connecticut
 # Generate sentence for each state
 all_sentence_population_ageyrend <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = ncrp_population_ageyrend,
                                                  x_var      = "ageyrend",
                                                  type       = "in prison",
-                                                 year       = pop_select_year)
+                                                 year       = select_year)############### HAWAII USES 2018
 
   return(sentences)
 })
@@ -280,7 +294,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Summarize offense data for the prison population for each state
-ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop_consolidated, "fbi_index", year = pop_select_year)
+ncrp_population_fbi_index <- fnc_summarize_data(ncrp_yearendpop_consolidated, "fbi_index", which_overall_year)
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_fbi_index$state)
@@ -288,6 +302,8 @@ states <- unique(ncrp_population_fbi_index$state)
 # VISUALIZATION: Prison Population by Offense
 # Generate chart for each state
 all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Offense Type"
   highcharts <- fnc_hc_columnchart(state_var   = x,
@@ -298,7 +314,7 @@ all_bar_population_fbi_index <- map(.x = states,  .f = function(x) {
                                    type        = "the prison population",
                                    title_type  = "People in Prison",
                                    source      = ncrp_source,
-                                   year        = pop_select_year,
+                                   year        = select_year,############### HAWAII USES 2018
                                    orientation = "horizontal")
 
   return(highcharts)
@@ -311,11 +327,13 @@ all_bar_population_fbi_index$Georgia
 # Generate sentence for each state
 all_sentence_population_fbi_index <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = ncrp_population_fbi_index,
                                                  x_var      = "fbi_index",
                                                  type       = "in prison",
-                                                 year       = pop_select_year)
+                                                 year       = select_year)############### HAWAII USES 2018
 
   return(sentences)
 })
@@ -329,7 +347,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Process sentence length data for the prison population
-ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop_consolidated, "sentlgth", year = pop_select_year)
+ncrp_population_sentlgth <- fnc_summarize_data(ncrp_yearendpop_consolidated, "sentlgth", which_overall_year)############### HAWAII USES 2018
 
 # Get unique states to iterate over
 states <- unique(ncrp_population_sentlgth$state)
@@ -337,6 +355,8 @@ states <- unique(ncrp_population_sentlgth$state)
 # VISUALIZATION: Prison Population by Sentence Length
 # Generate chart for each state
 all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Sentence Length"
   highcharts <- fnc_hc_columnchart(state_var  = x,
@@ -347,7 +367,7 @@ all_bar_population_sentlgth <- map(.x = states,  .f = function(x) {
                                    type       = "the prison population",
                                    title_type = "People in Prison",
                                    source     = ncrp_source,
-                                   year       = pop_select_year)
+                                   year       = select_year)############### HAWAII USES 2018
 
   return(highcharts)
 })
@@ -361,11 +381,13 @@ all_bar_population_sentlgth$Idaho
 # Generate sentence for each state
 all_sentence_population_sentlgth <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = ncrp_population_sentlgth,
                                                  x_var      = "sentlgth",
                                                  type       = "in prison",
-                                                 year       = pop_select_year)
+                                                 year       = select_year)############### HAWAII USES 2018
 
   return(sentences)
 })

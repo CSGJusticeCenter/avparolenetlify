@@ -200,7 +200,7 @@ ncrp_releases_consolidated <- ncrp_releases_consolidated |>
          time_between_admission_release = as.numeric(relyr) - as.numeric(admityr))
 
 # States with high missingness for race and ethnicity
-states_with_high_missing_race <- ncrp_yearendpop_consolidated |>
+states_with_high_missing_race <- ncrp_yearendpop_consolidated |>######################## need for releases too?
   group_by(state, rptyear) |>
   summarize(
     perc_missing_race = round(mean(race == "Unknown" | is.na(race)) * 100, 1),

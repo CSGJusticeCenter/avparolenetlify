@@ -18,7 +18,7 @@
 
 # Function that filters the releases data to include only includes states with
 # parole systems and without high missingness
-ncrp_releases_filtered <- fnc_filter_population(ncrp_releases_consolidated)
+ncrp_releases_filtered <- fnc_filter_population(ncrp_releases_consolidated, exclude = states_to_exclude)
 
 # Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
@@ -69,6 +69,9 @@ states <- unique(ncrp_releases_by_year$state)
 # VISUALIZATION: Prison Releases by Year
 # Generate chart for each state
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   df1 <- ncrp_releases_by_year |>
     ungroup() |>
     filter(state == x) |>
@@ -127,11 +130,13 @@ rm(states)
 
 # Filter NCRP releases to people in prison for new crimes and sentence lengths
 # not less than one year or life
-ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(ncrp_releases_not_consolidated) #########################################
+ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(data = ncrp_releases_not_consolidated,#########################################
+                                                                exclude = states_to_exclude,
+                                                                dont_filter = states_nofilter)
 
 # Get number of people past PE and released and get people released on PE
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
-  filter(rptyear >= 2010) |>
+  filter(rptyear >= 2010 & rptyear <= 2019) |> ###########################################HAWAII
   filter(estimated_pey_status %in% c("past", "current_year")) |>
   group_by(state, rptyear, estimated_pey_status) |>
   summarise(n = n(), .groups = "drop") |>
@@ -205,7 +210,7 @@ all_sentence_pe_proportion_released <- map(.x = states,  .f = function(x) {
 
   # Find the earliest (2010) and latest (2020) years
   earliest_year <- 2010
-  latest_year <- 2020
+  latest_year <- 2019
 
   # Filter data for 2010 and 2020
   df_earliest <- df1 %>% filter(rptyear == earliest_year)
@@ -265,12 +270,11 @@ rm(states)
 # Filter to include only conditional and unconditional releases, removing other release types
 # Remove "Other releases" - although Alabama has 30% other releases
 release_types <- ncrp_releases_filtered |>
-  filter(rptyear == select_year) |>
   filter(reltype == "Conditional release" | reltype == "Unconditional release") |>
   mutate(reltype = case_when(reltype == "Conditional release" ~ "Conditional Release",
                              reltype == "Unconditional release" ~ "Unconditional Release",
                              TRUE ~ reltype)) |>
-  group_by(state) |>
+  group_by(state, rptyear) |>
   count(reltype) |>
   mutate(prop = n/sum(n))
 
@@ -280,9 +284,13 @@ states <- unique(release_types$state)
 # VISUALIZATION: Proportion of Conditional vs Unconditional Releases
 # Generate chart for each state
 all_pie_release_type <- map(.x = states, .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   df1 <- release_types |>
     ungroup() |>
-    filter(state == x)
+    filter(state == x) |>
+    filter(rptyear == select_year)
 
   hc_accessibility_text <- paste0("This graph shows the proportion of the prison population
                                   released by release type (unconditional release vs. conditional
@@ -336,6 +344,7 @@ states <- unique(release_types$state)
 #            In YEAR, 45 percent of people released from prison were conditional releases."
 # Generate sentence for each state
 all_sentence_release_type <- map(.x = states,  .f = function(x) {
+  select_year <- fnc_determine_select_year(x, which_overall_year)
   df1 <- release_types |>
     filter(state == x & reltype == "Conditional Release")
   sentences <- paste0(
@@ -356,7 +365,7 @@ rm(states)
 
 # Race and Ethnicity
 # Filter releases for valid race data and generate visualizations and summary sentences
-prison_releases_race <- fnc_summarize_data(ncrp_releases_filtered, "race") |>
+prison_releases_race <- fnc_summarize_data(ncrp_releases_filtered, "race", which_overall_year) |>
   # Exclude states with high missingness for race and ethnicity
   # Prints off which states are missing data
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
@@ -368,6 +377,8 @@ states <- unique(prison_releases_race$state)
 # Generate graph for each state
 all_bar_releases_race <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   this_metric <- "Race and Ethnicity"
   highcharts <- fnc_hc_columnchart(state_var  = x,
                                    df         = prison_releases_race,
@@ -376,7 +387,8 @@ all_bar_releases_race <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "released from prison",
                                    title_type = "People Released from Prison",
-                                   source     = ncrp_source)
+                                   source     = ncrp_source,
+                                   year       = select_year)
 
   return(highcharts)
 })
@@ -393,10 +405,13 @@ states <- unique(prison_releases_race$state)
 # Generate sentence for each state
 all_sentence_releases_race <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = prison_releases_race,
                                                  x_var      = "race",
-                                                 type       = "released from prison")
+                                                 type       = "released from prison",
+                                                 year       = select_year)
 
 })
 # Assign state names to list
@@ -410,7 +425,7 @@ rm(states)
 # Releases by Sex
 # ---------------------------------------------------------------------------- #
 
-prison_releases_sex <- fnc_summarize_data(ncrp_releases_filtered, "sex")
+prison_releases_sex <- fnc_summarize_data(ncrp_releases_filtered, "sex", which_overall_year)
 
 # Get unique states to iterate over
 states <- unique(prison_releases_sex$state)
@@ -418,6 +433,8 @@ states <- unique(prison_releases_sex$state)
 # VISUALIZATION: Prison Releases by Sex
 # Generate graph for each state
 all_bar_releases_sex <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Sex"
   highcharts <- fnc_hc_columnchart(state_var  = x,
@@ -427,7 +444,8 @@ all_bar_releases_sex <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "released from prison",
                                    title_type = "People Released from Prison",
-                                   source     = ncrp_source)
+                                   source     = ncrp_source,
+                                   year       = select_year)
 
 
 })
@@ -443,10 +461,13 @@ states <- unique(prison_releases_sex$state)
 # Generate sentence for each state
 all_sentence_releases_sex <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = prison_releases_sex,
                                                  x_var      = "sex",
-                                                 type       = "released from prison")
+                                                 type       = "released from prison",
+                                                 year       = select_year)
 
 })
 # Assign state names to list
@@ -460,7 +481,7 @@ rm(states)
 # Releases by Age
 # ---------------------------------------------------------------------------- #
 
-prison_releases_agerlse <- fnc_summarize_data(ncrp_releases_filtered, "agerelease")
+prison_releases_agerlse <- fnc_summarize_data(ncrp_releases_filtered, "agerelease", which_overall_year)
 
 # Get unique states to iterate over
 states <- unique(prison_releases_agerlse$state)
@@ -468,6 +489,8 @@ states <- unique(prison_releases_agerlse$state)
 # VISUALIZATION: Prison Releases by Age
 # Generate graph for each state
 all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Age"
   highcharts <- fnc_hc_columnchart(state_var  = x,
@@ -477,7 +500,8 @@ all_bar_releases_agerlse <- map(.x = states,  .f = function(x) {
                                    metric     = this_metric,
                                    type       = "released from prison",
                                    title_type = "People Released from Prison",
-                                   source     = ncrp_source)
+                                   source     = ncrp_source,
+                                   year       = select_year)
   return(highcharts)
 })
 # Assign state names to list
@@ -489,10 +513,13 @@ all_bar_releases_agerlse$Georgia
 # Generate sentence for each state
 all_sentence_releases_agerlse <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = prison_releases_agerlse,
                                                  x_var      = "agerelease",
-                                                 type       = "released from prison")
+                                                 type       = "released from prison",
+                                                 year       = select_year)
 
 })
 # Assign state names to list
@@ -507,7 +534,7 @@ rm(states)
 # ---------------------------------------------------------------------------- #
 
 # Filter release data for the selected year and group by state and offense type (FBI index)
-prison_releases_fbi_index <- fnc_summarize_data(ncrp_releases_filtered, "fbi_index")
+prison_releases_fbi_index <- fnc_summarize_data(ncrp_releases_filtered, "fbi_index", which_overall_year)
 
 # Get unique states to iterate over
 states <- unique(prison_releases_fbi_index$state)
@@ -515,6 +542,8 @@ states <- unique(prison_releases_fbi_index$state)
 # VISUALIZATION: Prison Releases by Offense
 # Generate chart for each state
 all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Offense Type"
   highcharts <- fnc_hc_columnchart(state_var   = x,
@@ -525,7 +554,8 @@ all_bar_releases_fbi_index <- map(.x = states,  .f = function(x) {
                                    type        = "released from prison",
                                    title_type  = "People Released from Prison",
                                    orientation = "horizontal",
-                                   source      = ncrp_source)
+                                   source      = ncrp_source,
+                                   year        = select_year)
 
 })
 # Assign state names to list
@@ -537,10 +567,13 @@ all_bar_releases_fbi_index$Georgia
 # Generate sentence for each state
 all_sentence_releases_fbi_index <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = prison_releases_fbi_index,
                                                  x_var      = "fbi_index",
-                                                 type       = "released from prison")
+                                                 type       = "released from prison",
+                                                 year       = select_year)
 
 })
 # Assign state names to list

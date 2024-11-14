@@ -370,7 +370,8 @@ if (no_data_male) {
 
 ```{r results = 'asis'}
 df1 <- avg_current_pe_race |>
-  filter(state == state_for_report)
+  filter(state == state_for_report) |> 
+  filter(rptyear == select_year)
 
 no_data <- nrow(df1) == 0
 
@@ -420,7 +421,8 @@ if (no_data) {
 
 ```{r results = 'asis'}
 df1 <- avg_current_pe_sex |>
-  filter(state == state_for_report)
+  filter(state == state_for_report)|> 
+  filter(rptyear == select_year)
 
 no_data <- nrow(df1) == 0
 

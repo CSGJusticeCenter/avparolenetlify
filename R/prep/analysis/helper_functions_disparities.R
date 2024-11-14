@@ -144,20 +144,26 @@ fnc_get_census_data <- function(state) {
 #
 #   return(all_sentences)
 # }
-fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, year) {
+fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col, which_year) {
+
   # Get unique states to iterate over
   states <- unique(df$state)
 
   # Generate sentence for each state
   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
 
+    year <- which_year |>
+      filter(state == state_var) |>
+      pull(year_to_use)
+
     # Check for the comparison variable ("sex" or "race")
     if (compare_var == "sex") {
 
       # Filter data for the specified state
       df1 <- df |>
-        dplyr::ungroup() |>
-        dplyr::filter(state == state_var)
+        ungroup() |>
+        filter(state == state_var) |>
+        filter(rptyear == year)
 
       # Handle missing data for the state
       if (nrow(df1) == 0) {
@@ -212,7 +218,8 @@ fnc_generate_los_disparity_sentences <- function(df, type, compare_var, los_col,
           race == "Black, non-Hispanic" ~ "Black",
           race == "Hispanic, any race" ~ "Hispanic"
         )) |>
-        dplyr::filter(state == state_var)
+        dplyr::filter(state == state_var) |>
+        filter(rptyear == year)
 
       # Handle missing data for the state
       if (nrow(df1) == 0) {
@@ -333,6 +340,7 @@ fnc_create_lollipop_chart <- function(df, group_var, group_labels, colors, state
   df1 <- df |>
     ungroup() |>
     filter(state == state_name) |>
+    filter(rptyear == year) |>
     arrange(desc(average_los)) |>
     mutate(group_num = row_number(),
            color = case_when(
@@ -458,10 +466,11 @@ fnc_calc_los_by_var <- function(df,
                                 filter_values,
                                 time_var,
                                 state_col = "state",
-                                fbi_col = "fbi_index") {
-  fnc_filter_population(df) |>
+                                fbi_col = "fbi_index",
+                                exclude) {
+  fnc_filter_population(df, exclude) |>
     filter(!!sym(var) %in% filter_values) |>
-    group_by(!!sym(state_col), !!sym(var), !!sym(fbi_col)) |>
+    group_by(!!sym(state_col), !!sym(var), !!sym(fbi_col), rptyear) |>
     summarise(
       avg_time = mean(!!sym(time_var), na.rm = TRUE),
       people = n(),
@@ -483,14 +492,20 @@ fnc_calc_los_by_var <- function(df,
 #'
 #' @return A named list of sentences, where each state has a sentence describing the largest disparity in length of stay between groups.
 #' @export
-fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "avg_los") {
+fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "avg_los", which_year) {
   # Get unique states to iterate over
   states <- unique(data$state)
 
   # Generate sentence for each state
   all_sentences <- purrr::map(.x = states, .f = function(x) {
+
+    year <- which_year |>
+      filter(state == x) |>
+      pull(year_to_use)
+
     df1 <- data |>
-      dplyr::filter(state == x & fbi_index != "Unknown")
+      dplyr::filter(state == x & fbi_index != "Unknown") |>
+      filter(rptyear == year)
 
     # Handling missing data
     if (nrow(df1) == 0) {
@@ -642,7 +657,8 @@ fnc_create_scatter_charts_by_state <- function(df,
                                                group_labels,
                                                colors,
                                                year = 2020,
-                                               source = ncrp_csg_source) {
+                                               source = ncrp_csg_source,
+                                               which_years) {
 
   # Get unique states to iterate over
   states <- unique(df$state)
@@ -658,10 +674,13 @@ fnc_create_scatter_charts_by_state <- function(df,
                              "Years Past Parole: {point.x: .1f} years<br/>")
     accessibility_measure <- ifelse(measure == "avg_los", "average length of stay", "average years past parole eligibility")
 
+    year <- fnc_determine_select_year(state_name, which_years)
+
     # Filter data for the specified state
     df1 <- df |>
       ungroup() |>
       filter(state == state_name & fbi_index != "Unknown") |>
+      filter(rptyear == year) |>
       mutate(fbi_index = fct_rev(as.factor(fbi_index))) |>
       arrange(desc(!!sym(measure))) |>
       mutate(avg_time = round(!!sym(measure), 1),

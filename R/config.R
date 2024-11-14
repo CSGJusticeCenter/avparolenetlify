@@ -81,15 +81,6 @@ deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_find
 # Projection year
 projection_year <- 2023
 
-# # Select years for analysis using NCRP data and BJS data
-# select_year <- 2019
-#
-# # Year for population data (NCRP)
-# pop_select_year <- 2019
-#
-# # Year for population data (BJS)
-# bjs_data_year <- 2019
-
 #------------------------------------------------------------------------------#
 # Fonts
 #------------------------------------------------------------------------------#
