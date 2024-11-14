@@ -135,11 +135,39 @@ fnc_filter_exclude_high_missing_race <- function(data, states_with_high_missing_
 #'
 #' @return A summarized data frame with counts, proportions, and formatted labels.
 #' @export
-fnc_summarize_data <- function(df, count_column, year) {
+# fnc_summarize_data <- function(df, count_column, year) {
+#   count_column <- sym(count_column)  # Convert the string column name to a symbol
+#
+#   df1 <- df |>
+#     filter(rptyear == year) |>
+#     group_by(state) |>
+#
+#     # Conditionally exclude "Unknown" only if the count_column is not "race"
+#     filter(!is.na(!!count_column) &
+#              (!(deparse(substitute(count_column)) != "race" & (!!count_column == "Unknown")))) |>
+#
+#     count(!!count_column) |>
+#
+#     # Calculate proportions and create labels for visualization
+#     mutate(
+#       prop = (n / sum(n)) * 100,                # Calculate proportion
+#       n_total = sum(n),                         # Calculate total population
+#       prop_label = paste0(round(prop, 0), "%"), # Create proportion label as percentage
+#       n_label = formattable::comma(n, 0)        # Format count labels with commas
+#     ) |>
+#     ungroup()
+#
+#   return(df1)
+# }
+fnc_summarize_data <- function(df, count_column, year_df) {
   count_column <- sym(count_column)  # Convert the string column name to a symbol
 
+  # Join df with year_df to get the correct year for each state
+  df <- df |>
+    left_join(year_df, by = "state")
+
   df1 <- df |>
-    filter(rptyear == year) |>  # Ensure 'rptyear' exists or use the correct year column
+    filter(rptyear == year_to_use) |>
     group_by(state) |>
 
     # Conditionally exclude "Unknown" only if the count_column is not "race"

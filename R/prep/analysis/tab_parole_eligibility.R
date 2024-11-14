@@ -138,6 +138,7 @@ all_sentence_pe_type <- map(states, function(x) {
 all_sentence_pe_type <- setNames(all_sentence_pe_type, states)
 all_sentence_pe_type$Georgia
 all_sentence_pe_type$Connecticut
+all_sentence_pe_type$Hawaii
 rm(states)
 
 
@@ -281,6 +282,7 @@ all_sentence_pop_pe_by_year <- setNames(all_sentence_pop_pe_by_year, states)
 all_sentence_pop_pe_by_year$Michigan
 all_sentence_pop_pe_by_year$Georgia
 all_sentence_pop_pe_by_year$Connecticut
+all_sentence_pop_pe_by_year$Hawaii
 
 # VISUALIZATION: Prison Population Past Parole Eligibility by Year
 # Generate chart for each state
@@ -371,16 +373,19 @@ current_pe <- ncrp_yearendpop_filtered |>
   filter(parelig_status == "Current")
 
 # Use unconsolidated file for age - ageyrend not in consolidated file
-current_pe_unconsolidated <- fnc_filter_pe_population_criteria(ncrp_yearendpop_not_consolidated) |>
+current_pe_unconsolidated <-
+  fnc_filter_pe_population_criteria(ncrp_yearendpop_not_consolidated,
+                                    exclude = states_to_exclude,
+                                    dont_filter = states_nofilter) |>
   filter(parelig_status == "Current")
 
 # Race data: Exclude states with high missingness in race categories
-current_ped_race     <- fnc_summarize_data(current_pe, "race") |>
+current_ped_race <- fnc_summarize_data(current_pe, "race", which_overall_year) |>
   # Exclude states with high missingness for race and ethnicity
   # Prints off which states are missing data
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
-current_ped_sex      <- fnc_summarize_data(current_pe, "sex")
-current_ped_ageyrend <- fnc_summarize_data(current_pe_unconsolidated, "ageyrend")
+current_ped_sex      <- fnc_summarize_data(current_pe, "sex", which_overall_year)
+current_ped_ageyrend <- fnc_summarize_data(current_pe_unconsolidated, "ageyrend", which_overall_year)
 
 # ---------------------------------------------------------------------------- #
 # Race
@@ -391,6 +396,9 @@ current_ped_ageyrend <- fnc_summarize_data(current_pe_unconsolidated, "ageyrend"
 states <- unique(current_ped_race$state)
 all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 
+  # Determine year based on state
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   this_metric <- "Race and Ethnicity"
   highcharts <- fnc_hc_columnchart(state_var  = x,
                                    df         = current_ped_race,
@@ -398,27 +406,34 @@ all_bar_parole_eligibility_race <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population past parole eligibility",
-                                   title_type = "People in Prison Past Parole Eligibility")
+                                   title_type = "People in Prison Past Parole Eligibility",
+                                   year       = select_year)
 
   return(highcharts)
 })
 # Assign state names to list
 all_bar_parole_eligibility_race <- setNames(all_bar_parole_eligibility_race, states)
 all_bar_parole_eligibility_race$Georgia
+all_bar_parole_eligibility_race$Hawaii
 
 # SENTENCE: "In YEAR, 60 percent of people in prison past parole eligibility were Black, non-Hispanic."
 # Generate sentence for each state
 all_sentence_parole_eligibility_race <- map(.x = states,  .f = function(x) {
 
+  # Determine year based on state
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = current_ped_race,
                                                  x_var      = "race",
-                                                 type       = "in prison past parole eligibility")
+                                                 type       = "in prison past parole eligibility",
+                                                 year       = select_year)
 
   return(sentences)
 })
 all_sentence_parole_eligibility_race <- setNames(all_sentence_parole_eligibility_race, states)
 all_sentence_parole_eligibility_race$Georgia
+all_sentence_parole_eligibility_race$Hawaii
 rm(states)
 
 
@@ -432,6 +447,9 @@ rm(states)
 states <- unique(current_ped_sex$state)
 all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 
+  # Determine year based on state
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   this_metric <- "Sex"
   highcharts <- fnc_hc_columnchart(state_var  = x,
                                    df         = current_ped_sex,
@@ -439,7 +457,8 @@ all_bar_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population past parole eligibility",
-                                   title_type = "People in Prison Past Parole Eligibility")
+                                   title_type = "People in Prison Past Parole Eligibility",
+                                   year       = select_year)
 
   return(highcharts)
 })
@@ -451,10 +470,14 @@ all_bar_parole_eligibility_sex$Georgia
 # Generate sentence for each state
 all_sentence_parole_eligibility_sex <- map(.x = states,  .f = function(x) {
 
+  # Determine year based on state
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var  = x,
                                                  df         = current_ped_sex,
                                                  x_var      = "sex",
-                                                 type       = "in prison past parole eligibility")
+                                                 type       = "in prison past parole eligibility",
+                                                 year       = select_year)
 
   return(sentences)
 })
@@ -473,6 +496,9 @@ rm(states)
 states <- unique(current_ped_ageyrend$state)
 all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 
+  # Determine year based on state
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   this_metric <- "Age"
   highcharts <- fnc_hc_columnchart(state_var  = x,
                                    df         = current_ped_ageyrend,
@@ -480,7 +506,8 @@ all_bar_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population past parole eligibility",
-                                   title_type = "People in Prison Past Parole Eligibility")
+                                   title_type = "People in Prison Past Parole Eligibility",
+                                   year       = select_year)
 
   return(highcharts)
 })
@@ -492,10 +519,14 @@ all_bar_parole_eligibility_ageyrend$Georgia
 # Generate sentence for each state
 all_sentence_parole_eligibility_ageyrend <- map(.x = states,  .f = function(x) {
 
+  # Determine year based on state
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var = x,
                                                  df        = current_ped_ageyrend,
                                                  x_var     = "ageyrend",
-                                                 type      = "in prison past parole eligibility")
+                                                 type      = "in prison past parole eligibility",
+                                                 year       = select_year)
 
   return(sentences)
 })
@@ -511,7 +542,7 @@ rm(states)
 
 # Get number and prop of people in prison past their parole eligibility year
 # by offense
-current_ped_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |>
+current_ped_fbi_index <- fnc_summarize_data(current_pe, "fbi_index", which_overall_year) |>
   # Group offenses into violent vs nonviolent
   mutate(offense_group = case_when(
     fbi_index %in% c("Murder or Nonnegligent Manslaughter",
@@ -537,6 +568,7 @@ current_ped_offense_group <- current_ped_fbi_index |>
 states <- unique(current_ped_fbi_index$state)
 all_bar_ped_fbi_index <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
   this_metric <- "Offense Type"
   highcharts <- fnc_hc_columnchart(state_var   = x,
                                    df          = current_ped_fbi_index,
@@ -545,7 +577,8 @@ all_bar_ped_fbi_index <- map(.x = states,  .f = function(x) {
                                    metric      = this_metric,
                                    type        = "the prison population past parole eligibility",
                                    title_type  = "People in Prison Past Parole Eligibility",
-                                   orientation = "horizontal")
+                                   orientation = "horizontal",
+                                   year        = select_year)
 
   return(highcharts)
 })
@@ -558,10 +591,9 @@ all_bar_ped_fbi_index$Georgia
 #           Most people who were incarcerated past parole eligibility were serving
 #           time for aggravated or simple assault (21%) and robbery (20%) offenses.
 # Generate sentence for each state
-library(dplyr)
-library(purrr)
-
 all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   # Get the top offense_group
   df1 <- current_ped_offense_group |>
@@ -632,12 +664,14 @@ rm(states)
 
 # Currently parole eligible population but still in prison by sentlgth in select year
 # Only for people in prison most recently for a new court commitment, sentence lengths (1 to 24.99 years)
-current_ped_sentlgth <- fnc_summarize_data(current_pe, "sentlgth")
+current_ped_sentlgth <- fnc_summarize_data(current_pe, "sentlgth", which_overall_year)
 
 # VISUALIZATION: Bar charts for parole eligibility by sentlgth for each state
 # Generate graph for each state
 states <- unique(current_ped_sentlgth$state)
 all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
+
+  select_year <- fnc_determine_select_year(x, which_overall_year)
 
   this_metric <- "Sentence Length"
   highcharts <- fnc_hc_columnchart(state_var  = x,
@@ -646,7 +680,8 @@ all_bar_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
                                    y_var      = "prop",
                                    metric     = this_metric,
                                    type       = "the prison population past parole eligibility",
-                                   title_type = "People in Prison Past Parole Eligibility")
+                                   title_type = "People in Prison Past Parole Eligibility",
+                                   year       = select_year)
 
   return(highcharts)
 })
@@ -658,10 +693,13 @@ all_bar_parole_eligibility_sentlgth$Georgia
 # Generate sentence for each state
 all_sentence_parole_eligibility_sentlgth <- map(.x = states,  .f = function(x) {
 
+  select_year <- fnc_determine_select_year(x, which_overall_year)
+
   sentences <- fnc_generate_columnchart_sentence(state_var = x,
                                                  df        = current_ped_sentlgth,
                                                  x_var     = "sentlgth",
-                                                 type      = "in prison past parole eligibility")
+                                                 type      = "in prison past parole eligibility",
+                                                 year      = select_year)
 
   return(sentences)
 })

@@ -66,7 +66,7 @@ div(
 ::: {.panel-tabset .nav-pills}
 
 # Parole Eligibility
-
+ 
 ## How Parole Eligibility Is Determined
 
 Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
