@@ -34,12 +34,14 @@ knitr::opts_chunk$set(
 source("R/config.R")
 
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
-states_to_include <- parole_eligibility_table |> filter(!is.na(current_perc))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/abolished_states.rds"))
+
+states_to_include <- parole_eligibility_table |> filter(!is.na(proj_pcnt_ppey_rounded) & !state %in% states_national_page_only$state)
 ```
 
 ```{r}
-
-
 # List of states with their corresponding URLs
 state_links <- list(
   "Alabama" = "https://avparoleproject.netlify.app/state_report_alabama",
@@ -112,33 +114,3 @@ knitr::asis_output(html_output)
 ```
 
 <br><br>
-
-**Missing Data**
-
-The following states are not included due to incomplete data submitted to the National Corrections Reporting Program in 2020, though they still have parole systems:
-
-- Alaska
-- Vermont
-- Arkansas
-- Hawaii
-
-Additionally, the analysis excludes states that have abolished parole, meaning no state reports are provided for:
-
-- Arizona
-- California
-- Delaware
-- Florida
-- Illinois
-- Indiana
-- Kansas
-- Maine
-- Minnesota
-- New Mexico
-- North Carolina
-- Ohio
-- Oregon
-- Virginia
-- Washington
-- Wisconsin
-
-
