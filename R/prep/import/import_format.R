@@ -103,12 +103,12 @@ abolished_states <- state_notes |>
 # Determine which states have high missingness and should be excluded from analysis/tool
 # File created by Seba Guzman in Stata
 # excl_state_year = 1 means the state for that year should be excluded
-pey_and_hearings_by_state_2010_2020 <-
-  read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/pey_and_hearings_by_state_2010_2020.dta"))
+projections_compl_2010_2020 <-
+  read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_compl_2010_2020.dta"))
 
 # Determine which year is best by state
 # Some should use 2019 and others should use 2018
-which_overall_year <- pey_and_hearings_by_state_2010_2020 |>
+which_overall_year <- projections_compl_2010_2020 |>
   select(state, year, excl_state_year) |>
   group_by(state) |>
   mutate(year_to_use = case_when(
@@ -121,12 +121,12 @@ which_overall_year <- pey_and_hearings_by_state_2010_2020 |>
   select(state, year_to_use) |> distinct()
 
 # Determine which years shouldn't be used by state due to unreliable data
-which_years <- pey_and_hearings_by_state_2010_2020 |>
+which_years <- projections_compl_2010_2020 |>
   select(state, year, excl_state_year) |>
   distinct()
 
 # Filter states with excl_state_year == 1 for both 2018 and 2019
-states_with_high_missing <- pey_and_hearings_by_state_2010_2020 |>
+states_with_high_missing <- projections_compl_2010_2020 |>
   filter(year %in% c(2018, 2019)) |>
   group_by(state) |>
   summarise(all_years_missing = all(excl_state_year == 1)) |>
@@ -142,9 +142,9 @@ states_to_exclude <- states_with_high_missing |>
 
 
 #------------------------------------------------------------------------------#
-# NCRP Data
+# Parole Eligibility Data:
+# Seba Guzman's NCRP Projections for 2021 to 2023
 # Seba Guzman's Imputed Data for NCRP 2010 to 2020
-# Seba Guzman's Projections for 2021 to 2023
 #------------------------------------------------------------------------------#
 
 # Import projections

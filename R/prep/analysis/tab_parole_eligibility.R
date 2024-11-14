@@ -511,7 +511,7 @@ rm(states)
 # by offense
 current_ped_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |>
   # Group offenses into violent vs nonviolent
-  mutate(group = case_when(
+  mutate(offense_group = case_when(
     fbi_index %in% c("Murder or Nonnegligent Manslaughter",
                      "Negligent Manslaughter",
                      "Rape or Sexual Assault",
@@ -523,9 +523,9 @@ current_ped_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |>
 
 # Get prop of offenses that were violent and nonviolent
 current_ped_offense_group <- current_ped_fbi_index |>
-  select(state, fbi_index, group, n) |>
-  filter(group == "Violent" | group == "Nonviolent") |>
-  group_by(state, group) |>
+  select(state, fbi_index, offense_group, n) |>
+  filter(offense_group == "Violent" | offense_group == "Nonviolent") |>
+  group_by(state, offense_group) |>
   summarise(total_offenses = sum(n), .groups = 'drop') |>
   group_by(state) |>
   mutate(prop = total_offenses / sum(total_offenses))
@@ -561,7 +561,7 @@ library(purrr)
 
 all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
 
-  # Get the top group
+  # Get the top offense_group
   df1 <- current_ped_offense_group |>
     filter(state == x) |>
     arrange(-prop)
@@ -572,10 +572,10 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
   }
 
   # Violent vs Nonviolent breakdown sentence
-  violent_prop <- df1 |> filter(group == "Violent") |> pull(prop) * 100
-  nonviolent_prop <- df1 |> filter(group == "Nonviolent") |> pull(prop) * 100
+  violent_prop <- df1 |> filter(offense_group == "Violent") |> pull(prop) * 100
+  nonviolent_prop <- df1 |> filter(offense_group == "Nonviolent") |> pull(prop) * 100
 
-  group_sentence <- paste0("In ", select_year, ", ", round(violent_prop, 0),
+  offense_group_sentence <- paste0("In ", select_year, ", ", round(violent_prop, 0),
                            " percent of people in prison past parole eligibility were in prison for violent offenses and ",
                            round(nonviolent_prop, 0), " percent for nonviolent offenses.")
 
@@ -610,7 +610,7 @@ all_sentence_parole_eligibility_fbi_index <- map(.x = states, .f = function(x) {
   }
 
   # Combine the sentences
-  sentences <- paste0(group_sentence, " Most people who were incarcerated past parole eligibility were serving time for ", fbi_sentence_final, " offenses.")
+  sentences <- paste0(offense_group_sentence, " Most people who were incarcerated past parole eligibility were serving time for ", fbi_sentence_final, " offenses.")
 
   return(sentences)
 })

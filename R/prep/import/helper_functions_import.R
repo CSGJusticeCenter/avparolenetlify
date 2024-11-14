@@ -105,9 +105,16 @@ fnc_create_fbi_index <- function(df) {
   print("Creating FBI index...")
 
   # Define custom order (in reverse)
-  custom_order <- c("Drug", "Public Order", "Property",
-                    "Aggravated or Simple Assault", "Robbery", "Rape or Sexual Assault",
-                    "Negligent Manslaughter", "Murder or Nonnegligent Manslaughter", "Other Violent Offenses",
+  custom_order <- c("Drug",
+                    "Public Order",
+                    "Property",
+                    "Aggravated or Simple Assault",
+                    "Robbery",
+                    "Rape or Sexual Assault",
+                    "Negligent Manslaughter",
+                    "Murder or Nonnegligent Manslaughter",
+                    "Other Violent Offenses",
+                    "Other or Unspecified",
                     "Unknown")
 
   df <- df |>
@@ -230,10 +237,13 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
   df <- df |>
     mutate(
       # Use earliest_pey1_status as estimated_pey_status for specific states
+      # because it's more reliable than the imputed value (estimated_pey_status)
       estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status),
-      sentlgth_raw = sentlgth,
-      offdetail = trimws(offdetail),
-      time_between_ped_rptyear = as.numeric(years_to_estimated_pey),
+      sentlgth_raw = sentlgth, # back up sentence length
+      offdetail = trimws(offdetail), # trim white space
+      time_between_ped_rptyear = as.numeric(years_to_estimated_pey), # rename variable
+
+      # Create category for past and currently eligible people. They are both eligible currently, technically...
       parelig_status = case_when(
         estimated_pey_status %in% c("past", "current_year") ~ "Current",
         estimated_pey_status == "missing" ~ "Missing",
@@ -241,12 +251,18 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
         TRUE ~ estimated_pey_status
       )
     ) |>
+
+    # Change instances of "NA" to "Unknown"
     mutate_at(all_of(existing_columns),
               ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
+
+    # Categorize offense categories
     fnc_create_fbi_index() |>
+
+    # Categorize admission type
     fnc_create_admtype() |>
     mutate(
-      # Catgorize Seba Guzman's imputated variable calc_sent_lgth to be the same as NCRP's sentlgth
+      # Categorize Seba Guzman's imputated variable calc_sent_lgth to be the same as NCRP's sentlgth
       calc_sent_lgth = case_when(
         calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
         calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
