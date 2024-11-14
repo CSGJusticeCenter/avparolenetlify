@@ -47,9 +47,9 @@ fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualizat
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
-  div(id = "highlight-text", formattable::comma(num_people_proj_ppey, digits = 0)),
-  div(id = "highlight-text", paste0(round(num_people_proj_pcnt_ppey, 0), "%")),
-  div(id = "highlight-text", formattable::comma(num_parole_board_mem, digits = 0)),
+  div(id = "highlight-text", formattable::comma(proj_ppey, digits = 0)),
+  div(id = "highlight-text", paste0(round(proj_pcnt_ppey, 0), "%")),
+  div(id = "highlight-text", formattable::comma(parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", 
       HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'></span>")),
   div(id = "bold-text", style = "text-align: center;", 

@@ -14,13 +14,15 @@
 # Get unique states from ncrp_projections
 unique_states <- unique(which_overall_year$state)
 
-filtered_parole_elig_table_analysis_year <- ncrp_projections |>
+# Select projection_year from NCRP projections created by Seba Guzman in Stata
+parole_eligibility_table_projection_year <- ncrp_projections |>
   filter(year == projection_year) |>
   filter(!state %in% states_to_exclude$state) |>
   mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
          proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
 
+# Get total past PE
 proj_past_pe_count_rounded <- ncrp_projections |>
   filter(year == projection_year) |>
   filter(!state %in% states_to_exclude$state) |>
@@ -55,7 +57,7 @@ states_parole <- state_notes |>
 #------------------------------------------------------------------------------#
 
 # Only include states that abolished parole + Lousiana (high PE population)
-parole_eligibility_table <- filtered_parole_elig_table_analysis_year |>
+parole_eligibility_table <- parole_eligibility_table_projection_year |>
   left_join(states_parole, by = "state") |>
   filter(abolished_parole == "N" | state == "Louisiana") |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded, members)
@@ -100,13 +102,13 @@ map_data <- filtered_parole_elig_table_analysis_year |>
 
       state == "Louisiana" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
-               "Louisiana is listed among the states with parole systems, despite<br>
-               its recent abolition of parole, due to a substantial population<br>
-               that remains eligible for parole release under the previous system.<br>",
-               "Percentage of People: ",
                paste0(round(proj_pcnt_ppey_rounded, 0), "%<br>"),
                "Number of People: ",
-               formattable::comma(proj_pop_past_pey_rounded, 0)),
+               formattable::comma(proj_pop_past_pey_rounded, 0),
+               "<br>Louisiana is listed among the states with parole systems, despite<br>
+               its recent abolition of parole, due to a substantial population<br>
+               that remains eligible for parole release under the previous system.<br>",
+               "Percentage of People: "),
 
       all_na == TRUE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",

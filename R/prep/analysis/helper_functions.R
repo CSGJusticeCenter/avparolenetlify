@@ -25,9 +25,9 @@ fnc_determine_select_year <- function(state_name, which_overall_year) {
 #'
 #' @return A filtered data frame with states that did not abolish parole and have valid data.
 #' @export
-fnc_filter_population <- function(data) {
+fnc_filter_population <- function(data, exclude) {
   # Get states to exclude - missing data and abolished parole
-  exclude <- states_to_exclude |>
+  exclude <- exclude |>
     pull(state)
 
   # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
@@ -47,8 +47,7 @@ fnc_filter_population <- function(data) {
 #'
 #' @return A filtered data frame based on parole eligibility criteria.
 #' @export
-fnc_filter_pe_population_criteria <- function(data, exclude = states_to_exclude,
-                                              dont_filter = states_nofilter) {
+fnc_filter_pe_population_criteria <- function(data, exclude, dont_filter) {
   # Get states to exclude - missing data and abolished parole
   exclude <- exclude |>
     pull(state)

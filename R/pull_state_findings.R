@@ -73,9 +73,9 @@ if (state_for_report %in% unique(parole_eligibility_table$state)) {
   state_data <- no_data_text
 }
 
-num_people_proj_ppey <- parole_eligibility_table |> filter(state == state_for_report) |> pull(proj_pop_past_pey_rounded)
-num_people_proj_pcnt_ppey <- parole_eligibility_table |> filter(state == state_for_report) |> pull(proj_pcnt_ppey)
-num_parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report) |> pull(members)
+proj_ppey <- parole_eligibility_table |> filter(state == state_for_report) |> pull(proj_pop_past_pey_rounded)
+proj_pcnt_ppey <- parole_eligibility_table |> filter(state == state_for_report) |> pull(proj_pcnt_ppey_rounded)
+parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report) |> pull(members)
 
 
 
