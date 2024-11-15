@@ -12,11 +12,14 @@
 # Prison Population By Year
 # ---------------------------------------------------------------------------- #
 
+bjs_prison_pop_by_rptyear_filtered <- bjs_prison_pop_by_rptyear |>
+  filter(!state %in% states_to_exclude$state) |>
+  filter(rptyear <= year_to_use)
+
 # Get unique states to iterate over
 # Only states that submitted data to BJS and not in exclusion
 # list (high missingness or abolished parole)
-states <- bjs_prison_pop_by_rptyear |>
-  filter(!state %in% states_to_exclude$state) |>
+states <- bjs_prison_pop_by_rptyear_filtered |>
   distinct(state) |>
   arrange(state) |>
   pull(state)
@@ -24,28 +27,40 @@ states <- bjs_prison_pop_by_rptyear |>
 # SENTENCE: "From 2010 to 2022, the prison population decreased 17 percent,
 #            changing from 56,432 in 2010 to 47,010 in 2022."
 # Generate sentence for each state
-all_sentence_population <- map(.x = states, .f = function(x) {
-  # Filter bjs_prison_pop_by_rptyear data for the specific state
-  df1 <- bjs_prison_pop_by_rptyear %>% filter(state == x)
+# Generate sentence for each state
+all_sentence_population_by_year <- map(.x = states, .f = function(x) {
+  # Filter bjs_prison_pop_by_rptyear_filtered data for the specific state
+  df1 <- bjs_prison_pop_by_rptyear_filtered |>
+    filter(state == x)
+
+  # Check if df1 has data
+  if (nrow(df1) == 0) {
+    return(paste0("No valid data available for ", x, "."))
+  }
 
   # Identify the earliest year with valid population data
-  earliest_year <- min(df1$rptyear)
+  earliest_year <- min(df1$rptyear, na.rm = TRUE)
   earliest_year_population <- df1$bjs_prison_population[df1$rptyear == earliest_year]
 
   # Handle cases where the population data for the earliest year is missing
-  if(is.na(earliest_year_population) | length(earliest_year_population) == 0) {
-    earliest_year <- min(df1$rptyear[!is.na(df1$bjs_prison_population)])
+  if (is.na(earliest_year_population) | length(earliest_year_population) == 0) {
+    earliest_year <- min(df1$rptyear[!is.na(df1$bjs_prison_population)], na.rm = TRUE)
     earliest_year_population <- df1$bjs_prison_population[df1$rptyear == earliest_year]
   }
 
   # Identify the most recent year with valid population data
-  latest_year <- max(df1$rptyear)
+  latest_year <- max(df1$rptyear, na.rm = TRUE)
   latest_year_population <- df1$bjs_prison_population[df1$rptyear == latest_year]
 
   # Handle cases where the population data for the latest year is missing
-  if(is.na(latest_year_population) | length(latest_year_population) == 0) {
-    latest_year <- max(df1$rptyear[!is.na(df1$bjs_prison_population) & df1$rptyear < latest_year])
+  if (is.na(latest_year_population) | length(latest_year_population) == 0) {
+    latest_year <- max(df1$rptyear[!is.na(df1$bjs_prison_population) & df1$rptyear < latest_year], na.rm = TRUE)
     latest_year_population <- df1$bjs_prison_population[df1$rptyear == latest_year]
+  }
+
+  # Check if population data is still missing after adjustments
+  if (is.na(earliest_year_population) | is.na(latest_year_population)) {
+    return(paste0("Population data is missing for ", x, "."))
   }
 
   # Calculate the percentage change in population from the earliest to latest year
@@ -60,14 +75,16 @@ all_sentence_population <- map(.x = states, .f = function(x) {
                       earliest_year, " to ", format(latest_year_population, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
 })
-all_sentence_population <- setNames(all_sentence_population, states)
-all_sentence_population$Georgia
+
+# Assign state names to the list
+all_sentence_population_by_year <- setNames(all_sentence_population_by_year, states)
+all_sentence_population_by_year$Georgia
 
 # VISUALIZATION: Prison Population by Year
 # Generate chart for each state
 all_line_population_by_year <- map(.x = states,  .f = function(x) {
 
-  df1 <- bjs_prison_pop_by_rptyear |>
+  df1 <- bjs_prison_pop_by_rptyear_filtered |>
     ungroup() |>
     filter(state == x) |>
     distinct() |>
@@ -130,6 +147,7 @@ current_yearendpop <- ncrp_yearendpop_consolidated |>
 current_yearendpop_not_consolidated <- ncrp_yearendpop_not_consolidated |>
   fnc_filter_by_year(which_overall_year)
 
+## Summarize number of people in prison by race, sex, ageyrend, offense, and sentence length
 bjs_population_race       <- bjs_prison_pop_by_race_2019 |> mutate(rptyear = 2019)
 bjs_population_sex        <- bjs_prison_pop_by_sex_2019 |> mutate(rptyear = 2019)
 ncrp_population_ageyrend  <- fnc_summarize_data(current_yearendpop_not_consolidated, "ageyrend")
@@ -192,7 +210,7 @@ all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  all_sentence_population           = "all_sentence_population.rds",
+  all_sentence_population_by_year           = "all_sentence_population_by_year.rds",
   all_line_population_by_year       = "all_line_population_by_year.rds",
   all_sentence_population_race      = "all_sentence_population_race.rds",
   all_bar_population_race           = "all_bar_population_race.rds",

@@ -165,15 +165,45 @@ fnc_create_admtype <- function(df) {
 #' @examples
 #' df <- data.frame(state = c("Alaskab", "Utahc", "U.S. Total"), bjs_prison_population = c("10,000", "5,000", "1,000,000"))
 #' df <- fnc_clean_bjs_data(df)
+# fnc_clean_bjs_data <- function(df) {
+#   print("Cleaning BJS data...")
+#
+#   df <- df |>
+#     # Remove anything after the state name in the `state` column
+#     mutate(state = str_replace(state, "/.*", "")) |>
+#     # Correct specific misspelled state names
+#     mutate(state = str_replace(state, "Alaskab", "Alaska")) |>
+#     mutate(state = str_replace(state, "Utahc", "Utah")) |>
+#     # Filter out invalid state names and totals
+#     filter(state != "" &
+#              state != "State" &
+#              state != "Federal" &
+#              state != "District of Columbia" &
+#              state != "U.S. Total" &
+#              state != "U.S. total" &
+#              state != "U.S. tota") |>
+#     # Remove non-numeric characters from `bjs_prison_population` and convert it to numeric
+#     mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) |>
+#     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
+#
+#   print("BJS data cleaned.")
+#   return(df)
+# }
 fnc_clean_bjs_data <- function(df) {
   print("Cleaning BJS data...")
 
+  # Initial cleanup of state names
   df <- df |>
     # Remove anything after the state name in the `state` column
     mutate(state = str_replace(state, "/.*", "")) |>
-    # Correct specific misspelled state names
-    mutate(state = str_replace(state, "Alaskab", "Alaska")) |>
-    mutate(state = str_replace(state, "Utahc", "Utah")) |>
+    # Correct known misspelled state names
+    mutate(state = str_replace_all(state, c(
+      "Wisconsing" = "Wisconsin",
+      "Idah" = "Idaho",
+      "Idahoo" = "Idaho",
+      "Alaskab" = "Alaska",
+      "Utahc" = "Utah"
+    ))) |>
     # Filter out invalid state names and totals
     filter(state != "" &
              state != "State" &

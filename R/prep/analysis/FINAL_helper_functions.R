@@ -169,6 +169,18 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
   return(sentences)
 }
 
+fnc_filter_population <- function(data, exclude) {
+  # Get states to exclude - missing data and abolished parole
+  exclude <- exclude |>
+    pull(state)
+
+  # Filter data based on the admission type, sentence lengths, and states that did not abolish parole
+  filtered_data <- data |>
+    filter(!(state %in% exclude))  # Only keep states that did not abolish parole
+
+  return(filtered_data)
+}
+
 
 # fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
 #

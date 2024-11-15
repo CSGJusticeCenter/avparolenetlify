@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 # # Race and Ethnicity
 # all_bar_pe_race <- fnc_generate_bar_charts(
 #   data       = current_pe_race,

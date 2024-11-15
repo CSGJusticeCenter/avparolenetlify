@@ -262,7 +262,8 @@ for (year in names(file_info)) {
 
 # Combine all the cleaned datasets from different years into a single dataframe.
 bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
-
+bjs_prison_pop_by_rptyear <- bjs_prison_pop_by_rptyear |>
+  left_join(which_overall_year, by = "state")
 
 
 

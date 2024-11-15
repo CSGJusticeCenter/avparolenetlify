@@ -172,7 +172,7 @@ current_pe_unconsolidated <-
   filter(parelig_status == "Current") |>
   fnc_filter_by_year(which_overall_year)
 
-# Summarize the data for race, sex, ageyrend, offense, and sentence length
+## Summarize number of people in prison by race, sex, ageyrend, offense, and sentence length
 current_pe_race     <- fnc_summarize_data(current_pe, "race") |>
   # Exclude states with high missingness for race and ethnicity
   # Prints off which states are missing data

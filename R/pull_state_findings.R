@@ -179,7 +179,7 @@ state_bar_pe_sentlgth <- apply_chart_settings(
 # Population Tab (tab_population.R)
 #------------------------------------------------------------------------------#
 
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_race.rds"))
@@ -196,7 +196,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_sen
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
 
 
-state_sentence_population <- all_sentence_population[[state_for_report]]
+state_sentence_population <- all_sentence_population_by_year[[state_for_report]]
 
 state_line_population_by_year <- apply_chart_settings(
   all_line_population_by_year[[state_for_report]],
@@ -254,7 +254,7 @@ state_bar_population_sentlgth <- apply_chart_settings(
 # Releases Tab (tab_releases.R)
 #------------------------------------------------------------------------------#
 
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_release_type.rds"))
@@ -273,7 +273,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_agerlse.rd
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_fbi_index.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_fbi_index.rds"))
 
-state_sentence_releases <- all_sentence_releases[[state_for_report]]
+state_sentence_releases <- all_sentence_releases_by_year[[state_for_report]]
 
 state_line_releases_by_year <- apply_chart_settings(
   all_line_releases_by_year[[state_for_report]],
