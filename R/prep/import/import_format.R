@@ -150,6 +150,10 @@ states_to_exclude <- states_with_high_missing |>
   bind_rows(abolished_states) |>
   distinct()
 
+states_use_other_race_eth <- state_rules_v1 |>
+  filter(use_other_race_ethnicity == 1)
+
+
 
 
 #------------------------------------------------------------------------------#
@@ -400,6 +404,7 @@ data_files <- list(
   states_with_high_missing         = "states_with_high_missing.rds",
   states_with_high_missing_race    = "states_with_high_missing_race.rds",
   states_national_page_only        = "states_national_page_only.rds",
+  states_use_other_race_eth        = "states_use_other_race_eth.rds",
   which_overall_year               = "which_overall_year.rds",
   which_years                      = "which_years.rds"
 )

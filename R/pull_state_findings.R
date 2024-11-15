@@ -375,8 +375,8 @@ state_sentence_pe_rri_male <- all_sentence_pe_rri_male[[state_for_report]]
 #------------------------------------------------------------------------------#
 
 # Past PE
-load(file = paste0(sp_data_path, "/data/analysis/app/avg_current_pe_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/avg_current_pe_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/avg_past_pe_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/avg_past_pe_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_sex.rds"))
 

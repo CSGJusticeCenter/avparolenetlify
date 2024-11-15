@@ -14,7 +14,7 @@
 
 # Function that filters the releases data to include only includes states with
 # parole systems and without high missingness
-ncrp_releases_filtered <- fnc_filter_population(ncrp_releases_not_consolidated, exclude = states_to_exclude)################ change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- fnc_filter_states(ncrp_releases_not_consolidated, exclude = states_to_exclude)################ change to ncrp_releases_consolidated when complete
 
 # Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>

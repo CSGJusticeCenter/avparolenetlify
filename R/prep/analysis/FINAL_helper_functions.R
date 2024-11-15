@@ -169,7 +169,7 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
   return(sentences)
 }
 
-fnc_filter_population <- function(data, exclude) {
+fnc_filter_states <- function(data, exclude) {
   # Get states to exclude - missing data and abolished parole
   exclude <- exclude |>
     pull(state)
