@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Date last updated: November 14, 2024 (MAR)
+# Date last updated: November 15, 2024 (MAR)
 # Description:
 ################################################################################
 
@@ -137,7 +137,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     hc_yAxis(title = list(text = "Percent Past Parole Eligibility"),
              min = 0, max = 100, labels = list(format = "{value}%")) |>
     hc_add_series(name = "Past Parole Eligibility", data = round(df1$pct_past_pe, 1),
-                  color = blue, marker = list(enabled = TRUE), connectNulls = TRUE,
+                  color = teal, marker = list(enabled = TRUE), connectNulls = TRUE,
                   tooltip = list(valueSuffix = "%")) |>
     hc_add_series(name = "Projected Past Parole Eligibility",
                   data = round(df1$proj_pct_past_pe, 1), color = red,
@@ -233,81 +233,6 @@ all_bar_pe_sentlgth <- all_bar_pe[["sentlgth"]]
 all_sentence_pe_sentlgth <- all_sentence_pe[["sentlgth"]]
 all_bar_pe_fbi_index <- all_bar_pe[["fbi_index"]]
 all_sentence_pe_fbi_index <- all_sentence_pe[["fbi_index"]]
-
-# # Race and Ethnicity
-# all_bar_pe_race <- fnc_generate_bar_charts(
-#   data       = current_pe_race,
-#   x_var      = "race",
-#   metric     = "Race and Ethnicity",
-#   type_desc  = "the prison population past parole eligibility",
-#   title_type = "People in Prison Past Parole Eligibility",
-#   y_var      = "prop"
-# )
-# all_sentence_pe_race <- fnc_generate_sentences(
-#   data      = current_pe_race,
-#   x_var     = "race",
-#   type_desc = "in prison past parole eligibility"
-# )
-#
-# # Sex
-# all_bar_pe_sex <- fnc_generate_bar_charts(
-#   data       = current_pe_sex,
-#   x_var      = "sex",
-#   metric     = "Sex",
-#   type_desc  = "the prison population past parole eligibility",
-#   title_type = "People in Prison Past Parole Eligibility",
-#   y_var      = "prop"
-# )
-# all_sentence_pe_sex <- fnc_generate_sentences(
-#   data      = current_pe_sex,
-#   x_var     = "sex",
-#   type_desc = "in prison past parole eligibility"
-# )
-#
-# # Age Year End
-# all_bar_pe_ageyrend <- fnc_generate_bar_charts(
-#   data       = current_pe_ageyrend,
-#   x_var      = "ageyrend",
-#   metric     = "Age",
-#   type_desc  = "the prison population past parole eligibility",
-#   title_type = "People in Prison Past Parole Eligibility",
-#   y_var      = "prop"
-# )
-# all_sentence_pe_ageyrend <- fnc_generate_sentences(
-#   data      = current_pe_ageyrend,
-#   x_var     = "ageyrend",
-#   type_desc = "in prison past parole eligibility"
-# )
-#
-# # Sentence Length
-# all_bar_pe_sentlgth <- fnc_generate_bar_charts(
-#   data       = current_pe_sentlgth,
-#   x_var      = "sentlgth",
-#   metric     = "Sentence Length",
-#   type_desc  = "the prison population past parole eligibility",
-#   title_type = "People in Prison Past Parole Eligibility",
-#   y_var      = "prop"
-# )
-# all_sentence_pe_sentlgth <- fnc_generate_sentences(
-#   data      = current_pe_sentlgth,
-#   x_var     = "sentlgth",
-#   type_desc = "in prison past parole eligibility"
-# )
-#
-# # FBI Index
-# all_bar_pe_fbi_index <- fnc_generate_bar_charts(
-#   data       = current_pe_fbi_index,
-#   x_var      = "fbi_index",
-#   metric     = "Offense Type",
-#   type_desc  = "the prison population past parole eligibility",
-#   title_type = "People in Prison Past Parole Eligibility",
-#   y_var      = "prop"
-# )
-# all_sentence_pe_fbi_index <- fnc_generate_sentences(
-#   data      = current_pe_fbi_index,
-#   x_var     = "fbi_index",
-#   type_desc = "in prison past parole eligibility"
-# )
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA
