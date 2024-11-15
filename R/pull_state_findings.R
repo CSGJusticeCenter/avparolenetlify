@@ -6,7 +6,9 @@ load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
 
 # Determine select year
-select_year <- fnc_determine_select_year(state_for_report, which_overall_year)
+# select_year <- fnc_determine_select_year(state_for_report, which_overall_year)
+select_year <- 2019########################################################################
+
 
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
 additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
@@ -91,16 +93,16 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_pop_pe_by_year.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sex.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sex.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_ageyrend.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_ageyrend.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_ageyrend.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_fbi_index.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_parole_eligibility_sentlgth.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_parole_eligibility_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_sentlgth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_sentlgth.rds"))
 
 # Define a helper function to conditionally apply size and colors if chart is not NULL
 apply_chart_settings <- function(chart, height = NULL, color = NULL) {
@@ -130,31 +132,31 @@ state_line_pop_pe_by_year <- apply_chart_settings(
   height = 400
 )
 
-state_sentence_parole_eligibility_race <- all_sentence_parole_eligibility_race[[state_for_report]]
+state_sentence_pe_race <- all_sentence_pe_race[[state_for_report]]
 
-state_bar_parole_eligibility_race <- apply_chart_settings(
-  all_bar_parole_eligibility_race[[state_for_report]],
+state_bar_pe_race <- apply_chart_settings(
+  all_bar_pe_race[[state_for_report]],
   height = 300,
   color = color4
 )
 
-state_sentence_parole_eligibility_sex <- all_sentence_parole_eligibility_sex[[state_for_report]]
+state_sentence_pe_sex <- all_sentence_pe_sex[[state_for_report]]
 
-state_bar_parole_eligibility_sex <- apply_chart_settings(
-  all_bar_parole_eligibility_sex[[state_for_report]],
+state_bar_pe_sex <- apply_chart_settings(
+  all_bar_pe_sex[[state_for_report]],
   height = 300,
   color = color4
 )
 
-state_sentence_parole_eligibility_ageyrend <- all_sentence_parole_eligibility_ageyrend[[state_for_report]]
+state_sentence_pe_ageyrend <- all_sentence_pe_ageyrend[[state_for_report]]
 
-state_bar_parole_eligibility_ageyrend <- apply_chart_settings(
-  all_bar_parole_eligibility_ageyrend[[state_for_report]],
+state_bar_pe_ageyrend <- apply_chart_settings(
+  all_bar_pe_ageyrend[[state_for_report]],
   height = 300,
   color = color4
 )
 
-state_sentence_parole_eligibility_fbi_index <- all_sentence_parole_eligibility_fbi_index[[state_for_report]]
+state_sentence_pe_fbi_index <- all_sentence_pe_fbi_index[[state_for_report]]
 
 state_bar_ped_fbi_index <- apply_chart_settings(
   all_bar_ped_fbi_index[[state_for_report]],
@@ -162,10 +164,10 @@ state_bar_ped_fbi_index <- apply_chart_settings(
   color = color4
 )
 
-state_sentence_parole_eligibility_sentlgth <- all_sentence_parole_eligibility_sentlgth[[state_for_report]]
+state_sentence_pe_sentlgth <- all_sentence_pe_sentlgth[[state_for_report]]
 
-state_bar_parole_eligibility_sentlgth <- apply_chart_settings(
-  all_bar_parole_eligibility_sentlgth[[state_for_report]],
+state_bar_pe_sentlgth <- apply_chart_settings(
+  all_bar_pe_sentlgth[[state_for_report]],
   height = 400,
   color = color4
 )
@@ -259,7 +261,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_release_type.r
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_parole_eligibility_release.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pe_release.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_race.rds"))
@@ -281,8 +283,8 @@ state_line_releases_by_year <- apply_chart_settings(
 
 state_sentence_pe_proportion_released <- all_sentence_pe_proportion_released[[state_for_report]]
 
-state_stackedbar_parole_eligibility_release <- apply_chart_settings(
-  all_stackedbar_parole_eligibility_release[[state_for_report]],
+state_stackedbar_pe_release <- apply_chart_settings(
+  all_stackedbar_pe_release[[state_for_report]],
   height = 400
 )
 

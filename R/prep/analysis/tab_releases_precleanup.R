@@ -152,7 +152,7 @@ states <- unique(ncrp_pe_releases_by_year$state)
 
 # VISUALIZATION: Percentage of Parole-Eligible People Released Past Their Parole Eligibility Year
 # Generate chart for each state
-all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) {
+all_stackedbar_pe_release <- map(.x = states,  .f = function(x) {
 
   df1 <- ncrp_pe_releases_by_year |>
     filter(state == x)
@@ -195,8 +195,8 @@ all_stackedbar_parole_eligibility_release <- map(.x = states,  .f = function(x) 
   return(highcharts)
 })
 # Assign state names to list
-all_stackedbar_parole_eligibility_release <- setNames(all_stackedbar_parole_eligibility_release, states)
-all_stackedbar_parole_eligibility_release$Georgia
+all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
+all_stackedbar_pe_release$Georgia
 rm(states)
 
 # Get unique states to iterate over
@@ -594,7 +594,7 @@ data_files <- list(
   all_sentence_releases                     = "all_sentence_releases.rds",
   all_line_releases_by_year                 = "all_line_releases_by_year.rds",
   all_sentence_pe_proportion_released       = "all_sentence_pe_proportion_released.rds",
-  all_stackedbar_parole_eligibility_release = "all_stackedbar_parole_eligibility_release.rds",
+  all_stackedbar_pe_release                 = "all_stackedbar_pe_release.rds",
 
   all_sentence_release_type                 = "all_sentence_release_type.rds",
   all_pie_release_type                      = "all_pie_release_type.rds",

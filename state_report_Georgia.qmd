@@ -92,22 +92,22 @@ fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_line_pop_pe_by_y
 
 ### Race and Ethnicity
 
-```{r results = 'asis', state_sentence_parole_eligibility_race}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_race, state_bar_parole_eligibility_race,
+```{r results = 'asis', state_sentence_pe_race}
+fnc_display_sentence_chart(state_sentence_pe_race, state_bar_pe_race,
                            chart_type = "small-visualization")
 ```
 
 ### Sex
 
-```{r results = 'asis', state_sentence_parole_eligibility_sex}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_sex, state_bar_parole_eligibility_sex,
+```{r results = 'asis', state_sentence_pe_sex}
+fnc_display_sentence_chart(state_sentence_pe_sex, state_bar_pe_sex,
                            chart_type = "small-visualization")
 ```
 
 ### Age
 
-```{r results = 'asis', state_sentence_parole_eligibility_ageyrend}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar_parole_eligibility_ageyrend,
+```{r results = 'asis', state_sentence_pe_ageyrend}
+fnc_display_sentence_chart(state_sentence_pe_ageyrend, state_bar_pe_ageyrend,
                            chart_type = "small-visualization")
 ```
 
@@ -118,8 +118,8 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar
 
 ## Offense Types
 
-```{r results = 'asis', state_sentence_parole_eligibility_fbi_index}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_bar_ped_fbi_index)
+```{r results = 'asis', state_sentence_pe_fbi_index}
+fnc_display_sentence_chart(state_sentence_pe_fbi_index, state_bar_ped_fbi_index)
 ```
 
 <br>
@@ -127,8 +127,8 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_ba
 
 ## Sentence Lengths
 
-```{r results = 'asis', state_sentence_parole_eligibility_sentlgth}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_sentlgth, state_bar_parole_eligibility_sentlgth)
+```{r results = 'asis', state_sentence_pe_sentlgth}
+fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 ```
 
 <br>
@@ -234,7 +234,7 @@ fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_populat
 
 ```{r results = 'asis', state_sentence_releases}
 fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year); br()
-fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_parole_eligibility_release)
+fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_pe_release)
 ```
 
 <br>

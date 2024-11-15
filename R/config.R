@@ -54,7 +54,7 @@ required_packages <- c(
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
   "ggtext", "scales", "base64enc", "glue", "haven", "png", "reshape2", "magick",
-  "downloadthis", "readxl"
+  "downloadthis", "readxl", "memoise"
 )
 
 lapply(required_packages, library, character.only = TRUE)
@@ -78,7 +78,7 @@ sp_data_path <- csg_get_project_path("AVParole")
 app_folder <- file.path(sp_data_path, "data", "analysis", "app")
 deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
-# Projection year
+# Set projection year
 projection_year <- 2023
 
 #------------------------------------------------------------------------------#

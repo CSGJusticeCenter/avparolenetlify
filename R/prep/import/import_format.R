@@ -11,7 +11,7 @@
 # MAP - National Snapshot Page
 #------------------------------------------------------------------------------#
 
-# Load hexgrid shapefile and select the 'state_abb' column
+# Import hexgrid shapefile and select the 'state_abb' column
 # Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
 hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
     select(state_abb = iso3166_2) |>
@@ -26,7 +26,7 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
 # Methodology of Imputation for "State Notes" Section
 #------------------------------------------------------------------------------#
 
-# Import state-specific imputation methodology
+# Import state-specific imputation methodology for the parole eligibility tab
 # Created by Seba Guzman (CSG Research) in Stata
 state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
 
@@ -42,6 +42,7 @@ state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/a
 # Combine state notes and state-specific imputation methodology
 # Adjust formatting - superscript 1 is for "How Parole Eligibility is Determined" so these need
 # to be increased by 1 because this text is near the bottom of the Parole Eligibility tab
+# NEED TO UPDATE THIS WHEN SEBA COMPLETES#########################
 state_notes <- state_notes_raw |>
   left_join(state_methodology, by = "state") |>
   # add period to matching note.
@@ -69,8 +70,7 @@ state_notes <- state_notes_raw |>
          citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"),
          methodology_notes = gsub("<br><br><br>", "<br>", methodology_notes),
          citation = gsub("<br><br><br>", "<br><br>", citation)) |>
-  filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))############################################
-
+  filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))
 
 #------------------------------------------------------------------------------#
 # States Rules
@@ -83,11 +83,13 @@ state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/s
 
 # Define states that won't need to filter by admission type and sentence length
 # These states have high missingness for these variables but their data can be used
-# without filtering by them because the estimates for people past parole eligibility are reliable enough
+# without filtering because the estimates for people past parole eligibility are reliable enough
+# or the data submitted is close enough to what the expected filtered population would be
 states_nofilter <- state_rules_v1 |>
   filter(dont_filter_admtype_sentlength == 1)
 
 # States where we should use the earliest parole eligibility year bc it is the more reliable
+# than the imputations
 states_earliest_pe <- state_rules_v1 |>
   filter(use_earliest_pey1 == 1)
 
@@ -141,10 +143,11 @@ states_with_high_missing <- projections_compl_2010_2020 |>
   select(state) |>
   ungroup()
 
-# Combine both dataframes of states to exclude
+# Combine both dataframes of states to exclude: states with high missingness
+# and states that abolished parole
+# These states will not need state reports
 states_to_exclude <- states_with_high_missing |>
   bind_rows(abolished_states) |>
-  filter(state != "Alabama") |>
   distinct()
 
 
@@ -155,7 +158,7 @@ states_to_exclude <- states_with_high_missing |>
 # Seba Guzman's Imputed Data for NCRP 2010 to 2020
 #------------------------------------------------------------------------------#
 
-# Import projections
+# Import projections created by Seba Guzman in Stata
 ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_short_2010_2020.dta"))
 
 # These are the NCRP files that were created by Sebastian (CSG Research) in Stata
@@ -215,7 +218,7 @@ states_with_high_missing_race <- ncrp_yearendpop_consolidated |>################
 
 
 #------------------------------------------------------------------------------#
-# BJS
+# BJS Prison Population by Year
 #------------------------------------------------------------------------------#
 
 # Get BJS Prisoners Series data from 2010 to 2022
@@ -260,12 +263,20 @@ for (year in names(file_info)) {
 # Combine all the cleaned datasets from different years into a single dataframe.
 bjs_prison_pop_by_rptyear <- do.call(rbind, cleaned_data_list)
 
+
+
+
+#------------------------------------------------------------------------------#
+# BJS Prison Population by Race, Ethnicity, and Sex
+# 2018 and 2019
+#------------------------------------------------------------------------------#
+
 # Import BJS prisoners data by race and ethnicity for 2019
 # Skipping the first 10 rows due to headers and metadata.
 # Prisoners under the jurisdiction
-bjs_prison_pop_by_race_state_2019 <- read.csv(file.path(sp_data_path,
-                                                        "data/raw/BJS Prison Pop/p19/p19at02.csv"),
-                                              skip = 10)
+bjs_prison_pop_by_race_state_2019 <-
+  read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p19/p19at02.csv"),
+           skip = 10)
 
 # Calculate total BJS prison population for 2019. Clean the 'total' column by removing commas.
 total_bjs_pop_2019 <- bjs_prison_pop_by_race_state_2019 |>
