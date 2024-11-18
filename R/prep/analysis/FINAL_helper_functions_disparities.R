@@ -183,3 +183,378 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 
   return(all_sentences)
 }
+
+# Function to create lollipop chart with fixed colors and labels
+fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, source = ncrp_csg_source) {
+
+  # Define consistent group labels, colors, and shapes
+  if (group_var == "sex") {
+    group_labels <- c("Male", "Female")
+    colors <- c(teal, purple)  # Colors for male and female
+    shapes <- c("circle", "triangle")  # Shapes for male and female
+  } else {
+    group_labels <- c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")
+    colors <- c(red, teal, blue, purple)  # Colors for race groups
+    shapes <- c("square", "circle", "diamond", "triangle")  # Shapes for race groups
+  }
+
+  # Filter data for the specified state
+  df1 <- df |>
+    ungroup() |>
+    filter(state == state_name) |>
+    arrange(desc(average_los)) |>
+    mutate(group_num = row_number(),
+           color = case_when(
+             !!sym(group_var) == group_labels[1] ~ colors[1],
+             !!sym(group_var) == group_labels[2] ~ colors[2],
+             !!sym(group_var) == group_labels[3] ~ colors[3],
+             !!sym(group_var) == group_labels[4] ~ colors[4]
+           ))
+
+  year <- unique(df1$rptyear)
+
+  # Determine the title based on the group_var
+  chart_title <- if (group_var == "sex") {
+    paste("Average Time Served by Sex,", year)
+  } else if (group_var == "race") {
+    paste("Average Time Served by Race and Ethnicity,", year)
+  } else {
+    paste("Average Time Served by", group_var, ",", year)
+  }
+
+  # Generate accessibility text based on the data
+  accessibility_text <- paste0("The chart below shows the average time served for different ",
+                               group_var, " groups in ", state_name, ". ",
+                               group_labels[1], " spent on average ", df1$average_los[df1$group_num == 1],
+                               " years, followed by ", group_labels[2], " with ", df1$average_los[df1$group_num == 2],
+                               " years, ", group_labels[3], " with ", df1$average_los[df1$group_num == 3],
+                               " years, and ", group_labels[4], " with ", df1$average_los[df1$group_num == 4],
+                               " years.")
+
+  max_los <- max(df1$average_los, na.rm = TRUE)
+
+  # Create a named list for y-axis labels
+  y_labels <- as.list(setNames(as.character(df1[[group_var]]), df1$group_num))
+
+  # Create the dataframe for lines in the lollipop chart
+  df_lines <- df1 |>
+    mutate(start_x = 0, end_x = average_los) |>
+    select(group_num, start_x, end_x, !!sym(group_var))
+
+  # Reshape data for highcharter
+  df_lines <- df_lines |>
+    gather(key = "point", value = "value", start_x, end_x)
+
+  # Initialize the highchart object
+  highcharts <- highchart() |>
+    hc_title(text = chart_title) |>
+    hc_add_series(
+      df_lines,
+      type = 'line',
+      hcaes(x = value, y = group_num, group = !!sym(group_var)),
+      lineWidth = 1,
+      color = "black",
+      dashStyle = "solid",
+      opacity = 1,
+      marker = list(enabled = FALSE),
+      enableMouseTracking = FALSE,
+      showInLegend = FALSE
+    )
+
+  # Add scatter series for each group with appropriate marker symbols
+  for (i in seq_along(group_labels)) {
+    highcharts <- highcharts |>
+      hc_add_series(
+        df1 %>% filter(!!sym(group_var) == group_labels[i]),
+        type = 'scatter',
+        color = colors[i],
+        hcaes(x = average_los, y = group_num, group = !!sym(group_var), name = !!sym(group_var)),
+        marker = list(
+          radius = 5,
+          symbol = shapes[i]  # Use unique shape for each group
+        ),
+        dataLabels = list(
+          enabled = TRUE,
+          format = '{point.x:.1f} Years',
+          align = "left",
+          y = 9,
+          x = 8,
+          style = list(color = 'black', fontWeight = "regular", fontSize = "12px")
+        )
+      )
+  }
+
+  # Add y-axis and x-axis customizations
+  highcharts <- highcharts |>
+    hc_add_theme(base_hc_theme) |>
+    hc_yAxis(
+      labels = list(
+        enabled = TRUE,
+        style = list(
+          color = 'black',
+          fontWeight = "regular",
+          fontSize = "12px"
+        )
+      ),
+      title = list(text = ""),
+      majorGridLineColor = "transparent",
+      gridLineColor = "transparent",
+      lineColor = "transparent",
+      tickColor = "white",
+      categories = y_labels
+    ) |>
+    hc_xAxis(
+      title = list(text = ""),
+      labels = list(enabled = FALSE),
+      lineColor = "transparent",
+      tickLength = 0,
+      gridLineColor = "transparent",
+      tickColor = "transparent",
+      max = max_los * 1.5
+    ) |>
+    hc_exporting(enabled = FALSE) |>
+    hc_tooltip(enabled = FALSE) |>
+    hc_legend(enabled = FALSE) |>
+    hc_size(height = height) |>
+    fnc_add_hc_accessibility(accessibility_text) |>
+    hc_caption(text = source)
+
+  return(highcharts)
+}
+
+# Function to generate lollipop charts dynamically without needing to specify colors and labels
+fnc_generate_lollipop_charts <- function(df, compare_var, height = 200) {
+
+  # Get unique states to iterate over
+  states <- unique(df$state)
+
+  # Generate lollipop chart for each state
+  all_charts <- purrr::map(.x = states, .f = function(state_var) {
+
+    # Create the lollipop chart for the state
+    fnc_create_lollipop_chart(
+      df = df,
+      group_var = compare_var,
+      state_name = state_var,
+      source = ncrp_source,
+      height = height
+    )
+  })
+
+  # Assign state names to the list of charts
+  all_charts <- setNames(all_charts, states)
+
+  return(all_charts)
+}
+
+fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "average_los", which_year) {
+  # Get unique states to iterate over
+  states <- unique(data$state)
+
+  # Generate sentence for each state
+  all_sentences <- purrr::map(.x = states, .f = function(x) {
+
+    df1 <- data |>
+      dplyr::filter(state == x & fbi_index != "Other or Unspecified")
+
+    year <- unique(df1$rptyear)
+
+    # Handling missing data
+    if (nrow(df1) == 0) {
+      return(paste0("No data available for ", x))
+    }
+
+    # Calculate the difference in average LOS between groups for each offense type
+    df_disparity <- df1 %>%
+      dplyr::group_by(fbi_index) %>%
+      dplyr::reframe(
+        max_los = max(!!rlang::sym(time_var)),
+        min_los = min(!!rlang::sym(time_var)),
+        diff_los = max_los - min_los,
+        group_longest = .data[[grouping_var]][which.max(!!rlang::sym(time_var))],
+        group_shortest = .data[[grouping_var]][which.min(!!rlang::sym(time_var))]
+      ) %>%
+      dplyr::arrange(dplyr::desc(diff_los))
+
+    # Adjust group names for race and ethnicity or sex, depending on grouping_var
+    if (grouping_var == "race") {
+      df_disparity <- df_disparity %>%
+        dplyr::mutate(
+          group_longest = dplyr::case_when(
+            group_longest == "Black, non-Hispanic" ~ "Black",
+            group_longest == "White, non-Hispanic" ~ "White",
+            group_longest == "Hispanic, any race" ~ "Hispanic",
+            group_longest == "Other race(s), non-Hispanic" ~ "non-Hispanic people of other races",
+            TRUE ~ group_longest
+          ),
+          group_shortest = dplyr::case_when(
+            group_shortest == "Black, non-Hispanic" ~ "Black",
+            group_shortest == "White, non-Hispanic" ~ "White",
+            group_shortest == "Hispanic, any race" ~ "Hispanic",
+            group_shortest == "Other race(s), non-Hispanic" ~ "non-Hispanic people of other races",
+            TRUE ~ group_shortest
+          )
+        )
+    }
+
+    # Filter for comparisons: Black, Hispanic, or non-Hispanic people of other races vs. White
+    if (grouping_var == "race") {
+      df_disparity_filtered <- df_disparity %>%
+        dplyr::filter(group_shortest == "White" & group_longest %in% c("Black", "Hispanic", "non-Hispanic people of other races"))
+    } else {
+      df_disparity_filtered <- df_disparity %>%
+        dplyr::filter(group_shortest == "Female" & group_longest == "Male") %>%
+        dplyr::mutate(
+          group_longest = "males",
+          group_shortest = "females"
+        )
+    }
+
+    # If no disparities exist, return default message
+    if (nrow(df_disparity_filtered) == 0) {
+      time_description <- ifelse(time_var == "time_served", "time served in prison", "time spent in prison past parole eligibility")
+      return(paste0("The chart below shows the average ", time_description, " by offense type and ",
+                    ifelse(grouping_var == "race", "race and ethnicity", grouping_var), " in 2020."))
+    }
+
+    # Remove "Other Violent Offenses" if it has the largest disparity
+    if (df_disparity_filtered$fbi_index[1] == "Other Violent Offenses" & nrow(df_disparity_filtered) > 1) {
+      df_disparity_filtered <- df_disparity_filtered %>% dplyr::slice(2)
+    }
+
+    # Get the largest remaining disparity
+    largest_disparity <- df_disparity_filtered %>% dplyr::slice(1)
+
+    # Extract values for the sentence
+    offense_type <- largest_disparity$fbi_index
+    group_longest <- largest_disparity$group_longest
+    los_longest <- round(largest_disparity$max_los, 1)
+    group_shortest <- largest_disparity$group_shortest
+    los_shortest <- round(largest_disparity$min_los, 1)
+    disparity_diff <- round(largest_disparity$diff_los, 1)
+
+    # Construct the sentence
+    time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
+    sentence <- paste0(
+      "The chart below shows the average ", time_description, " by offense type and ",
+      ifelse(grouping_var == "race", "race and ethnicity", grouping_var), " in ", year, ". ",
+      "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
+      group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",  # Add "people" for race labels other than "White"
+      " spent on average ", disparity_diff, " more years in prison compared to ",
+      group_shortest, if (grouping_var == "race") " people" else "", "."
+    )
+
+    return(sentence)
+  })
+
+  # Assign state names to list
+  all_sentences <- setNames(all_sentences, states)
+
+  return(all_sentences)
+}
+
+fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = ncrp_csg_source) {
+
+  # Get unique states to iterate over
+  states <- unique(df$state)
+
+  # Iterate over each state to generate charts
+  all_charts <- purrr::map(.x = states, .f = function(state_name) {
+
+    # Define consistent group labels, colors, and shapes dynamically
+    if (group_var == "sex") {
+      group_labels <- c("Male", "Female")
+      colors <- c(teal, purple)  # Colors for male and female
+      shapes <- c("circle", "triangle")  # Shapes for male and female
+    } else {
+      group_labels <- c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")
+      colors <- c(red, teal, blue, purple)  # Colors for race groups
+      shapes <- c("square", "circle", "diamond", "triangle")  # Shapes for race groups
+    }
+
+    # Filter data for the specified state
+    df1 <- df |>
+      ungroup() |>
+      filter(state == state_name) |>
+      arrange(desc(!!sym(measure))) |>
+      mutate(group_num = row_number(),
+             color = case_when(
+               !!sym(group_var) == group_labels[1] ~ colors[1],
+               !!sym(group_var) == group_labels[2] ~ colors[2],
+               !!sym(group_var) == group_labels[3] ~ colors[3],
+               !!sym(group_var) == group_labels[4] ~ colors[4]
+             ))
+
+    year <- unique(df1$rptyear)
+
+    # Define titles and labels based on the measure
+    x_axis_title <- ifelse(measure == "average_los", "Average Time Served (Years)", "Average Years Past Parole Eligibility")
+    chart_title <- paste0("Average ", ifelse(measure == "average_los", "Time Served", "Years Past Parole Eligibility"),
+                          " by Offense and ", ifelse(group_var == "sex", "Gender", "Race and Ethnicity"), ", ", year)
+
+    # Generate accessibility text
+    accessibility_measure <- ifelse(measure == "average_los", "average length of stay", "average years past parole eligibility")
+    accessibility_text <- paste0("The chart shows the ", accessibility_measure, " for different ",
+                                 group_var, " groups in ", state_name, ". ", group_labels[1],
+                                 " spent an average of ", df1[[measure]][df1$group_num == 1],
+                                 " years, followed by ", group_labels[2], " with ",
+                                 df1[[measure]][df1$group_num == 2], " years, and ",
+                                 group_labels[3], " with ", df1[[measure]][df1$group_num == 3], " years.")
+
+    max_los <- max(df1[[measure]], na.rm = TRUE)
+
+    # Create a named list for y-axis labels
+    y_labels <- setNames(as.list(unique(as.character(df1$fbi_index))),
+                         unique(as.numeric(as.factor(df1$fbi_index))))
+
+    # Initialize the highchart object
+    highcharts <- highchart() |>
+      hc_title(text = chart_title) |>
+      hc_yAxis(
+        title = list(text = ""),
+        labels = list(enabled = TRUE, style = list(color = "black")),
+        categories = y_labels,
+        gridLineColor = "transparent"
+      ) |>
+      hc_xAxis(
+        title = list(text = x_axis_title, style = list(color = "black")),
+        labels = list(style = list(color = "black")),
+        gridLineDashStyle = "Dash",  # Add dashed grid lines
+        gridLineWidth = 1,           # Ensure grid lines are visible
+        gridLineColor = "lightgray",  # Set grid line color
+        tickLength = 0
+      ) |>
+      hc_tooltip(
+        useHTML = TRUE,
+        formatter = JS("function() {
+    return '<b>' + this.series.name + '</b><br/>' +
+           'Offense: ' + (this.point.fbi_index || 'Unknown') + '<br/>' +
+           'Average Years: ' + this.point.x.toFixed(1) + '<br/>' +
+           'People: ' + (this.point.people ? this.point.people.toLocaleString() : 'N/A');
+  }")
+      ) |>
+      hc_legend(layout = "horizontal", verticalAlign = "top") |>
+      hc_caption(text = source) |>
+      hc_add_theme(base_hc_theme) |>
+      fnc_add_hc_accessibility(accessibility_text)
+
+    # Add scatter series for each group with appropriate marker symbols
+    for (i in seq_along(group_labels)) {
+      highcharts <- highcharts |>
+        hc_add_series(
+          df1 %>% filter(!!sym(group_var) == group_labels[i]),
+          type = 'scatter',
+          color = colors[i],
+          hcaes(x = !!sym(measure), y = as.numeric(factor(fbi_index)), group = !!sym(group_var)),
+          marker = list(symbol = shapes[i], radius = 5)
+        )
+    }
+
+    return(highcharts)
+  })
+
+  # Assign state names to the charts list
+  all_charts <- setNames(all_charts, states)
+
+  return(all_charts)
+}
