@@ -30,7 +30,7 @@ replace_write_qmd <- function(state) {
 wd <- getwd()
 
 # Get list of states for reports - only states with parole and complete PE data
-states <- c("Georgia", "Hawaii")
+states <- c("Georgia", "Hawaii", "Louisiana")
 # states <- c("Georgia", "Louisiana", "Connecticut", "Colorado", "Michigan")
 # states <- parole_eligibility_table |>
 #   filter(!is.na(current_perc)) |>

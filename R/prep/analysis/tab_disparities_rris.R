@@ -22,8 +22,7 @@ fnc_calculate_rri <- function(data, comparison_group, category) {
   rri_data <- data |>
     inner_join(reference_rate_data, by = "state") |>
     mutate(rri = round(past_pe_rate / reference_past_pe_rate, 1)) |>
-    select(state, !!sym(category), rri) |>
-    filter(rri != 1)
+    select(state, !!sym(category), rri)
 
   return(rri_data)
 }
@@ -94,12 +93,16 @@ merged_prison_pop_data_race <- prison_pop_by_race |>
 
 # Calculate RRI by race
 all_pe_rri_data <- fnc_calculate_rri(merged_prison_pop_data_race, "White, non-Hispanic", "race") |>
-  add_row(state = "Hawaii", race = "Other race(s), non-Hispanic", rri = 1.3)  # Test data##########################################
+  # add_row(state = "Hawaii", race = "Other race(s), non-Hispanic", rri = 1.3)  # Test data##########################################
+  mutate(rri = case_when(state == "Hawaii" & race == "Other race(s), non-Hispanic" ~ 1.3, TRUE ~ rri))
+
+all_pe_rri_data_filtered <- all_pe_rri_data |>
+  filter(rri > 1 | rri < 1)
 
 # Sentence generation for race
-all_sentence_pe_rri_black    <- fnc_generate_rri_sentences(all_pe_rri_data, "race", "Black, non-Hispanic", teal)
-all_sentence_pe_rri_hispanic <- fnc_generate_rri_sentences(all_pe_rri_data, "race", "Hispanic, any race", blue)
-all_sentence_pe_rri_other    <- fnc_generate_rri_sentences(all_pe_rri_data, "race", "Other race(s), non-Hispanic", purple)
+all_sentence_pe_rri_black    <- fnc_generate_rri_sentences(all_pe_rri_data_filtered, "race", "Black, non-Hispanic", teal)
+all_sentence_pe_rri_hispanic <- fnc_generate_rri_sentences(all_pe_rri_data_filtered, "race", "Hispanic, any race", blue)
+all_sentence_pe_rri_other    <- fnc_generate_rri_sentences(all_pe_rri_data_filtered, "race", "Other race(s), non-Hispanic", purple)
 
 # Add note for Hispanic RRI
 all_sentence_pe_rri_hispanic <- map(all_sentence_pe_rri_hispanic, ~ paste0(.,
@@ -135,8 +138,11 @@ merged_prison_pop_data_sex <- prison_pop_by_sex |>
 # Calculate RRI by sex
 all_pe_rri_data_male <- fnc_calculate_rri(merged_prison_pop_data_sex, "Female", "sex")
 
+all_pe_rri_data_male_filtered <- all_pe_rri_data_male |>
+  filter(rri > 1 | rri < 1)
+
 # Sentence generation for sex
-all_sentence_pe_rri_male <- fnc_generate_rri_sentences(all_pe_rri_data_male, "sex", "Male", teal)
+all_sentence_pe_rri_male <- fnc_generate_rri_sentences(all_pe_rri_data_male_filtered, "sex", "Male", teal)
 all_sentence_pe_rri_male$Georgia
 
 

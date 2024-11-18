@@ -21,7 +21,6 @@ state_for_report <- "Louisiana"
 
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")
-source("R/prep/analysis/helper_functions.R")
 source("R/pull_state_findings.R")
 
 # Function to display data and sentences
@@ -92,22 +91,22 @@ fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_line_pop_pe_by_y
 
 ### Race and Ethnicity
 
-```{r results = 'asis', state_sentence_parole_eligibility_race}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_race, state_bar_parole_eligibility_race,
+```{r results = 'asis', state_sentence_pe_race}
+fnc_display_sentence_chart(state_sentence_pe_race, state_bar_pe_race,
                            chart_type = "small-visualization")
 ```
 
 ### Sex
 
-```{r results = 'asis', state_sentence_parole_eligibility_sex}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_sex, state_bar_parole_eligibility_sex,
+```{r results = 'asis', state_sentence_pe_sex}
+fnc_display_sentence_chart(state_sentence_pe_sex, state_bar_pe_sex,
                            chart_type = "small-visualization")
 ```
 
 ### Age
 
-```{r results = 'asis', state_sentence_parole_eligibility_ageyrend}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar_parole_eligibility_ageyrend,
+```{r results = 'asis', state_sentence_pe_ageyrend}
+fnc_display_sentence_chart(state_sentence_pe_ageyrend, state_bar_pe_ageyrend,
                            chart_type = "small-visualization")
 ```
 
@@ -118,8 +117,8 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_ageyrend, state_bar
 
 ## Offense Types
 
-```{r results = 'asis', state_sentence_parole_eligibility_fbi_index}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_bar_ped_fbi_index)
+```{r results = 'asis', state_sentence_pe_fbi_index}
+fnc_display_sentence_chart(state_sentence_pe_fbi_index, state_bar_ped_fbi_index)
 ```
 
 <br>
@@ -127,8 +126,8 @@ fnc_display_sentence_chart(state_sentence_parole_eligibility_fbi_index, state_ba
 
 ## Sentence Lengths
 
-```{r results = 'asis', state_sentence_parole_eligibility_sentlgth}
-fnc_display_sentence_chart(state_sentence_parole_eligibility_sentlgth, state_bar_parole_eligibility_sentlgth)
+```{r results = 'asis', state_sentence_pe_sentlgth}
+fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 ```
 
 <br>
@@ -153,7 +152,7 @@ Data analysis was conducted using information from the National Corrections Repo
 
 
 ```{r}
-####################################################################################################################
+#-----------------------------------------------------------------------------------------------------------------------------------------#
 ```
 
 # Prison Population
@@ -225,8 +224,9 @@ fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_populat
 
 
 ```{r}
-####################################################################################################################
+#-----------------------------------------------------------------------------------------------------------------------------------------#
 ```
+
 
 # Prison Releases
 
@@ -234,7 +234,7 @@ fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_populat
 
 ```{r results = 'asis', state_sentence_releases}
 fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year); br()
-fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_parole_eligibility_release)
+fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_pe_release)
 ```
 
 <br>
@@ -297,8 +297,9 @@ fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases
 
 
 ```{r}
-####################################################################################################################
+#-----------------------------------------------------------------------------------------------------------------------------------------#
 ```
+
 
 # Disparities
 
@@ -308,30 +309,63 @@ fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases
 
 ### Race and Ethnicity
 
-```{r results = 'asis'}
-# Check if both Black and Hispanic data are missing
-no_data_black <- !file.exists(pe_rri_infographic_black) 
-no_data_hispanic <- !file.exists(pe_rri_infographic_hispanic) 
+<br>
 
-if (file.exists(pe_rri_infographic_black)) {
-  HTML("<br>")
-}
-if (file.exists(pe_rri_infographic_black)) {
+```{r results = 'asis'}
+no_infographic_black <- !file.exists(pe_rri_infographic_black)
+no_data_black <- !state_for_report %in% all_pe_rri_data$state
+rri_details <- all_pe_rri_data |> 
+  filter(state == state_for_report & race == "Black, non-Hispanic") |> 
+  group_by(state, race) |> 
+  summarise(
+    above_1 = rri > 1,
+    equal_1 = rri == 1,
+    below_1 = rri < 1
+  ) |> 
+  mutate(rri_exists = ifelse(equal_1 == FALSE, TRUE, FALSE))
+no_rri_details <- nrow(rri_details) == 0
+
+if (no_infographic_black == TRUE & no_data_black == TRUE) {
+  # Display "No Data" message
+  HTML(no_data_text)
+} else if (no_infographic_black == TRUE & no_data_black == FALSE & no_rri_details == FALSE) {
+  # Display "No RRI" message
+  HTML("No significant racial disparities in incarceration rates past parole eligibility were identified between Black and White individuals, as indicated by a Relative Rate Index (RRI) of 1.")
+} else if (no_infographic_black == FALSE & no_data_black == FALSE) {
+  # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_black)
 }
-if (!no_data_black) {
+if (no_infographic_black == FALSE & no_data_black == FALSE) {
+  # Render the HTML content separately
   HTML(state_sentence_pe_rri_black, "<br><br>")
 }
 
-if (file.exists(pe_rri_infographic_hispanic)) {
+no_infographic_hispanic <- !file.exists(pe_rri_infographic_hispanic)
+no_data_hispanic <- !state_for_report %in% all_pe_rri_data$state
+rri_details <- all_pe_rri_data |> 
+  filter(state == state_for_report & race == "Hispanic, any race") |> 
+  group_by(state, race) |> 
+  summarise(
+    above_1 = rri > 1,
+    equal_1 = rri == 1,
+    below_1 = rri < 1
+  ) |> 
+  mutate(rri_exists = ifelse(equal_1 == FALSE, TRUE, FALSE))
+no_rri_details <- nrow(rri_details) == 0
+
+if (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) {
+  # Display "No Data" message
+  HTML(no_data_text)
+} else if (no_infographic_hispanic == TRUE & no_data_hispanic == FALSE & no_rri_details == FALSE) {
+  # Display "No RRI" message
+  HTML("No significant racial disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.")
+} else if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
+  # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_hispanic)
 }
-if (!no_data_hispanic) {
-  HTML(state_sentence_pe_rri_hispanic)
-}
-
-if (no_data_black && no_data_hispanic) {
-  no_data_text
+if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
+  # Render the HTML content separately
+  HTML(state_sentence_pe_rri_hispanic, "<br>")
 }
 ```
 
@@ -369,9 +403,8 @@ if (no_data_male) {
 ### Race and Ethnicity
 
 ```{r results = 'asis'}
-df1 <- avg_current_pe_race |>
-  filter(state == state_for_report) |> 
-  filter(rptyear == select_year)
+df1 <- avg_past_pe_race |>
+  filter(state == state_for_report)
 
 no_data <- nrow(df1) == 0
 
@@ -380,24 +413,48 @@ if (!no_data) {
 }
 
 if (!no_data) {
+  if ("Other race(s), non-Hispanic" %in% df1$race) {
+    # Create html_output with "Other race(s), non-Hispanic"
     html_output <- div(
-    id = "grid-container",
-    # style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-        style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
-    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
-        ),
-    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
-        ),
-    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
-        ),
+      id = "grid-container",
+      style = "display: grid; grid-template-columns: repeat(4, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
+      div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
+      ),
+      div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Other race(s), non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
+      div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
+      div(style = "color: #938ebf; text-align: center; font-size: 16px; font-weight: bold;", HTML("Other")),
+      div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
+    )
+  } else {
+    # Create html_output without "Other race(s), non-Hispanic"
+    html_output <- div(
+      id = "grid-container",
+      style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
+      div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
+      ),
+      div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
+      div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
+      div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
+    )
+  }
 
-    div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
-    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
-    div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
-  )
   cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
@@ -420,9 +477,8 @@ if (no_data) {
 ### Sex
 
 ```{r results = 'asis'}
-df1 <- avg_current_pe_sex |>
-  filter(state == state_for_report)|> 
-  filter(rptyear == select_year)
+df1 <- avg_past_pe_sex |>
+  filter(state == state_for_report)
 
 no_data <- nrow(df1) == 0
 
@@ -588,7 +644,9 @@ if (no_data) {
 
 
 
-
+```{r}
+#-----------------------------------------------------------------------------------------------------------------------------------------#
+```
 
 <br>
 <div class="divider"></div>
@@ -597,7 +655,7 @@ if (no_data) {
 
 **Understanding Disparities in Parole Outcomes**
 
-In examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in criminal justice outcomes—including incarceration rates, parole eligibility, and time served—across race, ethnicity, and sex.
+In examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in incarceration rates past parole eligibility across race, ethnicity, and sex.
 
 The RRI is calculated by dividing the rate for Black or Hispanic individuals by the rate for White individuals, with values above 1.0 indicating that a group experiences the outcome at a higher rate relative to White individuals, and values below 1.0 indicating a lower rate. This allows for a comparative analysis of which groups are more likely to remain incarcerated past their parole eligibility.
 
@@ -616,20 +674,12 @@ Data collection and reporting practices vary significantly across states:
 
 - Race and Ethnicity Identification: Some states collect race and ethnicity data based on intake officers’ assessments, while others allow individuals to self-identify. This may result in variability and influence RRI calculations.
 - Combined vs. Separate Categories: Some states combine race and ethnicity into a single category, while others separate them. This inconsistency can impact the accuracy and comparability of data, sometimes leading to an underreporting of Hispanic individuals and mixed-race individuals or an overrepresentation of non-Hispanic White individuals.
+- Including 'Other' Category in Analysis: In states where populations categorized as "Other race(s), non-Hispanic" are substantial, we include these groups in the analysis. 
 
 **Small Sample Sizes and Interpretation**
 
-Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" because the small numbers in this group limit the ability to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
-
+Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
 :::
-
-
-
-
-
-```{r}
-####################################################################################################################
-```
 
 </div>
 

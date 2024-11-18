@@ -2083,7 +2083,7 @@
     "href": "state_report_Georgia.html#disparities-in-parole-release",
     "title": "Georgia",
     "section": "Disparities in Parole Release",
-    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\n\n\nIn 2019, Black, non-Hispanic were incarcerated in state prison past parole eligibility at a rate 1.1 times higher than White people, when accounting for prison population sizes in Georgia. \n\nIn 2019, Hispanic, any race were incarcerated in state prison past parole eligibility at a rate 1.1 times higher than White people, when accounting for prison population sizes in Georgia.Hispanic RRI should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity.\n\n\n\n\nIn 2019, Male were incarcerated in state prison past parole eligibility at a rate 1.3 times higher than females, when accounting for prison population sizes in Georgia."
+    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\n\n\nIn 2019, Black, non-Hispanic were incarcerated in state prison past parole eligibility at a rate 1.1 times higher than White people, when accounting for prison population sizes in Georgia. \n\nIn 2019, Hispanic, any race were incarcerated in state prison past parole eligibility at a rate 1.1 times higher than White people, when accounting for prison population sizes in Georgia.Hispanic RRI should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity. \n\n\n\n\nIn 2019, Male were incarcerated in state prison past parole eligibility at a rate 1.3 times higher than females, when accounting for prison population sizes in Georgia."
   },
   {
     "objectID": "state_report_Georgia.html#years-in-prison-past-parole-eligibility",
@@ -2104,7 +2104,7 @@
     "href": "state_report_Georgia.html#notes-on-disparities",
     "title": "Georgia",
     "section": "Notes on Disparities",
-    "text": "Notes on Disparities\nUnderstanding Disparities in Parole Outcomes\nIn examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in criminal justice outcomes—including incarceration rates, parole eligibility, and time served—across race, ethnicity, and sex.\nThe RRI is calculated by dividing the rate for Black or Hispanic individuals by the rate for White individuals, with values above 1.0 indicating that a group experiences the outcome at a higher rate relative to White individuals, and values below 1.0 indicating a lower rate. This allows for a comparative analysis of which groups are more likely to remain incarcerated past their parole eligibility.\nMetrics Displayed in Visualizations\nOur visualizations present three main metrics to highlight disparities across race, ethnicity, and sex:\n\nRRI of Parole Release: This metric compares the proportion of individuals past parole eligibility within the total prison population by race, ethnicity, and sex. It provides a snapshot of who remains in prison despite being eligible for parole.\nAverage Time Past Parole Eligibility: For those individuals who remain incarcerated past their parole eligibility date, we show the average additional time spent in prison. This is broken down by race, ethnicity, and sex, highlighting the length of delay in parole release among different groups.\nAverage Total Time Served: We also display the average total time served in prison by race, ethnicity, and sex, providing insight into sentencing and incarceration length disparities.\n\nData Considerations Our analysis focuses on Black, Hispanic, and White categories to align with data limitations from the National Corrections Reporting Program (NCRP), which categorizes individuals as White, Black, Hispanic, or Other. The term “Hispanic” is used here to align with NCRP terminology.\nData collection and reporting practices vary significantly across states:\n\nRace and Ethnicity Identification: Some states collect race and ethnicity data based on intake officers’ assessments, while others allow individuals to self-identify. This may result in variability and influence RRI calculations.\nCombined vs. Separate Categories: Some states combine race and ethnicity into a single category, while others separate them. This inconsistency can impact the accuracy and comparability of data, sometimes leading to an underreporting of Hispanic individuals and mixed-race individuals or an overrepresentation of non-Hispanic White individuals.\n\nSmall Sample Sizes and Interpretation\nInterpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as “Other race(s), non-Hispanic” because the small numbers in this group limit the ability to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis."
+    "text": "Notes on Disparities\nUnderstanding Disparities in Parole Outcomes\nIn examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in incarceration rates past parole eligibility across race, ethnicity, and sex.\nThe RRI is calculated by dividing the rate for Black or Hispanic individuals by the rate for White individuals, with values above 1.0 indicating that a group experiences the outcome at a higher rate relative to White individuals, and values below 1.0 indicating a lower rate. This allows for a comparative analysis of which groups are more likely to remain incarcerated past their parole eligibility.\nMetrics Displayed in Visualizations\nOur visualizations present three main metrics to highlight disparities across race, ethnicity, and sex:\n\nRRI of Parole Release: This metric compares the proportion of individuals past parole eligibility within the total prison population by race, ethnicity, and sex. It provides a snapshot of who remains in prison despite being eligible for parole.\nAverage Time Past Parole Eligibility: For those individuals who remain incarcerated past their parole eligibility date, we show the average additional time spent in prison. This is broken down by race, ethnicity, and sex, highlighting the length of delay in parole release among different groups.\nAverage Total Time Served: We also display the average total time served in prison by race, ethnicity, and sex, providing insight into sentencing and incarceration length disparities.\n\nData Considerations Our analysis focuses on Black, Hispanic, and White categories to align with data limitations from the National Corrections Reporting Program (NCRP), which categorizes individuals as White, Black, Hispanic, or Other. The term “Hispanic” is used here to align with NCRP terminology.\nData collection and reporting practices vary significantly across states:\n\nRace and Ethnicity Identification: Some states collect race and ethnicity data based on intake officers’ assessments, while others allow individuals to self-identify. This may result in variability and influence RRI calculations.\nCombined vs. Separate Categories: Some states combine race and ethnicity into a single category, while others separate them. This inconsistency can impact the accuracy and comparability of data, sometimes leading to an underreporting of Hispanic individuals and mixed-race individuals or an overrepresentation of non-Hispanic White individuals.\nIncluding ‘Other’ Category in Analysis: In states where populations categorized as “Other race(s), non-Hispanic” are substantial, we include these groups in the analysis.\n\nSmall Sample Sizes and Interpretation\nInterpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as “Other race(s), non-Hispanic” when the sample size is too small to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis."
   },
   {
     "objectID": "state_report_Colorado.html",
@@ -3168,7 +3168,7 @@
     "href": "state_report_Louisiana.html#prison-population-trends",
     "title": "Louisiana",
     "section": "Prison Population Trends",
-    "text": "Prison Population Trends\nFrom 2010 to 2022, the prison population decreased 34 percent, changing from 39,445 in 2010 to 26,074 in 2022."
+    "text": "Prison Population Trends\nFrom 2010 to 2019, the prison population decreased 20 percent, changing from 39,445 in 2010 to 31,609 in 2019."
   },
   {
     "objectID": "state_report_Louisiana.html#demographics-1",
@@ -3182,7 +3182,7 @@
     "href": "state_report_Louisiana.html#offense-types-1",
     "title": "Louisiana",
     "section": "Offense Types",
-    "text": "Offense Types\nIn 2019, 17 percent of people in prison were incarcerated for drug offenses."
+    "text": "Offense Types\nIn 2019, 53 percent of people in prison were in prison for violent offenses and 47 percent for nonviolent offenses. Most people in prison were incarcerated for drug (17 percent) offenses."
   },
   {
     "objectID": "state_report_Louisiana.html#sentence-lengths-1",
@@ -3196,49 +3196,49 @@
     "href": "state_report_Louisiana.html#prison-release-trends",
     "title": "Louisiana",
     "section": "Prison Release Trends",
-    "text": "Prison Release Trends\nFrom 2016 to 2016, the number people released from prison increased 0 percent, dropping from 15,339 in 2016 to 15,339 in 2016.\n\n\n\n\n\nIn 2019, 61 percent of parole-eligible people released in Louisiana were released past their parole eligibility year, which is an increase of 99 percent from 2010."
+    "text": "Prison Release Trends\nFrom 2010 to 2019, the number of people released from prison decreased 5 percent, dropping from 17,804 in 2010 to 16,979 in 2019.\n\n\n\n\n\nIn 2019, 61 percent of parole-eligible people released in Louisiana were released past their parole eligibility year, which is an increase of 99 percent from 2010."
   },
   {
     "objectID": "state_report_Louisiana.html#conditional-releases",
     "href": "state_report_Louisiana.html#conditional-releases",
     "title": "Louisiana",
     "section": "Conditional Releases",
-    "text": "Conditional Releases\nConditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. In 2019, 93 percent of people released from prison were conditional releases."
+    "text": "Conditional Releases\nConditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. In 2019, 90 percent of people released from prison were conditional releases."
   },
   {
     "objectID": "state_report_Louisiana.html#demographics-2",
     "href": "state_report_Louisiana.html#demographics-2",
     "title": "Louisiana",
     "section": "Demographics",
-    "text": "Demographics\n\nRace and EthnicitySexAge\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019."
+    "text": "Demographics\n\nRace and EthnicitySexAge\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\nIn 2019, 89 percent of people released from prison were male.\n\n\n\n\n\n\nIn 2019, 37 percent of people released from prison were between the ages of 25 and 34 years old."
   },
   {
     "objectID": "state_report_Louisiana.html#offense-types-2",
     "href": "state_report_Louisiana.html#offense-types-2",
     "title": "Louisiana",
     "section": "Offense Types",
-    "text": "Offense Types\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019."
+    "text": "Offense Types\nIn 2019, 17 percent of people released from prison were in prison for violent offenses and 83 percent for nonviolent offenses. Most people released from prison were incarcerated for drug (36 percent) offenses."
   },
   {
     "objectID": "state_report_Louisiana.html#disparities-in-parole-release",
     "href": "state_report_Louisiana.html#disparities-in-parole-release",
     "title": "Louisiana",
     "section": "Disparities in Parole Release",
-    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019."
+    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\n\n\nIn 2019, Male were incarcerated in state prison past parole eligibility at a rate 1.2 times higher than females, when accounting for prison population sizes in Louisiana."
   },
   {
     "objectID": "state_report_Louisiana.html#years-in-prison-past-parole-eligibility",
     "href": "state_report_Louisiana.html#years-in-prison-past-parole-eligibility",
     "title": "Louisiana",
     "section": "Years in Prison Past Parole Eligibility",
-    "text": "Years in Prison Past Parole Eligibility\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\nIn 2019, females who were still incarcerated spent on average 0.6 less years past parole eligibility compared to males in Louisiana.\n\n\nAverage Years in Prison Past Parole Eligibility \n\n\n\n2.1 Years\n\n\n1.5 Years\n\n\nMale\n\n\nFemale\n\n\nThe chart below shows the average time spent in prison past parole eligibility by offense type and sex in 2020. The largest disparity was observed among robbery offenses, where males spent on average 1.5 more years in prison compared to females."
+    "text": "Years in Prison Past Parole Eligibility\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\nIn 2019, females who were still incarcerated spent on average 0.6 less years past parole eligibility compared to males in Louisiana.\n\n\nAverage Years in Prison Past Parole Eligibility \n\n\n\n2.1 Years\n\n\n1.5 Years\n\n\nMale\n\n\nFemale\n\n\nThe chart below shows the average time spent in prison past parole eligibility by offense type and sex in 2019. The largest disparity was observed among robbery offenses, where males spent on average 1.5 more years in prison compared to females."
   },
   {
     "objectID": "state_report_Louisiana.html#time-served",
     "href": "state_report_Louisiana.html#time-served",
     "title": "Louisiana",
     "section": "Time Served",
-    "text": "Time Served\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\nIn 2019, females released spent on average 1.2 less years in prison compared to males in Louisiana.\n\n\n\n\nThe chart below shows the average time served in prison by offense type and sex in 2020. The largest disparity was observed among murder or nonnegligent manslaughter offenses, where males spent on average 10.1 more years in prison compared to females."
+    "text": "Time Served\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Louisiana submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\nIn 2019, females released spent on average 1.2 less years in prison compared to males in Louisiana.\n\n\n\n\nThe chart below shows the average time served in prison by offense type and sex in 2019. The largest disparity was observed among murder or nonnegligent manslaughter offenses, where males spent on average 10.1 more years in prison compared to females."
   },
   {
     "objectID": "state_report_Louisiana.html#notes-on-disparities",
@@ -4904,7 +4904,7 @@
     "href": "state_report_Hawaii.html#disparities-in-parole-release",
     "title": "Hawaii",
     "section": "Disparities in Parole Release",
-    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Hawaii submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\n\n               NO DATA\n               Data is not available. Hawaii submitted incomplete or missing data to the National Corrections Reporting Program in 2019."
+    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\nNo significant racial disparities in incarceration rates past parole eligibility were identified between Black and White individuals, as indicated by a Relative Rate Index (RRI) of 1.\nNo significant racial disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.\n\n\n\n               NO DATA\n               Data is not available. Hawaii submitted incomplete or missing data to the National Corrections Reporting Program in 2019."
   },
   {
     "objectID": "state_report_Hawaii.html#years-in-prison-past-parole-eligibility",

@@ -345,8 +345,11 @@ state_bar_releases_fbi_index <- apply_chart_settings(
 #------------------------------------------------------------------------------#
 
 # Race and Ethnicity
+load(file = paste0(sp_data_path, "/data/analysis/app/all_pe_rri_data.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_other.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
 
 # Format state_for_report to lowercase and replace spaces with underscores
 formatted_state_for_report <- str_to_lower(str_replace_all(state_for_report, " ", "_"))
@@ -362,10 +365,17 @@ pe_rri_infographic_hispanic <- paste0(
   formatted_state_for_report, ".png"
 )
 
+pe_rri_infographic_other <- paste0(
+  sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_other_",
+  formatted_state_for_report, ".png"
+)
+
+
 state_sentence_pe_rri_black <- all_sentence_pe_rri_black[[state_for_report]]
 
 state_sentence_pe_rri_hispanic <- all_sentence_pe_rri_hispanic[[state_for_report]]
 
+state_sentence_pe_rri_other <- all_sentence_pe_rri_other[[state_for_report]]
 
 # Sex
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_male.rds"))
