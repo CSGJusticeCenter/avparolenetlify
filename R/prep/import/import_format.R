@@ -329,7 +329,7 @@ data_files <- list(
   bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
 
   hex_gj                           = "hex_gj.rds",
-  states_abolished_parole                 = "states_abolished_parole.rds",
+  states_abolished_parole          = "states_abolished_parole.rds",
   state_notes                      = "state_notes.rds",
   states_to_exclude                = "states_to_exclude.rds",
   states_nofilter                  = "states_nofilter.rds",

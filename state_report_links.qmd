@@ -36,7 +36,7 @@ source("R/config.R")
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/abolished_states.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
 
 states_to_include <- parole_eligibility_table |> filter(!is.na(proj_pcnt_ppey_rounded) & !state %in% states_national_page_only$state)
 ```
