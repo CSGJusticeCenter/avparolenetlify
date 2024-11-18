@@ -228,7 +228,7 @@ fnc_create_and_save_infographic(
 # Takes about 10 minutes to run
 fnc_create_and_save_infographic(
   data = pe_rri_incarceration |> filter(race == "Other race(s), non-Hispanic"),
-  color = color4,
+  color = color5,
   prefix = "pe_rri_infographic_other_"
 )
 
