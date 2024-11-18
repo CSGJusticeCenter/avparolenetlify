@@ -21,7 +21,6 @@ state_for_report <- "this_state"
 
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")
-#source("R/prep/analysis/helper_functions.R")#########################################################################
 source("R/pull_state_findings.R")
 
 # Function to display data and sentences
@@ -381,24 +380,48 @@ if (!no_data) {
 }
 
 if (!no_data) {
+  if ("Other race(s), non-Hispanic" %in% df1$race) {
+    # Create html_output with "Other race(s), non-Hispanic"
     html_output <- div(
-    id = "grid-container",
-    # style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
-        style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
-    div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
-        ),
-    div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
-        ),
-    div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
-        ),
+      id = "grid-container",
+      style = "display: grid; grid-template-columns: repeat(4, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
+      div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
+      ),
+      div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Other race(s), non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
+      div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
+      div(style = "color: #938ebf; text-align: center; font-size: 16px; font-weight: bold;", HTML("Other")),
+      div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
+    )
+  } else {
+    # Create html_output without "Other race(s), non-Hispanic"
+    html_output <- div(
+      id = "grid-container",
+      style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
+      div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
+      ),
+      div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
+      ),
+      div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
+      div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
+      div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
+    )
+  }
 
-    div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
-    div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
-    div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
-  )
   cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))

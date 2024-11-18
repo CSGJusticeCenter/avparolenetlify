@@ -4786,5 +4786,145 @@
     "title": "West Virginia",
     "section": "Notes on Disparities",
     "text": "Notes on Disparities\nUnderstanding Disparities in Parole Outcomes\nIn examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in criminal justice outcomes—including incarceration rates, parole eligibility, and time served—across race, ethnicity, and sex.\nThe RRI is calculated by dividing the rate for Black or Hispanic individuals by the rate for White individuals, with values above 1.0 indicating that a group experiences the outcome at a higher rate relative to White individuals, and values below 1.0 indicating a lower rate. This allows for a comparative analysis of which groups are more likely to remain incarcerated past their parole eligibility.\nMetrics Displayed in Visualizations\nOur visualizations present three main metrics to highlight disparities across race, ethnicity, and sex:\n\nRRI of Parole Release: This metric compares the proportion of individuals past parole eligibility within the total prison population by race, ethnicity, and sex. It provides a snapshot of who remains in prison despite being eligible for parole.\nAverage Time Past Parole Eligibility: For those individuals who remain incarcerated past their parole eligibility date, we show the average additional time spent in prison. This is broken down by race, ethnicity, and sex, highlighting the length of delay in parole release among different groups.\nAverage Total Time Served: We also display the average total time served in prison by race, ethnicity, and sex, providing insight into sentencing and incarceration length disparities.\n\nData Considerations Our analysis focuses on Black, Hispanic, and White categories to align with data limitations from the National Corrections Reporting Program (NCRP), which categorizes individuals as White, Black, Hispanic, or Other. The term “Hispanic” is used here to align with NCRP terminology.\nData collection and reporting practices vary significantly across states:\n\nRace and Ethnicity Identification: Some states collect race and ethnicity data based on intake officers’ assessments, while others allow individuals to self-identify. This may result in variability and influence RRI calculations.\nCombined vs. Separate Categories: Some states combine race and ethnicity into a single category, while others separate them. This inconsistency can impact the accuracy and comparability of data, sometimes leading to an underreporting of Hispanic individuals and mixed-race individuals or an overrepresentation of non-Hispanic White individuals.\n\nSmall Sample Sizes and Interpretation\nInterpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as “Other race(s), non-Hispanic” because the small numbers in this group limit the ability to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis."
+  },
+  {
+    "objectID": "state_report_Hawaii.html",
+    "href": "state_report_Hawaii.html",
+    "title": "Hawaii",
+    "section": "",
+    "text": "2,200\n96%\n5\nPeople In Prison PastParole Eligibility*\nPrison Population IncarceratedPast Parole Eligibility\nParole BoardMembers\n\n\n\n\n\n*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#how-parole-eligibility-is-determined",
+    "href": "state_report_Hawaii.html#how-parole-eligibility-is-determined",
+    "title": "Hawaii",
+    "section": "How Parole Eligibility Is Determined",
+    "text": "How Parole Eligibility Is Determined\nParole eligibility refers to the point in a person’s prison sentence when they become eligible for consideration for release under parole. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.\nIn Hawaii, for most felonies, the sentencing court must impose a maximum sentence according to the offense grade (5, 10, 20, or life), with no discretion to determine the minimum. Minimum terms are set by the parole board, except when a mandatory minimum statute applies.¹"
+  },
+  {
+    "objectID": "state_report_Hawaii.html#in-prison-past-parole-eligibility",
+    "href": "state_report_Hawaii.html#in-prison-past-parole-eligibility",
+    "title": "Hawaii",
+    "section": "In Prison Past Parole Eligibility",
+    "text": "In Prison Past Parole Eligibility\nIn 2018, 96 percent of people in prison were currently past their parole eligibility. Another 2 percent will reach their parole eligibility after 2018.\n\n\n\n\n\nFrom 2015 to 2020, the percent of people in prison past parole eligibility decreased by 15 percent. We’ve projected that from 2021 to 2023, the percent of people past parole eligibility will increase by 6.8 percent."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#demographics",
+    "href": "state_report_Hawaii.html#demographics",
+    "title": "Hawaii",
+    "section": "Demographics",
+    "text": "Demographics\n\nRace and EthnicitySexAge\n\n\nIn 2018, 68 percent of people in prison past parole eligibility were Other race(s), non-Hispanic.\n\n\n\n\n\n\nIn 2018, 91 percent of people in prison past parole eligibility were male.\n\n\n\n\n\n\nIn 2018, 30 percent of people in prison past parole eligibility were between the ages of 25 and 34 years old."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#offense-types",
+    "href": "state_report_Hawaii.html#offense-types",
+    "title": "Hawaii",
+    "section": "Offense Types",
+    "text": "Offense Types\nIn 2018, 43 percent of people in prison past parole eligibility were in prison for violent offenses and 57 percent for nonviolent offenses. Most people in prison past parole eligibility were incarcerated for property (29 percent) offenses."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#sentence-lengths",
+    "href": "state_report_Hawaii.html#sentence-lengths",
+    "title": "Hawaii",
+    "section": "Sentence Lengths",
+    "text": "Sentence Lengths\nIn 2018, 55 percent of people in prison past parole eligibility had sentence lengths between 10 and 24.9 years."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#estimation-methodology",
+    "href": "state_report_Hawaii.html#estimation-methodology",
+    "title": "Hawaii",
+    "section": "Estimation Methodology",
+    "text": "Estimation Methodology\nParole eligibility year (PEY) estimates for 2020 and earlier are calculated in three steps. (1) We start with the PEY reported by National Corrections Reporting Program (NCRP) selected variable series for the year we are focusing on.² (2) Next, because in states PEY is missing for people who should have one, perhaps replaced with a new date after a failed hearing, we look for the PEY for the same person in previous reports. (3) Because some earlier PEY might still not be identified, we then use the state’s parole eligibility rules to create a conservative estimate of the PEY and replace the previous one if the rules-based estimate is earlier. Because the estimate is conservative, the result may be an undercount of the people past their PEY.To match people to their PEY in in previous reports without an official identifier, we create one based on the variables that should be constant across reports: state, sex, race, admission year, admission type, age at time of admission, sentence length, max. release year, offense (detailed), and offense (general). If in any year multiple people have the same identifier, the latest PEY among them is selected, with missing PEY treated as later than any other year. If a previous report returns a PEY earlier than the one from the year we are focusing on, that one is selected. The process is repeated for each report back until 2000..Rules-based imputation is based on rules identified by Reitz and colleagues.³ It is a conservative estimate computed as follows: First, for each person, it assigns a min. sentence based on the percentage of the max. sentence (0 percent). All fractions are rounded up. If the rules-based imputation is earlier than the one found in the previous steps, it is used as the best estimate. Because of this, data reported for Hawaii is from 2018, except for the 2023 estimate.Data is excluded for years where more than 10 percent of the relevant cases are missing the admission year or the max. sentence length variables, and for years when more than 40 percent of the relevant cases areare missing PEY. Relevant cases are all except those with life sentences, sentences of less than a year, and admission types that are not new court commitments or not available. All figures are calculated among relevant cases only.Estimates for the percentage of people past their PEY in 2023 are based on regression equation for the same variable between 2010 and 2020. The regression accounts for different trends each state has in terms of how much the percentage of people past their PEY increased or decreased annually in the previous decade and how much the percentage of people past PEY changed in 2020 due to special COVID policies. The total number of people past PEY in 2023 is the multiplication of the 2023[pending decision]population times the percentage of people past their PEY. [PENDING: explain the adjustment of pop. data from NCRP 2010-2020 and NPS 2010-2022, TBD]. Prison population beyond that in NCRP was obtained from the National Prisoners Survey (2010-2022) and the state’s department of corrections’ report (2023).⁴"
+  },
+  {
+    "objectID": "state_report_Hawaii.html#endnotes",
+    "href": "state_report_Hawaii.html#endnotes",
+    "title": "Hawaii",
+    "section": "Endnotes",
+    "text": "Endnotes\n¹ Kevin R. Reitz, Allegra Lukac, and Edward E. Rhine, Prison-Release Discretion and Prison Population Size: State Report: Hawaii (Robina Institute of Criminal Law and Criminal Justice, May 2023), https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu/files/2023-05/hawaii_doi_report_05_17_23_0.pdf.² US Bureau of Justice Statistics., “National Corrections Reporting Program NCRP Series” (Inter-university Consortium for Political and Social Research, 2022), accessed October 2, 2024, https://www.icpsr.umich.edu/web/NACJD/series/38.³ Kevin Reitz et al., American Prison-Release Systems: Indeterminacy in Sentencing and the Control of Prison Population Size, Final Report (Minneapolis, Minnesota: Robina Institute, University of Minnesota, 2022), accessed October 1, 2024, https://robinainstitute.umn.edu/sites/robinainstitute.umn.edu/files/2022-05/american_prison-release_systems.pdf, 36-43.⁴ US Bureau of Justice Statistics, “National Prisoner Statistics, 1978-2022” (Inter-university Consortium for Political and Social Research), accessed January 10, 2024, https://doi.org/10.3886/ICPSR38871.v1.Department of Public Safety, Department of Public Safety End of Month Population Report – December 31, 2023 (Honolulu: HI, Hawaii Department of Corrections and Rehabilitation, Hawaii Department of Public Safety, 2024), accessed October 1, 2024, https://dcr.hawaii.gov/wp-content/uploads/2024/01/Pop-Reports-EOM-2023-12-31.pdf.\nData analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp; “Prisoners - Statistical Tables,” Bureau of Justice Statistics, accessed September 25, 2024, https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#prison-population-trends",
+    "href": "state_report_Hawaii.html#prison-population-trends",
+    "title": "Hawaii",
+    "section": "Prison Population Trends",
+    "text": "Prison Population Trends\nFrom 2010 to 2018, the prison population decreased 9 percent, changing from 5,912 in 2010 to 5,375 in 2018."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#demographics-1",
+    "href": "state_report_Hawaii.html#demographics-1",
+    "title": "Hawaii",
+    "section": "Demographics",
+    "text": "Demographics\n\nRace and EthnicitySexAge\n\n\nIn 2018, 67 percent of people in prison were Other race(s), non-Hispanic.\n\n\n\n\n\n\nIn 2018, 88 percent of people in prison were male.\n\n\n\n\n\n\nIn 2018, 30 percent of people in prison were between the ages of 25 and 34 years old."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#offense-types-1",
+    "href": "state_report_Hawaii.html#offense-types-1",
+    "title": "Hawaii",
+    "section": "Offense Types",
+    "text": "Offense Types\nIn 2018, 44 percent of people in prison were in prison for violent offenses and 56 percent for nonviolent offenses. Most people in prison were incarcerated for property (28 percent) offenses."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#sentence-lengths-1",
+    "href": "state_report_Hawaii.html#sentence-lengths-1",
+    "title": "Hawaii",
+    "section": "Sentence Lengths",
+    "text": "Sentence Lengths\nIn 2018, 53 percent of people in prison had sentence lengths between 10 and 24.9 years."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#prison-release-trends",
+    "href": "state_report_Hawaii.html#prison-release-trends",
+    "title": "Hawaii",
+    "section": "Prison Release Trends",
+    "text": "Prison Release Trends\nFrom 2010 to 2018, the number of people released from prison decreased 43 percent, dropping from 1,882 in 2010 to 1,068 in 2018.\n\n\n\n\n\nIn 2018, 45 percent of parole-eligible people released in Hawaii were released past their parole eligibility year, which is a decrease of 46 percent from 2010."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#conditional-releases",
+    "href": "state_report_Hawaii.html#conditional-releases",
+    "title": "Hawaii",
+    "section": "Conditional Releases",
+    "text": "Conditional Releases\nConditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. In 2018, 68 percent of people released from prison were conditional releases."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#demographics-2",
+    "href": "state_report_Hawaii.html#demographics-2",
+    "title": "Hawaii",
+    "section": "Demographics",
+    "text": "Demographics\n\nRace and EthnicitySexAge\n\n\nIn 2018, 64 percent of people released from prison were Other race(s), non-Hispanic.\n\n\n\n\n\n\nIn 2018, 86 percent of people released from prison were male.\n\n\n\n\n\n\nIn 2018, 31 percent of people released from prison were between the ages of 35 and 44 years old."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#offense-types-2",
+    "href": "state_report_Hawaii.html#offense-types-2",
+    "title": "Hawaii",
+    "section": "Offense Types",
+    "text": "Offense Types\nIn 2018, 37 percent of people released from prison were in prison for violent offenses and 63 percent for nonviolent offenses. Most people released from prison were incarcerated for property (42 percent) offenses."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#disparities-in-parole-release",
+    "href": "state_report_Hawaii.html#disparities-in-parole-release",
+    "title": "Hawaii",
+    "section": "Disparities in Parole Release",
+    "text": "Disparities in Parole Release\n\nRace and EthnicitySex\n\n\n\n               NO DATA\n               Data is not available. Hawaii submitted incomplete or missing data to the National Corrections Reporting Program in 2019.\n             \n\n\n\n               NO DATA\n               Data is not available. Hawaii submitted incomplete or missing data to the National Corrections Reporting Program in 2019."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#years-in-prison-past-parole-eligibility",
+    "href": "state_report_Hawaii.html#years-in-prison-past-parole-eligibility",
+    "title": "Hawaii",
+    "section": "Years in Prison Past Parole Eligibility",
+    "text": "Years in Prison Past Parole Eligibility\n\nRace and EthnicitySex\n\n\nIn 2018, Black people who were still incarcerated spent on average 0.7 more years past parole eligibility, and Hispanic people who were still incarcerated spent on average 0.9 more years past parole eligibility, and non-Hispanic people of other races who were still incarcerated spent on average 0.1 less years past parole eligibility compared to White people.\n\n\nAverage Years in Prison Past Parole Eligibility \n\n\n\n2.9 Years\n\n\n3.1 Years\n\n\n2.1 Years\n\n\n2.2 Years\n\n\nBlack\n\n\nHispanic\n\n\nOther\n\n\nWhite\n\n\nThe chart below shows the average time spent in prison past parole eligibility by offense type and race and ethnicity in 2018. The largest disparity was observed among drug offenses, where Hispanic people spent on average 3.8 more years in prison compared to White people.\n\n\n\n\n\n\nIn 2018, females who were still incarcerated spent on average 0.7 less years past parole eligibility compared to males in Hawaii.\n\n\nAverage Years in Prison Past Parole Eligibility \n\n\n\n2.3 Years\n\n\n1.6 Years\n\n\nMale\n\n\nFemale\n\n\nThe chart below shows the average time spent in prison past parole eligibility by offense type and sex in 2018. The largest disparity was observed among murder or nonnegligent manslaughter offenses, where males spent on average 2.5 more years in prison compared to females."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#time-served",
+    "href": "state_report_Hawaii.html#time-served",
+    "title": "Hawaii",
+    "section": "Time Served",
+    "text": "Time Served\n\nRace and EthnicitySex\n\n\nIn 2018, Black people released spent on average 0.3 more years in prison, and Hispanic people released spent on average 0.5 more years in prison, and non-Hispanic people of other races released spent on average 0.3 more years in prison compared to White people.\n\n\n\n\nThe chart below shows the average time served in prison by offense type and race and ethnicity in 2018. The largest disparity was observed among negligent manslaughter offenses, where non-Hispanic people of other races people spent on average 6.7 more years in prison compared to White people.\n\n\n\n\n\n\nIn 2018, females released spent on average 0.5 less years in prison compared to males in Hawaii.\n\n\n\n\nThe chart below shows the average time served in prison by offense type and sex in 2018. The largest disparity was observed among rape or sexual assault offenses, where males spent on average 2.9 more years in prison compared to females."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#notes-on-disparities",
+    "href": "state_report_Hawaii.html#notes-on-disparities",
+    "title": "Hawaii",
+    "section": "Notes on Disparities",
+    "text": "Notes on Disparities\nUnderstanding Disparities in Parole Outcomes\nIn examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in criminal justice outcomes—including incarceration rates, parole eligibility, and time served—across race, ethnicity, and sex.\nThe RRI is calculated by dividing the rate for Black or Hispanic individuals by the rate for White individuals, with values above 1.0 indicating that a group experiences the outcome at a higher rate relative to White individuals, and values below 1.0 indicating a lower rate. This allows for a comparative analysis of which groups are more likely to remain incarcerated past their parole eligibility.\nMetrics Displayed in Visualizations\nOur visualizations present three main metrics to highlight disparities across race, ethnicity, and sex:\n\nRRI of Parole Release: This metric compares the proportion of individuals past parole eligibility within the total prison population by race, ethnicity, and sex. It provides a snapshot of who remains in prison despite being eligible for parole.\nAverage Time Past Parole Eligibility: For those individuals who remain incarcerated past their parole eligibility date, we show the average additional time spent in prison. This is broken down by race, ethnicity, and sex, highlighting the length of delay in parole release among different groups.\nAverage Total Time Served: We also display the average total time served in prison by race, ethnicity, and sex, providing insight into sentencing and incarceration length disparities.\n\nData Considerations Our analysis focuses on Black, Hispanic, and White categories to align with data limitations from the National Corrections Reporting Program (NCRP), which categorizes individuals as White, Black, Hispanic, or Other. The term “Hispanic” is used here to align with NCRP terminology.\nData collection and reporting practices vary significantly across states:\n\nRace and Ethnicity Identification: Some states collect race and ethnicity data based on intake officers’ assessments, while others allow individuals to self-identify. This may result in variability and influence RRI calculations.\nCombined vs. Separate Categories: Some states combine race and ethnicity into a single category, while others separate them. This inconsistency can impact the accuracy and comparability of data, sometimes leading to an underreporting of Hispanic individuals and mixed-race individuals or an overrepresentation of non-Hispanic White individuals.\n\nSmall Sample Sizes and Interpretation\nInterpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as “Other race(s), non-Hispanic” because the small numbers in this group limit the ability to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis."
   }
 ]
