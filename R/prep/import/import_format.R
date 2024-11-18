@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: November 12, 2024 (MAR)
+# Date last updated: November 18, 2024 (MAR)
 # Description:
 #    This script:
 #######################################
@@ -11,7 +11,7 @@
 # MAP - National Snapshot Page
 #------------------------------------------------------------------------------#
 
-# Import hexgrid shapefile and select the 'state_abb' column
+# Import hex map shapefile
 # Remove the District of Columbia (DC) and transform the spatial data to EPSG:3857
 hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid.geojson")) |>
     select(state_abb = iso3166_2) |>
@@ -20,18 +20,17 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
     sf_geojson() |>
     fromJSON(simplifyVector = FALSE)
 
-
 #------------------------------------------------------------------------------#
-# State-Specific Notes for "How is Parole Eligibility Determined?" Section
-# Methodology of Imputation for "State Notes" Section
+# State-Specific Notes for "How is Parole Eligibility Determined?" and
+# Methodology of Imputation for "State Notes" Section of Parole Eligibility Tab
 #------------------------------------------------------------------------------#
 
-# Import state-specific imputation methodology for the parole eligibility tab
+# Import state-specific imputation methodology
 # Created by Seba Guzman (CSG Research) in Stata
 state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
 
-# Import state-specific notes about parole eligibility, number of parole board members
-# These were created by Policy Team in Release Systems by State Word Document
+# Import "How is Parole Eligibility Determined?" and number of parole board members
+# These were created by Policy Team in 'Release Systems by State' Word Document
 state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
@@ -86,7 +85,7 @@ state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/s
 # without filtering because the estimates for people past parole eligibility are reliable enough
 # or the data submitted is close enough to what the expected filtered population would be
 states_nofilter <- state_rules_v1 |>
-  filter(dont_filter_admtype_sentlength == 1)
+  filter(dont_filter_admtype_sentlength == 1) #############################################################change to pull
 
 # States where we should use the earliest parole eligibility year bc it is the more reliable
 # than the imputations
@@ -103,9 +102,14 @@ states_national_page_only <- state_rules_v1 |>
   select(state)
 
 # States that have abolished parole
-abolished_states <- state_notes |>
+states_abolished_parole <- state_notes |>
   filter(abolished_parole == "Y") |>
   select(state)
+
+# States where "Other race(s), non-Hispanic" should be included due to population
+# sizes in these states (Hawaii, Alaska, New Mexico, Oklahoma)
+states_use_other_race_eth <- state_rules_v1 |>
+  filter(use_other_race_ethnicity == 1)
 
 # Determine which states have high missingness and should be excluded from analysis/tool
 # File created by Seba Guzman in Stata
@@ -115,8 +119,8 @@ projections_compl_2010_2020 <-
 
 # Determine which year is best by state
 # Some should use 2019 and others should use 2018
+# Some should use neither
 which_overall_year <- projections_compl_2010_2020 |>
-  mutate(excl_state_year = if_else(state == "Alabama", 0, excl_state_year)) |>
   select(state, year, excl_state_year) |>
   group_by(state) |>
   mutate(year_to_use = case_when(
@@ -130,7 +134,6 @@ which_overall_year <- projections_compl_2010_2020 |>
 
 # Determine which years shouldn't be used by state due to unreliable data
 which_years <- projections_compl_2010_2020 |>
-  mutate(excl_state_year = if_else(state == "Alabama" & year == 2019, 0, excl_state_year)) |>
   select(state, year, excl_state_year) |>
   distinct()
 
@@ -147,11 +150,10 @@ states_with_high_missing <- projections_compl_2010_2020 |>
 # and states that abolished parole
 # These states will not need state reports
 states_to_exclude <- states_with_high_missing |>
-  bind_rows(abolished_states) |>
+  bind_rows(states_abolished_parole) |>
   distinct()
 
-states_use_other_race_eth <- state_rules_v1 |>
-  filter(use_other_race_ethnicity == 1)
+
 
 
 
@@ -276,105 +278,36 @@ bjs_prison_pop_by_rptyear <- bjs_prison_pop_by_rptyear |>
 # 2018 and 2019
 #------------------------------------------------------------------------------#
 
-# Import BJS prisoners data by race and ethnicity for 2019
-# Skipping the first 10 rows due to headers and metadata.
-# Prisoners under the jurisdiction
-bjs_prison_pop_by_race_state_2019 <-
-  read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p19/p19at02.csv"),
-           skip = 10)
+# Load and clean data
+bjs_prison_pop_by_race_state_2018 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p18/p18at02.csv", 10, "jurisdiction")
+bjs_prison_pop_by_race_state_2019 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p19/p19at02.csv", 10)
 
-# Calculate total BJS prison population for 2019. Clean the 'total' column by removing commas.
+# Select total populations by state
 total_bjs_pop_2019 <- bjs_prison_pop_by_race_state_2019 |>
-  clean_names() |>
-  filter(state_federal == "") |>
-  select(x, total) |>
-  rename(state = x) |>
-  mutate(state = sub("/.*", "", state),
-         total = str_replace_all(total, ",", ""),
-         total = as.numeric(total))
+  select(state, total) |>
+  mutate(total = as.numeric(str_replace_all(total, ",", "")))
+total_bjs_pop_2018 <- bjs_prison_pop_by_race_state_2018 |>
+  select(state, total) |>
+  mutate(total = as.numeric(str_replace_all(total, ",", "")))
 
-# Process BJS population by race and ethnicity for 2019
-# Warning OK - characters like '~' turned to NA
-bjs_prison_pop_by_race_2019 <- bjs_prison_pop_by_race_state_2019 |>
-  clean_names() |>
-  filter(state_federal == "") |>
-  select(-state_federal) |>
-  rename(state = x) |>
-  mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
-  mutate(across(-state, as.numeric)) |>
-  # Pivot data from wide to long format to have race as a key variable and corresponding population as value.
-  pivot_longer(cols = total:did_not_report,
-               names_to = "race",
-               values_to = "n") |>
-  mutate(
-    state = sub("/.*", "", state),
-    race = case_when(
-      race == "total" ~ "Total Population",
-      race == "white_a" ~ "White, non-Hispanic",
-      race == "black_a" ~ "Black, non-Hispanic",
-      race == "hispanic" ~ "Hispanic, any race",
-      race %in% c("american_indian_alaska_native_a",
-                  "asian_a",
-                  "native_hawaiian_other_pacific_islander_a",
-                  "two_or_more_races_a",
-                  "other_a") ~ "Other race(s), non-Hispanic",
-      race == "unknown" ~ "Unknown",
-      race == "did_not_report" ~ "Unknown",
-      TRUE ~ race
-    )) |>
-  filter(race != "Unknown" & race != "Total Population") |>
-  group_by(state, race) |>
-  summarise(n = sum(n, na.rm = TRUE)) |>
-  left_join(total_bjs_pop_2019, by = "state") |>
-  ungroup() |>
-  mutate(prop = (n / total)*100,
-         prop_label = paste0(round(prop, 0), "%"),
-         n_label = formattable::comma(n, 0),
-         population_type = "In Prison") |>
-  select(-total)
+# Process race and ethnicity data
+# Warning messages ok, changes "NA" to actual NA
+bjs_prison_pop_by_race_2018 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2018, total_bjs_pop_2019) |> mutate(rptyear = 2018)
+bjs_prison_pop_by_race_2019 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2019, total_bjs_pop_2019) |> mutate(rptyear = 2019)
+bjs_prison_pop_by_race <- rbind(bjs_prison_pop_by_race_2018, bjs_prison_pop_by_race_2019)
 
 
-
-# Import BJS prisoners data by sex for 2019
-# Skipping the first 10 rows due to headers and metadata.
-# Prisoners under the jurisdiction
+# Import BJS data by sex
 bjs_prison_pop_by_sex_2019_raw <- read.csv(file.path(sp_data_path,
                                                      "data/raw/BJS Prison Pop/p19/p19t02.csv"))
 bjs_prison_pop_by_sex_2019_raw <- bjs_prison_pop_by_sex_2019_raw[-(1:10), ]
 
-# Process BJS population by sex for 2019
-# Warning OK - characters like '~' turned to NA
-bjs_prison_pop_by_sex_2019 <- bjs_prison_pop_by_sex_2019_raw  |>
-  clean_names() |>
-  select(state = x, male = x_6, female = x_7) |>
-  mutate(state = str_replace(state, "/.*", ""),
-         state = str_replace(state, "Alaskab", "Alaska"),
-         state = str_replace(state, "Utahc", "Utah")) |>
-  filter(state != "" &
-           state != "State" &
-           state != "Federal" &
-           state != "District of Columbia" &
-           state != "U.S. Total" &
-           state != "U.S. total" &
-           state != "U.S. tota") |>
-  mutate(male = str_replace_all(male, "[^\\d]", ""),
-         male = as.numeric(male),
-         female = str_replace_all(female, "[^\\d]", ""),
-         female = as.numeric(female)) |>
-  pivot_longer(cols = c(male, female), names_to = "sex", values_to = "population") |>
-  group_by(state) |>
-  rename(n = population) |>
-  mutate(
-    prop = (n/sum(n))*100,
-    prop_label = paste0(round(prop, 0), "%"),
-    n_label = formattable::comma(n, 0)
-  ) |>
-  ungroup() |>
-  mutate(sex = case_when(sex == "male" ~ "Male",
-                         sex == "female" ~ "Female",
-                         TRUE ~ sex))
+# Process data for 2018 and 2019
+bjs_prison_pop_by_sex_2019 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p19/p19t02.csv", 10, "x_6", "x_7", 2019)
+bjs_prison_pop_by_sex_2018 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p19/p19t02.csv", 10, "x_2", "x_3", 2018)
 
-
+# Combine data
+bjs_prison_pop_by_sex <- bind_rows(bjs_prison_pop_by_sex_2018, bjs_prison_pop_by_sex_2019)
 
 
 #------------------------------------------------------------------------------#
@@ -391,12 +324,12 @@ data_files <- list(
   ncrp_yearendpop_combined         = "ncrp_yearendpop_combined.rds",
   ncrp_releases_combined           = "ncrp_releases_combined.rds",
 
-  bjs_prison_pop_by_race_2019      = "bjs_prison_pop_by_race_2019.rds",
-  bjs_prison_pop_by_sex_2019       = "bjs_prison_pop_by_sex_2019.rds",
+  bjs_prison_pop_by_race           = "bjs_prison_pop_by_race.rds",
+  bjs_prison_pop_by_sex            = "bjs_prison_pop_by_sex.rds",
   bjs_prison_pop_by_rptyear        = "bjs_prison_pop_by_rptyear.rds",
 
   hex_gj                           = "hex_gj.rds",
-  abolished_states                 = "abolished_states.rds",
+  states_abolished_parole                 = "states_abolished_parole.rds",
   state_notes                      = "state_notes.rds",
   states_to_exclude                = "states_to_exclude.rds",
   states_nofilter                  = "states_nofilter.rds",

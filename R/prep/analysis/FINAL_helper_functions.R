@@ -42,6 +42,21 @@ fnc_filter_by_year <- function(df, which_state_year) {
     filter(rptyear == year_to_use)
 }
 
+fnc_determine_select_year <- function(state_name, which_overall_year) {
+  # Filter for the specified state and pull the year_to_use
+  select_year <- which_overall_year |>
+    filter(state == state_name) |>
+    pull(year_to_use)
+
+  # Return the selected year
+  if (length(select_year) == 0) {
+    stop("State not found in which_overall_year data.")
+  }
+
+  return(select_year)
+}
+
+
 fnc_filter_exclude_high_missing_race <- function(data, states_with_high_missing_race) {
   # Convert to character vector if it's a list
   if (is.list(states_with_high_missing_race)) {

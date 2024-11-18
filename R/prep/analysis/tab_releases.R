@@ -18,10 +18,10 @@ ncrp_releases_filtered <- fnc_filter_states(ncrp_releases_not_consolidated, excl
 
 # Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
-  filter(rptyear >= 2010) |>
   group_by(state, rptyear) |>
   summarise(total = n(), .groups = "drop") |>
-  left_join(which_overall_year, by = "state")
+  left_join(which_overall_year, by = "state") |>
+  filter(rptyear >= 2010 & rptyear <= year_to_use)
 
 # Get unique states to iterate over
 states <- unique(ncrp_releases_by_year$state)
@@ -33,7 +33,7 @@ all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
 
   # Determine the earliest year and use year_to_use for the latest year
   earliest_year <- min(df1$rptyear)
-  latest_year <- df1$year_to_use[1]  # Use the year_to_use from which_overall_year
+  latest_year <- max(df1$rptyear) # Use the year_to_use from which_overall_year
 
   # Get release totals for the earliest and latest years
   earliest_year_release <- df1$total[df1$rptyear == earliest_year]
@@ -62,11 +62,9 @@ all_sentence_releases_by_year$Hawaii
 # Generate chart for each state
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
 
-  max_year <- unique(df1$year_to_use)
-
   df1 <- ncrp_releases_by_year |>
     ungroup() |>
-    filter(state == x & rptyear <= max_year) |>
+    filter(state == x) |>
     distinct()
 
   # Determine the maximum value for the y-axis in the visualization
@@ -74,11 +72,11 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   max_value <- max(df1$total)*1.1
 
   hc_accessibility_text <- paste0("This graph shows the number of releases in ",
-                                  select_year, " in the state of ", x, ".")
+                                  " the state of ", x, " by year.")
   highcharts <- # Create the line chart
     hc <- highchart() |>
     hc_chart(type = "line") |>
-    hc_title(text = paste0("People Released From Prison by Year, ", min(df1$rptyear), "-", max_year)) |>
+    hc_title(text = paste0("People Released From Prison by Year, ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_yAxis(title = list(text = ""),
              min = 0,
              max = max_value) |>
@@ -106,6 +104,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
 all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
 all_line_releases_by_year$Georgia
 all_line_releases_by_year$Connecticut
+all_line_releases_by_year$Hawaii
 rm(states)
 
 
@@ -195,7 +194,7 @@ all_sentence_pe_proportion_released <- map(.x = states, .f = function(x) {
 
   # Find the earliest and latest years
   earliest_year <- min(df1$rptyear)
-  latest_year <- unique(df1$year_to_use)
+  latest_year <- max(df1$rptyear)
 
   # Filter data for the earliest and latest years
   df_earliest <- df1 %>% filter(rptyear == earliest_year)

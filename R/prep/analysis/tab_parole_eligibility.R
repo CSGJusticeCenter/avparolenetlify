@@ -180,7 +180,6 @@ current_pe_race     <- fnc_summarize_data(current_pe, "race") |>
 current_pe_sex      <- fnc_summarize_data(current_pe, "sex")
 current_pe_ageyrend <- fnc_summarize_data(current_pe, "ageyrend")
 current_pe_sentlgth <- fnc_summarize_data(current_pe, "sentlgth")
-
 current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |>
   fnc_group_offense_type()
 

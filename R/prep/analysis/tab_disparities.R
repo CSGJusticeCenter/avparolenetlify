@@ -52,11 +52,6 @@ all_sentence_los_sex <-
                                    type = "in prison",
                                    compare_var = "sex",
                                    los_col = "average_los")
-all_sentence_los_sex <-
-  fnc_generate_disparity_sentences(df = los_sex,
-                                   type = "in prison",
-                                   compare_var = "sex",
-                                   los_col = "average_los")
 
 # ---------------------------------------------------------------------------- #
 # Years Past Parole Eligibility
@@ -94,7 +89,8 @@ avg_past_pe_sex <- ncrp_past_pe |>
   group_by(state, sex, rptyear) |>
   summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
             people = n(),
-            .groups = "drop")
+            .groups = "drop")|>
+  fnc_filter_by_year(which_overall_year)
 
 all_sentence_avg_past_pe_race <-
   fnc_generate_disparity_sentences(df = avg_past_pe_race,

@@ -148,8 +148,8 @@ current_yearendpop_not_consolidated <- ncrp_yearendpop_not_consolidated |>
   fnc_filter_by_year(which_overall_year)
 
 ## Summarize number of people in prison by race, sex, ageyrend, offense, and sentence length
-bjs_population_race       <- bjs_prison_pop_by_race_2019 |> mutate(rptyear = 2019)
-bjs_population_sex        <- bjs_prison_pop_by_sex_2019 |> mutate(rptyear = 2019)
+bjs_population_race       <- bjs_prison_pop_by_race |> fnc_filter_by_year(which_overall_year) #################################################
+bjs_population_sex        <- bjs_prison_pop_by_sex |> fnc_filter_by_year(which_overall_year)
 ncrp_population_ageyrend  <- fnc_summarize_data(current_yearendpop_not_consolidated, "ageyrend")
 ncrp_population_fbi_index <- fnc_summarize_data(current_yearendpop, "fbi_index") |>
   fnc_group_offense_type()

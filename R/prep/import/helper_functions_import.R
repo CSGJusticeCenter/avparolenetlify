@@ -332,3 +332,84 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
   print("NCRP data transformation complete.")
   return(df)
 }
+
+
+# Function to load and clean BJS race and ethnicity data
+fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
+  data <- read.csv(file.path(sp_data_path, file_path), skip = skip_rows) |>
+    clean_names()
+
+  if (!is.null(rename_col)) {
+    data <- data |> rename(state_federal = !!sym(rename_col))
+  }
+
+  data |>
+    filter(state_federal == "") |>
+    rename(state = x) |>
+    mutate(state = sub("/.*", "", state)) |>
+    select(-state_federal)
+}
+
+# Function to process BJS prison population data
+fnc_process_bjs_raceeth_data <- function(data, total_data) {
+  data |>
+    mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
+    mutate(across(-state, as.numeric)) |>
+    pivot_longer(cols = total:did_not_report, names_to = "race", values_to = "n") |>
+    mutate(
+      race = case_when(
+        race == "total" ~ "Total Population",
+        race == "white_a" ~ "White, non-Hispanic",
+        race == "black_a" ~ "Black, non-Hispanic",
+        race == "hispanic" ~ "Hispanic, any race",
+        race %in% c("american_indian_alaska_native_a", "asian_a",
+                    "native_hawaiian_other_pacific_islander_a",
+                    "two_or_more_races_a", "other_a") ~ "Other race(s), non-Hispanic",
+        race %in% c("unknown", "did_not_report") ~ "Unknown",
+        TRUE ~ race
+      )) |>
+    filter(!race %in% c("Unknown", "Total Population")) |>
+    group_by(state, race) |>
+    summarise(n = sum(n, na.rm = TRUE)) |>
+    left_join(total_data, by = "state") |>
+    ungroup() |>
+    mutate(prop = (n / total) * 100,
+           prop_label = paste0(round(prop, 0), "%"),
+           n_label = formattable::comma(n, 0),
+           population_type = "In Prison") |>
+    select(-total)
+}
+
+
+# Function to load and process BJS population data by sex
+fnc_process_bjs_sex_data <- function(file_path, skip_rows, male_col, female_col, year) {
+  read.csv(file.path(sp_data_path, file_path))[-(1:skip_rows), ] |>
+    clean_names() |>
+    select(state = x, male = !!sym(male_col), female = !!sym(female_col)) |>
+    mutate(
+      state = str_replace_all(state, "/.*", ""),
+      state = str_replace_all(state, c("Alaskab" = "Alaska", "Utahc" = "Utah"))
+    ) |>
+    filter(
+      !state %in% c("", "State", "Federal", "District of Columbia",
+                    "U.S. Total", "U.S. total", "U.S. tota")
+    ) |>
+    mutate(
+      male = as.numeric(str_replace_all(male, "[^\\d]", "")),
+      female = as.numeric(str_replace_all(female, "[^\\d]", ""))
+    ) |>
+    pivot_longer(cols = c(male, female), names_to = "sex", values_to = "n") |>
+    group_by(state) |>
+    mutate(
+      prop = (n / sum(n)) * 100,
+      prop_label = paste0(round(prop, 0), "%"),
+      n_label = formattable::comma(n, 0),
+      sex = case_when(
+        sex == "male" ~ "Male",
+        sex == "female" ~ "Female",
+        TRUE ~ sex
+      ),
+      rptyear = year
+    ) |>
+    ungroup()
+}

@@ -153,7 +153,7 @@ Data analysis was conducted using information from the National Corrections Repo
 
 
 ```{r}
-####################################################################################################################
+#-----------------------------------------------------------------------------------------------------------------------------------------#
 ```
 
 # Prison Population
@@ -225,8 +225,9 @@ fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_populat
 
 
 ```{r}
-####################################################################################################################
+#-----------------------------------------------------------------------------------------------------------------------------------------#
 ```
+
 
 # Prison Releases
 
@@ -297,8 +298,9 @@ fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases
 
 
 ```{r}
-####################################################################################################################
+#-----------------------------------------------------------------------------------------------------------------------------------------#
 ```
+
 
 # Disparities
 
@@ -384,13 +386,13 @@ if (!no_data) {
     # style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 0px;",
         style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
     div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$average_avg_past_pe[df1$race == "Black, non-Hispanic"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
         ),
     div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$average_avg_past_pe[df1$race == "Hispanic, any race"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
         ),
     div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
-        paste0(round(df1$average_avg_past_pe[df1$race == "White, non-Hispanic"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
         ),
 
     div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
@@ -434,10 +436,10 @@ if (!no_data) {
     style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
     # First column: Years for Male, Second column: Years for Female
     div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$average_avg_past_pe[df1$sex == "Male"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Male"], 1), " Years")
     ),
     div(style = "color: #55b4e5; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$average_avg_past_pe[df1$sex == "Female"], 1), " Years")
+        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Female"], 1), " Years")
     ),
     # First column: Male label, Second column: Female label
     div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
@@ -586,7 +588,9 @@ if (no_data) {
 
 
 
-
+```{r}
+#-----------------------------------------------------------------------------------------------------------------------------------------#
+```
 
 <br>
 <div class="divider"></div>
@@ -620,14 +624,6 @@ Data collection and reporting practices vary significantly across states:
 Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" because the small numbers in this group limit the ability to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
 
 :::
-
-
-
-
-
-```{r}
-####################################################################################################################
-```
 
 </div>
 
