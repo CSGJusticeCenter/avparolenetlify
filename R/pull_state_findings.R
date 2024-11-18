@@ -9,7 +9,6 @@ load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
 # select_year <- fnc_determine_select_year(state_for_report, which_overall_year)
 select_year <- 2019########################################################################
 
-
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
 additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
   "*Includes people with any admission type or sentence length."
@@ -349,10 +348,19 @@ state_bar_releases_fbi_index <- apply_chart_settings(
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
 
-pe_rri_infographic_black    <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_black_",
-                                      state_for_report, ".png")
-pe_rri_infographic_hispanic <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_hispanic_",
-                                      state_for_report, ".png")
+# Format state_for_report to lowercase and replace spaces with underscores
+formatted_state_for_report <- str_to_lower(str_replace_all(state_for_report, " ", "_"))
+
+# Update the file paths with the formatted state name
+pe_rri_infographic_black <- paste0(
+  sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_black_",
+  formatted_state_for_report, ".png"
+)
+
+pe_rri_infographic_hispanic <- paste0(
+  sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_hispanic_",
+  formatted_state_for_report, ".png"
+)
 
 state_sentence_pe_rri_black <- all_sentence_pe_rri_black[[state_for_report]]
 
@@ -362,8 +370,11 @@ state_sentence_pe_rri_hispanic <- all_sentence_pe_rri_hispanic[[state_for_report
 # Sex
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_male.rds"))
 
-pe_rri_infographic_male     <- paste0(sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_male_",
-                                      state_for_report, ".png")
+pe_rri_infographic_male <- paste0(
+  sp_data_path, "/data/analysis/app/pngs/pe_rri_infographic_male_",
+  formatted_state_for_report, ".png"
+)
+
 
 state_sentence_pe_rri_male <- all_sentence_pe_rri_male[[state_for_report]]
 
@@ -402,11 +413,6 @@ state_scatter_avg_past_pe_sex_offense <- apply_chart_settings(
   all_scatter_avg_past_pe_sex_offense[[state_for_report]],
   height = 600
 )
-
-
-
-
-
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_los_sex.rds"))
