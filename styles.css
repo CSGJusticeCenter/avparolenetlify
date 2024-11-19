@@ -3,20 +3,19 @@
 /* Overview */
 /******************************************************************************/
 
-
-html, body {
+/* html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
-
+*/
 /* These styles are commented out. If enabled, they would remove the margin and padding of the entire page and hide scrollbars */
 
-
+/*
 #main-content {
   overflow-y: auto;
 }
-
+*/
 /* Commented out, but if enabled, this would allow vertical scrolling in the main content area */
 
 
