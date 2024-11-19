@@ -199,6 +199,7 @@ all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
   source = ncrp_source
 )
 all_scatter_los_race_offense$Georgia
+all_scatter_los_race_offense$Hawaii
 
 # Create scatter charts for average time served by sex and offense
 all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(

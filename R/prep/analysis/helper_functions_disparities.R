@@ -193,8 +193,8 @@ fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, s
     colors <- c(teal, purple)  # Colors for male and female
     shapes <- c("circle", "triangle")  # Shapes for male and female
   } else {
-    group_labels <- c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")
-    colors <- c(red, teal, blue, purple)  # Colors for race groups
+    group_labels <- c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic")
+    colors <- c(teal, blue, purple, red)  # Colors for race groups
     shapes <- c("square", "circle", "diamond", "triangle")  # Shapes for race groups
   }
 
@@ -468,7 +468,7 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = 
       shapes <- c("circle", "triangle")  # Shapes for male and female
     } else {
       group_labels <- c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic")
-      colors <- c(red, teal, blue, purple)  # Colors for race groups
+      colors <- c(teal, blue, purple, red)  # Colors for race groups
       shapes <- c("square", "circle", "diamond", "triangle")  # Shapes for race groups
     }
 
