@@ -30,6 +30,7 @@ proj_past_pe_count_rounded <- ncrp_projections |>
 
 # Filter out missing values from proj_pcnt_ppey
 ncrp_projections_no_nas <- ncrp_projections |>
+  # filter(!state %in% states_to_exclude$state) |>
   filter(year == projection_year) |>
   filter(!is.na(proj_pcnt_ppey))
 
