@@ -1,9 +1,3 @@
----
-editor: 
-  markdown: 
-    wrap: 72
----
-
 # AV Parole Project
 
 The AV Parole Project is dedicated to analyzing and visualizing data
@@ -16,13 +10,13 @@ across race, ethnicity, and sex.
 # Objectives
 
 -   Data Processing: Load and clean NCRP records from 2014 to 2020 to
-    create standardized datasets for analysis.\
+    create standardized datasets for analysis.  
 -   Disparity Analysis: Identify and quantify disparities in
     incarceration and parole eligibility based on race, ethnicity, and
-    sex.\
+    sex.  
 -   Data Visualization: Develop visualizations that communicate key
     findings, such as trends over time and comparisons between different
-    demographic groups.\
+    demographic groups.  
 -   State-Specific Insights: Generate state-level reports and
     visualizations.
 
@@ -68,18 +62,15 @@ import and analysis subfolders.
 
 **R/prep/import:**
 
--   **import_format.R:** Script used for formatting and standardizing
-    raw data as it is imported. It ensures that the data has a uniform
-    structure and format, which is essential for accurate analysis.  
+-   **import_format.R:** Importing, formatting, and standardizing raw data.  
 -   **historical_ncrp_term_records.R:** Processes NCRP term records data
     from 2014 to 2020. The script loads raw data, cleans it by trimming
     characters and whitespace, and organizes the data for analysis. This
-    cleaned data serves as a base for subsequent imputation and
-    analysis.  
+    cleaned data serves as a base for subsequent imputation by Seba Guzman 
+    in Stata.  
 -   **helper_functions_import.R:** Contains utility functions to assist
     with data import tasks, such as custom cleaning routines, data
-    transformation functions, and helpers to manage file loading. These
-    functions streamline the data preparation process.  
+    transformation functions, and helpers to manage file loading.  
 
 **R/prep/analysis/:**
 
@@ -87,27 +78,17 @@ import and analysis subfolders.
     script focuses on identifying patterns and trends in release data,
     including how these trends vary by demographic factors like age,
     race, and sex.  
--   **tab_population.R:** Examines trends in prison population data,
+-   **tab_population.R:** Analyzes data related prison populations,
     including changes over time and differences across demographic
-    groups. It provides insights into the composition and fluctuations
-    of the incarcerated population.  
+    groups.  
 -   **tab_parole_eligibility.R:** Analyzes data related to parole
     eligibility, including who becomes eligible for parole and the
-    factors that influence eligibility. It generates insights into
-    patterns and disparities related to parole opportunities.  
+    characteristics of people in prison past parole eligibility.    
 -   **tab_disparities.R:** Focuses on identifying disparities in parole
-    and incarceration outcomes by race, ethnicity, and sex. This script
-    helps highlight systemic inequalities and areas where policy
-    interventions may be needed.  
+    eligibility by race, ethnicity, and sex.  
 -   **tab_disparities_rris.R:** Computes and analyzes Relative Rate
-    Indexes (RRIs) to quantify disparities in parole and incarceration
-    outcomes. This script is essential for understanding the magnitude
-    of disparities between different groups.  
--   **page_national_trends.R:** Compiles national-level trends in the
-    data, providing a broad overview of how parole and incarceration
-    patterns have changed over time across the United States. It creates
-    visualizations that are useful for presentations and reports.  
+    Indexes (RRIs) to quantify disparities in parole release.
+-   **page_national_trends.R:** Uses 2023 projections to visualize national trends.
 -   **helper_functions.R:** Contains reusable functions that support
     various analysis tasks, such as data transformations, statistical
-    calculations, and custom visualizations. These functions keep the
-    codebase organized and efficient.  
+    calculations, and custom visualizations.  
