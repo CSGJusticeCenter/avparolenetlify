@@ -541,12 +541,12 @@ if (!no_data) {
     div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
         paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Male"], 1), " Years")
     ),
-    div(style = "color: #55b4e5; font-size: 24px; font-weight: bold; margin: 0;", 
+    div(style = "color: #938ebf; font-size: 24px; font-weight: bold; margin: 0;", 
         paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Female"], 1), " Years")
     ),
     # First column: Male label, Second column: Female label
     div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
-    div(style = "color: #55b4e5; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
+    div(style = "color: #938ebf; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
   )
   cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))

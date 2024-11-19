@@ -50,7 +50,7 @@ div(
       ),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("People In Prison Past Their<br>Parole Eligibility*<br><br>")),
-  div(id = "bold-text", HTML("1 in X (TBD) Incarcerated People Are In Prison Past Their Parole Eligibility")),
+  div(id = "bold-text", HTML("1 in 5 Incarcerated People Are In Prison Past Their Parole Eligibility")),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole**<br><br>"))
 )
 ```

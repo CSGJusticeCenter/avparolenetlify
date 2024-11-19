@@ -39,7 +39,7 @@ average_percent_past_pey <- mean(ncrp_projections_no_nas$proj_pcnt_ppey)
 
 # Convert this percentage to a "1 in X" estimate
 proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
-
+proj_past_pe_1_in_x <- 4#####################################################################################
 
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
