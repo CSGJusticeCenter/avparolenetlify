@@ -467,7 +467,7 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = 
       colors <- c(teal, purple)  # Colors for male and female
       shapes <- c("circle", "triangle")  # Shapes for male and female
     } else {
-      group_labels <- c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic")
+      group_labels <- c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic")
       colors <- c(red, teal, blue, purple)  # Colors for race groups
       shapes <- c("square", "circle", "diamond", "triangle")  # Shapes for race groups
     }
@@ -503,9 +503,22 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = 
 
     max_los <- max(df1[[measure]], na.rm = TRUE)
 
-    # Create a named list for y-axis labels
-    y_labels <- setNames(as.list(unique(as.character(df1$fbi_index))),
-                         unique(as.numeric(as.factor(df1$fbi_index))))
+    # # Create a named list for y-axis labels
+    # y_labels <- setNames(as.list(unique(as.character(df1$fbi_index))),
+    #                      unique(as.numeric(as.factor(df1$fbi_index))))
+    # Reverse the order of offenses for y-axis labels
+    desired_order <- rev(c(
+      "Drug", "Public Order", "Property", "Aggravated or Simple Assault",
+      "Robbery", "Rape or Sexual Assault", "Negligent Manslaughter",
+      "Murder or Nonnegligent Manslaughter", "Other Violent Offenses",
+      "Other or Unspecified"
+    ))
+
+    # Reorder the factor levels in df1$fbi_index according to the desired order
+    df1$fbi_index <- factor(df1$fbi_index, levels = desired_order, ordered = TRUE)
+
+    # Create y_labels with offenses in the specified order
+    y_labels <- setNames(as.list(desired_order), seq_along(desired_order))
 
     # Initialize the highchart object
     highcharts <- highchart() |>

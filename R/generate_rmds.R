@@ -33,12 +33,12 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rd
 load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
 
 # Get list of states for reports - only states with parole and complete PE data
-# states <- c("Georgia", "Hawaii", "Louisiana")
+states <- c("Georgia", "Hawaii", "Louisiana")
 # states <- c("Georgia", "Louisiana", "Connecticut", "Colorado", "Michigan")
-states <- parole_eligibility_table |>
-  filter(!state %in% states_to_exclude$state) |>
-  filter(!state %in% states_national_page_only$state) |>
-  pull(state)
+# states <- parole_eligibility_table |>
+#   filter(!state %in% states_to_exclude$state) |>
+#   filter(!state %in% states_national_page_only$state) |>
+#   pull(state)
 
 # Read in original qmd
 orig_qmd <- read_lines("_state_report_template.qmd")
