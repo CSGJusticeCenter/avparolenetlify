@@ -189,7 +189,7 @@ map_data_breaks <- map_data |>
   )
 
 # create hex map
-map_percent <- highchart(height = 600) |>
+map_percent <- highchart(height = 625) |>
 
   hc_chart(marginTop = 50,
            marginBottom = 50,
@@ -276,8 +276,7 @@ map_percent <- highchart(height = 600) |>
            align = "center",
            style = list(fontSize = "1.75em", fontWeight = "bold")) |>
 
-  hc_exporting(
-    enabled = FALSE) |>
+  hc_exporting(enabled = FALSE, filename = "proj_past_parole_eligibility_2023") |>
 
   hc_caption(text = ncrp_csg_source,
              y = 0) |>
@@ -291,8 +290,27 @@ map_percent <- highchart(height = 600) |>
             y = -30,
             itemMarginTop = 2,
             itemMarginBottom = 2)
+
+# Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
+map_percent <- onRender(map_percent, "
+  function(el, x) {
+    // Add CSS to target the circle symbol of the second legend item
+    var style = document.createElement('style');
+    style.innerHTML = `
+      .highcharts-legend-item:nth-child(5) .highcharts-point {
+        stroke: gray;
+        stroke-width: 1px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+")
+
+# View map
 map_percent
 
+# KEEP THIS CODE FOR NOW
+# DOWNLOAD MAP OPTION - NO BUTTON?
 map_percent_download <- highchart(height = 625,
                                   width = 1000) |>
 
@@ -391,14 +409,6 @@ map_percent_download <- highchart(height = 625,
            align = "center",
            style = list(fontSize = "1.75em", fontWeight = "bold")) |>
 
-  # hc_exporting(
-  #   enabled = TRUE,
-  #   allowHTML = TRUE,
-  #   filename = paste0(gsub(" ", "_", tolower("Map Past Parole Eligibility by State 2023"))),
-  #   scale = 1,
-  #   sourceWidth = 800,
-  #   sourceHeight = 600) |>
-
   hc_exporting(
     enabled = FALSE) |>
 
@@ -406,7 +416,7 @@ map_percent_download <- highchart(height = 625,
              y = 0)
 
 # Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
-map_percent_download <- onRender(map_percent_download, "
+map_proj_past_parole_eligibility_2023 <- onRender(map_percent_download, "
   function(el, x) {
     // Add CSS to target the circle symbol of the second legend item
     var style = document.createElement('style');
@@ -420,32 +430,13 @@ map_percent_download <- onRender(map_percent_download, "
   }
 ")
 
-# Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
-map_percent <- onRender(map_percent, "
-  function(el, x) {
-    // Add CSS to target the circle symbol of the second legend item
-    var style = document.createElement('style');
-    style.innerHTML = `
-      .highcharts-legend-item:nth-child(5) .highcharts-point {
-        stroke: gray;
-        stroke-width: 1px;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-")
-
-# Render the map
-map_percent_download
-map_percent
-
-# Save map_percent_download as a temporary HTML file
-saveWidget(map_percent_download, file = "temp.html", selfcontained = TRUE)
+# Save map_proj_past_parole_eligibility_2023 as a temporary HTML file
+saveWidget(map_proj_past_parole_eligibility_2023, file = "temp.html", selfcontained = TRUE)
 
 # Use webshot to take a screenshot and save it as a PNG
 webshot2::webshot(
   url = "temp.html",
-  file = file.path(app_folder, "map_percent_download.png"),
+  file = file.path("img/map_proj_past_parole_eligibility_2023.png"),
   delay = 1,
   vwidth = 1200,
   vheight = 500,

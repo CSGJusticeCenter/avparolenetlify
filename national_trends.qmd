@@ -83,7 +83,11 @@ div(
 map_percent 
 ```
 </div>
-<br>
+<!-- HTML code for the download button -->
+<a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button">
+  Download Map
+</a>
+<br><br>
 <div id="body-section">
 <div class="divider"></div>
 
@@ -164,9 +168,8 @@ parole_eligibility_table_download |>
     output_extension = ".xlsx",
     button_label = "Download Table",
     button_type = "default",
-    has_icon = TRUE,
-    class = "download-button",
-    style = "background-color: black; color: white; border: 1px solid black; border-radius: 0px; padding: 5px 5px; font-size: 14px;"
+    has_icon = FALSE,
+    class = "download-button"
   )  
 ```
 

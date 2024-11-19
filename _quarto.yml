@@ -1,5 +1,7 @@
 project:
   type: website
+  resources:
+    - img/map_proj_past_parole_eligibility_2023.png
 
 website:
   title: "AV Parole Project"

@@ -72,12 +72,43 @@ body {
   border-radius: 0!important; /* Ensures no element has rounded corners */
 }
 
-/* Button styling */
+
+
+
+/* .download-button {
+  font-family: "Graphik";
+  font-size: 1em;
+  padding: 4px 8px;
+}*/
+
+
 .download-button {
-  font-family: "Graphik"; /* Applies Graphik font */
-  font-size: 1em; /* Standard font size */
-  padding: 4px 8px; /* Adds padding around the button */
+  font-family: "Graphik";
+  font-size: 0.7em;
+  padding: 4px 8px;
+  background-color: black;
+  color: white;
+  border: 1px solid black;
+  border-radius: 0px;
+  text-decoration: none; /* Removes underline */
+  display: inline-block; /* Makes it look like a button */
+  cursor: pointer; /* Changes cursor to pointer on hover */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+  margin-top: 10px;
 }
+
+/* Hide icon of download button */
+.download-button i,
+.download-button svg {
+  display: none !important;
+}
+
+/* Download button hover - keep for now
+.download-button:hover {
+  background-color: #d97d68;
+  color: black;
+}*/
+
 
 /* Ensures code blocks are responsive on smaller screens */
 pre {
