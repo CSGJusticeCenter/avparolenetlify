@@ -88,7 +88,8 @@ import and analysis subfolders.
     eligibility by race, ethnicity, and sex.  
 -   **tab_disparities_rris.R:** Computes and analyzes Relative Rate
     Indexes (RRIs) to quantify disparities in parole release.
--   **page_national_trends.R:** Uses 2023 projections to visualize national trends.
+-   **page_national_trends.R:** Uses 2023 projections to visualize 
+    national trends of people in prison past parole eligibility.  
 -   **helper_functions.R:** Contains reusable functions that support
     various analysis tasks, such as data transformations, statistical
     calculations, and custom visualizations.  
