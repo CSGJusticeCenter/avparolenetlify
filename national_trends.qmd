@@ -44,7 +44,8 @@ div(
     grid-column-gap: 20px; 
     align-items: end;
   ",
-  div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
+  # div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
+    div(id = "national-highlight", "195,000"),
   img(src = "img/pe_1_in_x.png", 
   style = "margin: 0 auto; margin-bottom: 10px; margin-top: 10px; max-width: 50%; height: auto; text-align: center;"
       ),

@@ -260,12 +260,11 @@ map_data <- parole_eligibility_table_projection_year |>
       state == "Louisiana" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
                paste0(round(proj_pcnt_ppey_rounded, 0), "%<br>"),
-               "Number of People: ",
-               formattable::comma(proj_pop_past_pey_rounded, 0),
+               "Percentage of People: ", paste0(round(proj_pcnt_ppey_rounded, 0), "%<br>"),
+               "Number of People: ", formattable::comma(proj_pop_past_pey_rounded, 0),
                "<br>Louisiana is listed among the states with parole systems, despite<br>
                its recent abolition of parole, due to a substantial population<br>
-               that remains eligible for parole release under the previous system.<br>",
-               "Percentage of People: "),
+               that remains eligible for parole release under the previous system.<br>"),
 
       all_na == TRUE & abolished_parole == "N" ~
         paste0("<span style='font-size: 1.5em;'><b>", state, "</b></span><br>",
