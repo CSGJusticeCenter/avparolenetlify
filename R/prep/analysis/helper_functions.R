@@ -56,6 +56,25 @@ fnc_determine_select_year <- function(state_name, which_overall_year) {
   return(select_year)
 }
 
+fnc_round_to_power <- function(x) {
+  sapply(x, function(val) {
+    # Check if the value is NA, and return NA if true
+    if (is.na(val)) {
+      return(NA)
+    }
+
+    # Determine the number of digits in the number
+    digits <- nchar(floor(val))
+
+    # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
+    if (digits >= 3) {
+      power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
+      floor(val / power) * power  # Use floor to always round down
+    } else {
+      round(val, -1)
+    }
+  })
+}
 
 fnc_filter_exclude_high_missing_race <- function(data, states_with_high_missing_race) {
   # Convert to character vector if it's a list

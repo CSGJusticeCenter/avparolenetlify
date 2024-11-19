@@ -53,18 +53,15 @@ fnc_read_and_add_year <- function(file_path) {
 
   # Read the data from Stata file
   data <- read_dta(file_path)
-  print("Data successfully read.")
 
   # Extract year from file name using regular expression
   year <- sub(".*_(\\d{4})_.*", "\\1", file_path)
-  print(paste("Extracted year:", year))
 
   # Add extracted year as rptyear column
   data <- data %>% mutate(rptyear = as.numeric(year))
 
   # Remove labels from state_encoded, if it exists
   if ("state_encoded" %in% colnames(data)) {
-    print("Removing labels from state_encoded.")
     data$state_encoded <- as.numeric(data$state_encoded)
   }
 

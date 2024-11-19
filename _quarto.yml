@@ -10,7 +10,7 @@ website:
     type: textbox
   navbar:
     left:
-      - text: "Project Overview"
+      - text: "Home Page"
         href: index.html
       - text: "National Snapshot"
         href: national_trends.html

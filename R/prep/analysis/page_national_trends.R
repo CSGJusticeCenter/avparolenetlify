@@ -82,7 +82,7 @@ gradient_colors <- c(green1, green2, green3, green4, blue)
 
 # Prepare tooltips and map data
 # Prepare data for national maps
-map_data <- filtered_parole_elig_table_analysis_year |>
+map_data <- parole_eligibility_table_projection_year |>
 
   # add missing states
   complete(state = all_states) |>
@@ -228,16 +228,6 @@ map_percent <- highchart(height = 600) |>
                )
   ) |>
 
-  hc_legend(align = "right",
-            verticalAlign = "bottom",
-            layout = "vertical",
-            symbolHeight = 15,
-            symbolWidth = 15,
-            x = 15,
-            y = -40,
-            itemMarginTop = 2,
-            itemMarginBottom = 2) |>
-
   hc_xAxis(title = "") |>
   hc_yAxis(title = "") |>
 
@@ -290,7 +280,18 @@ map_percent <- highchart(height = 600) |>
     enabled = FALSE) |>
 
   hc_caption(text = ncrp_csg_source,
-             y = 0)
+             y = 0) |>
+
+  hc_legend(align = "right",
+            verticalAlign = "bottom",
+            layout = "vertical",
+            symbolHeight = 15,
+            symbolWidth = 15,
+            x = 0,
+            y = -30,
+            itemMarginTop = 2,
+            itemMarginBottom = 2)
+map_percent
 
 map_percent_download <- highchart(height = 625,
                                   width = 1000) |>
@@ -337,7 +338,7 @@ map_percent_download <- highchart(height = 625,
             layout = "vertical",
             symbolHeight = 15,
             symbolWidth = 15,
-            x = 15,
+            x = 0,
             y = -40,
             itemMarginTop = 2,
             itemMarginBottom = 2) |>

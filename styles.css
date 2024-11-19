@@ -362,10 +362,10 @@ table th, table td {
 }
 
 #footnotes-text {
-  font-size: 0.8em;
+  font-size: 0.7em;
   font-family: 'Graphik', sans-serif;
   text-align: left;
-  color: gray;
+  color: black;
 }
 
 #asterisk-section {
