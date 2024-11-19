@@ -13,7 +13,6 @@ format:
 While the most recent available data from the National Corrections Reporting Program (NCRP) is from 2020, we've projected the numbers for 2023 to offer a more current view of how many people are in prison beyond their parole eligibility and how this impacts prison populations. These projections are conservative estimates, as we did not fully account for “good time” credits, or time that should be subtracted from a person’s sentence, reducing their time until parole eligibility. Additionally, there are other factors contributing to the conservative nature of these estimates that were not fully captured in our models. As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests, indicating a more significant issue than our conservative estimates reflect.
 
 ```{r setup, include=FALSE}
-
 knitr::opts_chunk$set(
   echo = FALSE,
   warning = FALSE,
@@ -21,37 +20,20 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
+# Run configeration file
 source("R/config.R")
 
+# Load saved data and pngs
 load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/proj_past_pe_count_rounded.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/average_percent_past_pey.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
-
-# Custom function to round
-fnc_round <- function(x) {
-  # Check if the value is NA, and return NA if true
-  if (is.na(x)) {
-    return(NA)
-  }
-  
-  # Determine the number of digits in the number
-  digits <- nchar(floor(x))
-  
-  # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
-  if (digits >= 3) {
-    power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
-    floor(x / power) * power  # Use floor to always round down
-  } else {
-    round(x, -1)
-  }
-}
 ```
 
 <div id="body-section">
 
 ```{r highlights}
+# 3 Key Findings at Top of Page
 div(
   id = "grid-container",
   style = "
@@ -63,7 +45,6 @@ div(
     align-items: end;
   ",
   div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
-  # img(src = "img/pe_1_in_3.png", style = "margin: 0 auto; max-width: 50%; height: auto; text-align: center;"),
   img(src = "img/pe_1_in_x.png", 
   style = "margin: 0 auto; margin-bottom: 10px; margin-top: 10px; max-width: 50%; height: auto; text-align: center;"
       ),
@@ -75,6 +56,7 @@ div(
 ```
 </div>
 <br>
+<!-- HTML code for asterisks notes -->
 <div style="font-size: 0.7em; color: black; text-align: left;">
 *Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.  
 **Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population that remains eligible for parole release under the previous system.
@@ -84,6 +66,7 @@ div(
 <br>
 <div id="map-section">
 ```{r map}
+# Map of Percent of People in Prison Past Parole Eligibility
 map_percent 
 ```
 </div>
@@ -116,9 +99,7 @@ data_bars_custom <- function(value) {
       )
 }
 
-# parole_eligibility_table <- parole_eligibility_table |> 
-#   mutate(filtered_total_pop = as.numeric(filtered_total_pop))
-
+# Table of Percent of People in Prison Past Parole Eligibility by State
 reactable(
   parole_eligibility_table ,
   pagination = FALSE,
@@ -166,6 +147,7 @@ reactable(
 
 
 ```{r echo=FALSE}
+# Download button for table download
 parole_eligibility_table_download |>
   download_this(
     output_name = "parole_eligibility_by_state_2023_estimates",
