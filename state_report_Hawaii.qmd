@@ -379,7 +379,7 @@ if (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) {
   no_data_needed_hispanic_individuals <- TRUE
 } else if (no_infographic_hispanic == TRUE & no_data_hispanic == FALSE & no_rri_details_hispanic == FALSE) {
   # Display "No RRI" message
-  HTML("No significant disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+  HTML("No significant disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
 } else if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_hispanic)
@@ -392,28 +392,22 @@ if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
 # Only process "Other race(s), non-Hispanic" if the state is in the specified list
 if (use_other_race) {
   if (no_infographic_other == TRUE & no_data_other == TRUE) {
-  # Display "No Data" message
-  no_data_needed_other_individuals <- TRUE
+    no_data_needed_other_individuals <- TRUE
   } else if (no_infographic_other == TRUE & no_data_other == FALSE & no_rri_details_other == FALSE) {
-    # Display "No RRI" message
-    HTML("No significant disparities in incarceration rates past parole eligibility were identified between non-Hispanic individuals of other races and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
+    HTML("No significant disparities in incarceration rates past parole eligibility were identified between Other race(s), non-Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
   } else if (no_infographic_other == FALSE & no_data_other == FALSE) {
-    # Render the image using knitr::include_graphics()
     knitr::include_graphics(pe_rri_infographic_other)
   }
-  # if (no_infographic_other == FALSE & no_data_other == FALSE) {
-  #   # Render the HTML content separately
-  #   HTML(state_sentence_pe_rri_other, "<br>")
-  # }
-}
 
-if (use_other_race){
-    if (no_infographic_other == FALSE & no_data_other == FALSE) {
-    # Render the HTML content separately
+  if (no_infographic_other == FALSE & no_data_other == FALSE) {
     HTML(state_sentence_pe_rri_other, "<br>")
   }
 }
 
+# if (no_infographic_black == TRUE & no_data_black == TRUE &
+#     no_infographic_hispanic == TRUE & no_data_hispanic == TRUE){
+#   no_data_text
+# }
 # Display "No Data" message if all three groups (Black, Hispanic, Other) have no data
 if ((no_infographic_black == TRUE & no_data_black == TRUE) &
     (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) &
