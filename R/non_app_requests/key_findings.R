@@ -7,7 +7,9 @@
 # ---------------------------------------------------------------------------- #
 
 # Filter data to people currently eligible for parole or past parole eligibility
-ncrp_current_pe <- fnc_filter_pe_population_criteria(ncrp_yearendpop_consolidated) |>
+ncrp_current_pe <-   fnc_filter_pe_population_criteria(ncrp_yearendpop_not_consolidated,
+                                                       exclude = states_to_exclude,
+                                                       dont_filter = states_nofilter) |>
   filter(parelig_status == "Current") |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   # Join with which_overall_year to get the specific year for each state
@@ -22,7 +24,7 @@ states_using_2018_data <- ncrp_current_pe |>
   pull(state) |>
   unique()
 
-# Get average time between PE and release by state and race
+# Get average time between parole ligibility date and rpt year (years_to_estimated_pey) by state and race
 avg_current_pe_race <- ncrp_current_pe |>
   filter(race %in% c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race")) |>
   mutate(race = factor(race,
@@ -51,9 +53,16 @@ count_high_missing_general_states <- length(high_missing_general_states)
 count_high_missing_race_states <- length(high_missing_race_states)
 count_excluded_states <- length(excluded_states)
 count_included_states <- length(included_states)
-count_abolished_states <- length(abolished_states$state)
+count_abolished_states <- length(states_abolished_parole$state)
 
-# Print the results with corrected spacing
+cat("In 2019,", comma(avg_current_pe_race$people[avg_current_pe_race$race == "White, non-Hispanic"]),
+    "White, non-Hispanic individuals collectively spent",
+    comma(round(avg_current_pe_race$total_years_past_pe[avg_current_pe_race$race == "White, non-Hispanic"], 1)),
+    "years in prison past their parole eligibility year across",
+    count_included_states, "states, serving an average of",
+    round(avg_current_pe_race$avg_years_to_estimated_pey[avg_current_pe_race$race == "White, non-Hispanic"], 1),
+    "years beyond parole eligibility.\n")
+
 cat("In 2019,", comma(avg_current_pe_race$people[avg_current_pe_race$race == "Black, non-Hispanic"]),
     "Black, non-Hispanic individuals collectively spent",
     comma(round(avg_current_pe_race$total_years_past_pe[avg_current_pe_race$race == "Black, non-Hispanic"], 1)),
@@ -87,7 +96,7 @@ cat("States with Unreliable PE Data (", count_high_missing_general_states, "):",
 cat("States with High Missingness for Race/Ethnicity (", count_high_missing_race_states, "):", paste(high_missing_race_states, collapse = ", "), "\n")
 
 # Print states that have abolished parole
-cat("States Abolished Parole (", count_abolished_states, "):", paste(abolished_states$state, collapse = ", "), "\n")
+cat("States Abolished Parole (", count_abolished_states, "):", paste(states_abolished_parole$state, collapse = ", "), "\n")
 
 
 # ---------------------------------------------------------------------------- #
