@@ -93,7 +93,6 @@ body {
   text-decoration: none; /* Removes underline */
   display: inline-block; /* Makes it look like a button */
   cursor: pointer; /* Changes cursor to pointer on hover */
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
   margin-top: 10px;
 }
 
