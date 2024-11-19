@@ -235,7 +235,7 @@ table th, table td {
 }
 
 .navbar {
-  background-color: black; /* Sets the background color of the navbar */
+  background-color: #006eac; /* Sets the background color of the navbar */
 }
 
 /* Active state for tab links */
