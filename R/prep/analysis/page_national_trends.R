@@ -39,7 +39,7 @@ average_percent_past_pey <- mean(ncrp_projections_no_nas$proj_pcnt_ppey)
 
 # Convert this percentage to a "1 in X" estimate
 proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
-proj_past_pe_1_in_x <- 4#####################################################################################
+proj_past_pe_1_in_x <- 5.0#####################################################################################
 
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
@@ -143,7 +143,7 @@ fnc_create_icons_homepage <- function(rri_raw, rri_digits = 1, fillcolor = "dark
   plot_list[[1]] <- first_icon_opts$full
 
   # Create full icons in gray based on RRI value
-  for (i in 2:(numfull + 1)) {
+  for (i in 2:(numfull)) {
     plot_list[[i]] <- plot_opts$full
   }
 
