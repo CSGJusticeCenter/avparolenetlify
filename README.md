@@ -137,7 +137,11 @@ import and analysis subfolders.
     various analysis tasks, such as data transformations, statistical
     calculations, and custom visualizations.  
     
-    
+# Data Security
+
+This data does not contain personally identifiable information and 
+does not need to be destroyed by a specific deadline.
+
 # Notes and Acknowledgments
 
 Public Data Sources:
@@ -147,7 +151,8 @@ Public Data Sources:
 
 Caution for Hispanic Data:
 
-- Interpret RRI findings for Hispanic populations with caution due to inconsistent data collection and reporting across states.
+- Interpret RRI findings for Hispanic populations with caution due to 
+inconsistent data collection and reporting across states.
 
 Authors:
 
