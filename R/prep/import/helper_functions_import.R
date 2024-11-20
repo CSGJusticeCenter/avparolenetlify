@@ -1,4 +1,3 @@
-
 #------------------------------------------------------------------------------#
 # IMPORT FUNCTIONS
 #------------------------------------------------------------------------------#
@@ -31,9 +30,6 @@ fnc_format_citation <- function(citation) {
 
   return(formatted_citation)
 }
-
-
-
 
 #' Read a Stata File and Add a Year Column
 #'
@@ -69,8 +65,6 @@ fnc_read_and_add_year <- function(file_path) {
   return(data)
 }
 
-
-
 #' Combine Files for Releases and Year-End Population
 #'
 #' This function reads multiple Stata files, processes each file using `fnc_read_and_add_year`,
@@ -88,8 +82,6 @@ fnc_read_and_add_year <- function(file_path) {
 fnc_combine_files <- function(files) {
   bind_rows(lapply(files, fnc_read_and_add_year))
 }
-
-
 
 #' Create FBI index by categorizing offenses and adding custom order
 #'
@@ -162,30 +154,6 @@ fnc_create_admtype <- function(df) {
 #' @examples
 #' df <- data.frame(state = c("Alaskab", "Utahc", "U.S. Total"), bjs_prison_population = c("10,000", "5,000", "1,000,000"))
 #' df <- fnc_clean_bjs_data(df)
-# fnc_clean_bjs_data <- function(df) {
-#   print("Cleaning BJS data...")
-#
-#   df <- df |>
-#     # Remove anything after the state name in the `state` column
-#     mutate(state = str_replace(state, "/.*", "")) |>
-#     # Correct specific misspelled state names
-#     mutate(state = str_replace(state, "Alaskab", "Alaska")) |>
-#     mutate(state = str_replace(state, "Utahc", "Utah")) |>
-#     # Filter out invalid state names and totals
-#     filter(state != "" &
-#              state != "State" &
-#              state != "Federal" &
-#              state != "District of Columbia" &
-#              state != "U.S. Total" &
-#              state != "U.S. total" &
-#              state != "U.S. tota") |>
-#     # Remove non-numeric characters from `bjs_prison_population` and convert it to numeric
-#     mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) |>
-#     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
-#
-#   print("BJS data cleaned.")
-#   return(df)
-# }
 fnc_clean_bjs_data <- function(df) {
   print("Cleaning BJS data...")
 
@@ -216,7 +184,6 @@ fnc_clean_bjs_data <- function(df) {
   print("BJS data cleaned.")
   return(df)
 }
-
 
 #' Transform NCRP Data
 #'
@@ -330,8 +297,18 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
   return(df)
 }
 
-
-# Function to load and clean BJS race and ethnicity data
+#' Load and Clean Race/Ethnicity Data from BJS Files
+#'
+#' This function reads a CSV file containing race and ethnicity data from the Bureau of Justice Statistics (BJS),
+#' cleans column names, filters rows, and renames specified columns for consistency.
+#'
+#' @param file_path A string representing the file path to the BJS race/ethnicity data file.
+#' @param skip_rows An integer specifying the number of rows to skip when reading the CSV file.
+#' @param rename_col Optional. A string representing the column to rename to `state_federal`.
+#'
+#' @return A cleaned data frame with filtered rows and updated column names.
+#' @examples
+#' raceeth_data <- fnc_load_raceeth_data("raceeth.csv", skip_rows = 2, rename_col = "jurisdiction")
 fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
   data <- read.csv(file.path(sp_data_path, file_path), skip = skip_rows) |>
     clean_names()
@@ -347,7 +324,17 @@ fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
     select(-state_federal)
 }
 
-# Function to process BJS prison population data
+#' Process BJS Race/Ethnicity Prison Population Data
+#'
+#' This function processes BJS race/ethnicity data by cleaning values, converting columns,
+#' and summarizing data for specific race categories.
+#'
+#' @param data A data frame containing raw race/ethnicity data.
+#' @param total_data A data frame containing total population data by state.
+#'
+#' @return A cleaned and summarized data frame with race proportions and labels.
+#' @examples
+#' processed_data <- fnc_process_bjs_raceeth_data(raceeth_data, total_population_data)
 fnc_process_bjs_raceeth_data <- function(data, total_data) {
   data |>
     mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
@@ -377,8 +364,20 @@ fnc_process_bjs_raceeth_data <- function(data, total_data) {
     select(-total)
 }
 
-
-# Function to load and process BJS population data by sex
+#' Process BJS Population Data by Sex
+#'
+#' This function reads and processes BJS population data disaggregated by sex,
+#' cleaning and summarizing the data for visualization or analysis.
+#'
+#' @param file_path A string representing the file path to the CSV data.
+#' @param skip_rows An integer specifying the number of rows to skip in the file.
+#' @param male_col A string representing the column name for male population counts.
+#' @param female_col A string representing the column name for female population counts.
+#' @param year An integer indicating the reporting year for the data.
+#'
+#' @return A data frame with processed sex-based population data including proportions and labels.
+#' @examples
+#' sex_data <- fnc_process_bjs_sex_data("population_sex.csv", 3, "males", "females", 2023)
 fnc_process_bjs_sex_data <- function(file_path, skip_rows, male_col, female_col, year) {
   read.csv(file.path(sp_data_path, file_path))[-(1:skip_rows), ] |>
     clean_names() |>
