@@ -199,6 +199,25 @@ fnc_summarize_data <- function(df, count_column, year_df) {
 #'
 #' @return A numeric vector with values rounded to the nearest power of 10.
 #' @export
+# fnc_round_to_power <- function(x) {
+#   sapply(x, function(val) {
+#     # Check if the value is NA, and return NA if true
+#     if (is.na(val)) {
+#       return(NA)
+#     }
+#
+#     # Determine the number of digits in the number
+#     digits <- nchar(floor(val))
+#
+#     # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
+#     if (digits >= 3) {
+#       power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
+#       floor(val / power) * power  # Use floor to always round down
+#     } else {
+#       round(val, -1)
+#     }
+#   })
+# }
 fnc_round_to_power <- function(x) {
   sapply(x, function(val) {
     # Check if the value is NA, and return NA if true
@@ -209,10 +228,10 @@ fnc_round_to_power <- function(x) {
     # Determine the number of digits in the number
     digits <- nchar(floor(val))
 
-    # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
+    # Define the rounding level: if digits >= 3, round to the nearest power of 10 down, else round to 10
     if (digits >= 3) {
-      power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
-      floor(val / power) * power  # Use floor to always round down
+      power <- 10^(digits - 2) # This determines the rounding level to the nearest power of 10 below
+      round(val / power) * power  # Use round to round to the nearest significant value
     } else {
       round(val, -1)
     }

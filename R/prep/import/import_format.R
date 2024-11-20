@@ -164,8 +164,18 @@ states_to_exclude <- states_with_high_missing |>
 # Seba Guzman's Imputed Data for NCRP 2010 to 2020
 #------------------------------------------------------------------------------#
 
-# Import projections created by Seba Guzman in Stata
+# Import parole eligibility projections created by Seba Guzman in Stata
 ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_short_2010_2020.dta"))
+
+# Import projections of prison populations created by Seba Guzman in Stata
+# The variable 'total_prison_population' represents the total number of individuals in prison.
+# It prioritizes the value from 'jurtott_incl_und' (jurisdictional total, including unclassified categories)
+# when available. If 'jurtott_incl_und' is missing, it defaults to 'custott_incl_und'
+# (custodial total, including unclassified categories).
+ncrp_population_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_compl_2010_2020.dta")) |>
+  mutate(total_prison_population = if_else(!is.na(jurtott_incl_und),
+                                           jurtott_incl_und,
+                                           custott_incl_und))
 
 # These are the NCRP files that were created by Sebastian (CSG Research) in Stata
 # Original NCRP releases and yearendpop files were used to create imputations for missing data regarding
@@ -317,6 +327,7 @@ bjs_prison_pop_by_sex <- bind_rows(bjs_prison_pop_by_sex_2018, bjs_prison_pop_by
 # Define the data objects and their corresponding file names
 data_files <- list(
   ncrp_projections                 = "ncrp_projections.rds",
+  ncrp_population_projections      = "ncrp_population_projections.rds",
   ncrp_releases_not_consolidated   = "ncrp_releases_not_consolidated.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",

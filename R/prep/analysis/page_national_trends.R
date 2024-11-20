@@ -14,31 +14,42 @@
 # Select projection_year from NCRP projections created by Seba Guzman in Stata
 parole_eligibility_table_projection_year <- ncrp_projections |>
   filter(year == projection_year) |>
-  filter(!state %in% states_to_exclude$state) |>
+  filter(!state %in% states_abolished_parole$state) |>
   mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
          proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
 
 # Get total past PE
-proj_past_pe_count_rounded <- ncrp_projections |>
+proj_past_pe <- ncrp_projections |>
   filter(year == projection_year) |>
-  filter(!state %in% states_to_exclude$state) |>
   group_by() |>
-  summarise(n = sum(proj_pop_past_pey, na.rm = TRUE)) |>
-  mutate(n_rounded = fnc_round_to_power(n)) |>
-  pull(n_rounded)
+  summarise(past_pe_pop = sum(proj_pop_past_pey, na.rm = TRUE))
 
-# Filter out missing values from proj_pcnt_ppey
-ncrp_projections_no_nas <- ncrp_projections |>
-  # filter(!state %in% states_to_exclude$state) |>
+# Rounded
+proj_past_pe_count_rounded <- proj_past_pe |>
+  mutate(past_pe_pop_rounded = fnc_round_to_power(past_pe_pop)) |>
+  pull(past_pe_pop_rounded)
+
+# # Filter out missing values from proj_pcnt_ppey
+# ncrp_projections_no_nas <- ncrp_projections |>
+#   # filter(!state %in% states_to_exclude$state) |>
+#   filter(year == projection_year) |>
+#   filter(!is.na(proj_pcnt_ppey))
+#
+# # Calculate the average percentage of people past parole eligibility
+# average_percent_past_pey <- mean(ncrp_projections_no_nas$proj_pcnt_ppey)
+#
+# # Convert this percentage to a "1 in X" estimate
+# proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
+
+proj_past_pe <- proj_past_pe |>
+  pull(past_pe_pop)
+
+proj_prison_pop <- ncrp_population_projections |>
   filter(year == projection_year) |>
-  filter(!is.na(proj_pcnt_ppey))
 
-# Calculate the average percentage of people past parole eligibility
-average_percent_past_pey <- mean(ncrp_projections_no_nas$proj_pcnt_ppey)
 
-# Convert this percentage to a "1 in X" estimate
-proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
+
 proj_past_pe_1_in_x <- 5.0#####################################################################################
 
 #-------------------------------------------------------------------------------

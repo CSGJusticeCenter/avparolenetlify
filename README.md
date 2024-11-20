@@ -10,13 +10,13 @@ across race, ethnicity, and sex.
 # Objectives
 
 -   Data Processing: Load and clean NCRP records from 2014 to 2020 to
-    create standardized datasets for analysis.  
+    create standardized datasets for analysis.
 -   Disparity Analysis: Identify and quantify disparities in
     incarceration and parole eligibility based on race, ethnicity, and
-    sex.  
+    sex.
 -   Data Visualization: Develop visualizations that communicate key
     findings, such as trends over time and comparisons between different
-    demographic groups.  
+    demographic groups.
 -   State-Specific Insights: Generate state-level reports and
     visualizations.
 
