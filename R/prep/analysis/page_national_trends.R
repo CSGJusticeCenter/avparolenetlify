@@ -408,44 +408,30 @@ map_percent_download <- highchart(height = 625,
 
   hc_add_theme(base_hc_theme) |>
 
-  hc_plotOptions(series = list(
-    animation = FALSE,
-    cursor = "pointer",
-    borderWidth = 3,
-    accessibility = list(
-      enabled = TRUE,
-      keyboardNavigation = list(enabled = TRUE),
-      pointDescriptionFormatter = JS("function(point) {
-        return 'State: ' + point.state_abb + ', Percentage: ' + point.currentperclabel;
-      }")
-    )
-  ),
-  accessibility = list(
-    enabled = TRUE,
-    keyboardNavigation = list(enabled = TRUE),
-    linkedDescription =
-      paste0("This hexagonal map visualizes the projected proportion of people in prison past their parole eligibility across different U.S. states in 2023. ",
-             "States are represented as hexagons, with color gradients indicating different percentage ranges of prison populations past parole eligibility. ",
-             "The map also includes a category for states that have abolished discretionary parole and those with missing data."),
-    landmarkVerbosity = "one"
-  ),
-  area = list(accessibility = list(description =
-                                     paste0("This chart visually compares parole eligibility status across U.S. states, using colors to denote different percentage ranges.")))
-  ) |>
-
-  hc_tooltip(
-    borderWidth = 1,
-    borderRadius = 0,
-    backgroundColor = '#FFFFFF', # Fully opaque white background
-    outside = TRUE, # Ensure tooltip is rendered outside
-    useHTML = TRUE,
-    formatter = JS("function() {
-          return '<div style=\"background-color: #FFFFFF; opacity: 1; border: none; padding: 5px;\">' +
-          '<div style=\"text-align:left;\">' +
-          '<span style=\"font-weight:normal; font-size: 1em;\">' + this.point.tooltip + '</span>' +
-          '</div></div>';
-    }")
-  ) |>
+  # hc_plotOptions(series = list(
+  #   animation = FALSE,
+  #   cursor = "pointer",
+  #   borderWidth = 3,
+  #   accessibility = list(
+  #     enabled = TRUE,
+  #     keyboardNavigation = list(enabled = TRUE),
+  #     pointDescriptionFormatter = JS("function(point) {
+  #       return 'State: ' + point.state_abb + ', Percentage: ' + point.currentperclabel;
+  #     }")
+  #   )
+  # ),
+  # accessibility = list(
+  #   enabled = TRUE,
+  #   keyboardNavigation = list(enabled = TRUE),
+  #   linkedDescription =
+  #     paste0("This hexagonal map visualizes the projected proportion of people in prison past their parole eligibility across different U.S. states in 2023. ",
+  #            "States are represented as hexagons, with color gradients indicating different percentage ranges of prison populations past parole eligibility. ",
+  #            "The map also includes a category for states that have abolished discretionary parole and those with missing data."),
+  #   landmarkVerbosity = "one"
+  # ),
+  # area = list(accessibility = list(description =
+  #                                    paste0("This chart visually compares parole eligibility status across U.S. states, using colors to denote different percentage ranges.")))
+  # ) |>
 
   hc_title(text = "Percentage of People in Prison Past Parole Eligibility<br>2023 Projections",
            align = "center",

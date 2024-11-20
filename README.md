@@ -4,12 +4,26 @@ The AV Parole Project is dedicated to analyzing and visualizing data
 related to individuals in prison who are past their parole eligibility.
 The project leverages data from the National Corrections Reporting
 Program (NCRP) to generate insights into the criminal justice system,
-focusing on trends in incarceration, parole eligibility, and disparities
-across race, ethnicity, and sex.
+focusing on trends in incarceration, parole eligibility, prison releases, and 
+disparities across race, ethnicity, and sex.
+
+National Snapshot Page:  
+[https://avparoleproject.netlify.app/national_trends](https://avparoleproject.netlify.app/national_trends)
+
+Example of State Report (Georgia):  
+[https://avparoleproject.netlify.app/state_report_georgia](https://avparoleproject.netlify.app/state_report_georgia)
+
+# Background
+
+For this project, we primarily used NCRP data, including the year-end population and release files. While the most recent data available is from 2020, 2019 was found to be more reliable for analysis, and most state-specific reports rely on 2019 data. An exception is Hawaii, where 2018 data was used to ensure more reliable estimates.  
+
+To estimate the number of individuals in prison past parole eligibility, Sebastián Guzmán (CSG Research) imputed values by integrating information from NCRP's year-end population, release, and terms records, as well as publicly available data regarding prison populations and parole eligibility criteria by state. These are called "consolidated files". 
+
+For analyses involving age at year-end, the unconsolidated files are used, as this information is not available in the consolidated files. The unconsolidated files allow us to calculate the proportion of people in prison and past parole eligibility based on their age at year-end. 
 
 # Objectives
 
--   Data Processing: Load and clean NCRP records from 2014 to 2020 to
+-   Data Processing: Load and clean BJS and NCRP records to
     create standardized datasets for analysis.
 -   Disparity Analysis: Identify and quantify disparities in
     incarceration and parole eligibility based on race, ethnicity, and
@@ -19,6 +33,35 @@ across race, ethnicity, and sex.
     demographic groups.
 -   State-Specific Insights: Generate state-level reports and
     visualizations.
+    
+# Features
+
+National Snapshot:
+
+- Projected parole eligibility populations by state.
+- Display interactive hex map for state comparisons.
+
+Parole Eligibility Tab:
+
+- State-by-state trends in people in prison past parole eligibility
+- Break down demographic data by race, sex, age, sentence length, and offense type.
+
+Population Tab:
+
+- Examine state-by-state trends in prison populations.
+- Break down demographic data by race, sex, age, sentence length, and offense type.
+
+Prison Releases Tab:
+
+- Examine state-by-state trends in prison releases.
+- Analyze release types (conditional vs. unconditional).
+- Break down demographic data by race, sex, age, and offense type.
+
+Disparities Tab:
+
+- Calculate Relative Rate Index (RRI) for incarceration past parole eligibility.
+- Visualize disparities by race, ethnicity, and sex in time served and 
+incarceration past parole eligibility.
 
 # Repository
 
@@ -93,3 +136,19 @@ import and analysis subfolders.
 -   **helper_functions.R:** Contains reusable functions that support
     various analysis tasks, such as data transformations, statistical
     calculations, and custom visualizations.  
+    
+    
+# Notes and Acknowledgments
+
+Public Data Sources:
+
+- National Corrections Reporting Program (NCRP)
+- Bureau of Justice Statistics (BJS)
+
+Caution for Hispanic Data:
+
+- Interpret RRI findings for Hispanic populations with caution due to inconsistent data collection and reporting across states.
+
+Authors:
+
+- Mari Roberts, Sebastián Guzman

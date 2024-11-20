@@ -1,28 +1,23 @@
-#######################################
+################################################################################
 # Project: AV Parole
 # File: config.R
 # Authors: Mari Roberts
-# Date last updated: November 12, 2024 (MAR)
+# Date last updated: November 20, 2024 (MAR)
 # Description:
 #    This script is responsible for setting up the environment for the AV Parole project.
 #    It includes the following tasks:
-#    1. Selecting the year for analysis.
-#    2. Setting the project path and data paths.
-#    3. Providing installation instructions for R packages.
-#    4. Loading all necessary R packages.
-#    5. Adding custom fonts.
-#    6. Configuring Highcharter options for data visualization.
-#    7. Defining color schemes.
-#
-#    Usage:
-#    - This script should be sourced at the beginning of your analysis scripts to ensure
-#      all packages and settings are correctly initialized.
+#    1. Setting the project path and app paths.
+#    2. Providing installation instructions for R packages.
+#    3. Loading all necessary R packages.
+#    4. Adding custom fonts.
+#    5. Configuring Highcharter options for data visualization.
+#    6. Defining color schemes.
 #
 #    [ACTION REQUIRED]:
 #    - Make sure to update the project and SharePoint paths as needed.
 #    - Follow the installation instructions for any packages that are not already installed
 #      on your system.
-#######################################
+################################################################################
 
 #------------------------------------------------------------------------------#
 # Package Installation Instructions
@@ -63,8 +58,7 @@ lapply(required_packages, library, character.only = TRUE)
 # Configurations
 #------------------------------------------------------------------------------#
 
-# Set project path
-# [ACTION REQUIRED] Change this to your project path
+# [ACTION REQUIRED] Change this to your project path in SharePoint (sp)
 csg_set_project_path(
   project = "AVParole",
   sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
@@ -78,7 +72,7 @@ sp_data_path <- csg_get_project_path("AVParole")
 app_folder <- file.path(sp_data_path, "data", "analysis", "app")
 deliverables_folder <- file.path(sp_data_path, "data", "deliverables", "key_findings")
 
-# Set projection year
+# [ACTION REQUIRED] Set desired projection year
 projection_year <- 2023
 
 #------------------------------------------------------------------------------#
@@ -123,11 +117,11 @@ color4 <- teal
 color5 <- purple
 color6 <- lightteal
 
-# Gradient for map
-green1    = "#b1d4d5"
-green2    = "#49a7a1"
-green3    = "#176f6d"
-green4    = "#104040"
+# Gradient for map on national snapshot page
+gradient1    = "#b1d4d5"
+gradient2    = "#49a7a1"
+gradient3    = "#176f6d"
+gradient4    = "#104040"
 
 # Gray colors
 darkgray <- "#969696"
@@ -139,7 +133,7 @@ lightgray <- "#d7d7d7"
 # Sources
 #------------------------------------------------------------------------------#
 
-# Format sources
+# Format sources that will go under each visualization
 ncrp_csg_source <- "National Corrections Reporting Program and CSG Justice Center estimates"
 ncrp_source     <- "National Corrections Reporting Program"
 bjs_source      <- "BJS Prisoners in the United States"

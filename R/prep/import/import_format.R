@@ -1,14 +1,25 @@
-#######################################
+################################################################################
 # Project: AV Parole
 # File: import.R
 # Authors: Mari Roberts
-# Date last updated: November 18, 2024 (MAR)
+# Date last updated: November 20, 2024 (MAR)
 # Description:
-#    This script:
-#######################################
+#    This script handles the import, transformation, and integration of multiple
+#    datasets for the AV Parole project. It includes:
+#    - Importing and processing hex map shapefiles for visualizations.
+#    - Loading and combining NCRP data files, including projections and imputations
+#      for parole eligibility and prison populations.
+#    - Integrating state-specific notes and rules for data exclusions, missingness,
+#      and projections.
+#    - Importing and processing Bureau of Justice Statistics (BJS) data for prison
+#      populations by year, race, ethnicity, and sex.
+#    - Applying state-level rules and exclusions to prepare clean datasets for
+#      national and state-specific reports.
+#    - Saving processed data objects for use in downstream analysis and visualization.
+################################################################################
 
 #------------------------------------------------------------------------------#
-# MAP - National Snapshot Page
+# Hex Map - National Snapshot Page
 #------------------------------------------------------------------------------#
 
 # Import hex map shapefile
@@ -21,95 +32,148 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
     fromJSON(simplifyVector = FALSE)
 
 #------------------------------------------------------------------------------#
-# State-Specific Notes for "How is Parole Eligibility Determined?" and
-# Methodology of Imputation for "State Notes" Section of Parole Eligibility Tab
-#------------------------------------------------------------------------------#
-
-# Import state-specific imputation methodology
-# Created by Seba Guzman (CSG Research) in Stata
-state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
-
-# Import "How is Parole Eligibility Determined?" and number of parole board members
-# These were created by Policy Team in 'Release Systems by State' Word Document
-state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
-  clean_names() |>
-  mutate(across(where(is.character), str_trim)) |>
-  mutate(
-    state = str_replace_all(state, "\\*", ""),
-    citation = sapply(citation, fnc_format_citation)) # format citations
-
-# Combine state notes and state-specific imputation methodology
-# Adjust formatting - superscript 1 is for "How Parole Eligibility is Determined" so these need
-# to be increased by 1 because this text is near the bottom of the Parole Eligibility tab
-# NEED TO UPDATE THIS WHEN SEBA COMPLETES#########################
-state_notes <- state_notes_raw |>
-  left_join(state_methodology, by = "state") |>
-  # add period to matching note.
-  mutate(matching_note = paste0(matching_note, "."),
-         # add superscript 1 to release systems
-         release_systems = paste0(release_systems, "\u00B9"),
-         citation        = paste("\u00B9", citation, sep = " "),
-         # Increase superscripts to account for 1^ above
-         # Superscript 1: \u00B9
-         # Superscript 2: \u00B2
-         # Superscript 3: \u00B3
-         # Superscript 4: \u2074
-         # Superscript 5: \u2075
-         # Superscript 6: \u2076
-         estimation_note = gsub("\u00B9", "\u00B2", estimation_note),
-         rules_note      = gsub("\u00B2", "\u00B3", rules_note),
-         projection_note = gsub("\u00B3", "\u2074", projection_note),
-
-         source_note1    = gsub("\u00B9", "\u00B2", source_note1),
-         source_note2    = gsub("\u00B2", "\u00B3", source_note2),
-         source_note3    = gsub("\u00B3", "\u2074", source_note3),
-         # combine methodology info and citations
-         methodology_notes = paste(estimation_note, matching_note, rules_note,
-                                   last_year_note, year_excluded_note, projection_note, sep = "<br><br>"),
-         citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"),
-         methodology_notes = gsub("<br><br><br>", "<br>", methodology_notes),
-         citation = gsub("<br><br><br>", "<br><br>", citation)) |>
-  filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))
-
-#------------------------------------------------------------------------------#
 # States Rules
 #------------------------------------------------------------------------------#
 
-# Import state rules:
-# States to exclude overall, states that don't need the parole eligibility filtered by admission type and sentence length,
-# states that should be interpreted with caution, states to exclude in projections
+# Import rules for handling specific states in the analysis of parole eligibility.
+# The rules are stored in an Excel file and include:
+# - States to exclude overall
+# - States that do not require filtering by admission type and sentence length
+# - States to interpret with caution due to data quality concerns
+# - States to exclude from projections
 state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules_v1.xlsx"))
 
 # Define states that won't need to filter by admission type and sentence length
-# These states have high missingness for these variables but their data can be used
-# without filtering because the estimates for people past parole eligibility are reliable enough
-# or the data submitted is close enough to what the expected filtered population would be
+# These states have high missingness in variables for admission type and sentence length,
+# but their estimates for people past parole eligibility are reliable enough for inclusion
+# without filtering. Alternatively, the data submitted aligns closely with the expected
+# filtered population.
 states_nofilter <- state_rules_v1 |>
-  filter(dont_filter_admtype_sentlength == 1) #############################################################change to pull
+  filter(dont_filter_admtype_sentlength == 1)
 
-# States where we should use the earliest parole eligibility year bc it is the more reliable
-# than the imputations
+# States where we should use the earliest parole eligibility year
+# In these states, the earliest parole eligibility year (PEY1) is more reliable
+# than imputed values for parole eligibility.
 states_earliest_pe <- state_rules_v1 |>
   filter(use_earliest_pey1 == 1)
 
-# States where the people past PEY is likely undercounted
+# For these states, the analysis indicates that the number of people identified
+# as past parole eligibility is likely undercounted due to limitations in the data.
 states_undercounted <- state_rules_v1 |>
   filter(likely_undercount == 1)
 
-# States that should be on the national snapshot page but not the state reports
+# These states should appear on the national snapshot page but are excluded
+# from the state-specific reports.
 states_national_page_only <- state_rules_v1 |>
   filter(exclude_from_reports == 1) |>
   select(state)
 
-# States that have abolished parole
+# Identify states where parole has been abolished.
+# These states are excluded from specific analyses related to parole eligibility.
 states_abolished_parole <- state_notes |>
   filter(abolished_parole == "Y") |>
   select(state)
 
-# States where "Other race(s), non-Hispanic" should be included due to population
-# sizes in these states (Hawaii, Alaska, New Mexico, Oklahoma)
+# For specific states (e.g., Hawaii, Alaska, New Mexico, Oklahoma), the population
+# sizes of "Other race(s), non-Hispanic" are significant enough to warrant inclusion
+# in the analysis.
 states_use_other_race_eth <- state_rules_v1 |>
   filter(use_other_race_ethnicity == 1)
+
+
+#------------------------------------------------------------------------------#
+# State-Specific Notes for "How is Parole Eligibility Determined?" and
+# Methodology of Imputation for "Estimation Methodology" Section of Parole Eligibility Tab
+#------------------------------------------------------------------------------#
+
+# Import state-specific imputation methodology
+# The file was created by Seba Guzman (CSG Research) in Stata and contains
+# methodology details for imputing state-level parole eligibility information
+state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
+
+# Convert all entries in columns starting with "source_note" to NA
+# if they contain only "³". This helps filter out irrelevant or placeholder notes.
+state_methodology_clean <- state_methodology %>%
+  mutate(across(starts_with("source_note"), str_trim)) |>
+  mutate(across(starts_with("source_note"),
+                ~ if_else(. == "³", NA_character_, .)))
+
+#------------------------------------------------------------------------------#
+# "How is Parole Eligibility Determined?"
+#------------------------------------------------------------------------------#
+
+# Import "How is Parole Eligibility Determined?" and number of parole board members
+# Load data created by the Policy Team in the 'Release Systems by State' Word document.
+# The dataset includes state-specific notes on parole eligibility determination
+# and the number of parole board members.
+state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
+  clean_names() |>
+  mutate(across(where(is.character), str_trim)) |> # Trim leading/trailing whitespace
+  mutate(
+    state = str_replace_all(state, "\\*", ""),      # Remove asterisks from state names
+    citation = sapply(citation, fnc_format_citation) # Format citations for proper display
+  )
+
+#------------------------------------------------------------------------------#
+# Combine Notes and Adjust Formatting
+#------------------------------------------------------------------------------#
+
+# Merge state notes from the Policy Team with imputation methodology from Seba Guzman.
+# Adjust formatting to ensure consistency with the Parole Eligibility tab display.
+# Note on Superscripts:
+# Superscripts are used to provide references and citations throughout the Parole
+# Eligibility tab. Each type of note is assigned a unique superscript number:
+# - Superscript 1 (¹) is used for notes related to "How Parole Eligibility is Determined".
+# - Superscript numbers are incremented for methodology-related notes and citations:
+#   - ¹ becomes ², ² becomes ³, ³ becomes ⁴, and so on.
+# These adjustments ensure clarity and proper alignment with the visual layout of
+# the tab. Superscripts are encoded as Unicode characters for compatibility:
+# - \u00B9 (¹), \u00B2 (²), \u00B3 (³), \u2074 (⁴), \u2075 (⁵), etc.
+state_notes <- state_notes_raw |>
+  left_join(state_methodology_clean, by = "state") |>
+
+  # Ensure proper formatting for notes:
+  mutate(
+    # Append a period to `matching_note` if missing
+    matching_note = paste0(matching_note, "."),
+
+    # Add superscript 1 to `release_systems` for "How Parole Eligibility is Determined"
+    release_systems = paste0(release_systems, "\u00B9"),
+
+    # Add superscript 1 to `citation` for consistency
+    citation = paste("\u00B9", citation, sep = " "),
+
+    # Increment superscripts for notes by 1 to align with numbering conventions:
+    # Superscript 1 (\u00B9) becomes 2 (\u00B2), 2 becomes 3 (\u00B3), and so on.
+    estimation_note = gsub("\u00B9", "\u00B2", estimation_note),
+    rules_note = gsub("\u00B2", "\u00B3", rules_note),
+    projection_note = gsub("\u00B3", "\u2074", projection_note),
+
+    # Apply the same logic to source note columns
+    source_note1 = gsub("\u00B9", "\u00B2", source_note1),
+    source_note2 = gsub("\u00B2", "\u00B3", source_note2),
+    source_note3 = gsub("\u00B3", "\u2074", source_note3),
+
+    # Combine all imputation methodology details into a single HTML-compatible string
+    methodology_notes = paste(estimation_note, matching_note, rules_note,
+                              last_year_note, year_excluded_note, projection_note,
+                              sep = "<br><br>"),
+
+    # Combine all citations into a single field for display
+    citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"),
+
+    # Remove unnecessary blank lines from the formatted output
+    methodology_notes = gsub("<br><br><br>", "<br>", methodology_notes),
+    citation = gsub("<br><br><br>", "<br><br>", citation)############################# Will need to format when Seba provides updated data (11/20/24)
+  ) |>
+
+  # Remove the second duplicate entry for Louisiana (if it exists)
+  filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))
+
+
+#------------------------------------------------------------------------------#
+# Projections
+#------------------------------------------------------------------------------#
 
 # Determine which states have high missingness and should be excluded from analysis/tool
 # File created by Seba Guzman in Stata
