@@ -11,171 +11,46 @@
 # Parole Eligibility Table
 #------------------------------------------------------------------------------#
 
-# Select projection_year from NCRP projections created by Seba Guzman in Stata
+# Filter NCRP projections for the specified projection year and calculate rounded values
+# - Exclude states listed in `states_to_exclude`
+# - Calculate projected population past parole eligibility year (PEY) rounded to nearest power
+# - Round percentage past PEY to the nearest whole number
+# - Select only relevant columns for output
 parole_eligibility_table_projection_year <- ncrp_projections |>
   filter(year == projection_year) |>
-  filter(!state %in% states_abolished_parole$state) |>
+  # filter(!state %in% states_abolished_parole$state) |>
+  filter(!state %in% states_to_exclude$state) |>
   mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
          proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
 
-# Get total past PE
+# Calculate the total projected population past parole eligibility (PE) across all states
 proj_past_pe <- ncrp_projections |>
   filter(year == projection_year) |>
   summarise(past_pe_pop = sum(proj_pop_past_pey, na.rm = TRUE))
 
-# Rounded
+# Round the total projected population past PE to the nearest power
 proj_past_pe_count_rounded <- proj_past_pe |>
   mutate(past_pe_pop_rounded = fnc_round_to_power(past_pe_pop)) |>
   pull(past_pe_pop_rounded)
 
-# # Filter out missing values from proj_pcnt_ppey
-# ncrp_projections_no_nas <- ncrp_projections |>
-#   # filter(!state %in% states_to_exclude$state) |>
-#   filter(year == projection_year) |>
-#   filter(!is.na(proj_pcnt_ppey))
-#
-# # Calculate the average percentage of people past parole eligibility
-# average_percent_past_pey <- mean(ncrp_projections_no_nas$proj_pcnt_ppey)
-#
-# # Convert this percentage to a "1 in X" estimate
-# proj_past_pe_1_in_x <- round(100 / average_percent_past_pey, 1)
-
+# Extract the unrounded total projected population past PE for further calculations
 proj_past_pe <- proj_past_pe |>
   pull(past_pe_pop)
 
+# Calculate the total projected prison population for the specified projection year
 proj_prison_pop <- ncrp_population_projections |>
   filter(year == projection_year) |>
   summarise(total_prison_pop = sum(total_prison_population, na.rm = TRUE)) |>
   pull(total_prison_pop)
 
+# Calculate the ratio of total prison population to population past PE (1 in X individuals)
 proj_past_pe_1_in_x <- round(proj_prison_pop/proj_past_pe, 0)
 
 
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
 #-------------------------------------------------------------------------------
-
-fnc_blankitout_homepage <- function(){
-  list(
-    theme_void(),  # Removes background and gridlines for a clean appearance.
-    scale_x_continuous(expand = expansion(mult = ex_w, add = 0)),  # Customizes x-axis scale expansion.
-    scale_y_continuous(expand = expansion(mult = ex_h, add = 0)),  # Customizes y-axis scale expansion.
-    theme(legend.position = "none", aspect.ratio = img_ar_hw)  # Removes legend and sets the aspect ratio for the plot.
-  )
-}
-
-fnc_icon_options_homepage <- function(partialval, empty = "#FFFFFF", fill = dark_color, partial = light_color, bg = "#FFFFFF", fillHoriz = FALSE) {
-  # Ensure partialval is within valid range
-  if (partialval < 0 | partialval >= 1) stop("partialval must be between 0 and 1")
-
-  # Define color sets for different states of the icon (empty, full, partial)
-  cols_lst <- list(
-    "empty" = c(bg, empty),
-    "full" = c(bg, fill),
-    "partial" = c(bg, partial, fill)
-  )
-
-  # Define percentage fills for each icon state
-  pcts_lst <- list(
-    "empty" = 0,
-    "full" = 100,
-    "partial" = partialval * 100
-  )
-
-  # Initialize the plot list to store generated plots for each state
-  plot_lst <- list("empty" = NULL, "full" = NULL, "partial" = NULL)
-
-  # Determine the boundaries for filling either horizontally or vertically
-  if (fillHoriz == FALSE) {
-    pos1 <- which(apply(img[,,1], 2, function(y) any(y == 1)))  # Determine filled vertical range
-    max <- max(pos1)
-  } else {
-    pos1 <- which(apply(img[,,1], 1, function(y) any(y == 1)))  # Determine filled horizontal range
-    max <- max(pos1)
-  }
-  h <- dim(img)[1]  # Icon height
-  w <- dim(img)[2]  # Icon width
-  min <- min(pos1)
-
-  # Loop through each icon state and generate corresponding plot
-  for (j in names(plot_lst)) {
-    pcts <- pcts_lst[[j]]  # Get the fill percentage for the current state
-    pospct <- round((max - min) * pcts / 100 + min)  # Calculate the fill position based on percentage
-    finalimg <- img[h:1,,1]  # Flip the image vertically for correct orientation
-    bkgr <- (finalimg == 1)  # Background mask
-    colfill <- matrix(rep(FALSE, h*w), nrow = h)  # Initialize fill matrix
-
-    # Apply the fill either horizontally or vertically
-    if (fillHoriz == FALSE) {
-      colfill[1:h, max:pospct] <- TRUE
-    } else {
-      colfill[max:pospct, 1:w] <- TRUE
-    }
-
-    # Assign partially filled cells in the image
-    finalimg[bkgr & colfill] <- 0.5
-    df <- reshape2::melt(finalimg)  # Convert matrix to long format for plotting
-
-    # Remove partial fill for the 'full' state
-    if (j == "full") {
-      df[df$value == 0.5, ] <- 0
-    }
-
-    # Create the ggplot for each icon state
-    plot <- ggplot(df, aes(x = Var2, y = Var1, fill = factor(value))) +
-      geom_raster() +
-      scale_fill_manual(values = cols_lst[[j]]) +  # Apply the corresponding color scheme
-      fnc_blankitout_homepage()  # Apply the blank theme
-
-    plot_lst[[j]] <- plot  # Store the plot in the list
-  }
-
-  return(plot_lst)  # Return the list of generated plots
-}
-
-fnc_create_icons_homepage <- function(rri_raw, rri_digits = 1, fillcolor = "darkgray", partialcolor = "white",
-                                      emptyhumans = TRUE, emptycolor = "white", infogs = default_ncols,
-                                      infogs_ncol = default_ncols, fillHoriz = FALSE) {
-
-  # Round the RRI value and compute full and partial icons
-  RRI <- round(rri_raw, digits = rri_digits)
-  numfull <- floor(RRI)  # Number of fully filled icons
-  numremain <- RRI - numfull  # Portion of the partial icon
-
-  # Generate plot options for full, partial, and empty icons
-  plot_opts <- fnc_icon_options_homepage(partialval = numremain, empty = emptycolor, fill = fillcolor, partial = partialcolor, fillHoriz = fillHoriz)
-
-  plot_list <- list()  # Initialize list for storing plots
-
-  # Set the first icon in green
-  first_icon_color <- color4
-  first_icon_opts <- fnc_icon_options_homepage(partialval = 0, empty = emptycolor, fill = first_icon_color, partial = first_icon_color, fillHoriz = fillHoriz)
-  plot_list[[1]] <- first_icon_opts$full
-
-  # Create full icons in gray based on RRI value
-  for (i in 2:(numfull)) {
-    plot_list[[i]] <- plot_opts$full
-  }
-
-  # Add a partially filled icon if needed
-  if (numremain > 0) {
-    plot_list[[numfull + 1]] <- plot_opts$partial
-  }
-
-  # Add empty icons if needed
-  if (emptyhumans && length(plot_list) < infogs) {
-    for (i in (numfull + 2):infogs) {
-      plot_list[[i]] <- plot_opts$empty
-    }
-  }
-
-  # Determine the number of rows for the icon grid
-  rows <- ifelse(infogs > infogs_ncol, ceiling(length(plot_list) / infogs_ncol), 1)
-
-  # Return the grid of icon plots
-  plot_grid(plotlist = plot_list, nrow = rows)
-}
 
 # General setup
 wd <- getwd()
