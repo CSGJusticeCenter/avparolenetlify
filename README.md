@@ -70,7 +70,7 @@ avparolenetlify/
 ├── R/  
 │   ├── config.R  
 │   ├── pull_state_findings.R  
-│   ├── generate_rmds.R  
+│   ├── run.R  
 │   ├── prep/  
 │   │   ├── import/  
 │   │   │   ├── import_format.R  
@@ -95,8 +95,7 @@ individual scripts.
 - pull_state_findings.R: Extracts and summarizes state-specific data
 from NCRP term records. It generates findings for each state, which can
 be used in the state reports.  
-- generate_rmds.R: Automates the creation of Quarto documents for
-rendering.  
+- run.R: Runs all R code and automates the creation of Quarto documents for rendering.  
 
 **R/prep/:**
 
