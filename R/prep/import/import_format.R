@@ -173,9 +173,25 @@ ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results
 # when available. If 'jurtott_incl_und' is missing, it defaults to 'custott_incl_und'
 # (custodial total, including unclassified categories).
 ncrp_population_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_compl_2010_2020.dta")) |>
-  mutate(total_prison_population = if_else(!is.na(jurtott_incl_und),
-                                           jurtott_incl_und,
-                                           custott_incl_und))
+  select(state, year, jurtott_incl_und, custott_incl_und) |>
+  group_by(state) |>
+  arrange(state, year) |>  # Ensure data is sorted by state and year
+  # Checking if the data for 2023 is missing and substituting it with the data from 2022
+  mutate(
+    jurtott_incl_und1 = if_else(
+      year == 2023 & is.na(jurtott_incl_und),
+      lag(jurtott_incl_und, default = NA, order_by = year),
+      jurtott_incl_und
+    ),
+    custott_incl_und1 = if_else(
+      year == 2023 & is.na(custott_incl_und),
+      lag(custott_incl_und, default = NA, order_by = year),
+      custott_incl_und
+    )
+  ) |>
+  ungroup() |>
+  mutate(total_prison_population = case_when(is.na(jurtott_incl_und1) ~ custott_incl_und1,
+                                             TRUE ~ jurtott_incl_und1))
 
 # These are the NCRP files that were created by Sebastian (CSG Research) in Stata
 # Original NCRP releases and yearendpop files were used to create imputations for missing data regarding

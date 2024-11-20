@@ -22,7 +22,6 @@ parole_eligibility_table_projection_year <- ncrp_projections |>
 # Get total past PE
 proj_past_pe <- ncrp_projections |>
   filter(year == projection_year) |>
-  group_by() |>
   summarise(past_pe_pop = sum(proj_pop_past_pey, na.rm = TRUE))
 
 # Rounded
@@ -47,10 +46,11 @@ proj_past_pe <- proj_past_pe |>
 
 proj_prison_pop <- ncrp_population_projections |>
   filter(year == projection_year) |>
+  summarise(total_prison_pop = sum(total_prison_population, na.rm = TRUE)) |>
+  pull(total_prison_pop)
 
+proj_past_pe_1_in_x <- round(proj_prison_pop/proj_past_pe, 0)
 
-
-proj_past_pe_1_in_x <- 5.0#####################################################################################
 
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
@@ -618,6 +618,7 @@ webshot2::webshot(
 data_files <- list(
   map_percent                       = "map_percent.rds",
   proj_past_pe_count_rounded        = "proj_past_pe_count_rounded.rds",
+  proj_past_pe_1_in_x               = "proj_past_pe_1_in_x.rds",
   average_percent_past_pey          = "average_percent_past_pey.rds",
   parole_eligibility_table          = "parole_eligibility_table.rds",
   parole_eligibility_table_download = "parole_eligibility_table_download.rds"
