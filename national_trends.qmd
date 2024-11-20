@@ -60,7 +60,7 @@ div(
 <!-- HTML code for asterisks notes -->
 <div id ="footnotes-text">
 \*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.  
-\*\*This is a conservative estimate. It excludes individuals returning from parole as being past their parole eligibility year (PEY) and assumes that no individuals with life-with-parole sentences or sentences less than one year are past their PEY. Additionally, the estimate excludes paroling states where reliable data to calculate the population past PEY was unavailable, specifically Utah and Vermont.  
+\*\*This is a conservative estimate. It excludes individuals returning from parole as being past their parole eligibility year (PEY) and assumes that no individuals with life-with-parole sentences or sentences less than one year are past their PEY. Additionally, the estimate excludes paroling states where reliable data to calculate the population past PEY was unavailable, specifically Alaska, Nebraska, Utah, and Vermont.  
 \*\*\*Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population that remains eligible for parole release under the previous system.
 </div>
 <div class="divider"></div>
