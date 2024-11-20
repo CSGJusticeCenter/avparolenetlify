@@ -14,7 +14,8 @@
 # ---------------------------------------------------------------------------- #
 
 # Get NCRP data for people released from prison
-ncrp_releases_filtered <- fnc_filter_states(ncrp_releases_not_consolidated, exclude = states_to_exclude)################ change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_not_consolidated |>
+  filter(!state %in% states_to_exclude$state) ################ change to ncrp_releases_consolidated when complete
 
 # Calculate average time served by race, ethnicity, and state
 # Remove states with high missingness for race and ethnicity
@@ -153,6 +154,7 @@ all_sentence_los_race <-
                                    type = "in prison",
                                    compare_var = "race",
                                    los_col = "average_los")
+all_sentence_los_race$Georgia
 
 # Generate sentence about average time served sentence by sex
 all_sentence_los_sex <-
@@ -160,18 +162,21 @@ all_sentence_los_sex <-
                                    type = "in prison",
                                    compare_var = "sex",
                                    los_col = "average_los")
+all_sentence_los_sex$Georgia
 
 # Generate lollipop charts of time served by race and ethnicity
 all_lollipop_los_race <- fnc_generate_lollipop_charts(
   df = los_race,
   compare_var = "race"
 )
+all_lollipop_los_race$Georgia
 
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
   df = los_sex,
   compare_var = "sex"
 )
+all_lollipop_los_sex$Georgia
 
 # Time served by race and offense
 # SENTENCE:  "This chart shows the average time served by offense type and race in 2020. The largest disparity
@@ -180,6 +185,7 @@ all_lollipop_los_sex <- fnc_generate_lollipop_charts(
 all_sentence_los_race_offense <- fnc_generate_offense_disparity_sentence(los_race_by_offense_type,
                                                                          "race",
                                                                          "average_los")
+all_sentence_los_race_offense$Georgia
 
 # Time served by race and offense
 # SENTENCE:  "This chart shows the average time spent in prison past parole
@@ -190,6 +196,7 @@ all_sentence_los_race_offense <- fnc_generate_offense_disparity_sentence(los_rac
 all_sentence_los_sex_offense <- fnc_generate_offense_disparity_sentence(los_sex_by_offense_type,
                                                                         "sex",
                                                                         "average_los")
+all_sentence_los_sex_offense$Georgia
 
 # Create scatter charts for average time served by race, ethnicity, and offense
 all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(

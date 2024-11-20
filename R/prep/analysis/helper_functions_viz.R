@@ -274,44 +274,6 @@ js_code <- "function() {
                   }"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ---------------------------------------------------------------------------- #
-# Visualization Helper Functions
-# ---------------------------------------------------------------------------- #
-
-
-
 fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type,
                                source = ncrp_csg_source, orientation = "vertical") {
 
@@ -382,4 +344,42 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 
   return(highcharts)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------------------------- #
+# Visualization Helper Functions
+# ---------------------------------------------------------------------------- #
+
+
 

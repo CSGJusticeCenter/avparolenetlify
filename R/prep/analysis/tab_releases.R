@@ -14,7 +14,8 @@
 
 # Function that filters the releases data to include only includes states with
 # parole systems and without high missingness
-ncrp_releases_filtered <- fnc_filter_states(ncrp_releases_not_consolidated, exclude = states_to_exclude)################ change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_not_consolidated |> ################ change to ncrp_releases_consolidated when complete
+  filter(!state %in% states_to_exclude$state)
 
 # Summarize total people released from prison by state and year for data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
@@ -122,7 +123,7 @@ rm(states)
 ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(data = ncrp_releases_not_consolidated,######################################### change to ncrp_releases_consolidated when ready
                                                                 exclude = states_to_exclude,
                                                                 dont_filter = states_nofilter) |>
-  left_join(which_overall_year, by = "state")
+  left_join(which_overall_year, by = "state") ############################################################move to import
 
 # Get number of people past PE and released and get people released on PE
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
@@ -323,12 +324,11 @@ states <- unique(release_types$state)
 #            In YEAR, 45 percent of people released from prison were conditional releases."
 # Generate sentence for each state
 all_sentence_release_type <- map(.x = states,  .f = function(x) {
-  select_year <- fnc_determine_select_year(x, which_overall_year)
   df1 <- release_types |>
     filter(state == x & reltype == "Conditional Release")
   sentences <- paste0(
     "Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. ",
-    "In ", select_year, ", ", round(df1$prop*100, 0), " percent of people released from prison were ", tolower(df1$reltype), "s.")
+    "In ", unique(df1$rptyear), ", ", round(df1$prop*100, 0), " percent of people released from prison were ", tolower(df1$reltype), "s.")
   return(sentences)
 })
 # Assign state names as the names of the charts list
@@ -363,11 +363,11 @@ ncrp_releases_sentlgth   <- fnc_summarize_data(current_releases, "sentlgth")
 
 # List of parameters for each category
 categories <- list(
-  list(data = ncrp_releases_race, x_var = "race", metric = "Race and Ethnicity"),
-  list(data = ncrp_releases_sex, x_var = "sex", metric = "Sex"),
-  list(data = ncrp_releases_agerlse, x_var = "agerlse", metric = "Age"),
-  list(data = ncrp_releases_sentlgth, x_var = "sentlgth", metric = "Sentence Length"),
-  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type")
+  list(data = ncrp_releases_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source),
+  list(data = ncrp_releases_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source),
+  list(data = ncrp_releases_agerlse, x_var = "agerlse", metric = "Age", source = ncrp_csg_source),
+  list(data = ncrp_releases_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),
+  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)
 )
 
 # ---------------------------------------------------------------------------- #
@@ -386,7 +386,8 @@ for (category in categories) {
     metric     = category$metric,
     type_desc  = "released from prison",
     title_type = "People Released from Prison",
-    y_var      = "prop"
+    y_var      = "prop",
+    source     = category$source
   )
 
   all_sentence_releases[[category$x_var]] <- fnc_generate_sentences(

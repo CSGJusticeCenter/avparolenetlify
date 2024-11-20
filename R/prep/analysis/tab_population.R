@@ -157,11 +157,11 @@ ncrp_population_sentlgth  <- fnc_summarize_data(current_yearendpop, "sentlgth")
 
 # List of parameters for each category
 categories <- list(
-  list(data = bjs_population_race, x_var = "race", metric = "Race and Ethnicity"),
-  list(data = bjs_population_sex, x_var = "sex", metric = "Sex"),
-  list(data = ncrp_population_ageyrend, x_var = "ageyrend", metric = "Age"),
-  list(data = ncrp_population_sentlgth, x_var = "sentlgth", metric = "Sentence Length"),
-  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type")
+  list(data = bjs_population_race, x_var = "race", metric = "Race and Ethnicity", source = bjs_source),
+  list(data = bjs_population_sex, x_var = "sex", metric = "Sex", source = bjs_source),
+  list(data = ncrp_population_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source),
+  list(data = ncrp_population_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),
+  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)
 )
 
 # ---------------------------------------------------------------------------- #
@@ -180,7 +180,8 @@ for (category in categories) {
     metric     = category$metric,
     type_desc  = "the prison population",
     title_type = "People in Prison",
-    y_var      = "prop"
+    y_var      = "prop",
+    source     = category$source
   )
 
   all_sentence_population[[category$x_var]] <- fnc_generate_sentences(

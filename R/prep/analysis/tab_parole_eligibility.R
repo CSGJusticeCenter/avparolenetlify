@@ -126,7 +126,8 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     select(-last_value_past_pe, -year_to_fill)
 
   title <- "People in Prison Past Parole Eligibility by Year"
-  hc_accessibility_text <- "This chart shows the percentage of people in prison who are past their parole eligibility year, with projections highlighted in red."
+  hc_accessibility_text <- "This chart shows the percentage of people in prison who
+  are past their parole eligibility year, with projections highlighted in red."
 
   # Create the Highcharts object
   highchart() |>
@@ -176,20 +177,19 @@ current_pe_race     <- fnc_summarize_data(current_pe, "race") |>
   # Exclude states with high missingness for race and ethnicity
   # Prints off which states are missing data
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
-current_pe_sex      <- fnc_summarize_data(current_pe, "sex")
-current_pe_ageyrend <- fnc_summarize_data(current_pe, "ageyrend")
-current_pe_sentlgth <- fnc_summarize_data(current_pe, "sentlgth")
+current_pe_sex       <- fnc_summarize_data(current_pe, "sex")
+current_pe_ageyrend  <- fnc_summarize_data(current_pe, "ageyrend")
+current_pe_sentlgth  <- fnc_summarize_data(current_pe, "sentlgth")
 current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |>
   fnc_group_offense_type()
 
-
 # List of parameters for each category
 categories <- list(
-  list(data = current_pe_race, x_var = "race", metric = "Race and Ethnicity"),
-  list(data = current_pe_sex, x_var = "sex", metric = "Sex"),
-  list(data = current_pe_ageyrend, x_var = "ageyrend", metric = "Age"),
-  list(data = current_pe_sentlgth, x_var = "sentlgth", metric = "Sentence Length"),
-  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type")
+  list(data = current_pe_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source),
+  list(data = current_pe_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source),
+  list(data = current_pe_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source),
+  list(data = current_pe_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),
+  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)
 )
 
 
@@ -210,7 +210,8 @@ for (category in categories) {
     metric     = category$metric,
     type_desc  = "the prison population past parole eligibility",
     title_type = "People in Prison Past Parole Eligibility",
-    y_var      = "prop"
+    y_var      = "prop",
+    source     = category$source
   )
 
   all_sentence_pe[[category$x_var]] <- fnc_generate_sentences(
