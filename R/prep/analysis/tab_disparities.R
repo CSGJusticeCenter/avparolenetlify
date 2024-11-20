@@ -13,9 +13,24 @@
 # Years Past Parole Eligibility and by Offense
 # ---------------------------------------------------------------------------- #
 
+desired_order <- c(
+  "Drug",
+  "Public Order",
+  "Property",
+  "Aggravated or Simple Assault",
+  "Robbery",
+  "Rape or Sexual Assault",
+  "Negligent Manslaughter",
+  "Murder or Nonnegligent Manslaughter",
+  "Other Violent Offenses",
+  "Other or Unspecified"
+)
+
 # Get NCRP data for people released from prison
 ncrp_releases_filtered <- ncrp_releases_not_consolidated |>
-  filter(!state %in% states_to_exclude$state) ################ change to ncrp_releases_consolidated when complete
+  filter(!state %in% states_to_exclude$state) |>  ################ change to ncrp_releases_consolidated when complete
+  mutate(fbi_index = factor(fbi_index,
+                            levels = c(desired_order)))
 
 # Calculate average time served by race, ethnicity, and state
 # Remove states with high missingness for race and ethnicity
@@ -40,7 +55,7 @@ los_race <- ncrp_releases_filtered |>
 los_race_by_offense_type <- ncrp_releases_filtered |>
   # Exclude states with high missingness for race and ethnicity
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
-  filter(race != "Unknown" & fbi_index != "Unknown") |>
+  filter(race != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
   # Apply race filter conditionally
   filter(
     state %in% states_use_other_race_eth$state |
@@ -64,7 +79,7 @@ los_sex <- ncrp_releases_filtered |>
 
 # Calculate average time served by offense, sex and state
 los_sex_by_offense_type <- ncrp_releases_filtered |>
-  filter(sex != "Unknown" & fbi_index != "Unknown") |>
+  filter(race != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
   group_by(state, sex, fbi_index, rptyear) |>
   summarise(average_los = mean(time_between_admission_release, na.rm = TRUE),
             people = n(),
@@ -117,7 +132,7 @@ avg_past_pe_sex <- ncrp_past_pe |>
 # Get average time served past PE for people still in prison by race and ethnicity and offense
 avg_past_pe_race_by_offense_type <- ncrp_past_pe |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
-  filter(race != "Unknown" & fbi_index != "Unknown") |>
+  filter(race != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
   # Apply race filter conditionally
   filter(
     state %in% states_use_other_race_eth$state |
@@ -135,7 +150,7 @@ avg_past_pe_race_by_offense_type <- ncrp_past_pe |>
 
 # Get average time served past PE for people still in prison by sex and offense
 avg_past_pe_sex_by_offense_type <- ncrp_past_pe |>
-  filter(sex != "Unknown" & fbi_index != "Unknown") |>
+  filter(race != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
   mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
   group_by(state, sex, fbi_index, rptyear) |>
