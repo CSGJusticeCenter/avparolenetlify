@@ -49,5 +49,5 @@ walk(states_qmd, replace_write_qmd)
 # Render all generated Quarto Markdown (QMD) files
 # Note: Ensure Quarto is installed and properly configured before running this
 # Takes about 15 minutes to run
-quarto::quarto_render()
+# quarto::quarto_render()
 

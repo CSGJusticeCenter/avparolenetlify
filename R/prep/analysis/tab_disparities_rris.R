@@ -15,7 +15,7 @@ fnc_calculate_rri <- function(data, comparison_group, category) {
   # Calculate reference rate for the comparison group
   reference_rate_data <- data |>
     filter(!!sym(category) == comparison_group) |>
-    select(state, past_pe_rate) |>
+    select(state, past_pe_rate, rptyear) |>
     rename(reference_past_pe_rate = past_pe_rate)
 
   # Calculate RRI for all groups
@@ -37,13 +37,13 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
 
     rri <- df1$rri
     if (rri > 1) {
-      paste0("In ", select_year, ", <span style='color:", color, "; font-weight:bold;'>", label,
+      paste0("In ", rpytyear, ", <span style='color:", color, "; font-weight:bold;'>", label,
              "</span> were incarcerated in state prison past parole eligibility at a rate <span style='color:",
              color, "; font-weight:bold;'>", rri, " times higher</span> than <span style='color:",
              comparison_color, "; font-weight:bold;'>", comparison_group, "</span>, when accounting for prison population sizes in ", state_name, ".")
     } else {
       percent_less <- round((1 - rri) * 100, 0)
-      paste0("In ", select_year, ", <span style='color:", color, "; font-weight:bold;'>", label,
+      paste0("In ", rpytyear, ", <span style='color:", color, "; font-weight:bold;'>", label,
              "</span> were <span style='color:", color, "; font-weight:bold;'>", percent_less,
              " percent less likely</span> to be incarcerated in state prison past parole eligibility compared to <span style='color:",
              comparison_color, "; font-weight:bold;'>", comparison_group, "</span>, when accounting for population sizes in ", state_name, ".")
@@ -92,7 +92,7 @@ merged_prison_pop_data_race <- prison_pop_by_race |>
   mutate(past_pe_rate = n / total_prison_pop)
 
 # Calculate RRI by race
-all_pe_rri_data <- fnc_calculate_rri(merged_prison_pop_data_race, "White, non-Hispanic", "race") |>
+all_pe_rri_data <- fnc_calculate_rri(merged_prison_pop_data_race, comparison_group = "White, non-Hispanic", category = "race") |>
   # add_row(state = "Hawaii", race = "Other race(s), non-Hispanic", rri = 1.3)  # Test data##########################################
   mutate(rri = case_when(state == "Hawaii" & race == "Other race(s), non-Hispanic" ~ 1.3, TRUE ~ rri))
 

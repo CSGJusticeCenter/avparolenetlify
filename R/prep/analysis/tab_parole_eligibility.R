@@ -12,9 +12,8 @@
 
 # Function that filters the population data to include only people in prison for new crimes
 # with sentence lengths 1+ years except life
-# Only includes states with parole systems and without high missingness
-# Includes states don't need to be filtered by admission type or sentence length
-# These states are in states_nofilter
+# Only includes states with parole systems and without high missingness (states_to_exclude)
+# Includes states thats don't need to be filtered by admission type or sentence length (states_nofilter)
 ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(data = ncrp_yearendpop_consolidated,
                                                               exclude = states_to_exclude,
                                                               dont_filter = states_nofilter)
@@ -65,7 +64,7 @@ all_sentence_pe_type <- {
     paste0(
       "In ", select_year, ", ",
       round(current_prop, 0),
-      " percent of people in prison were currently past their parole eligibility.",
+      " percent of people in prison were currently eligible for parole and incarcerated past parole eligibility.",
       " Another ", round(future_prop, 0),
       " percent will reach their parole eligibility after ", select_year, "."
     )

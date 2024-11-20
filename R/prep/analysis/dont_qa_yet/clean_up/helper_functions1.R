@@ -1,3 +1,97 @@
+
+#-------------------------------------------------------------------------------
+# CHECKED FUNCTIONS
+#-------------------------------------------------------------------------------
+
+#' Filter Parole Eligibility Population
+#'
+#' Filters the input data based on specific parole eligibility criteria such as admission type,
+#' sentence length, and exclusion of states with missing data or abolished parole.
+#'
+#' @param data A data frame containing population data to filter.
+#'
+#' @return A filtered data frame based on parole eligibility criteria.
+#' @export
+fnc_filter_pe_population_criteria <- function(data, exclude, dont_filter) {
+  # Get states to exclude - missing data and abolished parole
+  exclude <- exclude |>
+    pull(state)
+
+  # Get states that don't need to filter admtype and sentlgth
+  dont_filter <- dont_filter |>
+    pull(state)
+
+  # Filter data based on criteria, applying admtype and sentlgth filters only if state is not in dont_filter
+  filtered_data <- data |>
+    filter(!(state %in% exclude)) |>
+    filter(
+      (state %in% dont_filter) | # Skip filtering if in dont_filter
+        (admtype == "New court commitment" & sentlgth %in% c("1-1.9 years",
+                                                             "2-4.9 years",
+                                                             "5-9.9 years",
+                                                             "10-24.9 years",
+                                                             ">=25 years"))
+    )
+
+  # Return the filtered data
+  return(filtered_data)
+}
+
+fnc_filter_by_year <- function(df, which_state_year) {
+  df |>
+    # Join with `which_state_year` to add `year_to_use`
+    left_join(which_state_year, by = "state") |>
+    # Filter rows where `rptyear` matches `year_to_use`
+    filter(rptyear == year_to_use)
+}
+
+#' Create Tooltip for Highcharts
+#'
+#' Creates a tooltip for a Highchart object by formatting the variable label,
+#' number of people, and the percentage of people in the population.
+#'
+#' @param df A data frame containing the data to be used for tooltips.
+#' @param variable_label A string representing the label of the variable to be displayed in the tooltip.
+#' @param variable A column in the data frame representing the variable used in the tooltip.
+#'
+#' @return A data frame with an added tooltip column.
+#' @export
+fnc_create_tooltip <- function(df, variable_label, variable) {
+  df |>
+    dplyr::mutate(
+      tooltip = paste0(
+        "<b>", variable_label, ":</b> ", {{ variable }}, "<br>",
+        "<b>People:</b> ", formattable::comma(n, 0), "<br>",
+        "<b>Percentage of People:</b> ", round(prop, 0), "%"
+      )
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------------
 # Analysis Functions
 #-------------------------------------------------------------------------------
@@ -38,62 +132,9 @@ fnc_filter_population <- function(data, exclude) {
 }
 
 
-#' Filter Parole Eligibility Population
-#'
-#' Filters the input data based on specific parole eligibility criteria such as admission type,
-#' sentence length, and exclusion of states with missing data or abolished parole.
-#'
-#' @param data A data frame containing population data to filter.
-#'
-#' @return A filtered data frame based on parole eligibility criteria.
-#' @export
-fnc_filter_pe_population_criteria <- function(data, exclude, dont_filter) {
-  # Get states to exclude - missing data and abolished parole
-  exclude <- exclude |>
-    pull(state)
-
-  # Get states that don't need to filter admtype and sentlgth
-  dont_filter <- dont_filter |>
-    pull(state)
-
-  # Filter data based on criteria, applying admtype and sentlgth filters only if state is not in dont_filter
-  filtered_data <- data |>
-    filter(!(state %in% exclude)) |>
-    filter(
-      (state %in% dont_filter) | # Skip filtering if in dont_filter
-        (admtype == "New court commitment" & sentlgth %in% c("1-1.9 years",
-                                                             "2-4.9 years",
-                                                             "5-9.9 years",
-                                                             "10-24.9 years",
-                                                             ">=25 years"))
-    )
-
-  # Return the filtered data
-  return(filtered_data)
-}
 
 
-#' Create Tooltip for Highcharts
-#'
-#' Creates a tooltip for a Highchart object by formatting the variable label,
-#' number of people, and the percentage of people in the population.
-#'
-#' @param df A data frame containing the data to be used for tooltips.
-#' @param variable_label A string representing the label of the variable to be displayed in the tooltip.
-#' @param variable A column in the data frame representing the variable used in the tooltip.
-#'
-#' @return A data frame with an added tooltip column.
-#' @export
-fnc_create_tooltip <- function(df, variable_label, variable) {
-  df |>
-    dplyr::mutate(
-      tooltip = paste0(
-        "<b>", variable_label, ":</b> ", {{ variable }}, "<br>",
-        "<b>People:</b> ", formattable::comma(n, 0), "<br>",
-        "<b>Percentage of People:</b> ", round(prop, 0), "%"
-      )
-    )
-}
+
 
 
 #' Filter Data by Excluding States with High Missing Race Data
