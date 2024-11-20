@@ -68,12 +68,6 @@ states_national_page_only <- state_rules_v1 |>
   filter(exclude_from_reports == 1) |>
   select(state)
 
-# Identify states where parole has been abolished.
-# These states are excluded from specific analyses related to parole eligibility.
-states_abolished_parole <- state_notes |>
-  filter(abolished_parole == "Y") |>
-  select(state)
-
 # For specific states (e.g., Hawaii, Alaska, New Mexico, Oklahoma), the population
 # sizes of "Other race(s), non-Hispanic" are significant enough to warrant inclusion
 # in the analysis.
@@ -170,6 +164,11 @@ state_notes <- state_notes_raw |>
   # Remove the second duplicate entry for Louisiana (if it exists)
   filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))
 
+# Identify states where parole has been abolished.
+# These states are excluded from specific analyses related to parole eligibility.
+states_abolished_parole <- state_notes |>
+  filter(abolished_parole == "Y") |>
+  select(state)
 
 #------------------------------------------------------------------------------#
 # Projections
@@ -439,26 +438,26 @@ invisible(lapply(names(data_files), function(obj) {
 }))
 
 
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_projections.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_population_projections.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_not_consolidated.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_consolidated.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_combined.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_combined.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/which_years.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_projections.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_population_projections.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_not_consolidated.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_consolidated.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_combined.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_combined.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/which_years.rds"))

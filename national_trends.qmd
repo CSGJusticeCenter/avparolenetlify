@@ -50,8 +50,8 @@ div(
   style = "margin: 0 auto; margin-bottom: 10px; margin-top: 10px; max-width: 50%; height: auto; text-align: center;"
       ),
   div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("People In Prison Past Their<br>Parole Eligibility*<br><br>")),
-  div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " Incarcerated People In Paroling States Are In Prison Past Their Parole Eligibility**"))),
+  div(id = "bold-text", HTML("People In Prison Past Parole Eligibility*<br><br>")),
+  div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People in Prison Are Incarcerated Past Parole Eligibility**"))),
   div(id = "bold-text", HTML("States With<br>Discretionary Parole***<br><br>"))
 )
 ```

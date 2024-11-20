@@ -121,7 +121,7 @@ parole_eligibility_table_download <- parole_eligibility_table |>
 all_states <- state.name
 
 # Define the gradient colors for categories
-gradient_colors <- c(green1, green2, green3, green4, blue)
+gradient_colors <- c(gradient1, gradient2, gradient3, gradient4, blue)
 
 # Prepare tooltips and map data
 # Prepare data for national maps
@@ -260,10 +260,10 @@ map_percent <- highchart(height = 625) |>
 
   hc_colorAxis(dataClassColor = "category",
                dataClasses = list(
-                 list(from = 1, to = 1, color = green1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
-                 list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
-                 list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
-                 list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
+                 list(from = 1, to = 1, color = gradient1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
+                 list(from = 2, to = 2, color = gradient2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
+                 list(from = 3, to = 3, color = gradient3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
+                 list(from = 4, to = 4, color = gradient4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
                  list(from = 5, to = 5, color = "white", name = "Abolished Disretionary<br>Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
@@ -383,10 +383,10 @@ map_percent_download <- highchart(height = 625,
 
   hc_colorAxis(dataClassColor = "category",
                dataClasses = list(
-                 list(from = 1, to = 1, color = green1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
-                 list(from = 2, to = 2, color = green2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
-                 list(from = 3, to = 3, color = green3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
-                 list(from = 4, to = 4, color = green4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
+                 list(from = 1, to = 1, color = gradient1, name = paste0(breaks[1], "% - ", breaks[2], "%")),
+                 list(from = 2, to = 2, color = gradient2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
+                 list(from = 3, to = 3, color = gradient3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
+                 list(from = 4, to = 4, color = gradient4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
                  list(from = 5, to = 5, color = "white", name = "Abolished Disretionary<br>Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
@@ -480,7 +480,6 @@ data_files <- list(
   map_percent                       = "map_percent.rds",
   proj_past_pe_count_rounded        = "proj_past_pe_count_rounded.rds",
   proj_past_pe_1_in_x               = "proj_past_pe_1_in_x.rds",
-  average_percent_past_pey          = "average_percent_past_pey.rds",
   parole_eligibility_table          = "parole_eligibility_table.rds",
   parole_eligibility_table_download = "parole_eligibility_table_download.rds"
 )

@@ -6,10 +6,6 @@
 #'
 #' @param citation A string containing the citation.
 #' @return A formatted string with report titles italicized and URLs as markdown links.
-#' @examples
-#' citation <- "Prison-Release Discretion and Prison Population Size: State Report: 2023 (https://example.com)."
-#' formatted <- fnc_format_citation(citation)
-#' print(formatted)
 fnc_format_citation <- function(citation) {
   # Italicize the report title
   formatted_citation <- str_replace_all(
@@ -41,9 +37,6 @@ fnc_format_citation <- function(citation) {
 #'
 #' @return A data frame with an added `rptyear` column containing the year extracted from the file name.
 #' @export
-#'
-#' @examples
-#' data <- fnc_read_and_add_year("file_2023_data.dta")
 fnc_read_and_add_year <- function(file_path) {
   print(paste("Reading file:", file_path))
 
@@ -75,10 +68,6 @@ fnc_read_and_add_year <- function(file_path) {
 #' @return A combined data frame containing the data from all files, with each file's data
 #'         processed by `fnc_read_and_add_year`.
 #' @export
-#'
-#' @examples
-#' files <- c("file1_2023_data.dta", "file2_2022_data.dta")
-#' combined_data <- fnc_combine_files(files)
 fnc_combine_files <- function(files) {
   bind_rows(lapply(files, fnc_read_and_add_year))
 }
@@ -87,9 +76,6 @@ fnc_combine_files <- function(files) {
 #'
 #' @param df A dataframe containing an offense detail column `offdetail`.
 #' @return A dataframe with a new `fbi_index` column added based on `offdetail`.
-#' @examples
-#' df <- data.frame(offdetail = c("Aggravated or simple assault", "Robbery"))
-#' df <- fnc_create_fbi_index(df)
 fnc_create_fbi_index <- function(df) {
   print("Creating FBI index...")
 
@@ -130,9 +116,6 @@ fnc_create_fbi_index <- function(df) {
 #'
 #' @param df A dataframe containing an `admtype` column.
 #' @return A dataframe with a transformed `admtype` column, consolidating admission types.
-#' @examples
-#' df <- data.frame(admtype = c("Other admission (including unsentenced, transfer, AWOL/escapee return)", "Other"))
-#' df <- fnc_create_admtype(df)
 fnc_create_admtype <- function(df) {
   print("Transforming admtype...")
 
@@ -151,9 +134,6 @@ fnc_create_admtype <- function(df) {
 #'
 #' @param df A dataframe containing BJS data with columns `state` and `bjs_prison_population`.
 #' @return A cleaned dataframe with corrected state names and numeric prison population.
-#' @examples
-#' df <- data.frame(state = c("Alaskab", "Utahc", "U.S. Total"), bjs_prison_population = c("10,000", "5,000", "1,000,000"))
-#' df <- fnc_clean_bjs_data(df)
 fnc_clean_bjs_data <- function(df) {
   print("Cleaning BJS data...")
 
@@ -196,9 +176,6 @@ fnc_clean_bjs_data <- function(df) {
 #'
 #' @return A transformed data frame with new variables and adjusted columns.
 #' @export
-#'
-#' @examples
-#' transformed_data <- fnc_transform_ncrp_data(ncrp_data)
 fnc_transform_ncrp_data <- function(df, states_to_update) {
   print("Transforming NCRP data...")
 
@@ -307,8 +284,6 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
 #' @param rename_col Optional. A string representing the column to rename to `state_federal`.
 #'
 #' @return A cleaned data frame with filtered rows and updated column names.
-#' @examples
-#' raceeth_data <- fnc_load_raceeth_data("raceeth.csv", skip_rows = 2, rename_col = "jurisdiction")
 fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
   data <- read.csv(file.path(sp_data_path, file_path), skip = skip_rows) |>
     clean_names()
@@ -333,8 +308,6 @@ fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
 #' @param total_data A data frame containing total population data by state.
 #'
 #' @return A cleaned and summarized data frame with race proportions and labels.
-#' @examples
-#' processed_data <- fnc_process_bjs_raceeth_data(raceeth_data, total_population_data)
 fnc_process_bjs_raceeth_data <- function(data, total_data) {
   data |>
     mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
@@ -376,8 +349,6 @@ fnc_process_bjs_raceeth_data <- function(data, total_data) {
 #' @param year An integer indicating the reporting year for the data.
 #'
 #' @return A data frame with processed sex-based population data including proportions and labels.
-#' @examples
-#' sex_data <- fnc_process_bjs_sex_data("population_sex.csv", 3, "males", "females", 2023)
 fnc_process_bjs_sex_data <- function(file_path, skip_rows, male_col, female_col, year) {
   read.csv(file.path(sp_data_path, file_path))[-(1:skip_rows), ] |>
     clean_names() |>

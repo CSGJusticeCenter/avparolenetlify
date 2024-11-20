@@ -195,7 +195,6 @@ fnc_generate_sentences <- function(data, x_var, type_desc) {
   setNames(sentences, states)
 }
 
-
 fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 
   df1 <- df |>
@@ -281,7 +280,25 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
   return(sentences)
 }
 
+fnc_round_to_power <- function(x) {
+  sapply(x, function(val) {
+    # Check if the value is NA, and return NA if true
+    if (is.na(val)) {
+      return(NA)
+    }
 
+    # Determine the number of digits in the number
+    digits <- nchar(floor(val))
+
+    # Define the rounding level: if digits >= 3, round to the nearest power of 10 down, else round to 10
+    if (digits >= 3) {
+      power <- 10^(digits - 2) # This determines the rounding level to the nearest power of 10 below
+      round(val / power) * power  # Use round to round to the nearest significant value
+    } else {
+      round(val, -1)
+    }
+  })
+}
 
 
 
@@ -303,29 +320,9 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 #   return(select_year)
 # }
 #
-# fnc_round_to_power <- function(x) {
-#   sapply(x, function(val) {
-#     # Check if the value is NA, and return NA if true
-#     if (is.na(val)) {
-#       return(NA)
-#     }
-#
-#     # Determine the number of digits in the number
-#     digits <- nchar(floor(val))
-#
-#     # Define the rounding level: if digits >= 3, round to the next power of 10 down, else round to 10
-#     if (digits >= 3) {
-#       power <- 10^(digits - 2) # This rounds down to the next power of 10 below the number
-#       floor(val / power) * power  # Use floor to always round down
-#     } else {
-#       round(val, -1)
-#     }
-#   })
-# }
-#
 
 #
-
+#
 #
 # fnc_filter_states <- function(data, exclude) {
 #   # Get states to exclude - missing data and abolished parole
@@ -424,11 +421,6 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 # #
 # #   return(sentences)
 # # }
-#
-
-#
-
-
 # # fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
 # #
 # #   df1 <- df |>
@@ -469,16 +461,3 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 # #
 # #   return(sentences)
 # # }
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
