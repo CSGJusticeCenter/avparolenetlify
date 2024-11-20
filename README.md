@@ -95,7 +95,7 @@ individual scripts.
 - pull_state_findings.R: Extracts and summarizes state-specific data
 from NCRP term records. It generates findings for each state, which can
 be used in the state reports.  
-- generate_rmds.R: Automates the creation of R Markdown documents for
+- generate_rmds.R: Automates the creation of Quarto documents for
 rendering.  
 
 **R/prep/:**
