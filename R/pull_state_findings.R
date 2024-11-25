@@ -6,7 +6,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
 
 # Determine select year
-select_year <- which_overall_year |> filter(state == state_for_report)
+select_year <- which_overall_year |> filter(state == state_for_report) |> pull(year_to_use)
 
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
 additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
