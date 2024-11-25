@@ -19,8 +19,7 @@
 #   - Saving all outputs (sentences and visualizations) to `.rds` files.
 #
 # Outputs:
-#   - State-specific summary sentences (e.g., "From 2010 to 2022, the prison
-#     population decreased 17 percent, changing from 56,432 to 47,010.").
+#   - State-specific summary sentences.
 #   - Interactive Highcharts visualizations for demographic and trend analysis.
 #   - Processed data objects for further analysis or reporting.
 ################################################################################

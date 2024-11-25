@@ -2,9 +2,29 @@
 # Project: AV Parole
 # File: tab_disparities.R
 # Authors: Mari Roberts
-# Date last updated: November 15, 2024 (MAR)
+# Last Updated: November 25, 2024 (MAR)
 # Description:
-#    Prison disparities visualizations and findings for disparities tab
+#   This script analyzes and visualizes disparities in race, ethnicity, and sex,
+#   focusing on two key areas: time served and years past parole eligibility.
+#   The analysis highlights disparities by race, ethnicity, sex, and offense type.
+#   The outputs include state-specific summary sentences and visualizations
+#   designed to identify and communicate these disparities effectively.
+#
+#   - Filtering and summarizing data to calculate average time served and
+#     years past parole eligibility.
+#   - Generating summary sentences for disparities across states.
+#   - Creating lollipop charts, scatter charts, and other visualizations
+#     for detailed insights.
+#   - Saving processed data and visual outputs for use in reports or further
+#     analysis.
+#
+# Outputs:
+#   - State-specific summary sentences (e.g., "The largest disparity was observed
+#     among robbery offenses, where Hispanic people spent an average of 3.6 more
+#     years in prison compared to White people.").
+#   - Interactive Highcharts visualizations of disparities by offense, race,
+#     ethnicity, and sex.
+#   - Processed data objects in `.rds` files for reporting or further use.
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
@@ -13,6 +33,7 @@
 # Years Past Parole Eligibility and by Offense
 # ---------------------------------------------------------------------------- #
 
+# Define the desired order for offense categories
 desired_order <- c(
   "Drug",
   "Public Order",
@@ -26,32 +47,32 @@ desired_order <- c(
   "Other or Unspecified"
 )
 
-# Get NCRP data for people released from prison
-ncrp_releases_filtered <- ncrp_releases_not_consolidated |>
-  filter(!state %in% states_to_exclude$state) |>  ################ change to ncrp_releases_consolidated when complete
-  mutate(fbi_index = factor(fbi_index,
-                            levels = c(desired_order)))
+# Filter NCRP releases data and order offense categories
+ncrp_releases_filtered <- ncrp_releases_not_consolidated |>  ################ change to ncrp_releases_consolidated when complete
+  filter(!state %in% states_to_exclude$state) |>  # Exclude states with high missingness or abolished parole
+  mutate(fbi_index = factor(fbi_index, levels = desired_order))  # Set factor levels for offense categories
+
+# --- Average Time Served Calculations ---
 
 # Calculate average time served by race, ethnicity, and state
-# Remove states with high missingness for race and ethnicity
-# (states_to_exclude created in prep/import_format.R)
 los_race <- ncrp_releases_filtered |>
-  # Exclude states with high missingness for race and ethnicity
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
-  filter(race != "Unknown") |>
-  # Apply race filter conditionally
+  filter(race != "Unknown") |>  # Exclude unknown race values
   filter(
+    # Include all races for selected states, or specific races for others
     state %in% states_use_other_race_eth$state |
       (!state %in% states_use_other_race_eth$state &
          race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"))
   ) |>
   group_by(state, race, rptyear) |>
-  summarise(average_los = mean(time_between_admission_release, na.rm = TRUE),
-            people = n(),
-            .groups = "drop") |>
-  fnc_filter_by_year(which_overall_year)
+  summarise(
+    average_los = mean(time_between_admission_release, na.rm = TRUE),  # Calculate average length of stay
+    people = n(),  # Count the number of people
+    .groups = "drop"
+  ) |>
+  fnc_filter_by_year(which_overall_year)  # Filter to the best available year for each state
 
-# Calculate average time served by offense, race, ethnicity, and state
+# Calculate average time served by offense type, race, and ethnicity
 los_race_by_offense_type <- ncrp_releases_filtered |>
   # Exclude states with high missingness for race and ethnicity
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>

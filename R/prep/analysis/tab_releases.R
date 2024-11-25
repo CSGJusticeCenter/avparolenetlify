@@ -2,10 +2,29 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Date last updated: September 12, 2024 (MAR)
+# Last Updated: September 12, 2024 (MAR)
 # Description:
-#    Prison releases visualizations and findings for releases tab
-#    Uses BJS Prisoners Data
+#   This script analyzes and visualizes trends in prison releases across states
+#   and generates summary sentences and charts for key demographic and
+#   offense-related categories. It includes functionality to filter and process
+#   data from NCRP to prepare state-specific insights for release trends,
+#   parole eligibility proportions, and release types.
+#
+#   - Filtering and summarizing release data by race, sex, age, sentence length,
+#     and offense type.
+#   - Generating summary sentences for prison release trends and parole-eligible
+#     release proportions for individual states.
+#   - Creating pie charts for conditional vs. unconditional release types.
+#   - Creating bar charts for demographic breakdowns and offense types.
+#   - Generating stacked bar charts visualizing parole-eligible release trends
+#     over time.
+#   - Saving all outputs (sentences and visualizations) to `.rds` files.
+#
+# Outputs:
+#   - State-specific summary sentences.
+#   - Interactive Highcharts visualizations for release trends, parole
+#     eligibility proportions, and release types.
+#   - Processed data objects for further analysis or reporting.
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
