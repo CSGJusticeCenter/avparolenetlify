@@ -1665,7 +1665,7 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
 }
 
 # ---------------------------------------------------------------------------- #
-# Infographic Helper Functions
+# People Infographic Helper Functions
 # ---------------------------------------------------------------------------- #
 
 #' Create and Save State-Specific Infographic
