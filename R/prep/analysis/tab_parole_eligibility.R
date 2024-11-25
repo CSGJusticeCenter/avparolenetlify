@@ -227,7 +227,7 @@ current_pe_unconsolidated <- fnc_filter_pe_population_criteria(
 current_pe_race     <- fnc_summarize_data(current_pe, "race") |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)  # Exclude states with high missingness for race data
 current_pe_sex       <- fnc_summarize_data(current_pe, "sex")          # Summarize by sex
-current_pe_ageyrend  <- fnc_summarize_data(current_pe, "ageyrend")     # Summarize by age
+current_pe_ageyrend  <- fnc_summarize_data(current_pe_unconsolidated, "ageyrend")     # Summarize by age
 current_pe_sentlgth  <- fnc_summarize_data(current_pe, "sentlgth")     # Summarize by sentence length
 current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |> # Summarize by offense type
   fnc_group_offense_type()                                             # Group offense types into broader categories
