@@ -199,7 +199,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
 # Assign state names to the generated charts
 all_line_pop_pe_by_year <- setNames(all_line_pop_pe_by_year, states)
 all_line_pop_pe_by_year$Georgia
-
+rm(states)  # Cleanup: Remove the temporary `states` variable
 
 
 
@@ -242,6 +242,7 @@ categories <- list(
 )
 
 
+
 # ---------------------------------------------------------------------------- #
 # Generate Sentences and Column Charts (Demographics, Offense Type, Sentence Length)
 # ---------------------------------------------------------------------------- #
@@ -281,6 +282,7 @@ all_bar_pe_sentlgth       <- all_bar_pe[["sentlgth"]]
 all_sentence_pe_sentlgth  <- all_sentence_pe[["sentlgth"]]
 all_bar_pe_fbi_index      <- all_bar_pe[["fbi_index"]]
 all_sentence_pe_fbi_index <- all_sentence_pe[["fbi_index"]]
+
 
 
 # ---------------------------------------------------------------------------- #

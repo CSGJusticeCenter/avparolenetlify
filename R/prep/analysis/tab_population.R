@@ -2,38 +2,57 @@
 # Project: AV Parole
 # File: tab_population.R
 # Authors: Mari Roberts
-# Date last updated: September 12, 2024 (MAR)
+# Last Updated: November 25, 2024 (MAR)
 # Description:
-#    Prison population visualizations and findings for population tab
-#    Uses BJS Prisoners Data
+#   This script analyzes and visualizes trends in the prison population across
+#   states and generates summary sentences and charts for key demographic and
+#   offense-related categories. It includes functionality to filter and process
+#   data from various sources (BJS and NCRP) to prepare state-specific insights
+#   for year-end prison population trends and proportions.
+#
+#   - Filtering and summarizing prison population data by race, sex, age,
+#     sentence length, and offense type.
+#   - Generating summary sentences for population changes across years for
+#     individual states.
+#   - Creating bar charts for demographic breakdowns and offense types.
+#   - Generating line charts visualizing prison population trends over time.
+#   - Saving all outputs (sentences and visualizations) to `.rds` files.
+#
+# Outputs:
+#   - State-specific summary sentences (e.g., "From 2010 to 2022, the prison
+#     population decreased 17 percent, changing from 56,432 to 47,010.").
+#   - Interactive Highcharts visualizations for demographic and trend analysis.
+#   - Processed data objects for further analysis or reporting.
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
 # Prison Population By Year
 # ---------------------------------------------------------------------------- #
 
+# Filter BJS prison population data
+# Exclude states with high missingness or abolished parole (in `states_to_exclude`)
+# Only include years up to the selected `year_to_use` for analysis
 bjs_prison_pop_by_rptyear_filtered <- bjs_prison_pop_by_rptyear |>
   filter(!state %in% states_to_exclude$state) |>
   filter(rptyear <= year_to_use)
 
-# Get unique states to iterate over
-# Only states that submitted data to BJS and not in exclusion
-# list (high missingness or abolished parole)
+# Get a list of unique states for iteration
+# These are states that submitted data to BJS and are not in the exclusion list
 states <- bjs_prison_pop_by_rptyear_filtered |>
   distinct(state) |>
   arrange(state) |>
   pull(state)
 
-# SENTENCE: "From 2010 to 2022, the prison population decreased 17 percent,
-#            changing from 56,432 in 2010 to 47,010 in 2022."
-# Generate sentence for each state
-# Generate sentence for each state
+# Generate summary sentences for the prison population trends in each state
+# Example sentence format:
+# "From 2010 to 2022, the prison population decreased 17 percent,
+#  changing from 56,432 in 2010 to 47,010 in 2022."
 all_sentence_population_by_year <- map(.x = states, .f = function(x) {
-  # Filter bjs_prison_pop_by_rptyear_filtered data for the specific state
+  # Filter data for the specific state
   df1 <- bjs_prison_pop_by_rptyear_filtered |>
     filter(state == x)
 
-  # Check if df1 has data
+  # If no data is available for the state, return an appropriate message
   if (nrow(df1) == 0) {
     return(paste0("No valid data available for ", x, "."))
   }
@@ -42,7 +61,7 @@ all_sentence_population_by_year <- map(.x = states, .f = function(x) {
   earliest_year <- min(df1$rptyear, na.rm = TRUE)
   earliest_year_population <- df1$bjs_prison_population[df1$rptyear == earliest_year]
 
-  # Handle cases where the population data for the earliest year is missing
+  # Handle missing population data for the earliest year by finding the next available year
   if (is.na(earliest_year_population) | length(earliest_year_population) == 0) {
     earliest_year <- min(df1$rptyear[!is.na(df1$bjs_prison_population)], na.rm = TRUE)
     earliest_year_population <- df1$bjs_prison_population[df1$rptyear == earliest_year]
@@ -52,23 +71,23 @@ all_sentence_population_by_year <- map(.x = states, .f = function(x) {
   latest_year <- max(df1$rptyear, na.rm = TRUE)
   latest_year_population <- df1$bjs_prison_population[df1$rptyear == latest_year]
 
-  # Handle cases where the population data for the latest year is missing
+  # Handle missing population data for the latest year by finding the previous available year
   if (is.na(latest_year_population) | length(latest_year_population) == 0) {
     latest_year <- max(df1$rptyear[!is.na(df1$bjs_prison_population) & df1$rptyear < latest_year], na.rm = TRUE)
     latest_year_population <- df1$bjs_prison_population[df1$rptyear == latest_year]
   }
 
-  # Check if population data is still missing after adjustments
+  # If population data is still missing after adjustments, return an appropriate message
   if (is.na(earliest_year_population) | is.na(latest_year_population)) {
     return(paste0("Population data is missing for ", x, "."))
   }
 
-  # Calculate the percentage change in population from the earliest to latest year
+  # Calculate the percentage change in population between the earliest and latest years
   percent_change <- (latest_year_population - earliest_year_population) / earliest_year_population * 100
-  change_type <- ifelse(percent_change < 0, "decreased", "increased")  # Determine if population increased or decreased
-  percent_change_abs <- abs(round(percent_change, 0))
+  change_type <- ifelse(percent_change < 0, "decreased", "increased")  # Determine if the change is positive or negative
+  percent_change_abs <- abs(round(percent_change, 0))  # Use absolute value for reporting
 
-  # Construct a sentence summarizing the population change over the years
+  # Construct the summary sentence
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the prison population ",
                       change_type, " ", percent_change_abs, " percent, changing from ",
                       format(earliest_year_population, big.mark = ","), " in ",
@@ -76,34 +95,36 @@ all_sentence_population_by_year <- map(.x = states, .f = function(x) {
   return(sentences)
 })
 
-# Assign state names to the list
+# Assign state names to the generated sentences for easy access
 all_sentence_population_by_year <- setNames(all_sentence_population_by_year, states)
 all_sentence_population_by_year$Georgia
 
-# VISUALIZATION: Prison Population by Year
-# Generate chart for each state
-all_line_population_by_year <- map(.x = states,  .f = function(x) {
+# Generate line charts for each state's prison population trends over time
+all_line_population_by_year <- map(.x = states, .f = function(x) {
 
+  # Filter data for the specific state
   df1 <- bjs_prison_pop_by_rptyear_filtered |>
     ungroup() |>
     filter(state == x) |>
-    distinct() |>
+    distinct() |>  # Ensure unique rows
     mutate(tooltip = paste0("Year: ", rptyear, "<br>",
-                            "Year-End Population: ", bjs_prison_population))
+                            "Year-End Population: ", bjs_prison_population))  # Add tooltips for chart interactivity
 
-  # Adds a small margin space at the top
-  max_value <- max(df1$bjs_prison_population)*1.1
+  # Add a margin to the maximum value for better chart visualization
+  max_value <- max(df1$bjs_prison_population) * 1.1
 
+  # Accessibility description for the chart
   hc_accessibility_text <- paste0("This line chart shows the year-end prison population in ",
                                   x, " from ", min(df1$rptyear), " to ",
-                                  max(df1$rptyear),
-                                  ". Each point on the chart represents the prison population for a specific year, ",
+                                  max(df1$rptyear), ". Each point on the chart represents the prison population for a specific year, ",
                                   "showing trends over time. The y-axis represents the number of people in prison, ",
                                   "and the x-axis represents the years. ",
                                   "The tooltip provides the exact year and the corresponding prison population.")
 
+  # Define the chart title
   title <- "Prison Population by Year"
 
+  # Create the Highcharts object for visualization
   highcharts <-
     hc <- highchart() |>
     hc_chart(type = "line") |>
@@ -115,10 +136,10 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
              lineWidth = 1) |>
     hc_series(
       list(
-        name = "population",
-        data = df1$bjs_prison_population,
+        name = "Population",  # Name of the series
+        data = df1$bjs_prison_population,  # Data to visualize
         tooltip = list(
-          pointFormat = "<b>Prison Population:</b> {point.y}"
+          pointFormat = "<b>Prison Population:</b> {point.y}"  # Tooltip format
         )
       )
     ) |>
@@ -128,52 +149,74 @@ all_line_population_by_year <- map(.x = states,  .f = function(x) {
                  filename = paste0(gsub(" ", "_", tolower(title)), "_",
                                    min(df1$rptyear), "_", max(df1$rptyear))) |>
     hc_caption(text = bjs_source) |>
-    fnc_add_hc_accessibility(hc_accessibility_text)
+    fnc_add_hc_accessibility(hc_accessibility_text)  # Add accessibility features
 
   return(highcharts)
 })
+
+# Assign state names to the generated charts for easy access
 all_line_population_by_year <- setNames(all_line_population_by_year, states)
 all_line_population_by_year$Georgia
 all_line_population_by_year$Hawaii
-rm(states)
+rm(states)  # Cleanup: Remove the temporary `states` variable
+
+
 
 # ---------------------------------------------------------------------------- #
 # Prepare Column Charts Data (Demographics, Offense Type, Sentence Length)
 # ---------------------------------------------------------------------------- #
 
+# Filter the consolidated NCRP year-end population data for the selected year
 current_yearendpop <- ncrp_yearendpop_consolidated |>
-  fnc_filter_by_year(which_overall_year)
+  fnc_filter_by_year(which_overall_year)  # Ensure only data for the best year is included
 
+# Filter the non-consolidated NCRP year-end population data for the selected year
+# This includes variables like `ageyrend` which are not present in the consolidated file
 current_yearendpop_not_consolidated <- ncrp_yearendpop_not_consolidated |>
   fnc_filter_by_year(which_overall_year)
 
-## Summarize number of people in prison by race, sex, ageyrend, offense, and sentence length
-bjs_population_race       <- bjs_prison_pop_by_race |> fnc_filter_by_year(which_overall_year) #################################################
-bjs_population_sex        <- bjs_prison_pop_by_sex |> fnc_filter_by_year(which_overall_year)
-ncrp_population_ageyrend  <- fnc_summarize_data(current_yearendpop_not_consolidated, "ageyrend")
-ncrp_population_fbi_index <- fnc_summarize_data(current_yearendpop, "fbi_index") |>
-  fnc_group_offense_type()
-ncrp_population_sentlgth  <- fnc_summarize_data(current_yearendpop, "sentlgth")
+# Summarize the prison population data by various attributes for visualization and analysis
 
-# List of parameters for each category
+# BJS data: Summarize population by race for the selected year
+bjs_population_race <- bjs_prison_pop_by_race |>
+  fnc_filter_by_year(which_overall_year)  # Filter data for the selected year
+
+# BJS data: Summarize population by sex for the selected year
+bjs_population_sex <- bjs_prison_pop_by_sex |>
+  fnc_filter_by_year(which_overall_year)  # Filter data for the selected year
+
+# NCRP data: Summarize population by age (using non-consolidated data due to `ageyrend` availability)
+ncrp_population_ageyrend <- fnc_summarize_data(current_yearendpop_not_consolidated, "ageyrend")
+
+# NCRP data: Summarize population by offense type (FBI Index)
+ncrp_population_fbi_index <- fnc_summarize_data(current_yearendpop, "fbi_index") |>
+  fnc_group_offense_type()  # Group offenses into broader categories like "Violent" or "Nonviolent"
+
+# NCRP data: Summarize population by sentence length
+ncrp_population_sentlgth <- fnc_summarize_data(current_yearendpop, "sentlgth")
+
+# Create a list of categories to streamline chart and sentence generation
 categories <- list(
-  list(data = bjs_population_race, x_var = "race", metric = "Race and Ethnicity", source = bjs_source),
-  list(data = bjs_population_sex, x_var = "sex", metric = "Sex", source = bjs_source),
-  list(data = ncrp_population_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source),
-  list(data = ncrp_population_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),
-  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)
+  list(data = bjs_population_race, x_var = "race", metric = "Race and Ethnicity", source = bjs_source),             # Race data from BJS
+  list(data = bjs_population_sex, x_var = "sex", metric = "Sex", source = bjs_source),                              # Sex data from BJS
+  list(data = ncrp_population_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source),              # Age data from NCRP
+  list(data = ncrp_population_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),  # Sentence length from NCRP
+  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)    # Offense type from NCRP
 )
+
+
 
 # ---------------------------------------------------------------------------- #
 # Generate Sentences and Column Charts (Demographics, Offense Type, Sentence Length)
 # ---------------------------------------------------------------------------- #
 
-# Initialize empty lists to store bar charts and sentences
+# Initialize empty lists to store bar charts and sentences for each category
 all_bar_population <- list()
 all_sentence_population <- list()
 
 # Loop through each category to generate bar charts and sentences
 for (category in categories) {
+  # Generate bar charts for the current category
   all_bar_population[[category$x_var]] <- fnc_generate_bar_charts(
     data       = category$data,
     x_var      = category$x_var,
@@ -184,6 +227,7 @@ for (category in categories) {
     source     = category$source
   )
 
+  # Generate sentences for the current category
   all_sentence_population[[category$x_var]] <- fnc_generate_sentences(
     data      = category$data,
     x_var     = category$x_var,
@@ -192,15 +236,15 @@ for (category in categories) {
 }
 
 # Access specific bar charts and sentences
-all_bar_population_race <- all_bar_population[["race"]]
-all_sentence_population_race <- all_sentence_population[["race"]]
-all_bar_population_sex <- all_bar_population[["sex"]]
-all_sentence_population_sex <- all_sentence_population[["sex"]]
-all_bar_population_ageyrend <- all_bar_population[["ageyrend"]]
-all_sentence_population_ageyrend <- all_sentence_population[["ageyrend"]]
-all_bar_population_sentlgth <- all_bar_population[["sentlgth"]]
-all_sentence_population_sentlgth <- all_sentence_population[["sentlgth"]]
-all_bar_population_fbi_index <- all_bar_population[["fbi_index"]]
+all_bar_population_race           <- all_bar_population[["race"]]
+all_sentence_population_race      <- all_sentence_population[["race"]]
+all_bar_population_sex            <- all_bar_population[["sex"]]
+all_sentence_population_sex       <- all_sentence_population[["sex"]]
+all_bar_population_ageyrend       <- all_bar_population[["ageyrend"]]
+all_sentence_population_ageyrend  <- all_sentence_population[["ageyrend"]]
+all_bar_population_sentlgth       <- all_bar_population[["sentlgth"]]
+all_sentence_population_sentlgth  <- all_sentence_population[["sentlgth"]]
+all_bar_population_fbi_index      <- all_bar_population[["fbi_index"]]
 all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 
 
