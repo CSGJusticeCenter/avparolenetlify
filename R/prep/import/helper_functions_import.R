@@ -14,6 +14,13 @@ fnc_format_citation <- function(citation) {
     function(x) paste0("*", x, "*")
   )
 
+  # Replace "pdf." with "pdf"
+  formatted_citation <- str_replace_all(
+    formatted_citation,
+    "pdf\\.",
+    "pdf"
+  )
+
   # Convert URLs to markdown hyperlinks
   formatted_citation <- str_replace_all(
     formatted_citation,
@@ -130,6 +137,118 @@ fnc_create_admtype <- function(df) {
   return(df)
 }
 
+#' Transform NCRP Data
+#'
+#' This function transforms NCRP data by modifying or imputing variables, standardizing formats,
+#' and categorizing key fields. It is used to clean and prepare NCRP datasets for further analysis.
+#'
+#' @param df A data frame containing NCRP data to be transformed.
+#' @param states_to_update A vector of state names where specific variables should be updated.
+#' @return A transformed version of the input data frame with standardized and categorized variables.
+#' @details
+#' - Updates variables such as `estimated_pey_status` and `sentlgth`.
+#' - Handles missing data, categorizes offense types and admission types, and applies age group transformations.
+#' - Factors variables like `race` and `sentlgth` for consistent ordering in analysis.
+#' @export
+fnc_transform_ncrp_data <- function(df, states_to_update) {
+  print("Transforming NCRP data...")
+
+  # Ensure that `states_to_update` is available
+  if (!exists("states_to_update")) {
+    stop("The object 'states_to_update' is not defined in the global environment.")
+  }
+
+  # Define the columns to transform if they exist in the dataset
+  columns_to_check <- c("race", "sex", "admtype", "sentlgth", "offdetail")
+  existing_columns <- intersect(columns_to_check, colnames(df)) # Check for existing columns
+
+  # Check if age variable is available and set the appropriate age variable
+  if ("ageyrend" %in% colnames(df)) {
+    age_var <- "ageyrend"
+  } else if ("agerlse" %in% colnames(df)) {
+    age_var <- "agerlse"
+  } else {
+    age_var <- NULL
+  }
+
+  # If age_var is not NULL, add it to the list of existing columns
+  if (!is.null(age_var)) {
+    existing_columns <- c(existing_columns, age_var)
+  }
+
+  # Print the columns identified for transformation
+  print(paste("Existing columns to transform:", paste(existing_columns, collapse = ", ")))
+
+  # Begin transformations
+  df <- df |>
+    mutate(
+      # Update estimated parole eligibility status for specific states
+      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status),
+      sentlgth_raw = sentlgth, # Backup original sentence length
+      offdetail = trimws(offdetail), # Trim whitespace from offense details
+      time_between_ped_rptyear = as.numeric(years_to_estimated_pey), # Rename and convert years to numeric
+
+      # Create broader eligibility categories
+      parelig_status = case_when(
+        estimated_pey_status %in% c("past", "current_year") ~ "Current",
+        estimated_pey_status == "missing" ~ "Missing",
+        estimated_pey_status == "future" ~ "Future",
+        TRUE ~ estimated_pey_status
+      )
+    ) |>
+
+    # Replace "NA" or actual missing values with "Unknown" for specified columns
+    mutate_at(all_of(existing_columns),
+              ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
+
+    # Apply offense and admission type categorization functions
+    fnc_create_fbi_index() |>
+    fnc_create_admtype() |>
+    mutate(
+      # Categorize imputed sentence length values
+      calc_sent_lgth = case_when(
+        calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
+        calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
+        calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
+        calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
+        calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
+        calc_sent_lgth_compl >= 25 ~ ">=25 years",
+        is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
+        TRUE ~ "Unknown"
+      ),
+      # Replace missing `sentlgth` with categorized imputed values
+      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth, TRUE ~ sentlgth),
+
+      # Factor race with specified levels
+      race = factor(race, levels = c("Unknown", "Other race(s), non-Hispanic",
+                                     "White, non-Hispanic", "Hispanic, any race",
+                                     "Black, non-Hispanic")),
+      # Factor sentence length with specified levels
+      sentlgth = factor(sentlgth, levels = c("< 1 year",
+                                             "1-1.9 years",
+                                             "2-4.9 years",
+                                             "5-9.9 years",
+                                             "10-24.9 years",
+                                             ">=25 years",
+                                             "Life, LWOP, Life plus additional years, Death",
+                                             "Unknown"))
+    )
+
+  # Apply transformations for age variable if it exists
+  if (!is.null(age_var)) {
+    print("Transforming age variable...")
+    df <- df |>
+      mutate(!!sym(age_var) := factor(!!sym(age_var),
+                                      levels = c("18-24 years", "25-34 years",
+                                                 "35-44 years", "45-54 years",
+                                                 "55+ years", "Unknown")))
+  }
+
+  # Print completion message and return the transformed data
+  print("NCRP data transformation complete.")
+  return(df)
+}
+
 #' Clean BJS (Bureau of Justice Statistics) data by correcting state names and filtering out invalid rows
 #'
 #' @param df A dataframe containing BJS data with columns `state` and `bjs_prison_population`.
@@ -162,115 +281,6 @@ fnc_clean_bjs_data <- function(df) {
     mutate(bjs_prison_population = as.numeric(bjs_prison_population))
 
   print("BJS data cleaned.")
-  return(df)
-}
-
-#' Transform NCRP Data
-#'
-#' This function performs a series of transformations on NCRP data, including
-#' handling missing values, creating new variables, and categorizing data based
-#' on certain conditions. It also transforms specific columns if they exist in
-#' the data frame and applies factors to categorical variables.
-#'
-#' @param df A data frame containing NCRP data to be transformed.
-#'
-#' @return A transformed data frame with new variables and adjusted columns.
-#' @export
-fnc_transform_ncrp_data <- function(df, states_to_update) {
-  print("Transforming NCRP data...")
-
-  # Ensure that `states_to_update` is available
-  if (!exists("states_to_update")) {
-    stop("The object 'states_to_update' is not defined in the global environment.")
-  }
-
-  # Define the columns to transform if they exist in the dataset
-  columns_to_check <- c("race", "sex", "admtype", "sentlgth", "offdetail")
-  existing_columns <- intersect(columns_to_check, colnames(df))
-
-  # Check if age variable is available
-  # Change age variable depending on if it is a release file or population file
-  if ("ageyrend" %in% colnames(df)) {
-    age_var <- "ageyrend"
-  } else if ("agerlse" %in% colnames(df)) {
-    age_var <- "agerlse"
-  } else {
-    age_var <- NULL
-  }
-
-  # If age_var is not NULL, add it to the list of existing columns
-  if (!is.null(age_var)) {
-    existing_columns <- c(existing_columns, age_var)
-  }
-
-  print(paste("Existing columns to transform:", paste(existing_columns, collapse = ", ")))
-
-  df <- df |>
-    mutate(
-      # Use earliest_pey1_status as estimated_pey_status for specific states
-      # because it's more reliable than the imputed value (estimated_pey_status)
-      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status),
-      sentlgth_raw = sentlgth, # back up sentence length
-      offdetail = trimws(offdetail), # trim white space
-      time_between_ped_rptyear = as.numeric(years_to_estimated_pey), # rename variable
-
-      # Create category for past and currently eligible people. They are both eligible currently, technically...
-      parelig_status = case_when(
-        estimated_pey_status %in% c("past", "current_year") ~ "Current",
-        estimated_pey_status == "missing" ~ "Missing",
-        estimated_pey_status == "future" ~ "Future",
-        TRUE ~ estimated_pey_status
-      )
-    ) |>
-
-    # Change instances of "NA" to "Unknown"
-    mutate_at(all_of(existing_columns),
-              ~ ifelse(. == "NA" | is.na(.), "Unknown", .)) |>
-
-    # Categorize offense categories
-    fnc_create_fbi_index() |>
-
-    # Categorize admission type
-    fnc_create_admtype() |>
-    mutate(
-      # Categorize Seba Guzman's imputated variable calc_sent_lgth to be the same as NCRP's sentlgth
-      calc_sent_lgth = case_when(
-        calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
-        calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
-        calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
-        calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
-        calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
-        calc_sent_lgth_compl >= 25  ~ ">=25 years",
-        is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
-        TRUE ~ "Unknown"),
-      # If sentlgth is unknown, use Seba Guzman's imputated variable calc_sent_lgth
-      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth, TRUE ~ sentlgth),
-
-      # Factor race and sentence length
-      race = factor(race, levels = c("Unknown", "Other race(s), non-Hispanic",
-                                     "White, non-Hispanic", "Hispanic, any race",
-                                     "Black, non-Hispanic")),
-      sentlgth = factor(sentlgth, levels = c("< 1 year",
-                                             "1-1.9 years",
-                                             "2-4.9 years",
-                                             "5-9.9 years",
-                                             "10-24.9 years",
-                                             ">=25 years",
-                                             "Life, LWOP, Life plus additional years, Death",
-                                             "Unknown"))
-    )
-
-  # If age variable exists, apply transformation for age (it is already part of `existing_columns`)
-  if (!is.null(age_var)) {
-    print("Transforming age variable...")
-    df <- df |>
-      mutate(!!sym(age_var) := factor(!!sym(age_var),
-                                      levels = c("18-24 years", "25-34 years",
-                                                 "35-44 years", "45-54 years",
-                                                 "55+ years", "Unknown")))
-  }
-
-  print("NCRP data transformation complete.")
   return(df)
 }
 

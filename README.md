@@ -88,6 +88,9 @@ avparolenetlify/
 # File Descriptions
 
 **R/:** 
+- run.R: Runs all R code and automates the creation of Quarto documents for 
+rendering. Use this R file for general instructions for how to run all code 
+and generate the website.
 - config.R: Centralized configuration file where you define file
 paths, global settings, and parameters that are used throughout the
 project. This makes it easy to change settings without modifying
@@ -95,7 +98,6 @@ individual scripts.
 - pull_state_findings.R: Extracts and summarizes state-specific data
 from NCRP term records. It generates findings for each state, which can
 be used in the state reports.  
-- run.R: Runs all R code and automates the creation of Quarto documents for rendering.  
 
 **R/prep/:**
 
