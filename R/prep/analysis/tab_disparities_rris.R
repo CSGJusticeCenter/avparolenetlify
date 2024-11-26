@@ -11,14 +11,16 @@
 # Data Preparation and Filtering
 # ---------------------------------------------------------------------------- #
 
-# Apply filtering criteria to prepare the NCRP year-end population data
+# # Apply filtering criteria to prepare the NCRP year-end population data
 # ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(
 #   data = ncrp_yearendpop_consolidated, # Use the consolidated dataset
 #   exclude = states_to_exclude,         # Exclude states with abolished parole or high missingness
 #   dont_filter = states_nofilter        # Include specific states without filtering by admission type or sentence length
-# )
+#   )
+
 # Filter the consolidated year-end prison population data for specific criteria
 ncrp_yearendpop_filtered <- ncrp_yearendpop_consolidated |>
+  filter(state %in% seba_rris_pop_pop_race_v1$state) |>
   filter(!state %in% states_to_exclude$state) |>  # Exclude states with abolished parole or high missingness
   filter(
     admtype %in% c("New court commitment", "Unknown", NA) &  # Include admissions for new court commitments or unknown types
@@ -72,11 +74,10 @@ merged_prison_pop_data_race <- prison_pop_by_race |>
 all_pe_rri_data <- fnc_calculate_rri(
   merged_prison_pop_data_race,
   comparison_group = "White, non-Hispanic",  # Set "White, non-Hispanic" as the reference group
-  category = "race"
-) |>
+  category = "race") |>
   mutate(
     rri = case_when(
-      state == "Hawaii" & race == "Other race(s), non-Hispanic" ~ 1.3,  # Manually inject test data for Hawaii
+      #state == "Hawaii" & race == "Other race(s), non-Hispanic" ~ 1.3,  # Manually inject test data for Hawaii
       TRUE ~ rri  # Retain calculated RRI otherwise
     )
   )

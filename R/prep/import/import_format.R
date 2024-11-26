@@ -430,11 +430,9 @@ data_files <- list(
   ncrp_projections                 = "ncrp_projections.rds",
   ncrp_population_projections      = "ncrp_population_projections.rds",
   ncrp_releases_not_consolidated   = "ncrp_releases_not_consolidated.rds",
-  ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",
+  ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
-  ncrp_yearendpop_combined         = "ncrp_yearendpop_combined.rds",
-  ncrp_releases_combined           = "ncrp_releases_combined.rds",
 
   bjs_prison_pop_by_race           = "bjs_prison_pop_by_race.rds",
   bjs_prison_pop_by_sex            = "bjs_prison_pop_by_sex.rds",
