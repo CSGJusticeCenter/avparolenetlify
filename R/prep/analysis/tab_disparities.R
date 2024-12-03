@@ -239,7 +239,7 @@ all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
   df = los_race_by_offense_type,
   group_var = "race",
   measure = "average_los",
-  source = ncrp_source
+  source = ncrp_source_year
 )
 all_scatter_los_race_offense$Georgia
 all_scatter_los_race_offense$Hawaii
@@ -249,7 +249,7 @@ all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
   df = los_sex_by_offense_type,
   group_var = "sex",
   measure = "average_los",
-  source = ncrp_source
+  source = ncrp_source_year
 )
 all_scatter_los_sex_offense$Georgia
 
@@ -296,7 +296,7 @@ all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
   df = avg_past_pe_race_by_offense_type,
   group_var = "race",
   measure = "avg_years_to_estimated_pey",
-  source = ncrp_csg_source
+  source = ncrp_csg_source_year
 )
 all_scatter_avg_past_pe_race_offense$Georgia
 
@@ -305,7 +305,7 @@ all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(
   df = avg_past_pe_sex_by_offense_type,
   group_var = "sex",
   measure = "avg_years_to_estimated_pey",
-  source = ncrp_csg_source
+  source = ncrp_csg_source_year
 )
 all_scatter_avg_past_pe_sex_offense$Georgia
 

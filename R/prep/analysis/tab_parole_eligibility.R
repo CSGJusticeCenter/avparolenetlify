@@ -56,7 +56,7 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
 all_pie_pe_type <- fnc_hc_pie_chart(
   df = pe_status_pop, # Filtered population data
   variable = "parelig_status", # Variable to visualize in the pie chart
-  source = ncrp_csg_source # Source information for the chart caption
+  source = ncrp_csg_source_year # Source information for the chart caption
 )
 all_pie_pe_type$Georgia
 
@@ -236,11 +236,11 @@ current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |> # Summari
 
 # Create a list of parameters for each category to streamline chart and sentence generation
 categories <- list(
-  list(data = current_pe_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source),
-  list(data = current_pe_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source),
-  list(data = current_pe_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source),
-  list(data = current_pe_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),
-  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)
+  list(data = current_pe_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source_year),
+  list(data = current_pe_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source_year),
+  list(data = current_pe_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source_year),
+  list(data = current_pe_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source_year),
+  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source_year)
 )
 
 

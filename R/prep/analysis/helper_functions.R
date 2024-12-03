@@ -598,7 +598,8 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_add_theme(base_hc_theme) |> # Apply the base theme
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |> # Add custom tooltip formatter
     hc_legend(enabled = FALSE) |> # Disable the legend
-    hc_title(text = paste0(title, ", ", year)) |> # Add the chart title
+    # hc_title(text = paste0(title, ", ", year)) |> # Add the chart title
+    hc_title(text = title) |> # Add the chart title
     hc_exporting(enabled = TRUE, # Enable exporting functionality
                  filename = paste0(gsub(" ", "_", tolower(title)), "_", year)) |>
     fnc_add_hc_accessibility(accessibility_text) |> # Add accessibility text
@@ -1017,7 +1018,8 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
       sentences <- c(black_sentence, hispanic_sentence, other_sentence)
       sentences <- sentences[sentences != ""]
       if (length(sentences) > 0) {
-        return(paste0("In ", year, ", ", paste(sentences, collapse = ", and "), " compared to White people."))
+        # return(paste0("In ", year, ", ", paste(sentences, collapse = ", and "), " compared to White people."))
+        return(paste0(paste(sentences, collapse = ", and "), " compared to White people."))
       } else {
         return("No significant differences in average years spent compared to White people.")
       }
@@ -1108,7 +1110,8 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
       if (los_diff_female > 0) {
         # Females spent more years on average
         sentence <- paste0(
-          "In ", year, ", females ",
+          # "In ", year, ", females ",
+          "Females ",
           if (type == "in prison") "released" else "who were still incarcerated",
           " spent on average ", abs_los_diff_female,
           if (abs_los_diff_female == 1) " more year" else " more years",
@@ -1118,7 +1121,8 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
       } else if (los_diff_female < 0) {
         # Females spent fewer years on average
         sentence <- paste0(
-          "In ", year, ", females ",
+          # "In ", year, ", females ",
+          "Females ",
           if (type == "in prison") "released" else "who were still incarcerated",
           " spent on average ", abs_los_diff_female,
           if (abs_los_diff_female == 1) " less year" else " less years",
@@ -1134,7 +1138,8 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
     return(sentence)  # Return the constructed sentence if disparity is found
   } else {
     return(paste0(
-      "In ", year, ", females and males spent the same average number of years ",
+      # "In ", year, ", females and males spent the same average number of years ",
+      "Females and males spent the same average number of years ",
       if (type == "in prison") "in prison." else "past parole eligibility."
     ))
   }
@@ -1184,11 +1189,14 @@ fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, s
 
   # Determine the title based on the group_var
   chart_title <- if (group_var == "sex") {
-    paste("Average Time Served by Sex,", year)
+    # paste("Average Time Served by Sex,", year)
+    paste("Average Time Served by Sex")
   } else if (group_var == "race") {
-    paste("Average Time Served by Race and Ethnicity,", year)
+    # paste("Average Time Served by Race and Ethnicity,", year)
+    paste("Average Time Served by Race and Ethnicity")
   } else {
-    paste("Average Time Served by", group_var, ",", year)
+    # paste("Average Time Served by", group_var, ",", year)
+    paste("Average Time Served by", group_var)
   }
 
   # Generate accessibility text based on the data
@@ -1316,7 +1324,7 @@ fnc_generate_lollipop_charts <- function(df, compare_var, height = 200) {
       df = df,
       group_var = compare_var,
       state_name = state_var,
-      source = ncrp_source,
+      source = ncrp_source_year,
       height = height
     )
   })
@@ -1409,7 +1417,7 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
     if (nrow(df_disparity_filtered) == 0) {
       time_description <- ifelse(time_var == "time_served", "time served in prison", "time spent in prison past parole eligibility")
       return(paste0("The chart below shows the average ", time_description, " by offense type and ",
-                    ifelse(grouping_var == "race", "race and ethnicity", grouping_var), " in ", year, "."))
+                    ifelse(grouping_var == "race", "race and ethnicity", grouping_var), "."))
     }
 
     # Exclude "Other Violent Offenses" if it's the largest disparity (and there are other offenses)
@@ -1428,7 +1436,7 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
     time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
     sentence <- paste0(
       "The chart below shows the average ", time_description, " by offense type and ",
-      ifelse(grouping_var == "race", "race and ethnicity", grouping_var), " in ", year, ". ",
+      ifelse(grouping_var == "race", "race and ethnicity", grouping_var), ". ",
       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
       group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",
       " spent on average ", disparity_diff, " more years in prison compared to ",
@@ -1496,7 +1504,7 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = 
     # Define dynamic titles and labels for the chart
     x_axis_title <- ifelse(measure == "average_los", "Average Time Served (Years)", "Average Years Past Parole Eligibility")
     chart_title <- paste0("Average ", ifelse(measure == "average_los", "Time Served", "Years Past Parole Eligibility"),
-                          " by Offense and ", ifelse(group_var == "sex", "Gender", "Race and Ethnicity"), ", ", year)
+                          " by Offense and ", ifelse(group_var == "sex", "Gender", "Race and Ethnicity"))
 
     # Generate accessibility text for the chart
     accessibility_measure <- ifelse(measure == "average_los", "average length of stay", "average years past parole eligibility")
@@ -1643,12 +1651,19 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
     rri <- df1$rri
 
     # Ensure "label" is lowercase if it matches "Male"
-    label <- if (label == "Male") "males" else label
+    # label <- if (label == "Male") "males" else label
+    # Adjust the label for specific cases
+    label <- case_when(
+      label == "Hispanic, any race" ~ "Hispanic people",
+      label == "Black, non-Hispanic" ~ "Black, non-Hispanic people"
+      TRUE ~ label
+    )
 
     # Generate sentence for RRI > 1 (higher disparity)
     if (rri > 1) {
       paste0(
-        "In ", df1$rptyear, ", <span style='color:", color, "; font-weight:bold;'>", label,
+        # "In ", df1$rptyear, ", <span style='color:", color, "; font-weight:bold;'>", label,
+        "<span style='color:", color, "; font-weight:bold;'>", label,
         "</span> were incarcerated in state prison past parole eligibility at a rate <span style='color:",
         color, "; font-weight:bold;'>", rri, " times higher</span> than <span style='color:",
         comparison_color, "; font-weight:bold;'>", comparison_group,
@@ -1657,7 +1672,8 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
     } else {  # Generate sentence for RRI <= 1 (lower disparity)
       percent_less <- round((1 - rri) * 100, 0)
       paste0(
-        "In ", df1$rptyear, ", <span style='color:", color, "; font-weight:bold;'>", label,
+        # "In ", df1$rptyear, ", <span style='color:", color, "; font-weight:bold;'>", label,
+        "<span style='color:", color, "; font-weight:bold;'>", label,
         "</span> were <span style='color:", color, "; font-weight:bold;'>", percent_less,
         " percent less likely</span> to be incarcerated in state prison past parole eligibility compared to <span style='color:",
         comparison_color, "; font-weight:bold;'>", comparison_group,
@@ -1671,6 +1687,7 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
 
   return(sentences)
 }
+
 
 # ---------------------------------------------------------------------------- #
 # People Infographic Helper Functions

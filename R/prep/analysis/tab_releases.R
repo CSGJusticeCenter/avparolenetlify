@@ -248,13 +248,15 @@ all_sentence_pe_proportion_released <- map(.x = states, .f = function(x) {
       # Generate sentence based on whether there was an increase or decrease
       if (prop_change > 0) {
         sentence <- paste0(
-          "In ", latest_year, ", ", round(prop_past_parole_latest * 100, 0),
+          # "In ", latest_year, ", ", round(prop_past_parole_latest * 100, 0),
+          "In the most recent year of data available, ", round(prop_past_parole_latest * 100, 0),
           " percent of parole-eligible people released in ", x, " were released past their parole eligibility year, ",
           "which is an increase of ", round(prop_change, 0), " percent from ", earliest_year, "."
         )
       } else {
         sentence <- paste0(
-          "In ", latest_year, ", ", round(prop_past_parole_latest * 100, 0),
+          # "In ", latest_year, ", ", round(prop_past_parole_latest * 100, 0),
+          "In the most recent year of data available, ", round(prop_past_parole_latest * 100, 0),
           " percent of parole-eligible people released in ", x, " were released past their parole eligibility year, ",
           "which is a decrease of ", round(abs(prop_change), 0), " percent from ", earliest_year, "."
         )
@@ -321,7 +323,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
   # Create a pie chart visualization
   highcharts <- highchart() |>
     hc_chart(type = "pie") |>
-    hc_title(text = paste0("Percentage of Conditional vs. Unconditional Releases, ", year)) |>
+    hc_title(text = paste0("Percentage of Conditional vs. Unconditional Releases")) |>
     hc_plotOptions(pie = list(
       # Rotate the chart by 90 degrees if all releases are conditional
       startAngle = if (is_100_conditional) 90 else 0,
@@ -342,7 +344,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_colors(c(color4, color2)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
-    hc_caption(text = ncrp_source) |>
+    hc_caption(text = ncrp_source_year) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -362,7 +364,8 @@ all_sentence_release_type <- map(.x = states, .f = function(x) {
   # Construct the summary sentence for the state
   sentences <- paste0(
     "Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. ",
-    "In ", unique(df1$rptyear), ", ", round(df1$prop * 100, 0),
+    # "In ", unique(df1$rptyear), ", ", round(df1$prop * 100, 0),
+    round(df1$prop * 100, 0),
     " percent of people released from prison were ", tolower(df1$reltype), "s."
   )
 
@@ -402,11 +405,11 @@ ncrp_releases_sentlgth <- fnc_summarize_data(current_releases, "sentlgth")
 
 # Create a list of parameters for each category to streamline chart and sentence generation
 categories <- list(
-  list(data = ncrp_releases_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source),
-  list(data = ncrp_releases_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source),
-  list(data = ncrp_releases_agerlse, x_var = "agerlse", metric = "Age", source = ncrp_csg_source),
-  list(data = ncrp_releases_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),
-  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)
+  list(data = ncrp_releases_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source_year),
+  list(data = ncrp_releases_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source_year),
+  list(data = ncrp_releases_agerlse, x_var = "agerlse", metric = "Age", source = ncrp_csg_source_year),
+  list(data = ncrp_releases_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source_year),
+  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source_year)
 )
 
 

@@ -118,7 +118,7 @@ fnc_display_sentence_chart(state_sentence_pe_ageyrend, state_bar_pe_ageyrend,
 ## Offense Types
 
 ```{r results = 'asis', state_sentence_pe_fbi_index}
-fnc_display_sentence_chart(state_sentence_pe_fbi_index, state_bar_ped_fbi_index)
+fnc_display_sentence_chart(state_sentence_pe_fbi_index, state_bar_pe_fbi_index)
 ```
 
 <br>

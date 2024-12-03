@@ -98,7 +98,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_ageyrend.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_ageyrend.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_fbi_index.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_ped_fbi_index.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_fbi_index.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_sentlgth.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_sentlgth.rds"))
 
@@ -156,8 +156,8 @@ state_bar_pe_ageyrend <- apply_chart_settings(
 
 state_sentence_pe_fbi_index <- all_sentence_pe_fbi_index[[state_for_report]]
 
-state_bar_ped_fbi_index <- apply_chart_settings(
-  all_bar_ped_fbi_index[[state_for_report]],
+state_bar_pe_fbi_index <- apply_chart_settings(
+  all_bar_pe_fbi_index[[state_for_report]],
   height = 500,
   color = color4
 )

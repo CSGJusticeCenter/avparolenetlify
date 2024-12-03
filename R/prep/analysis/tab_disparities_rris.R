@@ -11,21 +11,15 @@
 # Data Preparation and Filtering
 # ---------------------------------------------------------------------------- #
 
-# # Apply filtering criteria to prepare the NCRP year-end population data
-# ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(
-#   data = ncrp_yearendpop_consolidated, # Use the consolidated dataset
-#   exclude = states_to_exclude,         # Exclude states with abolished parole or high missingness
-#   dont_filter = states_nofilter        # Include specific states without filtering by admission type or sentence length
-#   )
-
+# # Import Mari Robert's rri values
+# load(file = paste0(sp_data_path, "/data/analysis/app/all_pe_rri_data.rds"))
 # Filter the consolidated year-end prison population data for specific criteria
 ncrp_yearendpop_filtered <- ncrp_yearendpop_consolidated |>
-  filter(state %in% seba_rris_pop_pop_race_v1$state) |>
+  # filter(state %in% seba_rris_pop_pop_race_v1$state) |>
   filter(!state %in% states_to_exclude$state) |>  # Exclude states with abolished parole or high missingness
   filter(
-    admtype %in% c("New court commitment", "Unknown", NA) &  # Include admissions for new court commitments or unknown types
-      sentlgth %in% c("1-1.9 years", "2-4.9 years",            # Include individuals with specific sentence lengths
-                      "5-9.9 years", "10-24.9 years", ">=25 years", "Unknown", NA)
+    !(admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
+      !(sentlgth_raw %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth_raw) | sentlgth_raw == "Unknown")
   )
 
 # Exclude states with high missingness for race and ethnicity and filter by state-specific conditions
@@ -77,10 +71,12 @@ all_pe_rri_data <- fnc_calculate_rri(
   category = "race") |>
   mutate(
     rri = case_when(
-      #state == "Hawaii" & race == "Other race(s), non-Hispanic" ~ 1.3,  # Manually inject test data for Hawaii
       TRUE ~ rri  # Retain calculated RRI otherwise
     )
   )
+
+# USE SEBA'S RRI's for now#################################################################
+# all_pe_rri_data <-
 
 # Filter RRI data to include only disparities (RRI > 1 or RRI < 1)
 all_pe_rri_data_filtered <- all_pe_rri_data |>
