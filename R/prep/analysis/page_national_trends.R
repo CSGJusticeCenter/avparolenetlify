@@ -46,7 +46,7 @@ proj_prison_pop <- ncrp_population_projections |>
 
 # Calculate the ratio of total prison population to population past PE (1 in X individuals)
 proj_past_pe_1_in_x <- round(proj_prison_pop/proj_past_pe, 0)
-
+proj_past_pe_1_in_x <- 5
 
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
@@ -203,7 +203,7 @@ map_data_breaks <- map_data |>
   group_by(gradient_color) |>
   mutate(
     data_category = case_when(
-      # state == "Louisiana" ~ "Abolished Discretionary Parole",
+      # state == "Louisiana" ~ "No Discretionary Parole",
       gradient_color == gradient_colors[1] ~ paste0(breaks[1], "% - ", breaks[2], "%"),
       gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
       gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
@@ -212,19 +212,19 @@ map_data_breaks <- map_data |>
     ),
     data_category = case_when(
       is.na(data_category) & abolished_parole == "N" ~ "Missing Data",
-      is.na(data_category) & abolished_parole == "Y" ~ "Abolished Discretionary Parole",
-      # state == "Louisiana" ~ "Abolished Discretionary Parole",
+      is.na(data_category) & abolished_parole == "Y" ~ "No Discretionary Parole",
+      # state == "Louisiana" ~ "No Discretionary Parole",
       TRUE ~ data_category
     ),
     gradient_color = case_when(
       is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,
-      is.na(gradient_color) & data_category == "Abolished Discretionary Parole" ~ "white",
+      is.na(gradient_color) & data_category == "No Discretionary Parole" ~ "white",
       # state == "Louisiana" ~ "white",
       TRUE ~ gradient_color
     ),
     data_category_num = case_when(
       is.na(data_category_num) & data_category == "Missing Data" ~ 6,
-      is.na(data_category_num) & data_category == "Abolished Discretionary Parole" ~ 5,
+      is.na(data_category_num) & data_category == "No Discretionary Parole" ~ 5,
       # state == "Louisiana" ~ 5,
       TRUE ~ data_category_num
     )
@@ -264,7 +264,7 @@ map_percent <- highchart(height = 625) |>
                  list(from = 2, to = 2, color = gradient2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
                  list(from = 3, to = 3, color = gradient3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = gradient4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
-                 list(from = 5, to = 5, color = "white", name = "Abolished Disretionary<br>Parole",
+                 list(from = 5, to = 5, color = "white", name = "No Discretionary Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
                )
@@ -314,7 +314,7 @@ map_percent <- highchart(height = 625) |>
     }")
   ) |>
 
-  hc_title(text = "Percentage of People in Prison Past Parole Eligibility<br>2023 Projections",
+  hc_title(text = "Percentage of People in Prison Past Parole Eligibility",
            align = "center",
            style = list(fontSize = "1.75em", fontWeight = "bold")) |>
 
@@ -333,7 +333,7 @@ map_percent <- highchart(height = 625) |>
             itemMarginTop = 2,
             itemMarginBottom = 2)
 
-# Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item
+# Add JavaScript to apply a gray border to the "No Discretionary Parole" legend item
 map_percent <- onRender(map_percent, "
   function(el, x) {
     // Add CSS to target the circle symbol of the second legend item
@@ -387,7 +387,7 @@ map_percent_download <- highchart(height = 625,
                  list(from = 2, to = 2, color = gradient2, name = paste0(breaks[2] + 1, "% - ", breaks[3], "%")),
                  list(from = 3, to = 3, color = gradient3, name = paste0(breaks[3] + 1, "% - ", breaks[4], "%")),
                  list(from = 4, to = 4, color = gradient4, name = paste0(breaks[4] + 1, "% - ", breaks[5], "%")),
-                 list(from = 5, to = 5, color = "white", name = "Abolished Disretionary<br>Parole",
+                 list(from = 5, to = 5, color = "white", name = "No Discretionary Parole",
                       marker = list(lineColor = 'gray', lineWidth = 2, radius = 10)), # Define radius for visibility
                  list(from = 6, to = 6, color = darkgray, name = "Missing Data")
                )

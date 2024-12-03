@@ -10,9 +10,9 @@ select_year <- which_overall_year |> filter(state == state_for_report) |> pull(y
 
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
 additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
-  "*Includes people with any admission type or sentence length."
+  "*Projection based on 2023 prison population. Includes people in prison with any admission type or sentence length."
 } else {
-  "*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year."
+  "*Projection based on 2023 prison population. Includes people in prison with sentences more than one year who have not already been released on parole and excludes people with life sentences."
 }
 
 # Define the secondary asterisk text based on the states that were likely undercounted

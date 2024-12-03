@@ -10,8 +10,7 @@ format:
     toc: false
 ---
 
-While the most recent available data from the National Corrections Reporting Program (NCRP) is from 2020, we've projected the numbers for 2023 to offer a more current view of how many people are in prison beyond their parole eligibility and how this impacts prison populations. These projections are conservative estimates, as we did not fully account for “good time” credits, or time that should be subtracted from a person’s sentence, reducing their time until parole eligibility. Additionally, there are other factors contributing to the conservative nature of these estimates that were not fully captured in our models. As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests, indicating a more significant issue than our conservative estimates reflect.
-
+<br>
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
@@ -51,17 +50,16 @@ div(
       ),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("People In Prison Past Parole Eligibility*<br><br>")),
-  div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People in Prison Are Incarcerated Past Parole Eligibility**"))),
-  div(id = "bold-text", HTML("States With<br>Discretionary Parole***<br><br>"))
+  div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))),
+  div(id = "bold-text", HTML("States With<br>Discretionary Parole**<br><br>"))
 )
 ```
 </div>
 <br>
 <!-- HTML code for asterisks notes -->
 <div id ="footnotes-text">
-\*Only includes people in prison for new offenses and excludes people with life sentences and sentences less than one year.  
-\*\*This is a conservative estimate. It excludes individuals returning from parole as being past their parole eligibility year (PEY) and assumes that no individuals with life-with-parole sentences or sentences less than one year are past their PEY. Additionally, the estimate excludes paroling states where reliable data to calculate the population past PEY was unavailable, specifically Alaska, Nebraska, Utah, and Vermont.  
-\*\*\*Louisiana is listed among the states with parole systems, despite its recent abolition of parole, due to a substantial population that remains eligible for parole release under the previous system.
+\*These projections are conservative estimates based on data submitted from 30 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence.As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year.<br>
+\*\*Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system.
 </div>
 <div class="divider"></div>
 <br>
@@ -79,9 +77,9 @@ map_percent
 <div id="body-section">
 <div class="divider"></div>
 
-## Parole Eligibility Data by State
+## Parole Eligibility by State
 
-The table below provides a detailed projection of the 2023 snapshot of state-level prison populations, specifically the percentage and number of people who are incarcerated beyond their parole eligibility. It also highlights the number of parole board members for each state.
+The table below provides estimates for the percentage and number of incarcerated individuals who are past their parole eligibility date in 30 of the 34 paroling states. It also highlights the number of parole board members for each state.
 
 ```{r table}
 # Custom function to create data bars with NA handling
@@ -144,7 +142,7 @@ reactable(
 )
 ```
 
-<div id="footnotes-text"><br>National Corrections Reporting Program and CSG Justice Center estimates<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
+<div id="footnotes-text"><br>Source: National Corrections Reporting Program and CSG Justice Center estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
 
 
 ```{r echo=FALSE}

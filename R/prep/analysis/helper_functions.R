@@ -506,7 +506,8 @@ fnc_hc_pie_chart <- function(df, variable, source = ncrp_csg_source) {
       )) |>
       hc_add_theme(base_hc_theme) |> # Add a base theme for consistency
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |> # Custom tooltip formatting
-      hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |> # Chart title
+      # hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |> # Chart title
+      hc_title(text = "Prison Population by Parole Eligibility Status, Most Recent Year Available") |>
       hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", select_year)) |> # Enable export
       hc_caption(text = source) |> # Add chart caption with source information
       fnc_add_hc_accessibility(accessibility_text) # Add accessibility text
