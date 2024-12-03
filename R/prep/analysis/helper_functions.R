@@ -507,7 +507,8 @@ fnc_hc_pie_chart <- function(df, variable, source = ncrp_csg_source) {
       hc_add_theme(base_hc_theme) |> # Add a base theme for consistency
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |> # Custom tooltip formatting
       # hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |> # Chart title
-      hc_title(text = "Prison Population by Parole Eligibility Status, Most Recent Year Available") |>
+      # hc_title(text = "Prison Population by Parole Eligibility Status, Most Recent Year Available") |>
+      hc_title(text = "Prison Population by Parole Eligibility Status") |>
       hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", select_year)) |> # Enable export
       hc_caption(text = source) |> # Add chart caption with source information
       fnc_add_hc_accessibility(accessibility_text) # Add accessibility text
@@ -678,12 +679,14 @@ fnc_generate_projection_sentence <- function(state_name, data) {
     } else "has insufficient data to determine a change. ",
     if (!is.na(earliest_year_proj) && !is.na(latest_year_proj)) {
       paste0(
-        "We've projected that from ", earliest_year_proj, " to ", latest_year_proj,
-        ", the percent of people past parole eligibility ",
+        # "We've projected that from ", earliest_year_proj, " to ", latest_year_proj,
+        # ", the percent of people past parole eligibility ",
+        "Our forcasting model projects that the percentage of people past their initial parole eligibility ",
         if (!is.na(change_proj)) {
           if (change_proj > 0) paste0("will increase by ", change_proj, " percent")
           else if (change_proj < 0) paste0("will decrease by ", abs(change_proj), " percent")
-          else "will not change (0 percent change)"
+          # else "will not change (0 percent change)"
+          else paste0("will remain around ", round(proj_latest, 0), " percent")
         } else "has insufficient data to project a change",
         "."
       )
@@ -849,30 +852,34 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
       round(2) * 100
 
     # Construct the final sentence for "fbi_index"
-    sentences <- paste0("In ", year, ", ", violent_prop, " percent of people ", type_desc,
-                        " were in prison for violent offenses and ",
-                        nonviolent_prop, " percent for nonviolent offenses. ",
-                        "Most people ", type_desc, " were incarcerated for ", fbi_sentence_final, " offenses.")
+    sentences <- paste0(#"In ", year, ", ",
+      violent_prop, " percent of people ", type_desc,
+      " were in prison for violent offenses and ",
+      nonviolent_prop, " percent for nonviolent offenses. ",
+      "Most people ", type_desc, " were incarcerated for ", fbi_sentence_final, " offenses.")
   }
   # Special handling for age-related variables
   else if (x_var == "ageyrend" | x_var == "agerlse") {
     age_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
-    sentences <- paste0("In ", year, ", ", round(df1$prop[1], 0),
-                        " percent of people ", type_desc, " were between the ages of ",
-                        age_range[1], " and ", age_range[2], " old.")
+    sentences <- paste0(#"In ", year, ", ",
+      round(df1$prop[1], 0),
+      " percent of people ", type_desc, " were between the ages of ",
+      age_range[1], " and ", age_range[2], " old.")
   }
   # Special handling for sentence length variables
   else if (x_var == "sentlgth") {
     sent_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
-    sentences <- paste0("In ", year, ", ", round(df1$prop[1], 0),
-                        " percent of people ", type_desc, " had sentence lengths between ",
-                        sent_range[1], " and ", sent_range[2], ".")
+    sentences <- paste0(#"In ", year, ", ",
+      round(df1$prop[1], 0),
+      " percent of people ", type_desc, " had sentence lengths between ",
+      sent_range[1], " and ", sent_range[2], ".")
   }
   # General case for other variables
   else {
-    sentences <- paste0("In ", year, ", ", round(df1$prop[1], 0),
-                        " percent of people ", type_desc, " were ",
-                        df1[[x_var]][1], ".")
+    sentences <- paste0(#"In ", year, ", ",
+      round(df1$prop[1], 0),
+      " percent of people ", type_desc, " were ",
+      df1[[x_var]][1], ".")
   }
 
   return(sentences)

@@ -79,11 +79,13 @@ all_sentence_pe_type <- {
 
     # Construct the summary sentence for the state
     paste0(
-      "In ", select_year, ", ",
+      # "In ", select_year, ", ",
+      "Most recent data shows that ",
       round(current_prop, 0),
-      " percent of people in prison were currently eligible for parole and incarcerated past parole eligibility.",
-      " Another ", round(future_prop, 0),
-      " percent will reach their parole eligibility after ", select_year, "."
+      " percent of people in prison were eligible for parole and incarcerated past parole eligibility,",
+      " while another ", round(future_prop, 0),
+      " percent have yet to reach their parole eligibility."
+      # " percent will reach their parole eligibility after ", select_year, "."
     )
   }) |> setNames(states) # Assign state names to the generated sentences
 }
@@ -172,7 +174,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     ) |>
     hc_add_series(
       name = "Past Parole Eligibility",
-      data = round(df1$pct_past_pe, 1), # Add observed data
+      data = round(df1$pct_past_pe, 0), # Add observed data
       color = teal, # Set line color
       marker = list(enabled = TRUE), # Enable markers on data points
       connectNulls = TRUE, # Connect lines even if there are missing values
@@ -180,7 +182,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     ) |>
     hc_add_series(
       name = "Projected Past Parole Eligibility",
-      data = round(df1$proj_pct_past_pe, 1), # Add projected data
+      data = round(df1$proj_pct_past_pe, 0), # Add projected data
       color = red, # Set line color for projections
       marker = list(enabled = TRUE),
       connectNulls = TRUE,
