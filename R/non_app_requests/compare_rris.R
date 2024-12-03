@@ -3,8 +3,69 @@ seba_rris_pop_pop_race_v1 <-
   read_csv(file.path(sp_data_path, "/data/analysis/rris/rris_pop_pop_race_v1.csv")) |>
   select(state, race, rri_seba = rri)
 
-# Import Mari Robert's rri values
-load(file = paste0(sp_data_path, "/data/analysis/app/all_pe_rri_data.rds"))
+# # Import Mari Robert's rri values
+# load(file = paste0(sp_data_path, "/data/analysis/app/all_pe_rri_data.rds"))
+# Filter the consolidated year-end prison population data for specific criteria
+ncrp_yearendpop_filtered <- ncrp_yearendpop_consolidated |>
+  filter(state %in% seba_rris_pop_pop_race_v1$state) |>
+  filter(!state %in% states_to_exclude$state) |>  # Exclude states with abolished parole or high missingness
+  filter(
+    !(admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
+      !(sentlgth_raw %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth_raw) | sentlgth_raw == "Unknown")
+  )
+
+# Exclude states with high missingness for race and ethnicity and filter by state-specific conditions
+ncrp_yearendpop_race <- ncrp_yearendpop_filtered |>
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
+  group_by(state) |>  # Group by state for state-specific filtering
+  filter(
+    race %in% ifelse(
+      state %in% states_use_other_race_eth$state,  # For states requiring "Other race(s)"
+      c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic"),
+      c("Black, non-Hispanic", "Hispanic, any race", "White, non-Hispanic")  # Default race categories
+    )
+  )
+
+# Summarize the total prison population by state, year, and race
+prison_pop_by_race <- ncrp_yearendpop_race |>
+  group_by(state, rptyear, race) |>
+  summarise(
+    total_prison_pop = n(),  # Count the total population for each group
+    .groups = "drop"         # Avoid grouped output in the result
+  ) |>
+  fnc_filter_by_year(which_overall_year) |>  # Filter for the most relevant year
+  select(-c(rptyear, year_to_use))  # Remove unnecessary columns after filtering
+
+# Calculate the population past parole eligibility by state, year, and race
+prison_pop_past_parole_elig_by_race <- ncrp_yearendpop_race |>
+  filter(parelig_status == "Current") |>  # Include only individuals past their parole eligibility year
+  group_by(state, rptyear, race) |>
+  summarise(
+    n = n(),  # Count the number of individuals past eligibility
+    .groups = "drop"
+  ) |>
+  fnc_filter_by_year(which_overall_year) |>
+  select(-year_to_use)  # Drop unused column
+
+# Merge total prison population and past parole eligibility data to calculate rates
+merged_prison_pop_data_race <- prison_pop_by_race |>
+  left_join(prison_pop_past_parole_elig_by_race, by = c("state", "race")) |>  # Join by state and race
+  mutate(past_pe_rate = n / total_prison_pop)  # Calculate the rate of individuals past parole eligibility
+
+# ---------------------------------------------------------------------------- #
+# Relative Rate Index (RRI) Calculation for Racial Groups
+# ---------------------------------------------------------------------------- #
+
+# Calculate RRI using the merged data, comparing each group to White individuals
+all_pe_rri_data <- fnc_calculate_rri(
+  merged_prison_pop_data_race,
+  comparison_group = "White, non-Hispanic",  # Set "White, non-Hispanic" as the reference group
+  category = "race") |>
+  mutate(
+    rri = case_when(
+      TRUE ~ rri  # Retain calculated RRI otherwise
+    )
+  )
 
 # Merge with Seba's findings to see if we get the same thing
 all_pe_rri_data_with_seba_findings <- all_pe_rri_data |>
