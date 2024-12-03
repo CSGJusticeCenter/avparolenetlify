@@ -397,6 +397,21 @@ table th, table td {
   color: black;
 }
 
+#sourcenotes-text {
+  font-size: 0.6em;
+  font-family: 'Graphik', sans-serif;
+  text-align: center;
+  color: #55555;
+}
+
+#rri_sourcenotes-text {
+  font-size: 0.6em;
+  font-family: 'Graphik', sans-serif;
+  text-align: left;
+  color: #55555;
+}
+
+
 #asterisk-section {
   font-size: 0.8em;
   color: black;

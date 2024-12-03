@@ -384,7 +384,6 @@ pe_rri_infographic_male <- paste0(
   formatted_state_for_report, ".png"
 )
 
-
 state_sentence_pe_rri_male <- all_sentence_pe_rri_male[[state_for_report]]
 
 

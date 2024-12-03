@@ -70,7 +70,7 @@ los_race <- ncrp_releases_filtered |>
     people = n(),  # Count the number of people
     .groups = "drop"
   ) |>
-  fnc_filter_by_year(which_overall_year)  # Filter to the best available year for each state
+  fnc_filter_by_year(which_overall_year)
 
 # Calculate average time served by offense type, race, and ethnicity
 los_race_by_offense_type <- ncrp_releases_filtered |>
@@ -266,6 +266,9 @@ all_sentence_avg_past_pe_race <-
                                    type = "past parole eligibility",
                                    compare_var = "race",
                                    los_col = "avg_years_to_estimated_pey")
+all_sentence_avg_past_pe_race$Georgia
+all_sentence_avg_past_pe_race$`South Carolina`
+all_sentence_avg_past_pe_race$Hawaii
 
 # Generate sentence about average time served sentence by sex
 all_sentence_avg_past_pe_sex <-
@@ -273,6 +276,7 @@ all_sentence_avg_past_pe_sex <-
                                    type = "past parole eligibility",
                                    compare_var = "sex",
                                    los_col = "avg_years_to_estimated_pey")
+all_sentence_avg_past_pe_sex$Georgia
 
 # SENTENCE: "This chart shows the average time spent in prison past parole
 #            eligibility by offense type and race and ethnicity in 2020.
@@ -282,6 +286,7 @@ all_sentence_avg_past_pe_sex <-
 all_sentence_avg_past_pe_race_offense <- fnc_generate_offense_disparity_sentence(avg_past_pe_race_by_offense_type,
                                                                                  "race",
                                                                                  "avg_years_to_estimated_pey")
+all_sentence_avg_past_pe_race_offense$Georgia
 
 # SENTENCE: "This chart shows the average time spent in prison past parole
 #            eligibility by offense type and sex in 2020. The largest disparity
