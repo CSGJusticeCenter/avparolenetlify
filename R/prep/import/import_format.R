@@ -219,14 +219,6 @@ states_to_exclude <- states_with_high_missing |>
 
 
 
-
-
-#------------------------------------------------------------------------------#
-# Parole Eligibility Data:
-# Seba Guzman's NCRP Projections for 2021 to 2023
-# Seba Guzman's Imputed Data for NCRP 2010 to 2020
-#------------------------------------------------------------------------------#
-
 #------------------------------------------------------------------------------#
 # Parole Eligibility Data:
 # Seba Guzman's NCRP Projections for 2021 to 2023
@@ -332,6 +324,17 @@ states_with_high_missing_race <- ncrp_yearendpop_consolidated |> # Use year-end 
 
 
 
+#------------------------------------------------------------------------------#
+# RRI's:
+# Seba Guzman's RRI's
+#------------------------------------------------------------------------------#
+
+# Import RRIs for 2018 and 2019
+rris2018 <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/rris2018.dta"))
+rris2019 <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/rris2019.dta"))
+
+# Combine RRI's togther and add year variable
+seba_rris <- bind_rows(rris2018, rris2019)
 
 
 #------------------------------------------------------------------------------#
@@ -386,18 +389,29 @@ bjs_prison_pop_by_rptyear <- bjs_prison_pop_by_rptyear |>
 
 #------------------------------------------------------------------------------#
 # BJS Prison Population by Race, Ethnicity, and Sex
-# 2018 and 2019
 #------------------------------------------------------------------------------#
 
 # Load and clean data
 bjs_prison_pop_by_race_state_2018 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p18/p18at02.csv", 10, "jurisdiction")
 bjs_prison_pop_by_race_state_2019 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p19/p19at02.csv", 10)
+bjs_prison_pop_by_race_state_2020 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p20st/p20stat02.csv", 10, "jurisdiction")
+bjs_prison_pop_by_race_state_2021 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p21st/p21stat01.csv", 10, "jurisdiction")
+bjs_prison_pop_by_race_state_2022 <- fnc_load_raceeth_data("data/raw/BJS Prison Pop/p22st/p22stat01.csv", 10, "jurisdiction")
 
 # Select total populations by state
+total_bjs_pop_2018 <- bjs_prison_pop_by_race_state_2018 |>
+  select(state, total) |>
+  mutate(total = as.numeric(str_replace_all(total, ",", "")))
 total_bjs_pop_2019 <- bjs_prison_pop_by_race_state_2019 |>
   select(state, total) |>
   mutate(total = as.numeric(str_replace_all(total, ",", "")))
-total_bjs_pop_2018 <- bjs_prison_pop_by_race_state_2018 |>
+total_bjs_pop_2020 <- bjs_prison_pop_by_race_state_2020 |>
+  select(state, total) |>
+  mutate(total = as.numeric(str_replace_all(total, ",", "")))
+total_bjs_pop_2021 <- bjs_prison_pop_by_race_state_2021 |>
+  select(state, total) |>
+  mutate(total = as.numeric(str_replace_all(total, ",", "")))
+total_bjs_pop_2022 <- bjs_prison_pop_by_race_state_2022 |>
   select(state, total) |>
   mutate(total = as.numeric(str_replace_all(total, ",", "")))
 
@@ -405,21 +419,49 @@ total_bjs_pop_2018 <- bjs_prison_pop_by_race_state_2018 |>
 # WARNING MESSAGE OK: Changes "NA" to actual NA
 bjs_prison_pop_by_race_2018 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2018, total_bjs_pop_2018) |> mutate(rptyear = 2018)
 bjs_prison_pop_by_race_2019 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2019, total_bjs_pop_2019) |> mutate(rptyear = 2019)
-bjs_prison_pop_by_race <- rbind(bjs_prison_pop_by_race_2018, bjs_prison_pop_by_race_2019)
+bjs_prison_pop_by_race_2020 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2020, total_bjs_pop_2020) |> mutate(rptyear = 2020)
+bjs_prison_pop_by_race_2021 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2021, total_bjs_pop_2021) |> mutate(rptyear = 2021)
+bjs_prison_pop_by_race_2022 <- fnc_process_bjs_raceeth_data(bjs_prison_pop_by_race_state_2022, total_bjs_pop_2022) |> mutate(rptyear = 2022)
 
+# Combine all years into a single dataset
+bjs_prison_pop_by_race <- rbind(
+  bjs_prison_pop_by_race_2018,
+  bjs_prison_pop_by_race_2019,
+  bjs_prison_pop_by_race_2020,
+  bjs_prison_pop_by_race_2021,
+  bjs_prison_pop_by_race_2022
+)
 
-# Import BJS data by sex
-bjs_prison_pop_by_sex_2019_raw <- read.csv(file.path(sp_data_path,
-                                                     "data/raw/BJS Prison Pop/p19/p19t02.csv"))
-bjs_prison_pop_by_sex_2019_raw <- bjs_prison_pop_by_sex_2019_raw[-(1:10), ]
+# Filter data to most recent data available for now
+bjs_prison_pop_by_race <- bjs_prison_pop_by_race |>
+  filter(rptyear == 2022)
 
-# Process data for 2018 and 2019
-bjs_prison_pop_by_sex_2019 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p19/p19t02.csv", 10, "x_6", "x_7", 2019)
+# Keep code - Can check column numbers for male and female by year
+# test_2018 <- read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p19/p19t02.csv"))
+# test_2019 <- read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p20st/p20stt02.csv"))
+# test_2020 <- read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p20st/p20stt02.csv"))
+# test_2021 <- read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p22st/p22stt02.csv"))
+# test_2022 <- read.csv(file.path(sp_data_path, "data/raw/BJS Prison Pop/p22st/p22stt02.csv"))
+
+# Import and process data
 bjs_prison_pop_by_sex_2018 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p19/p19t02.csv", 10, "x_2", "x_3", 2018)
+bjs_prison_pop_by_sex_2019 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p20st/p20stt02.csv", 10, "x_2", "x_3", 2019)
+bjs_prison_pop_by_sex_2020 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p20st/p20stt02.csv", 10, "x_5", "x_6", 2020)
+bjs_prison_pop_by_sex_2021 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p22st/p22stt02.csv", 10, "x_2", "x_3", 2021)
+bjs_prison_pop_by_sex_2022 <- fnc_process_bjs_sex_data("data/raw/BJS Prison Pop/p22st/p22stt02.csv", 10, "x_6", "x_7", 2022)
 
 # Combine data
-bjs_prison_pop_by_sex <- bind_rows(bjs_prison_pop_by_sex_2018, bjs_prison_pop_by_sex_2019)
+bjs_prison_pop_by_sex <- rbind(
+  bjs_prison_pop_by_sex_2018,
+  bjs_prison_pop_by_sex_2019,
+  bjs_prison_pop_by_sex_2020,
+  bjs_prison_pop_by_sex_2021,
+  bjs_prison_pop_by_sex_2022
+)
 
+# Filter data to most recent data available for now
+bjs_prison_pop_by_sex <- bjs_prison_pop_by_sex |>
+  filter(rptyear == 2022)
 
 #------------------------------------------------------------------------------#
 # Save Data
@@ -433,6 +475,8 @@ data_files <- list(
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
   ncrp_yearendpop_not_consolidated = "ncrp_yearendpop_not_consolidated.rds",
+
+  seba_rris                        = "seba_rris.rds",
 
   bjs_prison_pop_by_race           = "bjs_prison_pop_by_race.rds",
   bjs_prison_pop_by_sex            = "bjs_prison_pop_by_sex.rds",

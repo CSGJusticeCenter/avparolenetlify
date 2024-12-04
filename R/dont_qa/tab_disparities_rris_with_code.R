@@ -8,15 +8,8 @@
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
-# Data Preparation on RRIs
+# Data Preparation and Filtering
 # ---------------------------------------------------------------------------- #
-
-# # Prepare data for analysis
-# all_pe_rri_data <- seba_rris |>
-#   filter(excl_state_year == 0) |>
-#   group_by(state) |>
-#   slice_max(order_by = rptyear, n = 1) |>
-#   ungroup()
 
 # Filter the consolidated year-end prison population data for specific criteria
 ncrp_yearendpop_filtered <- ncrp_yearendpop_consolidated |>
@@ -79,6 +72,9 @@ all_pe_rri_data <- fnc_calculate_rri(
       TRUE ~ rri  # Retain calculated RRI otherwise
     )
   )
+
+# USE SEBA'S RRI's for now#################################################################
+# all_pe_rri_data <-
 
 # Filter RRI data to include only disparities (RRI > 1 or RRI < 1)
 all_pe_rri_data_filtered <- all_pe_rri_data |>

@@ -42,7 +42,7 @@ ncrp_releases_by_year <- ncrp_releases_filtered |>
   group_by(state, rptyear) |>
   summarise(total = n(), .groups = "drop") |>  # Calculate total releases for each state and year
   left_join(which_overall_year, by = "state") |>  # Add the best year information for filtering
-  filter(rptyear >= 2010 & rptyear <= year_to_use)
+  filter(rptyear >= 2010)
 
 # Get unique states to iterate over
 states <- unique(ncrp_releases_by_year$state)
@@ -481,3 +481,4 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
+

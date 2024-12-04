@@ -32,8 +32,8 @@
 # Exclude states with high missingness or abolished parole (in `states_to_exclude`)
 # Only include years up to the selected `year_to_use` for analysis
 bjs_prison_pop_by_rptyear_filtered <- bjs_prison_pop_by_rptyear |>
-  filter(!state %in% states_to_exclude$state) |>
-  filter(rptyear <= year_to_use)
+  filter(!state %in% states_to_exclude$state)
+  # filter(rptyear <= year_to_use)
 
 # Get a list of unique states for iteration
 # These are states that submitted data to BJS and are not in the exclusion list
@@ -177,12 +177,10 @@ current_yearendpop_not_consolidated <- ncrp_yearendpop_not_consolidated |>
 # Summarize the prison population data by various attributes for visualization and analysis
 
 # BJS data: Summarize population by race for the selected year
-bjs_population_race <- bjs_prison_pop_by_race |>
-  fnc_filter_by_year(which_overall_year)  # Filter data for the selected year
+bjs_population_race <- bjs_prison_pop_by_race
 
 # BJS data: Summarize population by sex for the selected year
-bjs_population_sex <- bjs_prison_pop_by_sex |>
-  fnc_filter_by_year(which_overall_year)  # Filter data for the selected year
+bjs_population_sex <- bjs_prison_pop_by_sex
 
 # NCRP data: Summarize population by age (using non-consolidated data due to `ageyrend` availability)
 ncrp_population_ageyrend <- fnc_summarize_data(current_yearendpop_not_consolidated, "ageyrend")
