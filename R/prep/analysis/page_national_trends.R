@@ -24,6 +24,7 @@ parole_eligibility_table_projection_year <- ncrp_projections |>
          proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
 
+# OPTION 1)
 # Calculate the total projected population past parole eligibility (PE) across all states
 proj_past_pe <- ncrp_projections |>
   filter(year == projection_year) |>
@@ -46,7 +47,12 @@ proj_prison_pop <- ncrp_population_projections |>
 
 # Calculate the ratio of total prison population to population past PE (1 in X individuals)
 proj_past_pe_1_in_x <- round(proj_prison_pop/proj_past_pe, 0)
-proj_past_pe_1_in_x <- 5 ####### Jess S requested to make it 5 for now but this may change
+
+# OPTION 2)
+proj_past_pe_1_in_x <- 5 #### USING JESS S calculations for now. Keep this for now.
+
+
+
 
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
