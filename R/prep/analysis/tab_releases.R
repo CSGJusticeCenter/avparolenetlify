@@ -143,8 +143,7 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
   data = ncrp_releases_not_consolidated,  # Update to `ncrp_releases_consolidated` when complete
   exclude = states_to_exclude,
-  dont_filter = states_nofilter
-) |>
+  dont_filter = states_nofilter) |>
   left_join(which_overall_year, by = "state")  # Join to add the best year information for each state
 
 # Summarize release data by parole eligibility status (past or on their eligibility year)
@@ -214,7 +213,36 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
 
 # Assign state names to the list of charts for easy access
 all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
+all_stackedbar_pe_release$Alabama
+all_stackedbar_pe_release$Arkansas
+all_stackedbar_pe_release$Colorado
+all_stackedbar_pe_release$Connecticut
 all_stackedbar_pe_release$Georgia
+all_stackedbar_pe_release$Hawaii ########### look weird
+all_stackedbar_pe_release$Idaho  ########### look weird
+all_stackedbar_pe_release$Iowa
+all_stackedbar_pe_release$Kentucky
+all_stackedbar_pe_release$Louisiana
+all_stackedbar_pe_release$Maryland ######### missing data in 2014 and 2015
+all_stackedbar_pe_release$Massachusetts
+all_stackedbar_pe_release$Michigan
+all_stackedbar_pe_release$Mississippi
+all_stackedbar_pe_release$Missouri
+all_stackedbar_pe_release$Montana
+all_stackedbar_pe_release$Nevada
+all_stackedbar_pe_release$`New Hampshire`
+all_stackedbar_pe_release$`New Jersey`
+all_stackedbar_pe_release$`New York`
+all_stackedbar_pe_release$`North Dakota`
+all_stackedbar_pe_release$Oklahoma
+all_stackedbar_pe_release$Pennsylvania
+all_stackedbar_pe_release$`Rhode Island`
+all_stackedbar_pe_release$`South Carolina`
+all_stackedbar_pe_release$`South Dakota`
+all_stackedbar_pe_release$Tennessee
+all_stackedbar_pe_release$Texas
+all_stackedbar_pe_release$`West Virginia`
+all_stackedbar_pe_release$Wyoming
 
 # Generate summary sentences describing the proportion of people released past their parole eligibility year
 all_sentence_pe_proportion_released <- map(.x = states, .f = function(x) {
