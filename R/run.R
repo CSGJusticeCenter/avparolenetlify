@@ -38,10 +38,10 @@ load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
 
 # Filter states for reports: Include only states with parole systems and complete data
-# states <- parole_eligibility_table |>
-#   filter(!state %in% states_to_exclude$state) |>
-#   filter(!state %in% states_national_page_only$state) |>
-#   pull(state)
+states <- parole_eligibility_table |>
+  filter(!state %in% states_to_exclude$state) |>
+  filter(!state %in% states_national_page_only$state) |>
+  pull(state)
 # states <- as.character(states)
 states <- c("Georgia", "Louisiana", "Oklahoma")
 
