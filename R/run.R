@@ -43,7 +43,7 @@ states <- parole_eligibility_table |>
   filter(!state %in% states_national_page_only$state) |>
   pull(state)
 # states <- as.character(states)
-states <- c("Georgia", "Louisiana", "Oklahoma", "Idaho")
+# states <- c("Georgia", "Louisiana", "Oklahoma", "Idaho")
 
 # Read the Quarto template for state reports
 orig_qmd <- read_lines("_state_report_template.qmd")

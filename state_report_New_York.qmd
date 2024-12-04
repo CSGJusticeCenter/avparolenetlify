@@ -50,9 +50,9 @@ div(
   div(id = "highlight-text", paste0(round(proj_pcnt_ppey, 0), "%")),
   div(id = "highlight-text", formattable::comma(parole_board_mem, digits = 0)),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("People In Prison Past<br>Parole Eligibility*<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("People In Prison Past<br>Parole Eligibility*")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Prison Population Incarcerated<br>Past Parole Eligibility<br><span style='font-weight: normal; font-size: 0.8em'>(2023 Projection)</span>")),
+      HTML("Prison Population Incarcerated<br>Past Parole Eligibility")),
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Parole Board<br>Members"))
 )
@@ -118,7 +118,7 @@ fnc_display_sentence_chart(state_sentence_pe_ageyrend, state_bar_pe_ageyrend,
 ## Offense Types
 
 ```{r results = 'asis', state_sentence_pe_fbi_index}
-fnc_display_sentence_chart(state_sentence_pe_fbi_index, state_bar_ped_fbi_index)
+fnc_display_sentence_chart(state_sentence_pe_fbi_index, state_bar_pe_fbi_index)
 ```
 
 <br>
@@ -404,15 +404,13 @@ if (use_other_race) {
   }
 }
 
-# if (no_infographic_black == TRUE & no_data_black == TRUE &
-#     no_infographic_hispanic == TRUE & no_data_hispanic == TRUE){
-#   no_data_text
-# }
 # Display "No Data" message if all three groups (Black, Hispanic, Other) have no data
 if ((no_infographic_black == TRUE & no_data_black == TRUE) &
     (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) &
     (!use_other_race | (use_other_race & no_infographic_other == TRUE & no_data_other == TRUE))) {
   no_data_text
+} else {
+  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 ```
 
@@ -430,7 +428,9 @@ if (file.exists(pe_rri_infographic_male)) {
 if (!no_data_male) {
   HTML(paste0(state_sentence_pe_rri_male, "<br>"))
 }
-
+if (!no_data_male) {
+  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
+}
 if (no_data_male) {
   no_data_text
 }
@@ -505,6 +505,7 @@ if (!no_data) {
   cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
+  cat(as.character(div(id = "sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 
 if (!is.null(state_scatter_avg_past_pe_race_offense)) {
@@ -551,6 +552,7 @@ if (!no_data) {
   cat(as.character(br()))
   cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
   cat(as.character(html_output))
+  cat(as.character(div(id = "sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 
 if (!is.null(state_scatter_avg_past_pe_sex_offense)) {
