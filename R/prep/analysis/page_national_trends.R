@@ -48,12 +48,6 @@ proj_prison_pop <- ncrp_population_projections |>
 # Calculate the ratio of total prison population to population past PE (1 in X individuals)
 proj_past_pe_1_in_x <- round(proj_prison_pop/proj_past_pe, 0)
 
-# OPTION 2)
-proj_past_pe_1_in_x <- 5 #### USING JESS S calculations for now. Keep this for now.
-
-
-
-
 #-------------------------------------------------------------------------------
 # PEOPLE INFOGRAPHICS
 #-------------------------------------------------------------------------------
