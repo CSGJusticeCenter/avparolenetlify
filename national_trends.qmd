@@ -11,6 +11,7 @@ format:
 ---
 
 <br>
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE,
@@ -50,6 +51,7 @@ div(
   div(id = "bold-text", HTML("States With Discretionary Parole**<br><br>"))
 )
 ```
+
 </div>
 <br>
 <!-- HTML code for asterisks notes -->
@@ -59,17 +61,21 @@ div(
 </div>
 <div class="divider"></div>
 <br>
+
 <div id="map-section">
+
 ```{r map}
 # Map of Percent of People in Prison Past Parole Eligibility
 map_percent 
 ```
 </div>
+
 <!-- HTML code for the download button -->
 <a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button">
   Download Map
 </a>
 <br><br>
+
 <div id="body-section">
 <div class="divider"></div>
 
@@ -138,8 +144,9 @@ reactable(
 )
 ```
 
-<div id="footnotes-text"><br>Source: National Corrections Reporting Program and CSG Justice Center estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.<br></div>
-
+<div id="footnotes-text"><br>
+Source: National Corrections Reporting Program and CSG Justice Center estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
+<br></div>
 
 ```{r echo=FALSE}
 # Download button for table download
