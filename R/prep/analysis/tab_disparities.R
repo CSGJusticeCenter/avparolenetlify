@@ -206,6 +206,7 @@ all_lollipop_los_race <- fnc_generate_lollipop_charts(
   compare_var = "race"
 )
 all_lollipop_los_race$Georgia
+all_lollipop_los_race$Hawaii
 
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
@@ -213,6 +214,7 @@ all_lollipop_los_sex <- fnc_generate_lollipop_charts(
   compare_var = "sex"
 )
 all_lollipop_los_sex$Georgia
+all_lollipop_los_sex$Louisiana
 
 # Time served by race and offense
 # SENTENCE:  "This chart shows the average time served by offense type and race in 2020. The largest disparity
@@ -233,13 +235,14 @@ all_sentence_los_sex_offense <- fnc_generate_offense_disparity_sentence(los_sex_
                                                                         "sex",
                                                                         "average_los")
 all_sentence_los_sex_offense$Georgia
+all_sentence_los_sex_offense$Louisiana
 
 # Create scatter charts for average time served by race, ethnicity, and offense
 all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
   df = los_race_by_offense_type,
   group_var = "race",
   measure = "average_los",
-  source = ncrp_source_year
+  source1 = ncrp_source
 )
 all_scatter_los_race_offense$Georgia
 all_scatter_los_race_offense$Hawaii
@@ -249,10 +252,10 @@ all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
   df = los_sex_by_offense_type,
   group_var = "sex",
   measure = "average_los",
-  source = ncrp_source_year
+  source1 = ncrp_source
 )
 all_scatter_los_sex_offense$Georgia
-
+all_scatter_los_sex_offense$Louisiana
 
 
 
@@ -301,7 +304,8 @@ all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
   df = avg_past_pe_race_by_offense_type,
   group_var = "race",
   measure = "avg_years_to_estimated_pey",
-  source = ncrp_csg_source_year
+  source1 = ncrp_source,
+  source2 = csg_source
 )
 all_scatter_avg_past_pe_race_offense$Georgia
 
@@ -310,7 +314,8 @@ all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(
   df = avg_past_pe_sex_by_offense_type,
   group_var = "sex",
   measure = "avg_years_to_estimated_pey",
-  source = ncrp_csg_source_year
+  source1 = ncrp_source,
+  source2 = csg_source
 )
 all_scatter_avg_past_pe_sex_offense$Georgia
 

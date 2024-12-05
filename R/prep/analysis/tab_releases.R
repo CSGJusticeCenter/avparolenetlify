@@ -118,7 +118,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5)) |>
-    hc_caption(text = ncrp_source) |>
+    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     fnc_add_hc_accessibility(hc_accessibility_text)  # Add accessibility features
 
   return(highcharts)
@@ -206,7 +206,7 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
                                  borderWidth = 3,
                                  minPointLength = 4)) |>
     fnc_add_hc_accessibility(hc_accessibility_text) |>
-    hc_caption(text = ncrp_csg_source)
+    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear), " and ", csg_source))
 
   return(highcharts)
 })
@@ -372,7 +372,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_colors(c(color4, color2)) |>
     hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
-    hc_caption(text = ncrp_source_year) |>
+    hc_caption(text = paste0(ncrp_source, ", ", year)) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -433,11 +433,11 @@ ncrp_releases_sentlgth <- fnc_summarize_data(current_releases, "sentlgth")
 
 # Create a list of parameters for each category to streamline chart and sentence generation
 categories <- list(
-  list(data = ncrp_releases_race, x_var = "race", metric = "Race and Ethnicity", source = ncrp_csg_source_year),
-  list(data = ncrp_releases_sex, x_var = "sex", metric = "Sex", source = ncrp_csg_source_year),
-  list(data = ncrp_releases_agerlse, x_var = "agerlse", metric = "Age", source = ncrp_csg_source_year),
-  list(data = ncrp_releases_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source_year),
-  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source_year)
+  list(data = ncrp_releases_race,      x_var = "race",      metric = "Race and Ethnicity", source1 = ncrp_source, source2 = NULL),
+  list(data = ncrp_releases_sex,       x_var = "sex",       metric = "Sex",                source1 = ncrp_source, source2 = NULL),
+  list(data = ncrp_releases_agerlse,   x_var = "agerlse",   metric = "Age",                source1 = ncrp_source, source2 = NULL),
+  list(data = ncrp_releases_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length",    source1 = ncrp_source, source2 = NULL),
+  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type",       source1 = ncrp_source, source2 = NULL)
 )
 
 
@@ -459,7 +459,8 @@ for (category in categories) {
     type_desc  = "released from prison",
     title_type = "People Released from Prison",
     y_var      = "prop",
-    source     = category$source
+    source1    = category$source1,
+    source2    = category$source2
   )
 
   all_sentence_releases[[category$x_var]] <- fnc_generate_sentences(
@@ -481,7 +482,7 @@ all_sentence_releases_sentlgth <- all_sentence_releases[["sentlgth"]]
 all_bar_releases_fbi_index <- all_bar_releases[["fbi_index"]]
 all_sentence_releases_fbi_index <- all_sentence_releases[["fbi_index"]]
 
-
+all_bar_releases_race$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

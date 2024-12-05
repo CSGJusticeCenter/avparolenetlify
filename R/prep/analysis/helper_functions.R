@@ -540,7 +540,7 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
 #' - Includes accessibility text and exporting functionality.
 #' @export
 fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type,
-                               source1 = ncrp_source, source2 = csg_source,
+                               source1, source2 = NULL,
                                orientation = "vertical") {
 
   # Filter the data for the specified state
@@ -723,7 +723,7 @@ fnc_generate_projection_sentence <- function(state_name, data) {
 #' @examples
 #' charts <- fnc_generate_bar_charts(data, "fbi_index", "Crime Type", "Releases", "Release Trends", "prop", "CSG Data Source")
 #' @export
-fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, y_var = "prop", source) {
+fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, y_var = "prop", source1, source2 = NULL) {
   # Extract unique states from the data
   states <- unique(data$state)
 
@@ -735,13 +735,15 @@ fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, 
     # Call the column chart creation function for each state
     fnc_hc_columnchart(
       state_var  = state_name,   # Current state
-      df         = data,        # Filtered data
-      x_var      = x_var,       # X-axis variable
-      y_var      = y_var,       # Y-axis variable (default: "prop")
-      metric     = metric,      # Metric label
-      type       = type_desc,   # Type description (e.g., "Releases")
-      title_type = title_type,  # Title prefix
-      orientation = orientation # Determine horizontal or vertical orientation
+      df         = data,         # Filtered data
+      x_var      = x_var,        # X-axis variable
+      y_var      = y_var,        # Y-axis variable (default: "prop")
+      metric     = metric,       # Metric label
+      type       = type_desc,    # Type description (e.g., "Releases")
+      title_type = title_type,   # Title prefix
+      orientation = orientation, # Determine horizontal or vertical orientation
+      source1 = source1,
+      source2 = source2
     )
   })
 
@@ -946,7 +948,7 @@ fnc_filter_data_by_state_year <- function(df, state_var) {
 #' @examples
 #' chart <- fnc_create_lollipop_chart(data, "race", "Georgia", source = "NCRP")
 #' @export
-fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, source = ncrp_csg_source) {
+fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, source) {
 
   # Define consistent group labels, colors, and shapes
   if (group_var == "sex") {
@@ -1081,7 +1083,7 @@ fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, s
     hc_legend(enabled = FALSE) |>
     hc_size(height = height) |>
     fnc_add_hc_accessibility(accessibility_text) |>
-    hc_caption(text = source)
+    hc_caption(text = paste0(source, ", ", year))
 
   return(highcharts)
 }
@@ -1111,7 +1113,7 @@ fnc_generate_lollipop_charts <- function(df, compare_var, height = 200) {
       df = df,
       group_var = compare_var,
       state_name = state_var,
-      source = ncrp_source_year,
+      source = ncrp_source,
       height = height
     )
   })
@@ -1136,7 +1138,7 @@ fnc_generate_lollipop_charts <- function(df, compare_var, height = 200) {
 #' @param source A string for the chart's source caption (default is `ncrp_csg_source`).
 #' @return A named list of Highcharts objects, each corresponding to a state.
 #' @export
-fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = ncrp_csg_source) {
+fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, source2 = NULL) {
 
   # Extract unique states to iterate over
   states <- unique(df$state)
@@ -1232,9 +1234,14 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source = 
         }")  # Tooltip with offense, years, and people count
       ) |>
       hc_legend(layout = "horizontal", verticalAlign = "top") |>
-      hc_caption(text = source) |>
       hc_add_theme(base_hc_theme) |>
-      fnc_add_hc_accessibility(accessibility_text)  # Add accessibility features
+      fnc_add_hc_accessibility(accessibility_text) |>
+      hc_caption(
+        text = paste0(
+          source1, ", ", year,
+          if (!is.null(source2)) paste0(" and ", source2) else ""
+        )
+      )
 
     # Add scatter series for each group dynamically
     for (i in seq_along(group_labels)) {

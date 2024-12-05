@@ -33,7 +33,6 @@
 # Only include years up to the selected `year_to_use` for analysis
 bjs_prison_pop_by_rptyear_filtered <- bjs_prison_pop_by_rptyear |>
   filter(!state %in% states_to_exclude$state)
-  # filter(rptyear <= year_to_use)
 
 # Get a list of unique states for iteration
 # These are states that submitted data to BJS and are not in the exclusion list
@@ -146,8 +145,9 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
     hc_legend(enabled = FALSE) |>
     hc_exporting(enabled = TRUE,
                  filename = paste0(gsub(" ", "_", tolower(title)), "_",
-                                   min(df1$rptyear), "_", max(df1$rptyear))) |>
-    hc_caption(text = bjs_source) |>
+                                   min(df1$rptyear), "-", max(df1$rptyear))) |>
+    hc_caption(text = paste0(bjs_source, ", ",
+                             min(df1$rptyear), "-", max(df1$rptyear))) |>
     fnc_add_hc_accessibility(hc_accessibility_text)  # Add accessibility features
 
   return(highcharts)
@@ -194,11 +194,11 @@ ncrp_population_sentlgth <- fnc_summarize_data(current_yearendpop, "sentlgth")
 
 # Create a list of categories to streamline chart and sentence generation
 categories <- list(
-  list(data = bjs_population_race, x_var = "race", metric = "Race and Ethnicity", source = bjs_source),             # Race data from BJS
-  list(data = bjs_population_sex, x_var = "sex", metric = "Sex", source = bjs_source),                              # Sex data from BJS
-  list(data = ncrp_population_ageyrend, x_var = "ageyrend", metric = "Age", source = ncrp_csg_source),              # Age data from NCRP
-  list(data = ncrp_population_sentlgth, x_var = "sentlgth", metric = "Sentence Length", source = ncrp_csg_source),  # Sentence length from NCRP
-  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type", source = ncrp_csg_source)    # Offense type from NCRP
+  list(data = bjs_population_race,       x_var = "race",      metric = "Race and Ethnicity", source1 = bjs_source,  source2 = NULL),
+  list(data = bjs_population_sex,        x_var = "sex",       metric = "Sex",                source1 = bjs_source,  source2 = NULL),
+  list(data = ncrp_population_ageyrend,  x_var = "ageyrend",  metric = "Age",                source1 = ncrp_source, source2 = NULL),
+  list(data = ncrp_population_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length",    source1 = ncrp_source, source2 = NULL),
+  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type",       source1 = ncrp_source, source2 = NULL)
 )
 
 
@@ -221,7 +221,8 @@ for (category in categories) {
     type_desc  = "the prison population",
     title_type = "People in Prison",
     y_var      = "prop",
-    source     = category$source
+    source1    = category$source1,
+    source2    = category$source2
   )
 
   # Generate sentences for the current category
@@ -244,7 +245,9 @@ all_sentence_population_sentlgth  <- all_sentence_population[["sentlgth"]]
 all_bar_population_fbi_index      <- all_bar_population[["fbi_index"]]
 all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 
-
+all_bar_population_race$Georgia
+all_bar_population_sex$Georgia
+all_bar_population_ageyrend$Georgia
 
 #------------------------------------------------------------------------------#
 # SAVE DATA

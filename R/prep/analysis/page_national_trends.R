@@ -18,8 +18,8 @@
 # - Select only relevant columns for output
 parole_eligibility_table_projection_year <- ncrp_projections |>
   filter(year == projection_year) |>
-  filter(!state %in% states_abolished_parole$state) |>
-  # filter(!state %in% states_to_exclude$state) |>
+  # filter(!state %in% states_abolished_parole$state) |>
+  filter(!state %in% states_to_exclude$state) |>
   mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
          proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
@@ -319,7 +319,7 @@ map_percent <- highchart(height = 625) |>
 
   hc_exporting(enabled = FALSE, filename = "proj_past_parole_eligibility_2023") |>
 
-  hc_caption(text = "National Corrections Reporting Program and CSG Justice Center estimates, 2019",
+  hc_caption(text = "National Corrections Reporting Program, 2019 and CSG Justice Center Estimates",
              y = 0) |>
 
   hc_legend(align = "right",
@@ -414,7 +414,7 @@ map_percent_download <- highchart(height = 625,
   hc_exporting(
     enabled = FALSE) |>
 
-  hc_caption(text = "National Corrections Reporting Program and CSG Justice Center estimates, 2019",
+  hc_caption(text = "National Corrections Reporting Program, 2019 and CSG Justice Center Estimates",
              y = 0)
 
 # Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item

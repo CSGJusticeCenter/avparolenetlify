@@ -263,11 +263,11 @@ current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |> # Summari
 
 # Create a list of parameters for each category to streamline chart and sentence generation
 categories <- list(
-  list(data = current_pe_race,      x_var = "race",      metric = "Race and Ethnicity"),
-  list(data = current_pe_sex,       x_var = "sex",       metric = "Sex"),
-  list(data = current_pe_ageyrend,  x_var = "ageyrend",  metric = "Age"),
-  list(data = current_pe_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length"),
-  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type")
+  list(data = current_pe_race,      x_var = "race",      metric = "Race and Ethnicity", source1 = ncrp_source, source2 = csg_source),
+  list(data = current_pe_sex,       x_var = "sex",       metric = "Sex", source1 = ncrp_source, source2 = csg_source),
+  list(data = current_pe_ageyrend,  x_var = "ageyrend",  metric = "Age", source1 = ncrp_source, source2 = csg_source),
+  list(data = current_pe_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length", source1 = ncrp_source, source2 = csg_source),
+  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type", source1 = ncrp_source, source2 = csg_source)
 )
 
 
@@ -289,7 +289,9 @@ for (category in categories) {
     metric     = category$metric,     # Metric label (e.g., "Race and Ethnicity")
     type_desc  = "the prison population past parole eligibility",  # Description of the data type
     title_type = "People in Prison Past Parole Eligibility",       # Chart title prefix
-    y_var      = "prop"              # Y-axis variable (default: proportion)
+    y_var      = "prop",              # Y-axis variable (default: proportion)
+    source1    = category$source1,
+    source2    = category$source2
   )
 
   # Generate sentences for the current category
