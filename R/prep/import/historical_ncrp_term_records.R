@@ -100,3 +100,4 @@ full_file_path <- file.path(paste0(sp_data_path, "/data/analysis/clean_files"), 
 
 # Save the cleaned 2018 data to a CSV file (currently commented out for manual activation)
 # write.csv(ncrp_term_records_2018, full_file_path)
+

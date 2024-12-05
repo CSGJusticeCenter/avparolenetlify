@@ -451,7 +451,3 @@ file_path <- file.path(app_folder, file_name)
 
 # Save csv
 write.csv(parole_eligibility_table_download, file_path, row.names = FALSE)
-
-
-
-

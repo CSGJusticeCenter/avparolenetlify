@@ -57,4 +57,3 @@ walk(states, fnc_replace_write_qmd)
 # Note: Ensure Quarto is installed and properly configured before running this
 # Takes about 15 minutes to run
 quarto::quarto_render()
-

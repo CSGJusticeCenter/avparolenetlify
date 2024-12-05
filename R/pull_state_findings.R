@@ -90,7 +90,6 @@ parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pop_pe_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_pop_pe_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_pe_race.rds"))

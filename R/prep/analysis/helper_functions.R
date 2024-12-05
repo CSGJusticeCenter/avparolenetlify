@@ -2640,5 +2640,3 @@ fnc_create_icons_homepage <- function(rri_raw, rri_digits = 1, fillcolor = "dark
   # Return the grid of icons as a ggplot object
   plot_grid(plotlist = plot_list, nrow = rows)
 }
-
-
