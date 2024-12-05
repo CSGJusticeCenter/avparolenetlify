@@ -118,16 +118,16 @@ import and analysis subfolders.
 
 **R/prep/analysis/:**
 
+-   **tab_parole_eligibility.R:** Analyzes data related to parole
+    eligibility, including who becomes eligible for parole and the
+    characteristics of people in prison past parole eligibility. 
+-   **tab_population.R:** Analyzes data related prison populations,
+    including changes over time and differences across demographic
+    groups.  
 -   **tab_releases.R:** Analyzes data related to prison releases. This
     script focuses on identifying patterns and trends in release data,
     including how these trends vary by demographic factors like age,
     race, and sex.  
--   **tab_population.R:** Analyzes data related prison populations,
-    including changes over time and differences across demographic
-    groups.  
--   **tab_parole_eligibility.R:** Analyzes data related to parole
-    eligibility, including who becomes eligible for parole and the
-    characteristics of people in prison past parole eligibility.    
 -   **tab_disparities.R:** Focuses on identifying disparities in parole
     eligibility by race, ethnicity, and sex.  
 -   **tab_disparities_rris.R:** Computes and analyzes Relative Rate

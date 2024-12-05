@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: config.R
 # Authors: Mari Roberts
-# Date last updated: November 20, 2024 (MAR)
+# Date last updated: December 5, 2024 (MAR)
 # Description:
 #    This script is responsible for setting up the environment for the AV Parole project.
 #    It includes the following tasks:

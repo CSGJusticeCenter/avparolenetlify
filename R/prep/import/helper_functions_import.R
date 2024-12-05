@@ -99,6 +99,7 @@ fnc_create_fbi_index <- function(df) {
                     "Other or Unspecified",
                     "Unknown")
 
+  # Recategorize offense types
   df <- df |>
     mutate(fbi_index = case_when(
       offdetail == "Aggravated or simple assault" ~ "Aggravated or Simple Assault",
@@ -126,6 +127,7 @@ fnc_create_fbi_index <- function(df) {
 fnc_create_admtype <- function(df) {
   print("Transforming admtype...")
 
+  # Recategorize admission type
   df <- df |>
     mutate(admtype = case_when(
       admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other",
@@ -259,31 +261,30 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
 #' @param df A dataframe containing BJS data with columns `state` and `bjs_prison_population`.
 #' @return A cleaned dataframe with corrected state names and numeric prison population.
 fnc_clean_bjs_data <- function(df) {
-  print("Cleaning BJS data...")
+  print("Cleaning BJS data...")  # Log the start of the cleaning process
 
-  # Initial cleanup of state names
+  # Clean and process the data
   df <- df |>
-    # Remove anything after the state name in the `state` column
-    mutate(state = str_replace(state, "/.*", "")) |>
-    # Correct known misspelled state names
-    mutate(state = str_replace_all(state, c(
-      "Wisconsing" = "Wisconsin",
-      "Idah" = "Idaho",
-      "Idahoo" = "Idaho",
-      "Alaskab" = "Alaska",
-      "Utahc" = "Utah"
-    ))) |>
-    # Filter out invalid state names and totals
-    filter(state != "" &
-             state != "State" &
-             state != "Federal" &
-             state != "District of Columbia" &
-             state != "U.S. Total" &
-             state != "U.S. total" &
-             state != "U.S. tota") |>
-    # Remove non-numeric characters from `bjs_prison_population` and convert it to numeric
-    mutate(bjs_prison_population = str_replace_all(bjs_prison_population, "[^\\d]", "")) |>
-    mutate(bjs_prison_population = as.numeric(bjs_prison_population))
+    mutate(
+      # Standardize state names
+      state = str_replace(state, "/.*", ""),  # Remove content after "/"
+      state = str_replace_all(state, c(
+        "Wisconsing" = "Wisconsin",
+        "Idah" = "Idaho",
+        "Idahoo" = "Idaho",
+        "Alaskab" = "Alaska",
+        "Utahc" = "Utah"
+      )),
+
+      # Clean and convert prison population data
+      bjs_prison_population = as.numeric(str_replace_all(bjs_prison_population, "[^\\d]", ""))
+    ) |>
+
+    # Filter out invalid or non-relevant rows
+    filter(
+      !state %in% c("", "State", "Federal", "District of Columbia",
+                    "U.S. Total", "U.S. total", "U.S. tota")
+    )
 
   print("BJS data cleaned.")
   return(df)
@@ -300,18 +301,21 @@ fnc_clean_bjs_data <- function(df) {
 #'
 #' @return A cleaned data frame with filtered rows and updated column names.
 fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
+  # Load the CSV file, skipping the specified number of rows for headers/footers
   data <- read.csv(file.path(sp_data_path, file_path), skip = skip_rows) |>
-    clean_names()
+    clean_names()  # Standardize column names for consistency
 
+  # Rename a specified column if provided
   if (!is.null(rename_col)) {
-    data <- data |> rename(state_federal = !!sym(rename_col))
+    data <- data |> rename(state_federal = !!sym(rename_col))  # Rename the column
   }
 
+  # Filter and clean the data
   data |>
-    filter(state_federal == "") |>
-    rename(state = x) |>
-    mutate(state = sub("/.*", "", state)) |>
-    select(-state_federal)
+    filter(state_federal == "") |>             # Remove rows with non-state data
+    rename(state = x) |>                       # Rename column "x" to "state"
+    mutate(state = sub("/.*", "", state)) |>   # Remove trailing content after "/" in state names
+    select(-state_federal)                     # Drop the "state_federal" column
 }
 
 #' Process BJS Race/Ethnicity Prison Population Data
@@ -323,32 +327,60 @@ fnc_load_raceeth_data <- function(file_path, skip_rows, rename_col = NULL) {
 #' @param total_data A data frame containing total population data by state.
 #'
 #' @return A cleaned and summarized data frame with race proportions and labels.
+#------------------------------------------------------------------------------#
+# Function: fnc_process_bjs_raceeth_data
+# Purpose: Process Bureau of Justice Statistics (BJS) data on prison population
+#          by race/ethnicity, cleaning and transforming it for analysis and visualization.
+#------------------------------------------------------------------------------#
+
 fnc_process_bjs_raceeth_data <- function(data, total_data) {
+  # Clean numeric data and handle commas in population counts
   data |>
-    mutate(across(everything(), ~str_replace_all(., ",", ""))) |>
-    mutate(across(-state, as.numeric)) |>
-    pivot_longer(cols = total:did_not_report, names_to = "race", values_to = "n") |>
+    mutate(across(everything(), ~str_replace_all(., ",", ""))) |> # Remove commas
+    mutate(across(-state, as.numeric)) |>                         # Convert non-state columns to numeric
+
+    # Reshape data from wide to long format for easier handling
+    pivot_longer(
+      cols = total:did_not_report,    # Columns to pivot (race categories)
+      names_to = "race",              # New column for race categories
+      values_to = "n"                 # New column for population counts
+    ) |>
+
+    # Standardize and clean race categories
     mutate(
       race = case_when(
-        race == "total" ~ "Total Population",
-        race == "white_a" ~ "White, non-Hispanic",
-        race == "black_a" ~ "Black, non-Hispanic",
-        race == "hispanic" ~ "Hispanic, any race",
-        race %in% c("american_indian_alaska_native_a", "asian_a",
+        race == "total" ~ "Total Population",                           # Total population
+        race == "white_a" ~ "White, non-Hispanic",                      # White
+        race == "black_a" ~ "Black, non-Hispanic",                      # Black
+        race == "hispanic" ~ "Hispanic, any race",                      # Hispanic
+        race %in% c("american_indian_alaska_native_a", "asian_a",       # Other non-Hispanic races
                     "native_hawaiian_other_pacific_islander_a",
                     "two_or_more_races_a", "other_a") ~ "Other race(s), non-Hispanic",
-        race %in% c("unknown", "did_not_report") ~ "Unknown",
+        race %in% c("unknown", "did_not_report") ~ "Unknown",           # Unknown categories
         TRUE ~ race
-      )) |>
+      )
+    ) |>
+
+    # Remove "Unknown" and "Total Population" categories from further analysis
     filter(!race %in% c("Unknown", "Total Population")) |>
+
+    # Summarize the data by state and race
     group_by(state, race) |>
-    summarise(n = sum(n, na.rm = TRUE)) |>
-    left_join(total_data, by = "state") |>
-    ungroup() |>
-    mutate(prop = (n / total) * 100,
-           prop_label = paste0(round(prop, 0), "%"),
-           n_label = formattable::comma(n, 0),
-           population_type = "In Prison") |>
+    summarise(n = sum(n, na.rm = TRUE)) |>                             # Aggregate population counts by state/race
+
+    # Join with total population data to calculate proportions
+    left_join(total_data, by = "state") |>                             # Merge with total data on "state"
+    ungroup() |>                                                       # Remove grouping for calculations
+
+    # Calculate proportions and add formatted labels
+    mutate(
+      prop = (n / total) * 100,                                        # Calculate percentage
+      prop_label = paste0(round(prop, 0), "%"),                        # Create a percentage label
+      n_label = formattable::comma(n, 0),                              # Format counts with commas
+      population_type = "In Prison"                                    # Add population type for context
+    ) |>
+
+    # Remove the total column from the final output
     select(-total)
 }
 
@@ -365,33 +397,49 @@ fnc_process_bjs_raceeth_data <- function(data, total_data) {
 #'
 #' @return A data frame with processed sex-based population data including proportions and labels.
 fnc_process_bjs_sex_data <- function(file_path, skip_rows, male_col, female_col, year) {
+  # Read the CSV file and skip the specified number of rows for headers/footers
   read.csv(file.path(sp_data_path, file_path))[-(1:skip_rows), ] |>
-    clean_names() |>
-    select(state = x, male = !!sym(male_col), female = !!sym(female_col)) |>
+    clean_names() |>  # Clean column names to ensure consistent formatting
+    select(
+      state = x,                # Select the state column (renamed as "state")
+      male = !!sym(male_col),   # Select the male population column
+      female = !!sym(female_col) # Select the female population column
+    ) |>
+    # Clean the state names and handle special cases for Alaska and Utah
     mutate(
-      state = str_replace_all(state, "/.*", ""),
+      state = str_replace_all(state, "/.*", ""),  # Remove content after "/"
       state = str_replace_all(state, c("Alaskab" = "Alaska", "Utahc" = "Utah"))
     ) |>
+    # Filter out rows with invalid or non-state values
     filter(
       !state %in% c("", "State", "Federal", "District of Columbia",
                     "U.S. Total", "U.S. total", "U.S. tota")
     ) |>
+    # Clean and convert male and female population columns to numeric
     mutate(
-      male = as.numeric(str_replace_all(male, "[^\\d]", "")),
-      female = as.numeric(str_replace_all(female, "[^\\d]", ""))
+      male = as.numeric(str_replace_all(male, "[^\\d]", "")),  # Remove non-digit characters
+      female = as.numeric(str_replace_all(female, "[^\\d]", "")) # Remove non-digit characters
     ) |>
-    pivot_longer(cols = c(male, female), names_to = "sex", values_to = "n") |>
+    # Reshape the data from wide to long format for easier analysis
+    pivot_longer(
+      cols = c(male, female),  # Specify columns to pivot
+      names_to = "sex",        # Create a new column "sex" for male/female
+      values_to = "n"          # Create a new column "n" for population counts
+    ) |>
+    # Group by state to calculate proportions and labels
     group_by(state) |>
     mutate(
-      prop = (n / sum(n)) * 100,
-      prop_label = paste0(round(prop, 0), "%"),
-      n_label = formattable::comma(n, 0),
+      prop = (n / sum(n)) * 100,                     # Calculate percentage for each sex
+      prop_label = paste0(round(prop, 0), "%"),      # Create a label for percentage
+      n_label = formattable::comma(n, 0),            # Format the population count with commas
       sex = case_when(
-        sex == "male" ~ "Male",
-        sex == "female" ~ "Female",
+        sex == "male" ~ "Male",                      # Standardize "male" to "Male"
+        sex == "female" ~ "Female",                  # Standardize "female" to "Female"
         TRUE ~ sex
       ),
-      rptyear = year
+      rptyear = year                                 # Add reporting year
     ) |>
-    ungroup()
+    ungroup() # Remove grouping for final output
 }
+
+
