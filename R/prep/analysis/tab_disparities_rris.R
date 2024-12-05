@@ -2,26 +2,20 @@
 # Project: AV Parole
 # File: tab_disparities.R
 # Authors: Mari Roberts
-# Date last updated: November 25, 2024 (MAR)
+# Date last updated: December 5, 2024 (MAR)
 # Description:
-#    RRI visualizations and findings for disparities tab
+#    RRI visualizations and findings for Disparities tab
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
 # Data Preparation on RRIs
 # ---------------------------------------------------------------------------- #
 
-# # Prepare data for analysis
-# all_pe_rri_data <- seba_rris |>
-#   filter(excl_state_year == 0) |>
-#   group_by(state) |>
-#   slice_max(order_by = rptyear, n = 1) |>
-#   ungroup()
-
 # Filter the consolidated year-end prison population data for specific criteria
 ncrp_yearendpop_filtered <- ncrp_yearendpop_consolidated |>
-  # filter(state %in% seba_rris_pop_pop_race_v1$state) |>
   filter(!state %in% states_to_exclude$state) |>  # Exclude states with abolished parole or high missingness
+  # Only include people in prison for new court commitments and sentence lengths greater than 1 year but not life
+  # Also allow Unknowns in this case to mirror Seba Guzman's methodology on RRIs in Stata
   filter(
     !(admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
       !(sentlgth_raw %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth_raw) | sentlgth_raw == "Unknown")
@@ -32,6 +26,7 @@ ncrp_yearendpop_race <- ncrp_yearendpop_filtered |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
   group_by(state) |>  # Group by state for state-specific filtering
   filter(
+    # Filter to White, Hispanic, and Black for all states except states in states_use_other_race_eth
     race %in% ifelse(
       state %in% states_use_other_race_eth$state,  # For states requiring "Other race(s)"
       c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic"),
@@ -47,7 +42,7 @@ prison_pop_by_race <- ncrp_yearendpop_race |>
     .groups = "drop"         # Avoid grouped output in the result
   ) |>
   fnc_filter_by_year(which_overall_year) |>  # Filter for the most relevant year
-  select(-c(rptyear, year_to_use))  # Remove unnecessary columns after filtering
+  select(-c(rptyear, year_to_use))
 
 # Calculate the population past parole eligibility by state, year, and race
 prison_pop_past_parole_elig_by_race <- ncrp_yearendpop_race |>
@@ -58,7 +53,7 @@ prison_pop_past_parole_elig_by_race <- ncrp_yearendpop_race |>
     .groups = "drop"
   ) |>
   fnc_filter_by_year(which_overall_year) |>
-  select(-year_to_use)  # Drop unused column
+  select(-year_to_use)
 
 # Merge total prison population and past parole eligibility data to calculate rates
 merged_prison_pop_data_race <- prison_pop_by_race |>
@@ -104,7 +99,7 @@ all_sentence_pe_rri_hispanic <- map(
   )
 )
 
-# Access specific sentences for review (example: Georgia and Hawaii)
+# Example states:
 all_sentence_pe_rri_hispanic$Georgia
 all_sentence_pe_rri_black$Georgia
 all_sentence_pe_rri_other$Hawaii
@@ -158,6 +153,8 @@ all_pe_rri_data_male_filtered <- all_pe_rri_data_male |>
 all_sentence_pe_rri_male <- fnc_generate_rri_sentences(
   all_pe_rri_data_male_filtered, "sex", "Male", teal
 )
+
+# Example state:
 all_sentence_pe_rri_male$Georgia
 
 
@@ -222,7 +219,7 @@ fnc_create_and_save_infographic(
   prefix = "pe_rri_infographic_other_"
 )
 
-# Male
+# Create infographics for males
 pe_rri_incarceration_male <- all_pe_rri_data_male |>
   filter(sex == "Male") |>
   select(state, sex, rri) |>

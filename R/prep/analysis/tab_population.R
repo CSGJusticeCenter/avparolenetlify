@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_population.R
 # Authors: Mari Roberts
-# Last Updated: November 25, 2024 (MAR)
+# Last Updated: December 5, 2024 (MAR)
 # Description:
 #   This script analyzes and visualizes trends in the prison population across
 #   states and generates summary sentences and charts for key demographic and
@@ -14,14 +14,9 @@
 #     sentence length, and offense type.
 #   - Generating summary sentences for population changes across years for
 #     individual states.
-#   - Creating bar charts for demographic breakdowns and offense types.
+#   - Creating bar charts for demographic breakdowns, offense types and sentence lengths.
 #   - Generating line charts visualizing prison population trends over time.
 #   - Saving all outputs (sentences and visualizations) to `.rds` files.
-#
-# Outputs:
-#   - State-specific summary sentences.
-#   - Interactive Highcharts visualizations for demographic and trend analysis.
-#   - Processed data objects for further analysis or reporting.
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
@@ -30,12 +25,10 @@
 
 # Filter BJS prison population data
 # Exclude states with high missingness or abolished parole (in `states_to_exclude`)
-# Only include years up to the selected `year_to_use` for analysis
 bjs_prison_pop_by_rptyear_filtered <- bjs_prison_pop_by_rptyear |>
   filter(!state %in% states_to_exclude$state)
 
 # Get a list of unique states for iteration
-# These are states that submitted data to BJS and are not in the exclusion list
 states <- bjs_prison_pop_by_rptyear_filtered |>
   distinct(state) |>
   arrange(state) |>
@@ -122,7 +115,7 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
   # Define the chart title
   title <- "Prison Population by Year"
 
-  # Create the Highcharts object for visualization
+  # Create the Highchart
   highcharts <-
     hc <- highchart() |>
     hc_chart(type = "line") |>
@@ -137,7 +130,7 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
         name = "Population",  # Name of the series
         data = df1$bjs_prison_population,  # Data to visualize
         tooltip = list(
-          pointFormat = "<b>Prison Population:</b> {point.y}"  # Tooltip format
+          pointFormat = "<b>Prison Population:</b> {point.y}"
         )
       )
     ) |>
@@ -148,18 +141,18 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
                                    min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_caption(text = paste0(bjs_source, ", ",
                              min(df1$rptyear), "-", max(df1$rptyear))) |>
-    fnc_add_hc_accessibility(hc_accessibility_text)  # Add accessibility features
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
 
 # Assign state names to the generated charts for easy access
 all_line_population_by_year <- setNames(all_line_population_by_year, states)
-all_line_population_by_year$Georgia
-all_line_population_by_year$Hawaii
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
-
+# Example states:
+all_line_population_by_year$Georgia
+all_line_population_by_year$Hawaii
 
 # ---------------------------------------------------------------------------- #
 # Prepare Column Charts Data (Demographics, Offense Type, Sentence Length)
@@ -176,12 +169,6 @@ current_yearendpop_not_consolidated <- ncrp_yearendpop_not_consolidated |>
 
 # Summarize the prison population data by various attributes for visualization and analysis
 
-# BJS data: Summarize population by race for the selected year
-bjs_population_race <- bjs_prison_pop_by_race
-
-# BJS data: Summarize population by sex for the selected year
-bjs_population_sex <- bjs_prison_pop_by_sex
-
 # NCRP data: Summarize population by age (using non-consolidated data due to `ageyrend` availability)
 ncrp_population_ageyrend <- fnc_summarize_data(current_yearendpop_not_consolidated, "ageyrend")
 
@@ -194,11 +181,31 @@ ncrp_population_sentlgth <- fnc_summarize_data(current_yearendpop, "sentlgth")
 
 # Create a list of categories to streamline chart and sentence generation
 categories <- list(
-  list(data = bjs_population_race,       x_var = "race",      metric = "Race and Ethnicity", source1 = bjs_source,  source2 = NULL),
-  list(data = bjs_population_sex,        x_var = "sex",       metric = "Sex",                source1 = bjs_source,  source2 = NULL),
-  list(data = ncrp_population_ageyrend,  x_var = "ageyrend",  metric = "Age",                source1 = ncrp_source, source2 = NULL),
-  list(data = ncrp_population_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length",    source1 = ncrp_source, source2 = NULL),
-  list(data = ncrp_population_fbi_index, x_var = "fbi_index", metric = "Offense Type",       source1 = ncrp_source, source2 = NULL)
+  list(data = bjs_prison_pop_by_race,
+       x_var = "race",
+       metric = "Race and Ethnicity",
+       source1 = bjs_source,
+       source2 = NULL),
+  list(data = bjs_prison_pop_by_sex,
+       x_var = "sex",
+       metric = "Sex",
+       source1 = bjs_source,
+       source2 = NULL),
+  list(data = ncrp_population_ageyrend,
+       x_var = "ageyrend",
+       metric = "Age",
+       source1 = ncrp_source,
+       source2 = NULL),
+  list(data = ncrp_population_sentlgth,
+       x_var = "sentlgth",
+       metric = "Sentence Length",
+       source1 = ncrp_source,
+       source2 = NULL),
+  list(data = ncrp_population_fbi_index,
+       x_var = "fbi_index",
+       metric = "Offense Type",
+       source1 = ncrp_source,
+       source2 = NULL)
 )
 
 
@@ -245,6 +252,7 @@ all_sentence_population_sentlgth  <- all_sentence_population[["sentlgth"]]
 all_bar_population_fbi_index      <- all_bar_population[["fbi_index"]]
 all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 
+# Example states:
 all_bar_population_race$Georgia
 all_bar_population_sex$Georgia
 all_bar_population_ageyrend$Georgia

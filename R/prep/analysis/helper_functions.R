@@ -7,8 +7,11 @@
 #'
 #' This function filters the prison population data to include only individuals
 #' who meet specific criteria related to admission type and sentence length.
-#' It also excludes states with high missingness or abolished parole systems
-#' and skips filtering for states that don't require these criteria.
+#' When analyzing people in prison past parole eligibility, we are interested in
+#' people in prison for new crimes (not parole revocations) and with sentence lengths
+#' of more than 1 year but not life. This function also excludes states with
+#' high missingness or abolished parole systems and skips filtering for states
+#' that don't require these criteria.
 #'
 #' @param data A data frame containing prison population data to be filtered.
 #' @param exclude A data frame or vector containing states to exclude due to high missingness or abolished parole systems.
@@ -38,9 +41,11 @@ fnc_filter_pe_population_criteria <- function(data, exclude, dont_filter) {
     filter(!(state %in% exclude)) |> # Exclude states with missing data or no parole system
     filter(
       (state %in% dont_filter) | # Include states in dont_filter without further filtering
-        (admtype == "New court commitment" & # Filter for "New court commitment" admission type
-           sentlgth %in% c("1-1.9 years", "2-4.9 years", # Include specific sentence length categories
-                           "5-9.9 years", "10-24.9 years", ">=25 years"))
+        # (admtype == "New court commitment" & # Filter for "New court commitment" admission type
+        #    sentlgth %in% c("1-1.9 years", "2-4.9 years", # Include specific sentence length categories
+        #                    "5-9.9 years", "10-24.9 years", ">=25 years"))
+        !(admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
+        !(sentlgth %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth) | sentlgth == "Unknown")
     )
 
   # Return the filtered dataset
@@ -470,20 +475,22 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       ))
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
-    select_year <- unique(df1$rptyear)
+    year <- unique(df1$rptyear)
 
     # Generate descriptive accessibility text for the pie chart
     category_counts <- df1 |>
       group_by(!!sym(variable)) |> # Group by the specified variable
-      summarise(percentage = round(sum(n) / sum(df1$n) * 100, 0)) |> # Calculate percentage for each category
+      # Calculate percentage for each category
+      summarise(percentage = round(sum(n) / sum(df1$n) * 100, 0)) |>
       arrange(desc(percentage)) # Sort categories by descending percentage
 
     # Build a textual description of the chart for accessibility
     accessibility_text <- paste(
-      "This pie chart shows the distribution of the prison population by", variable, "in", select_year, ".",
+      "This pie chart shows the distribution of the prison population by", variable, "in", year, ".",
       paste(
         category_counts |>
-          transmute(text = paste0(!!sym(variable), ": ", percentage, "%")) |> # Combine category and percentage
+          # Combine category and percentage
+          transmute(text = paste0(!!sym(variable), ": ", percentage, "%")) |>
           pull(text), # Extract the formatted text
         collapse = ", " # Join all categories into a single string
       )
@@ -495,23 +502,24 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_plotOptions(pie = list(
         dataLabels = list( # Define label formatting for the chart
           enabled = TRUE,
-          format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span><br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
+          format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span>
+          <br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
         ),
-        colorByPoint = FALSE # Use custom colors defined in the data
+        # Use custom colors defined in the data
+        colorByPoint = FALSE
       )) |>
-      hc_series(list( # Add data to the chart
+      hc_series(list(
+        # Add data to the chart
         data = list_parse(df1 |> mutate(y = n) |> transmute(
           name = !!sym(variable), y, color, tooltip
         ))
       )) |>
-      hc_add_theme(base_hc_theme) |> # Add a base theme for consistency
-      hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |> # Custom tooltip formatting
-      # hc_title(text = paste0("Prison Population by Parole Eligibility Status, ", select_year)) |> # Chart title
-      # hc_title(text = "Prison Population by Parole Eligibility Status, Most Recent Year Available") |>
+      hc_add_theme(base_hc_theme) |> # Add a base theme
+      hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", select_year)) |> # Enable export
-      hc_caption(text = paste0(source1, ", ", select_year, " and ", source2)) |> # Add chart caption with source information
-      fnc_add_hc_accessibility(accessibility_text) # Add accessibility text
+      hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", year)) |>
+      hc_caption(text = paste0(source1, ", ", year, " and ", source2)) |> # Add chart caption with source information
+      fnc_add_hc_accessibility(accessibility_text) # Function to add accessibility text
   })
 
   # Assign state names to the charts list for clarity
@@ -640,11 +648,11 @@ fnc_generate_projection_sentence <- function(state_name, data) {
   # Filter data for the specified state
   state_data <- data |> filter(state == state_name)
 
-  # Extract years with valid past and projected data
+  # Extract years with valid percent of people past parole eligibility and projected data
   valid_past_years <- state_data |> filter(!is.na(pct_past_pe)) |> pull(year)
   valid_proj_years <- state_data |> filter(!is.na(proj_pct_past_pe)) |> pull(year)
 
-  # Determine earliest and latest years for past and projected data
+  # Determine earliest and latest years for original and projected data
   earliest_year_past <- min(valid_past_years, na.rm = TRUE) # First year with valid past data
   latest_year_past <- max(valid_past_years, na.rm = TRUE) # Last year with valid past data
   earliest_year_proj <- if (length(valid_proj_years) > 0) min(valid_proj_years, na.rm = TRUE) else NA # First projection year
@@ -686,13 +694,10 @@ fnc_generate_projection_sentence <- function(state_name, data) {
     } else "has insufficient data to determine a change. ",
     if (!is.na(earliest_year_proj) && !is.na(latest_year_proj)) {
       paste0(
-        # "We've projected that from ", earliest_year_proj, " to ", latest_year_proj,
-        # ", the percent of people past parole eligibility ",
         "Our forcasting model projects that the percentage of people past their initial parole eligibility ",
         if (!is.na(change_proj)) {
           if (change_proj > 0) paste0("will increase by ", change_proj, " percent")
           else if (change_proj < 0) paste0("will decrease by ", abs(change_proj), " percent")
-          # else "will not change (0 percent change)"
           else paste0("will remain around ", round(proj_latest, 0), " percent")
         } else "has insufficient data to project a change",
         "."
@@ -730,20 +735,21 @@ fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, 
   # Generate charts for each state
   charts <- map(states, function(state_name) {
     # Determine chart orientation dynamically
+    # Offense type, use horizontal bars
     orientation <- if (x_var == "fbi_index") "horizontal" else "vertical"
 
     # Call the column chart creation function for each state
     fnc_hc_columnchart(
-      state_var  = state_name,   # Current state
-      df         = data,         # Filtered data
-      x_var      = x_var,        # X-axis variable
-      y_var      = y_var,        # Y-axis variable (default: "prop")
-      metric     = metric,       # Metric label
-      type       = type_desc,    # Type description (e.g., "Releases")
-      title_type = title_type,   # Title prefix
-      orientation = orientation, # Determine horizontal or vertical orientation
-      source1 = source1,
-      source2 = source2
+      state_var   = state_name,   # Current state
+      df          = data,         # Filtered data
+      x_var       = x_var,        # X-axis variable
+      y_var       = y_var,        # Y-axis variable (default: "prop")
+      metric      = metric,       # Metric label
+      type        = type_desc,    # Type description (e.g., "Releases")
+      title_type  = title_type,   # Title prefix
+      orientation = orientation,  # Determine horizontal or vertical orientation
+      source1     = source1,      # Source 1
+      source2     = source2       # Source 2
     )
   })
 

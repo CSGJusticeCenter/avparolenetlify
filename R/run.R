@@ -33,17 +33,17 @@ fnc_replace_write_qmd <- function(state) {
 wd <- getwd()
 
 # Load pre-processed data for analysis
+# States to exclude from th analysis
+# States that should be in the National Snapshot page but not have a report
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
 
-# Filter states for reports: Include only states with parole systems and complete data
-# states <- parole_eligibility_table |>
-#   filter(!state %in% states_to_exclude$state) |>
-#   filter(!state %in% states_national_page_only$state) |>
-#   pull(state)
-# states <- as.character(states)
-states <- c("Georgia", "Hawaii", "Connecticut")
+# States that need reports
+states <- parole_eligibility_table |>
+  filter(!state %in% states_to_exclude$state) |>
+  filter(!state %in% states_national_page_only$state) |>
+  pull(state)
 
 # Read the Quarto template for state reports
 orig_qmd <- read_lines("_state_report_template.qmd")

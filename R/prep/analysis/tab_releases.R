@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Last Updated: September 12, 2024 (MAR)
+# Last Updated: December 5, 2024 (MAR)
 # Description:
 #   This script analyzes and visualizes trends in prison releases across states
 #   and generates summary sentences and charts for key demographic and
@@ -19,12 +19,6 @@
 #   - Generating stacked bar charts visualizing parole-eligible release trends
 #     over time.
 #   - Saving all outputs (sentences and visualizations) to `.rds` files.
-#
-# Outputs:
-#   - State-specific summary sentences.
-#   - Interactive Highcharts visualizations for release trends, parole
-#     eligibility proportions, and release types.
-#   - Processed data objects for further analysis or reporting.
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
@@ -33,11 +27,11 @@
 
 # Filter NCRP releases data to include only states with parole systems
 # Exclude states with high missingness or abolished parole (in `states_to_exclude`)
-ncrp_releases_filtered <- ncrp_releases_not_consolidated |> ############################# change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_not_consolidated |> ############################# Amund, Will change to ncrp_releases_consolidated when complete
   filter(!state %in% states_to_exclude$state)
 
 # Summarize total number of people released from prison by state and year
-# Include data from 2010 onwards and filter by the selected `year_to_use`
+# Include data from 2010 onwards
 ncrp_releases_by_year <- ncrp_releases_filtered |>
   group_by(state, rptyear) |>
   summarise(total = n(), .groups = "drop") |>  # Calculate total releases for each state and year
@@ -48,6 +42,8 @@ ncrp_releases_by_year <- ncrp_releases_filtered |>
 states <- unique(ncrp_releases_by_year$state)
 
 # Generate summary sentences describing prison release trends for each state
+# "From 2010 to 2020, the number of people released from prison decreased 16 percent,
+# dropping from 21,717 in 2010 to 18,298 in 2020."
 all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
   # Filter release data for the specific state
   df1 <- ncrp_releases_by_year %>% filter(state == x)
@@ -75,6 +71,8 @@ all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
 
 # Assign state names to the list of sentences
 all_sentence_releases_by_year <- setNames(all_sentence_releases_by_year, states)
+
+# Example states:
 all_sentence_releases_by_year$Georgia
 all_sentence_releases_by_year$Connecticut
 all_sentence_releases_by_year$Hawaii
@@ -95,7 +93,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   hc_accessibility_text <- paste0("This graph shows the number of releases in ",
                                   "the state of ", x, " by year.")
 
-  # Create the Highcharts object for visualization
+  # Create the Highchart
   highcharts <-
     hc <- highchart() |>
     hc_chart(type = "line") |>
@@ -110,7 +108,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
         name = "Releases",  # Name of the series
         data = df1$total,  # Data to visualize
         tooltip = list(
-          pointFormat = "<b>People Released From Prison:</b> {point.y}"  # Tooltip format
+          pointFormat = "<b>People Released From Prison:</b> {point.y}"
         )
       )
     ) |>
@@ -119,17 +117,19 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5)) |>
     hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
-    fnc_add_hc_accessibility(hc_accessibility_text)  # Add accessibility features
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
 
 # Assign state names to the list of charts for easy access
 all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
+rm(states)  # Cleanup: Remove the temporary `states` variable
+
+# Example states:
 all_line_releases_by_year$Georgia
 all_line_releases_by_year$Connecticut
 all_line_releases_by_year$Hawaii
-rm(states)  # Cleanup: Remove the temporary `states` variable
 
 
 
@@ -141,15 +141,16 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 # lengths not less than one year or life. Exclude states with high missingness
 # or abolished parole, and avoid filtering certain states based on other criteria.
 ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
-  data = ncrp_releases_not_consolidated,  # Update to `ncrp_releases_consolidated` when complete
+  data = ncrp_releases_not_consolidated,  ############################## Amund, I will update to `ncrp_releases_consolidated` when complete
   exclude = states_to_exclude,
   dont_filter = states_nofilter) |>
-  left_join(which_overall_year, by = "state")  # Join to add the best year information for each state
+  left_join(which_overall_year, by = "state")
 
-# Summarize release data by parole eligibility status (past or on their eligibility year)
+# Were people released on or past their eligibility year?
+# Summarize release data by parole eligibility status
 # - Calculate proportions within each group (on parole eligibility vs. past parole eligibility)
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
-  filter(estimated_pey_status %in% c("past", "current_year")) |>
+  filter(estimated_pey_status %in% c("past", "current_year")) |> # both currently and past parole eligibility
   group_by(state, rptyear, year_to_use, estimated_pey_status) |>
   summarise(n = n(), .groups = "drop") |>  # Count the number of releases
   group_by(state, rptyear, year_to_use) |>
@@ -160,7 +161,7 @@ ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
       estimated_pey_status == "current_year" ~ "On Parole Eligibility"
     )
   ) |>
-  filter(rptyear >= 2010 & rptyear <= year_to_use)  # Include data from 2010 onwards up to the selected year
+  filter(rptyear >= 2010 & rptyear <= year_to_use)  # Include data from 2010 onwards up to the year by state
 
 # Extract a list of unique states for iteration
 states <- unique(ncrp_pe_releases_by_year$state)
@@ -213,6 +214,8 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
 
 # Assign state names to the list of charts for easy access
 all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
+
+# Example states:
 all_stackedbar_pe_release$Alabama
 all_stackedbar_pe_release$Arkansas
 all_stackedbar_pe_release$Colorado
@@ -245,6 +248,9 @@ all_stackedbar_pe_release$`West Virginia`
 all_stackedbar_pe_release$Wyoming
 
 # Generate summary sentences describing the proportion of people released past their parole eligibility year
+# "In the most recent year of data available, 76 percent of parole-eligible people
+#  released in Georgia were released past their parole eligibility year, which is
+#  an increase of 3 percent from 2010."
 all_sentence_pe_proportion_released <- map(.x = states, .f = function(x) {
   # Filter data for the specific state
   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
@@ -297,8 +303,10 @@ all_sentence_pe_proportion_released <- map(.x = states, .f = function(x) {
 
 # Assign state names to the list of sentences
 all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_released, states)
-all_sentence_pe_proportion_released$Georgia
 rm(states)  # Cleanup: Remove the temporary `states` variable
+
+# Example state:
+all_sentence_pe_proportion_released$Georgia
 
 
 
@@ -380,6 +388,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
 
 # Assign state names to the pie chart list for easy access
 all_pie_release_type <- setNames(all_pie_release_type, states)
+
+# Example states:
 all_pie_release_type$Georgia
 all_pie_release_type$`South Dakota`
 
@@ -391,8 +401,9 @@ all_sentence_release_type <- map(.x = states, .f = function(x) {
 
   # Construct the summary sentence for the state
   sentences <- paste0(
-    "Conditional release involves an individual’s release under specific conditions and supervision, whereas unconditional release means the individual is released without further obligations or restrictions. ",
-    # "In ", unique(df1$rptyear), ", ", round(df1$prop * 100, 0),
+    "Conditional release involves an individual’s release under specific conditions ",
+    "and supervision, whereas unconditional release means the individual is released ",
+    "without further obligations or restrictions. ",
     round(df1$prop * 100, 0),
     " percent of people released from prison were ", tolower(df1$reltype), "s."
   )
@@ -402,8 +413,10 @@ all_sentence_release_type <- map(.x = states, .f = function(x) {
 
 # Assign state names to the sentences list for easy access
 all_sentence_release_type <- setNames(all_sentence_release_type, states)
-all_sentence_release_type$Georgia
 rm(states)  # Cleanup: Remove the temporary `states` variable
+
+# Example state:
+all_sentence_release_type$Georgia
 
 
 
@@ -413,7 +426,7 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 
 # Filter release data to include only the appropriate year for each state
 # This ensures that the analysis uses the best available year based on `which_overall_year`
-current_releases <- ncrp_releases_not_consolidated |>  # Replace with `ncrp_releases_consolidated` when ready
+current_releases <- ncrp_releases_not_consolidated |>  ################################## Will Replace with `ncrp_releases_consolidated` when ready
   fnc_filter_by_year(which_overall_year)
 
 # Create a second filtered dataset for non-consolidated data
@@ -422,29 +435,44 @@ current_releases_not_consolidated <- ncrp_releases_not_consolidated |>
   fnc_filter_by_year(which_overall_year)
 
 # Summarize the prison releases by various attributes
-# This step aggregates data and calculates proportions for visualization and reporting
 ncrp_releases_race <- fnc_summarize_data(current_releases, "race") |>
-  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)  # Exclude states with high missingness for race data
+  # Exclude states with high missingness for race data
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 ncrp_releases_sex <- fnc_summarize_data(current_releases, "sex")
 ncrp_releases_agerlse <- fnc_summarize_data(current_releases, "agerlse")  ################### Consider changing to `agerelease` if necessary
 ncrp_releases_fbi_index <- fnc_summarize_data(current_releases, "fbi_index") |>
-  fnc_group_offense_type()  # Group offenses into categories like "Violent" and "Nonviolent"
+  # Group offenses into categories like "Violent" and "Nonviolent"
+  fnc_group_offense_type()
 ncrp_releases_sentlgth <- fnc_summarize_data(current_releases, "sentlgth")
 
 # Create a list of parameters for each category to streamline chart and sentence generation
 categories <- list(
-  list(data = ncrp_releases_race,      x_var = "race",      metric = "Race and Ethnicity", source1 = ncrp_source, source2 = NULL),
-  list(data = ncrp_releases_sex,       x_var = "sex",       metric = "Sex",                source1 = ncrp_source, source2 = NULL),
-  list(data = ncrp_releases_agerlse,   x_var = "agerlse",   metric = "Age",                source1 = ncrp_source, source2 = NULL),
-  list(data = ncrp_releases_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length",    source1 = ncrp_source, source2 = NULL),
-  list(data = ncrp_releases_fbi_index, x_var = "fbi_index", metric = "Offense Type",       source1 = ncrp_source, source2 = NULL)
+  list(data = ncrp_releases_race,
+       x_var = "race",
+       metric = "Race and Ethnicity",
+       source1 = ncrp_source,
+       source2 = NULL),
+  list(data = ncrp_releases_sex,
+       x_var = "sex",
+       metric = "Sex",
+       source1 = ncrp_source,
+       source2 = NULL),
+  list(data = ncrp_releases_agerlse,
+       x_var = "agerlse",
+       metric = "Age",
+       source1 = ncrp_source,
+       source2 = NULL),
+  list(data = ncrp_releases_sentlgth,
+       x_var = "sentlgth",
+       metric = "Sentence Length",
+       source1 = ncrp_source,
+       source2 = NULL),
+  list(data = ncrp_releases_fbi_index,
+       x_var = "fbi_index",
+       metric = "Offense Type",
+       source1 = ncrp_source,
+       source2 = NULL)
 )
-
-
-
-# ---------------------------------------------------------------------------- #
-# Generate Sentences and Column Charts (Demographics, Offense Type, Sentence Length)
-# ---------------------------------------------------------------------------- #
 
 # Initialize empty lists to store bar charts and sentences
 all_bar_releases <- list()
@@ -471,17 +499,18 @@ for (category in categories) {
 }
 
 # Access specific bar charts and sentences
-all_bar_releases_race <- all_bar_releases[["race"]]
-all_sentence_releases_race <- all_sentence_releases[["race"]]
-all_bar_releases_sex <- all_bar_releases[["sex"]]
-all_sentence_releases_sex <- all_sentence_releases[["sex"]]
-all_bar_releases_agerlse <- all_bar_releases[["agerlse"]]
-all_sentence_releases_agerlse <- all_sentence_releases[["agerlse"]]
-all_bar_releases_sentlgth <- all_bar_releases[["sentlgth"]]
-all_sentence_releases_sentlgth <- all_sentence_releases[["sentlgth"]]
-all_bar_releases_fbi_index <- all_bar_releases[["fbi_index"]]
+all_bar_releases_race           <- all_bar_releases[["race"]]
+all_sentence_releases_race      <- all_sentence_releases[["race"]]
+all_bar_releases_sex            <- all_bar_releases[["sex"]]
+all_sentence_releases_sex       <- all_sentence_releases[["sex"]]
+all_bar_releases_agerlse        <- all_bar_releases[["agerlse"]]
+all_sentence_releases_agerlse   <- all_sentence_releases[["agerlse"]]
+all_bar_releases_sentlgth       <- all_bar_releases[["sentlgth"]]
+all_sentence_releases_sentlgth  <- all_sentence_releases[["sentlgth"]]
+all_bar_releases_fbi_index      <- all_bar_releases[["fbi_index"]]
 all_sentence_releases_fbi_index <- all_sentence_releases[["fbi_index"]]
 
+# Example state:
 all_bar_releases_race$Georgia
 
 # ---------------------------------------------------------------------------- #

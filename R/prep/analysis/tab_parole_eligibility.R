@@ -18,7 +18,7 @@
 #   - Analyzing trends and projections for people past their parole eligibility
 #     date, with summary sentences and line charts for states.
 #   - Saving all outputs (charts, sentences, and data summaries) as `.rds` files
-#     for integration with the AV Parole dashboard.
+#     for integration with the AV Parole web tool's Parole Eligibility tab.
 ################################################################################
 
 # ---------------------------------------------------------------------------- #
@@ -62,9 +62,14 @@ all_pie_pe_type <- fnc_hc_pie_chart(
   df = pe_status_pop,
   variable = "parelig_status"
 )
+
+# State example:
 all_pie_pe_type$Georgia
 
 # Generate summary sentences for each state describing parole eligibility proportions
+#  "Most recent data shows that 69 percent of people in prison were eligible for
+#   parole and incarcerated past parole eligibility at the end of the year, while
+#   another 31 will reach their parole eligibility next year."
 all_sentence_pe_type <- {
   # Get the list of unique states from the filtered data
   states <- unique(pe_status_pop$state)
@@ -75,7 +80,7 @@ all_sentence_pe_type <- {
     df <- pe_status_pop |> filter(state == state_name)
 
     # Extract the reporting year for the current state (assumes consistency across rows)
-    select_year <- unique(df$rptyear)
+    year <- unique(df$rptyear)
 
     # Get proportions of people currently eligible and those eligible in the future
     current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
@@ -83,16 +88,17 @@ all_sentence_pe_type <- {
 
     # Construct the summary sentence for the state
     paste0(
-      # "In ", select_year, ", ",
       "Most recent data shows that ",
       round(current_prop, 0),
-      " percent of people in prison were eligible for parole and incarcerated past parole eligibility at the end of the year,",
+      " percent of people in prison were eligible for parole and incarcerated ",
+      "past parole eligibility at the end of the year,",
       " while another ", round(future_prop, 0),
-      " will reach their parole eligibility next year."
-      # " percent will reach their parole eligibility after ", select_year, "."
+      " were expected to reach their parole eligibility in the following year."
     )
   }) |> setNames(states) # Assign state names to the generated sentences
 }
+
+# State example:
 all_sentence_pe_type$Georgia
 
 
@@ -106,7 +112,7 @@ all_sentence_pe_type$Georgia
 #   It includes projections for years beyond 2020.
 # ---------------------------------------------------------------------------- #
 
-# Transform and Generate Projection Data for Past Parole Eligibility
+# Transform projection data for past parole eligibility
 pe_proj_pop <- ncrp_projections |>
   select(state, year, pcnt_ppey_rules_wf, proj_pcnt_ppey, excl_state_year) |>
   mutate(
@@ -130,14 +136,18 @@ pe_proj_pop <- ncrp_projections |>
   # Remove states we aren't including in the app
   filter(!state %in% states_to_exclude$state)
 
-# Generate Summary Sentences for Past Parole Eligibility Projections
 # Extract the list of unique states
 states <- unique(pe_proj_pop$state)
 
 # Generate summary sentences for all states
+# "From 2010 to 2020, the percent of people in prison past parole eligibility
+#  increased by 22 percent. Our forcasting model projects that the percentage of
+#  people past their initial parole eligibility will remain around 68 percent."
 # The `fnc_generate_projection_sentence` function creates state-specific summaries
 all_sentence_pop_pe_by_year <- map(states, ~ fnc_generate_projection_sentence(.x, pe_proj_pop)) |>
   setNames(states) # Assign state names to the sentences for easy retrieval
+
+# State examples:
 all_sentence_pop_pe_by_year$Georgia
 all_sentence_pop_pe_by_year$Colorado
 all_sentence_pop_pe_by_year$Idaho
@@ -146,9 +156,11 @@ all_sentence_pop_pe_by_year$Hawaii
 # Generate Line Charts for Past Parole Eligibility Projections
 all_line_pop_pe_by_year <- map(states, function(x) {
 
+  # Filter to state
   df1 <- pe_proj_pop |>
     filter(state == x)
 
+  # Determine max year before projection line
   max_year <- df1 |>
     filter(!is.na(pct_past_pe)) |>
     group_by(state) |>
@@ -160,7 +172,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
 
   # Filter data for the current state and prepare for charting
   df1 <- df1 |>
-    complete(year = all_years, fill = list(pct_past_pe = NA, proj_pct_past_pe = NA)) |> # Ensure all years are included
+    complete(year = all_years, fill = list(pct_past_pe = NA, proj_pct_past_pe = NA)) |> # Ensure all years are included in graph
     mutate(
       # Get the last observed value for percentage past parole eligibility
       last_value_past_pe = last(na.omit(pct_past_pe)),
@@ -224,6 +236,8 @@ all_line_pop_pe_by_year <- map(states, function(x) {
 
 # Assign state names to the generated charts
 all_line_pop_pe_by_year <- setNames(all_line_pop_pe_by_year, states)
+
+# Example state:
 all_line_pop_pe_by_year$Georgia
 all_line_pop_pe_by_year$Colorado
 all_line_pop_pe_by_year$Idaho
@@ -236,45 +250,56 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 # Prepare Column Charts Data (Demographics, Offense Type, Sentence Length)
 # ---------------------------------------------------------------------------- #
 
-# Prepare data for people in prison past their parole eligibility date by demographics, offense type, and sentence length
-# Filter data to include only individuals who are currently eligible for parole release
+# Filter data to include only individuals who are currently eligible for parole
 current_pe <- ncrp_yearendpop_filtered |>
-  filter(parelig_status == "Current") |>
-  fnc_filter_by_year(which_overall_year)  # Ensure only data from the selected year is included
+  filter(parelig_status == "Current") |>  # Currently eligible for parole
+  fnc_filter_by_year(which_overall_year)  # Ensure only data from the year needed by state
 
 # Use the unconsolidated file for age since `ageyrend` is not available in the consolidated file
 current_pe_unconsolidated <- fnc_filter_pe_population_criteria(
   ncrp_yearendpop_not_consolidated,  # Use unconsolidated data
   exclude = states_to_exclude,       # Exclude states with missing or invalid data
-  dont_filter = states_nofilter      # States that don't require filtering
-) |>
+  dont_filter = states_nofilter) |>  # States that don't require filtering
   filter(parelig_status == "Current") |>
-  fnc_filter_by_year(which_overall_year)  # Apply year filtering
+  fnc_filter_by_year(which_overall_year)  # Ensure only data from the year needed by state
 
 # Summarize the prison population by various attributes
 # This step aggregates data and calculates proportions for visualization and reporting
-current_pe_race     <- fnc_summarize_data(current_pe, "race") |>
-  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)  # Exclude states with high missingness for race data
-current_pe_sex       <- fnc_summarize_data(current_pe, "sex")          # Summarize by sex
+current_pe_race     <- fnc_summarize_data(current_pe, "race") |>                      # Summarize by race and ethnicity
+  fnc_filter_exclude_high_missing_race(states_with_high_missing_race)                 # Exclude states with high missingness for race data
+current_pe_sex       <- fnc_summarize_data(current_pe, "sex")                         # Summarize by sex
 current_pe_ageyrend  <- fnc_summarize_data(current_pe_unconsolidated, "ageyrend")     # Summarize by age
-current_pe_sentlgth  <- fnc_summarize_data(current_pe, "sentlgth")     # Summarize by sentence length
-current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |> # Summarize by offense type
-  fnc_group_offense_type()                                             # Group offense types into broader categories
+current_pe_sentlgth  <- fnc_summarize_data(current_pe, "sentlgth")                    # Summarize by sentence length
+current_pe_fbi_index <- fnc_summarize_data(current_pe, "fbi_index") |>                # Summarize by offense type
+  fnc_group_offense_type()                                                            # Group offense types into broader categories
 
 # Create a list of parameters for each category to streamline chart and sentence generation
 categories <- list(
-  list(data = current_pe_race,      x_var = "race",      metric = "Race and Ethnicity", source1 = ncrp_source, source2 = csg_source),
-  list(data = current_pe_sex,       x_var = "sex",       metric = "Sex", source1 = ncrp_source, source2 = csg_source),
-  list(data = current_pe_ageyrend,  x_var = "ageyrend",  metric = "Age", source1 = ncrp_source, source2 = csg_source),
-  list(data = current_pe_sentlgth,  x_var = "sentlgth",  metric = "Sentence Length", source1 = ncrp_source, source2 = csg_source),
-  list(data = current_pe_fbi_index, x_var = "fbi_index", metric = "Offense Type", source1 = ncrp_source, source2 = csg_source)
-)
-
-
-
-# ---------------------------------------------------------------------------- #
-# Generate Sentences and Column Charts (Demographics, Offense Type, Sentence Length)
-# ---------------------------------------------------------------------------- #
+  list(data = current_pe_race,
+       x_var = "race",
+       metric = "Race and Ethnicity",
+       source1 = ncrp_source, # Source 1 (NCRP)
+       source2 = csg_source), # Source 2 (CSG Estimates)
+  list(data = current_pe_sex,
+       x_var = "sex",
+       metric = "Sex",
+       source1 = ncrp_source,
+       source2 = csg_source),
+  list(data = current_pe_ageyrend,
+       x_var = "ageyrend",
+       metric = "Age",
+       source1 = ncrp_source,
+       source2 = csg_source),
+  list(data = current_pe_sentlgth,
+       x_var = "sentlgth",
+       metric = "Sentence Length",
+       source1 = ncrp_source,
+       source2 = csg_source),
+  list(data = current_pe_fbi_index,
+       x_var = "fbi_index",
+       metric = "Offense Type",
+       source1 = ncrp_source,
+       source2 = csg_source))
 
 # Initialize empty lists to store bar charts and sentences for each category
 all_bar_pe <- list()
@@ -284,24 +309,25 @@ all_sentence_pe <- list()
 for (category in categories) {
   # Generate bar charts for the current category
   all_bar_pe[[category$x_var]] <- fnc_generate_bar_charts(
-    data       = category$data,       # Data for the current category
-    x_var      = category$x_var,      # X-axis variable (e.g., race, sex)
-    metric     = category$metric,     # Metric label (e.g., "Race and Ethnicity")
+    data       = category$data,                                    # Data for the current category
+    x_var      = category$x_var,                                   # X-axis variable (e.g., race, sex)
+    metric     = category$metric,                                  # Metric label (e.g., "Race and Ethnicity")
     type_desc  = "the prison population past parole eligibility",  # Description of the data type
     title_type = "People in Prison Past Parole Eligibility",       # Chart title prefix
-    y_var      = "prop",              # Y-axis variable (default: proportion)
-    source1    = category$source1,
-    source2    = category$source2
+    y_var      = "prop",                                           # Y-axis variable
+    source1    = category$source1,                                 # Source 1 (NCRP)
+    source2    = category$source2                                  # Source 2 (CSG Estimates)
   )
 
   # Generate sentences for the current category
   all_sentence_pe[[category$x_var]] <- fnc_generate_sentences(
-    data      = category$data,       # Data for the current category
-    x_var     = category$x_var,      # X-axis variable
+    data      = category$data,                       # Data for the current category
+    x_var     = category$x_var,                      # X-axis variable
     type_desc = "in prison past parole eligibility"  # Description of the data type
   )
 }
 
+# Assign chart and sentence names
 all_bar_pe_race           <- all_bar_pe[["race"]]
 all_sentence_pe_race      <- all_sentence_pe[["race"]]
 all_bar_pe_sex            <- all_bar_pe[["sex"]]
@@ -313,7 +339,7 @@ all_sentence_pe_sentlgth  <- all_sentence_pe[["sentlgth"]]
 all_bar_pe_fbi_index      <- all_bar_pe[["fbi_index"]]
 all_sentence_pe_fbi_index <- all_sentence_pe[["fbi_index"]]
 
-# Check Georgia chart and sentence
+# Example states:
 all_bar_pe_race$Georgia
 all_sentence_pe_race$Georgia
 all_bar_pe_race$Hawaii
