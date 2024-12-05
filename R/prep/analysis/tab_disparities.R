@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_disparities.R
 # Authors: Mari Roberts
-# Last Updated: November 25, 2024 (MAR)
+# Last Updated: December 5, 2024 (MAR)
 # Description:
 #   This script analyzes and visualizes disparities in race, ethnicity, and sex,
 #   focusing on two key areas: time served and years past parole eligibility.
@@ -100,7 +100,7 @@ los_sex <- ncrp_releases_filtered |>
 
 # Calculate average time served by offense, sex and state
 los_sex_by_offense_type <- ncrp_releases_filtered |>
-  filter(race != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
+  filter(sex != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
   group_by(state, sex, fbi_index, rptyear) |>
   summarise(average_los = mean(time_between_admission_release, na.rm = TRUE),
             people = n(),
@@ -171,7 +171,7 @@ avg_past_pe_race_by_offense_type <- ncrp_past_pe |>
 
 # Get average time served past PE for people still in prison by sex and offense
 avg_past_pe_sex_by_offense_type <- ncrp_past_pe |>
-  filter(race != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
+  filter(sex != "Unknown" & fbi_index != "Unknown" & fbi_index != "Other or Unspecified") |>
   mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
   group_by(state, sex, fbi_index, rptyear) |>

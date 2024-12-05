@@ -1078,7 +1078,9 @@ fnc_create_lollipop_chart <- function(df, group_var, state_name, height = 200, s
       tickColor = "transparent",
       max = max_los * 1.5
     ) |>
-    hc_exporting(enabled = FALSE) |>
+    hc_exporting(enabled = TRUE,
+                 filename = paste0(gsub(" ", "_", tolower(chart_title)), "_",
+                                   year)) |>
     hc_tooltip(enabled = FALSE) |>
     hc_legend(enabled = FALSE) |>
     hc_size(height = height) |>
@@ -1176,7 +1178,7 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
     # Define dynamic titles and labels for the chart
     x_axis_title <- ifelse(measure == "average_los", "Average Time Served (Years)", "Average Years Past Parole Eligibility")
     chart_title <- paste0("Average ", ifelse(measure == "average_los", "Time Served", "Years Past Parole Eligibility"),
-                          " by Offense and ", ifelse(group_var == "sex", "Gender", "Race and Ethnicity"))
+                          " by Offense and ", ifelse(group_var == "sex", "Sex", "Race and Ethnicity"))
 
     # Generate accessibility text for the chart
     accessibility_measure <- ifelse(measure == "average_los", "average length of stay", "average years past parole eligibility")
@@ -1241,7 +1243,10 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
           source1, ", ", year,
           if (!is.null(source2)) paste0(" and ", source2) else ""
         )
-      )
+      ) |>
+      hc_exporting(enabled = TRUE,
+                   filename = paste0(gsub(" ", "_", tolower(chart_title)), "_",
+                                     year))
 
     # Add scatter series for each group dynamically
     for (i in seq_along(group_labels)) {

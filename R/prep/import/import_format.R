@@ -101,7 +101,7 @@ state_methodology_clean <- state_methodology %>%
 
 # Import "How is Parole Eligibility Determined?" and number of parole board members
 # This data was created by the Policy Team in the 'Release Systems by State' Word document.
-state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes_v2.csv")) |>
+state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |> # Trim leading/trailing whitespace
   mutate(
