@@ -453,7 +453,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #' - Adds accessibility text to describe the chart for screen readers.
 #' - Outputs charts with exporting options enabled for saving.
 #' @export
-fnc_hc_pie_chart <- function(df, variable, source = ncrp_csg_source) {
+fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
   # Get unique states from the data
   states <- unique(df$state)
 
@@ -464,9 +464,9 @@ fnc_hc_pie_chart <- function(df, variable, source = ncrp_csg_source) {
       ungroup() |> # Remove grouping to ensure accurate filtering
       filter(state == state_name) |> # Select data for the current state
       mutate(color = case_when( # Assign colors based on parole eligibility status
-        parelig_status == "Future" ~ color2,
+        parelig_status == "Will Be Eligible Next Year" ~ color2,
         parelig_status == "Missing" ~ darkgray,
-        parelig_status == "Current" ~ color4
+        parelig_status == "Past Parole Eligibility at End of Year" ~ color4
       ))
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
@@ -510,7 +510,7 @@ fnc_hc_pie_chart <- function(df, variable, source = ncrp_csg_source) {
       # hc_title(text = "Prison Population by Parole Eligibility Status, Most Recent Year Available") |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
       hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", select_year)) |> # Enable export
-      hc_caption(text = source) |> # Add chart caption with source information
+      hc_caption(text = paste0(source1, ", ", select_year, " and ", source2)) |> # Add chart caption with source information
       fnc_add_hc_accessibility(accessibility_text) # Add accessibility text
   })
 
@@ -540,7 +540,8 @@ fnc_hc_pie_chart <- function(df, variable, source = ncrp_csg_source) {
 #' - Includes accessibility text and exporting functionality.
 #' @export
 fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type,
-                               source = ncrp_csg_source, orientation = "vertical") {
+                               source1 = ncrp_source, source2 = csg_source,
+                               orientation = "vertical") {
 
   # Filter the data for the specified state
   df1 <- df |>
@@ -602,8 +603,13 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_title(text = title) |> # Add the chart title
     hc_exporting(enabled = TRUE, # Enable exporting functionality
                  filename = paste0(gsub(" ", "_", tolower(title)), "_", year)) |>
-    fnc_add_hc_accessibility(accessibility_text) |> # Add accessibility text
-    hc_caption(text = source) # Add source caption
+    fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
+    hc_caption(
+      text = paste0(
+        source1, ", ", year,
+        if (!is.null(source2)) paste0(" and ", source2) else ""
+      )
+    )
 
   return(highcharts) # Return the generated Highchart
 }
@@ -735,7 +741,6 @@ fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, 
       metric     = metric,      # Metric label
       type       = type_desc,   # Type description (e.g., "Releases")
       title_type = title_type,  # Title prefix
-      source     = source,      # Chart source
       orientation = orientation # Determine horizontal or vertical orientation
     )
   })

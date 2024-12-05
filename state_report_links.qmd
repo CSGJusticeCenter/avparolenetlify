@@ -37,8 +37,13 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rd
 load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
 
-states_to_include <- parole_eligibility_table |> filter(!is.na(proj_pcnt_ppey_rounded) & !state %in% states_national_page_only$state)
+# Don't include states that we identified as needing to exlude
+# Don't create a report for states in states_national_page_only
+states_to_include <- parole_eligibility_table |> 
+  filter(!state %in% states_to_exclude$state) |> 
+  filter(!is.na(proj_pcnt_ppey_rounded) & !state %in% states_national_page_only$state)
 ```
 
 ```{r}

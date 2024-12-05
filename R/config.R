@@ -133,12 +133,7 @@ lightgray <- "#d7d7d7"
 # Sources
 #------------------------------------------------------------------------------#
 
-# # Format sources that will go under each visualization
-# ncrp_csg_source_year <- "National Corrections Reporting Program and CSG Justice Center estimates, 2019"
-# ncrp_source_year     <- "National Corrections Reporting Program, 2019"
-# bjs_source_year      <- "BJS Prisoners in the United States, 2022"
-
-# ncrp_csg_source      <- "National Corrections Reporting Program and CSG Justice Center estimates"
-# ncrp_source          <- "National Corrections Reporting Program"
-# bjs_source           <- "BJS Prisoners in the United States"
-#
+# Format sources that will go under each visualization
+csg_source   <- "CSG Justice Center Estimates"
+ncrp_source  <- "National Corrections Reporting Program"
+bjs_source   <- "BJS Prisoners in the United States"
