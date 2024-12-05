@@ -220,8 +220,10 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
       sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth, TRUE ~ sentlgth),
 
       # Factor race with specified levels
-      race = factor(race, levels = c("Unknown", "Other race(s), non-Hispanic",
-                                     "White, non-Hispanic", "Hispanic, any race",
+      race = factor(race, levels = c("Unknown",
+                                     "Other race(s), non-Hispanic",
+                                     "White, non-Hispanic",
+                                     "Hispanic, any race",
                                      "Black, non-Hispanic")),
       # Factor sentence length with specified levels
       sentlgth = factor(sentlgth, levels = c("< 1 year",
@@ -239,9 +241,12 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
     print("Transforming age variable...")
     df <- df |>
       mutate(!!sym(age_var) := factor(!!sym(age_var),
-                                      levels = c("18-24 years", "25-34 years",
-                                                 "35-44 years", "45-54 years",
-                                                 "55+ years", "Unknown")))
+                                      levels = c("18-24 years",
+                                                 "25-34 years",
+                                                 "35-44 years",
+                                                 "45-54 years",
+                                                 "55+ years",
+                                                 "Unknown")))
   }
 
   # Print completion message and return the transformed data

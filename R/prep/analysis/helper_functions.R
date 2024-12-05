@@ -2509,3 +2509,113 @@ fnc_create_infographic <- function(rri_raw, infographic_color) {
   print(final_plot)  # Display the final infographic plot
 }
 
+#' Round Numbers to Significant Figures or Nearest Tens
+#'
+#' This function rounds numbers based on their magnitude.
+#' - For numbers with 3 or more digits, it rounds to the nearest power of 10 below.
+#' - For smaller numbers, it rounds to the nearest tens place.
+#'
+#' @param x A numeric vector to be rounded.
+#' @return A numeric vector with rounded values. If the input contains `NA`, the corresponding output will also be `NA`.
+#' @examples
+#' fnc_round_to_power(c(12345, 678, 45, 9, NA))
+#' # Returns: 12300, 680, 50, 10, NA
+#'
+fnc_round_to_power <- function(x) {
+  sapply(x, function(val) {
+    # Check if the value is NA, and return NA if true
+    if (is.na(val)) {
+      return(NA)
+    }
+
+    # Determine the number of digits in the number
+    digits <- nchar(floor(val))
+
+    # Define the rounding level: if digits >= 3, round to the nearest power of 10 down, else round to 10
+    if (digits >= 3) {
+      power <- 10^(digits - 2) # This determines the rounding level to the nearest power of 10 below
+      round(val / power) * power  # Use round to round to the nearest significant value
+    } else {
+      round(val, -1)
+    }
+  })
+}
+
+
+#' Create an Icon Grid for the Homepage
+#'
+#' This function generates a grid of icons representing the Relative Rate Index (RRI),
+#' with the first icon displayed in a distinct color (e.g., green), followed by a combination
+#' of full, partial, and empty icons to represent the RRI value.
+#'
+#' @param rri_raw Numeric value of the RRI to represent.
+#' @param rri_digits Integer specifying the number of decimal places to round the RRI.
+#' @param fillcolor Character specifying the color for fully filled icons (default: "darkgray").
+#' @param partialcolor Character specifying the color for partially filled icons (default: "white").
+#' @param emptyhumans Logical indicating whether to include empty icons (default: TRUE).
+#' @param emptycolor Character specifying the color for empty icons (default: "white").
+#' @param infogs Integer specifying the total number of icons in the grid (default: `default_ncols`).
+#' @param infogs_ncol Integer specifying the number of columns in the icon grid (default: `default_ncols`).
+#' @param fillHoriz Logical indicating whether the icons should fill horizontally (default: FALSE).
+#'
+#' @return A ggplot object representing the grid of icons for the homepage.
+#' @examples
+#' # Generate a homepage icon grid for an RRI of 3.5
+#' fnc_create_icons_homepage(rri_raw = 3.5, fillcolor = "blue")
+fnc_create_icons_homepage <- function(rri_raw, rri_digits = 1, fillcolor = "darkgray", partialcolor = "white",
+                                      emptyhumans = TRUE, emptycolor = "white", infogs = default_ncols,
+                                      infogs_ncol = default_ncols, fillHoriz = FALSE) {
+
+  # Round the RRI value to the specified number of digits
+  RRI <- round(rri_raw, digits = rri_digits)
+  numfull <- floor(RRI)  # Number of fully filled icons
+  numremain <- RRI - numfull  # Portion of the partially filled icon
+
+  # Generate plot options for full, partial, and empty icons
+  plot_opts <- fnc_icon_options(
+    partialval = numremain,  # Partial fill value for partially filled icons
+    empty = emptycolor,      # Color for empty icons
+    fill = fillcolor,        # Color for fully filled icons
+    partial = partialcolor,  # Color for partially filled icons
+    fillHoriz = fillHoriz    # Direction of the fill (horizontal or vertical)
+  )
+
+  # Initialize a list to store the plots
+  plot_list <- list()
+
+  # Set the first icon to a distinct color (e.g., green)
+  first_icon_color <- color4  # Customize this color as needed
+  first_icon_opts <- fnc_icon_options(
+    partialval = 0,          # No partial fill for the first icon
+    empty = emptycolor,      # Color for empty background
+    fill = first_icon_color, # Color for the first icon
+    partial = first_icon_color, # Use the same color for partial fill
+    fillHoriz = fillHoriz    # Direction of the fill
+  )
+  plot_list[[1]] <- first_icon_opts$full  # Add the first icon to the list
+
+  # Create fully filled icons in gray for the remaining RRI value
+  for (i in 2:numfull) {
+    plot_list[[i]] <- plot_opts$full
+  }
+
+  # Add a partially filled icon if the RRI has a fractional part
+  if (numremain > 0) {
+    plot_list[[numfull + 1]] <- plot_opts$partial
+  }
+
+  # Add empty icons to complete the grid if needed
+  if (emptyhumans && length(plot_list) < infogs) {
+    for (i in (numfull + 2):infogs) {
+      plot_list[[i]] <- plot_opts$empty
+    }
+  }
+
+  # Determine the number of rows for the icon grid
+  rows <- ifelse(infogs > infogs_ncol, ceiling(length(plot_list) / infogs_ncol), 1)
+
+  # Return the grid of icons as a ggplot object
+  plot_grid(plotlist = plot_list, nrow = rows)
+}
+
+

@@ -18,8 +18,8 @@
 # - Select only relevant columns for output
 parole_eligibility_table_projection_year <- ncrp_projections |>
   filter(year == projection_year) |>
-  # filter(!state %in% states_abolished_parole$state) |>
-  filter(!state %in% states_to_exclude$state) |>
+  filter(!state %in% states_abolished_parole$state) |>
+  # filter(!state %in% states_to_exclude$state) |>
   mutate(proj_pop_past_pey_rounded = fnc_round_to_power(proj_pop_past_pey),
          proj_pcnt_ppey_rounded = round(proj_pcnt_ppey, 0)) |>
   select(state, proj_pcnt_ppey_rounded, proj_pop_past_pey_rounded)
@@ -319,7 +319,7 @@ map_percent <- highchart(height = 625) |>
 
   hc_exporting(enabled = FALSE, filename = "proj_past_parole_eligibility_2023") |>
 
-  hc_caption(text = ncrp_csg_source,
+  hc_caption(text = "National Corrections Reporting Program and CSG Justice Center estimates, 2019",
              y = 0) |>
 
   hc_legend(align = "right",
@@ -407,31 +407,6 @@ map_percent_download <- highchart(height = 625,
 
   hc_add_theme(base_hc_theme) |>
 
-  # hc_plotOptions(series = list(
-  #   animation = FALSE,
-  #   cursor = "pointer",
-  #   borderWidth = 3,
-  #   accessibility = list(
-  #     enabled = TRUE,
-  #     keyboardNavigation = list(enabled = TRUE),
-  #     pointDescriptionFormatter = JS("function(point) {
-  #       return 'State: ' + point.state_abb + ', Percentage: ' + point.currentperclabel;
-  #     }")
-  #   )
-  # ),
-  # accessibility = list(
-  #   enabled = TRUE,
-  #   keyboardNavigation = list(enabled = TRUE),
-  #   linkedDescription =
-  #     paste0("This hexagonal map visualizes the projected proportion of people in prison past their parole eligibility across different U.S. states in 2023. ",
-  #            "States are represented as hexagons, with color gradients indicating different percentage ranges of prison populations past parole eligibility. ",
-  #            "The map also includes a category for states that have abolished discretionary parole and those with missing data."),
-  #   landmarkVerbosity = "one"
-  # ),
-  # area = list(accessibility = list(description =
-  #                                    paste0("This chart visually compares parole eligibility status across U.S. states, using colors to denote different percentage ranges.")))
-  # ) |>
-
   hc_title(text = "Percentage of People in Prison Past Parole Eligibility<br>2023 Projections",
            align = "center",
            style = list(fontSize = "1.75em", fontWeight = "bold")) |>
@@ -439,7 +414,7 @@ map_percent_download <- highchart(height = 625,
   hc_exporting(
     enabled = FALSE) |>
 
-  hc_caption(text = ncrp_csg_source,
+  hc_caption(text = "National Corrections Reporting Program and CSG Justice Center estimates, 2019",
              y = 0)
 
 # Add JavaScript to apply a gray border to the "Abolished Discretionary Parole" legend item

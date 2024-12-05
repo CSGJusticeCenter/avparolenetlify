@@ -49,28 +49,6 @@ div(
   div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))),
   div(id = "bold-text", HTML("States With Discretionary Parole**<br><br>"))
 )
-# 3 Key Findings at Top of Page
-# div(
-#   style = "
-#     display: grid;
-#     grid-template-columns: repeat(3, 1fr);
-#     align-items: end;
-#   ",
-#   div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
-#   div(id = "national-highlight",
-#       img(src = "img/pe_1_in_x.png", style = "max-width: 50%;")),
-#   div(id = "national-highlight", "34")
-# )
-# br()
-# div(
-#   style = "
-#     display: grid;
-#     grid-template-columns: repeat(3, 1fr);
-#   ",
-#   div(id = "bold-text", HTML("People In Prison Past Parole Eligibility*<br><br>")),
-#   div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))),
-#   div(id = "bold-text", HTML("States With Discretionary Parole**<br><br>"))
-# )
 ```
 </div>
 <br>
