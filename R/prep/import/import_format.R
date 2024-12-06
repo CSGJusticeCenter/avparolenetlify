@@ -516,7 +516,7 @@ invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
 
-# ARCHIVE CODE BUT KEEP FOR NOW FOR EASY DATA LOADING
+# # ARCHIVE CODE BUT KEEP FOR NOW FOR EASY DATA LOADING
 # load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_projections.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_population_projections.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_not_consolidated.rds"))
@@ -539,4 +539,3 @@ invisible(lapply(names(data_files), function(obj) {
 # load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
-# load(file = paste0(sp_data_path, "/data/analysis/app/which_years.rds"))

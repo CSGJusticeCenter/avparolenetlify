@@ -49,7 +49,7 @@ required_packages <- c(
   "htmltools", "sf", "jsonlite", "geojsonsf", "openxlsx", "broom",
   "broom.helpers", "sjPlot", "rmarkdown", "cowplot", "jsonlite",
   "ggtext", "scales", "base64enc", "glue", "haven", "png", "reshape2", "magick",
-  "downloadthis", "readxl", "memoise" #, "purr"
+  "downloadthis", "readxl", "memoise", "tidylog" #, "purr"
 )
 
 lapply(required_packages, library, character.only = TRUE)
@@ -61,7 +61,7 @@ lapply(required_packages, library, character.only = TRUE)
 # [ACTION REQUIRED] Change this to your project path in SharePoint (sp)
 csg_set_project_path(
   project = "AVParole",
-  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - RES_Parole",
+  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
   force = TRUE
 )
 

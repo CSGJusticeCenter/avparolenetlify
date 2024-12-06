@@ -41,11 +41,10 @@ proj_past_pe <- ncrp_projections |>
     # Sum population past parole eligibility
     past_pe_pop = sum(proj_pop_past_pey, na.rm = TRUE)
   ) |>
-  mutate(
-    # Round total population to nearest power
-    past_pe_pop_rounded = fnc_round_to_power(past_pe_pop)
-  ) |>
-  pull(past_pe_pop_rounded)
+  pull(past_pe_pop)
+
+# Rounded value
+proj_past_pe_count_rounded <- fnc_round_to_power(proj_past_pe)
 
 # Calculate the total prison population and the ratio "1 in X" individuals past PEY
 proj_prison_pop <- ncrp_population_projections |>
@@ -85,6 +84,7 @@ if (whichimage == "person-2745706-bw") {
 }
 
 # Generate the infographic showing "1 in X" individuals past parole eligibility
+default_ncols <- proj_past_pe_1_in_x
 fnc_create_icons_homepage(proj_past_pe_1_in_x, emptyhumans = TRUE)
 
 # Save the infographic as a PNG file
