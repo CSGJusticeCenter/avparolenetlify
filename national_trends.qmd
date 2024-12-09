@@ -145,7 +145,7 @@ reactable(
 ```
 
 <div id="footnotes-text"><br>
-Source: National Corrections Reporting Program and CSG Justice Center estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
+Source: National Corrections Reporting Program, 2010-2020 and CSG Justice Center Estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
 <br></div>
 
 ```{r echo=FALSE}

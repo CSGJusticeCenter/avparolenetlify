@@ -21,9 +21,9 @@
 # This table forms the basis for parole eligibility statistics by state
 parole_eligibility_table_projection_year <- ncrp_projections |>
   # Filter by projection year
-  filter(year == projection_year) |>
+  filter(year == projection_year & !is.na(proj_pop_past_pey)) |>
   # Exclude specified states
-  filter(!state %in% states_to_exclude$state) |>
+  filter(!state %in% states_abolished_parole$state) |>
   mutate(
     # Round population to nearest power
     # Round percentage past PEY
