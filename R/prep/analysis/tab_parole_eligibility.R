@@ -243,6 +243,7 @@ all_line_pop_pe_by_year$Georgia
 all_line_pop_pe_by_year$Colorado
 all_line_pop_pe_by_year$Idaho
 all_line_pop_pe_by_year$Hawaii
+all_line_pop_pe_by_year$Michigan
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 
