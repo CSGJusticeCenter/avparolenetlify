@@ -49,7 +49,7 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
 # - States where the earliest parole eligibility year (PEY1) is more reliable than imputed values.
 #------------------------------------------------------------------------------#
 
-state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules_v1.xlsx"))
+state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules.xlsx"))
 
 # Identify states that do not require filtering by admission type and sentence length
 # These states have high missingness in these variables, but the estimates for people past parole eligibility
