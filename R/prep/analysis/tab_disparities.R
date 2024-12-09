@@ -37,7 +37,7 @@ desired_order <- c(
 )
 
 # Filter NCRP releases data and order offense categories
-ncrp_releases_filtered <- ncrp_releases_not_consolidated |>  ################ Change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_consolidated |>  ################ Change to ncrp_releases_consolidated when complete
   filter(!state %in% states_to_exclude$state) |>  # Exclude states with high missingness or abolished parole
   mutate(fbi_index = factor(fbi_index, levels = desired_order))  # Set factor levels for offense categories
 

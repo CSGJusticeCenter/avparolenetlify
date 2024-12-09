@@ -306,12 +306,16 @@ ncrp_releases_not_consolidated <- ncrp_releases_not_consolidated |>
 # Replaces the 'relyr' variable with Seba Guzman's calculated 'releaseyr' and recalculates time served
 # WARNING MESSAGE OK: Changes "NA" to actual NA
 ncrp_releases_consolidated <- ncrp_releases_consolidated |>
-  select(-relyr) |> # Remove original release year variable
-  rename(relyr = releaseyr) |> # Use Guzman's release year
   mutate(
-    relyr = as.numeric(relyr), # Convert to numeric
-    time_between_admission_release = as.numeric(relyr) - as.numeric(admityr) # Calculate time served
-  )
+    relyr = na_if(relyr, ""), # Replace empty strings with NA
+    relyr = if_else(
+      !is.na(relyr) & !is.na(as.numeric(relyr)), # Ensure relyr is numeric and not NA
+      as.numeric(relyr),
+      as.numeric(releaseyr) # Use releaseyr if relyr is NA or non-numeric
+    ),
+    time_between_admission_release = relyr - as.numeric(admityr) # Calculate time served
+  ) |>
+  select(-releaseyr)
 
 # Identify states with high missingness in race and ethnicity data
 # Focus on consolidated year-end population data for the years 2018 and 2019

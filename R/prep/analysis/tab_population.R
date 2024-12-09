@@ -263,7 +263,7 @@ all_bar_population_ageyrend$Georgia
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  all_sentence_population_by_year           = "all_sentence_population_by_year.rds",
+  all_sentence_population_by_year   = "all_sentence_population_by_year.rds",
   all_line_population_by_year       = "all_line_population_by_year.rds",
   all_sentence_population_race      = "all_sentence_population_race.rds",
   all_bar_population_race           = "all_bar_population_race.rds",

@@ -27,7 +27,7 @@
 
 # Filter NCRP releases data to include only states with parole systems
 # Exclude states with high missingness or abolished parole (in `states_to_exclude`)
-ncrp_releases_filtered <- ncrp_releases_not_consolidated |> ############################# Amund, Will change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_consolidated |> ############################# Amund, Will change to ncrp_releases_consolidated when complete
   filter(!state %in% states_to_exclude$state)
 
 # Summarize total number of people released from prison by state and year
@@ -141,7 +141,7 @@ all_line_releases_by_year$Hawaii
 # lengths not less than one year or life. Exclude states with high missingness
 # or abolished parole, and avoid filtering certain states based on other criteria.
 ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
-  data = ncrp_releases_not_consolidated,  ############################## Amund, I will update to `ncrp_releases_consolidated` when complete
+  data = ncrp_releases_consolidated,  ############################## Amund, I will update to `ncrp_releases_consolidated` when complete
   exclude = states_to_exclude,
   dont_filter = states_nofilter) |>
   left_join(which_overall_year, by = "state")
@@ -426,7 +426,7 @@ all_sentence_release_type$Georgia
 
 # Filter release data to include only the appropriate year for each state
 # This ensures that the analysis uses the best available year based on `which_overall_year`
-current_releases <- ncrp_releases_not_consolidated |>  ################################## Will Replace with `ncrp_releases_consolidated` when ready
+current_releases <- ncrp_releases_consolidated |>  ################################## Will Replace with `ncrp_releases_consolidated` when ready
   fnc_filter_by_year(which_overall_year)
 
 # Create a second filtered dataset for non-consolidated data
