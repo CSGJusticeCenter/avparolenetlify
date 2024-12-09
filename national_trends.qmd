@@ -46,7 +46,7 @@ div(
     id = "national-highlight",
     img(
       src = "img/pe_1_in_x.png", 
-      style = "margin: 0 auto; margin-top: 0px; max-width: 50%; height: auto; text-align: center;"
+      style = "margin: 0 auto; margin-bottom: 10px; max-width: 50%; height: auto; text-align: center;"
     )
   ),
   div(id = "national-highlight", "34"),
