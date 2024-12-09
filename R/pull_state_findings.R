@@ -345,6 +345,7 @@ state_bar_releases_fbi_index <- apply_chart_settings(
 
 # Race and Ethnicity
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pe_rri_data.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_pe_rri_data_male.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_black.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_hispanic.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_rri_other.rds"))
