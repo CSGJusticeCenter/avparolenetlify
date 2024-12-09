@@ -417,22 +417,55 @@ if ((no_infographic_black == TRUE & no_data_black == TRUE) &
 ### Sex
 
 ```{r results = 'asis'}
-no_data_male <- !file.exists(pe_rri_infographic_male) 
+# no_data_male <- !file.exists(pe_rri_infographic_male) 
+# 
+# if (file.exists(pe_rri_infographic_male)) {
+#   HTML("<br>")
+# }
+# if (file.exists(pe_rri_infographic_male)) {
+#   knitr::include_graphics(pe_rri_infographic_male)
+# }
+# if (!no_data_male) {
+#   HTML(paste0(state_sentence_pe_rri_male, "<br>"))
+# }
+# if (!no_data_male) {
+#   cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
+# }
+# if (no_data_male) {
+#   no_data_text
+# }
+no_infographic_male <- !file.exists(pe_rri_infographic_male)
+no_data_male <- !state_for_report %in% all_pe_rri_data_male$state
+rri_details_male <- all_pe_rri_data_male |> 
+  filter(state == state_for_report & sex == "Male") |> 
+  group_by(state, sex) |> 
+  summarise(
+    above_1 = rri > 1,
+    equal_1 = rri == 1,
+    below_1 = rri < 1
+  ) |> 
+  mutate(rri_exists = ifelse(equal_1 == FALSE, TRUE, FALSE))
+no_rri_details_male <- nrow(rri_details_male) == 0
 
-if (file.exists(pe_rri_infographic_male)) {
+if (no_infographic_male == FALSE) {
   HTML("<br>")
 }
-if (file.exists(pe_rri_infographic_male)) {
+if (no_infographic_male == TRUE & no_data_male == TRUE) {
+  # Display "No Data" message
+  no_data_needed_male_individuals <- TRUE
+} else if (no_infographic_male == TRUE & no_data_male == FALSE & no_rri_details_male == FALSE) {
+  # Display "No RRI" message
+  HTML("<br>No significant disparities in incarceration rates past parole eligibility were identified between male and females, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+} else if (no_infographic_male == FALSE & no_data_male == FALSE) {
+  # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_male)
 }
-if (!no_data_male) {
-  HTML(paste0(state_sentence_pe_rri_male, "<br>"))
-}
-if (!no_data_male) {
-  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
-}
-if (no_data_male) {
+
+# Display "No Data" message if no data
+if (no_infographic_male == TRUE & no_data_male == TRUE){
   no_data_text
+} else {
+  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 ```
 
