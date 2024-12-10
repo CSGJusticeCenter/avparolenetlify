@@ -54,7 +54,7 @@ div(
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Prison Population Incarcerated<br>Past Parole Eligibility")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Parole Board<br>Members"))
+      HTML("Parole Board<br>Members<sup style='font-size: 0.5em;'>1</sup>"))
 )
 ```
 
@@ -363,7 +363,7 @@ if (no_infographic_black == TRUE & no_data_black == TRUE) {
   no_data_needed_black_individuals <- TRUE
 } else if (no_infographic_black == TRUE & no_data_black == FALSE & no_rri_details_black == FALSE) {
   # Display "No RRI" message
-  HTML("<br>No significant disparities in incarceration rates past parole eligibility were identified between Black and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+  HTML("<br>No substantial disparities in incarceration rates past parole eligibility were identified between Black and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
 } else if (no_infographic_black == FALSE & no_data_black == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_black)
@@ -379,7 +379,7 @@ if (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) {
   no_data_needed_hispanic_individuals <- TRUE
 } else if (no_infographic_hispanic == TRUE & no_data_hispanic == FALSE & no_rri_details_hispanic == FALSE) {
   # Display "No RRI" message
-  HTML("No significant disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
+  HTML("No substantial disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
 } else if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_hispanic)
@@ -394,7 +394,7 @@ if (use_other_race) {
   if (no_infographic_other == TRUE & no_data_other == TRUE) {
     no_data_needed_other_individuals <- TRUE
   } else if (no_infographic_other == TRUE & no_data_other == FALSE & no_rri_details_other == FALSE) {
-    HTML("No significant disparities in incarceration rates past parole eligibility were identified between Other race(s), non-Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
+    HTML("No substantial disparities in incarceration rates past parole eligibility were identified between Other race(s), non-Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
   } else if (no_infographic_other == FALSE & no_data_other == FALSE) {
     knitr::include_graphics(pe_rri_infographic_other)
   }
@@ -455,7 +455,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE) {
   no_data_needed_male_individuals <- TRUE
 } else if (no_infographic_male == TRUE & no_data_male == FALSE & no_rri_details_male == FALSE) {
   # Display "No RRI" message
-  HTML("<br>No significant disparities in incarceration rates past parole eligibility were identified between male and females, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+  HTML("<br>No substantial disparities in incarceration rates past parole eligibility were identified between male and females, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
 } else if (no_infographic_male == FALSE & no_data_male == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_male)
