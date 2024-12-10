@@ -49,33 +49,33 @@ hex_gj <- read_sf(file.path(sp_data_path, "data/raw/Shapefiles/us_states_hexgrid
 # - States where the earliest parole eligibility year (PEY1) is more reliable than imputed values.
 #------------------------------------------------------------------------------#
 
-state_rules_v1 <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules.xlsx"))
+state_rules <- read_excel(file.path(sp_data_path, "data/raw/NCRP Data Rules/state_rules.xlsx"))
 
 # Identify states that do not require filtering by admission type and sentence length
 # These states have high missingness in these variables, but the estimates for people past parole eligibility
 # are reliable or align closely with the intended population.
-states_nofilter <- state_rules_v1 |>
+states_nofilter <- state_rules |>
   filter(dont_filter_admtype_sentlength == 1)
 
 # Identify states where the earliest parole eligibility year (PEY1) should be used
 # instead of imputed values for parole eligibility due to reliability concerns.
-states_earliest_pe <- state_rules_v1 |>
+states_earliest_pe <- state_rules |>
   filter(use_earliest_pey1 == 1)
 
 # Identify states where the number of people past parole eligibility is likely undercounted
 # due to limitations or inconsistencies in the data.
-states_undercounted <- state_rules_v1 |>
+states_undercounted <- state_rules |>
   filter(likely_undercount == 1)
 
 # Identify states to be included in the National Snapshot page but excluded from
 # state-specific reports due to specific criteria or data quality issues.
-states_national_page_only <- state_rules_v1 |>
+states_national_page_only <- state_rules |>
   filter(exclude_from_reports == 1) |>
   select(state)
 
 # Identify states where "Other race(s), non-Hispanic" populations are significant enough
 # to include in the disparities analysis. Examples: Hawaii, Alaska, New Mexico, Oklahoma.
-states_use_other_race_eth <- state_rules_v1 |>
+states_use_other_race_eth <- state_rules |>
   filter(use_other_race_ethnicity == 1)
 
 
@@ -110,11 +110,26 @@ state_methodology_clean <- state_methodology %>%
 # - Citations
 state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes.csv")) |>
   clean_names() |>
-  mutate(across(where(is.character), str_trim)) |>   # Trim leading/trailing whitespace
-  mutate(
-    state = str_replace_all(state, "\\*", ""),       # Remove asterisks from state names
-    citation = sapply(citation, fnc_format_citation) # Format citations for proper display
-  )
+  mutate(across(where(is.character), str_trim)) |>
+  mutate(pe_citation = paste(pe_citation_1,
+                             pe_citation_2,
+                             sep = "<br><br>"),
+
+         pb_citation = paste(pb_citation_1,
+                             pb_citation_2,
+                             sep = "<br><br>"),
+
+         # Add superscript 1 to PB citation
+         pb_citation = paste("\u00B9", pb_citation, sep = " "),
+
+         # Add superscript 2 to PE citation
+         pe_citation = paste("\u00B2", pe_citation, sep = " "),
+
+         # Superscript 1 will be added to "Parole Board Members" in Quarto document
+         # Add superscript 2 to `release_systems` for "How Parole Eligibility is Determined" section
+         release_systems = paste0(release_systems, "\u00B2")
+         )
+
 
 #------------------------------------------------------------------------------#
 # Combine All State Notes and Methodologies and Adjust Formatting
@@ -125,10 +140,10 @@ state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/a
 # Note on Superscripts:
 # Superscripts are used to provide references and citations throughout the Parole
 # Eligibility (PE) tab. Each type of note is assigned a unique superscript number:
-# - Superscript 1 (¹) is used for notes related to "How Parole Eligibility is Determined".
+# - Superscript 2 (²) is used for notes related to "How Parole Eligibility is Determined".
 # - Seba Guzman's citations start at 1, but 1 is already being used in the PE tab, therefore
 #   superscript numbers are incremented for methodology-related notes and citations:
-#   - ¹ becomes ², ² becomes ³, ³ becomes ⁴, and so on.
+#   - ¹ becomes ³, ² becomes ⁴, and so on.
 # These adjustments ensure clarity and proper alignment with the visual layout of
 # the tab. Superscripts are encoded as Unicode characters for compatibility:
 # - \u00B9 (¹), \u00B2 (²), \u00B3 (³), \u2074 (⁴), \u2075 (⁵), etc.
@@ -140,22 +155,16 @@ state_notes <- state_notes_raw |>
     # Append a period to `matching_note` if missing
     matching_note = paste0(matching_note, "."),
 
-    # Add superscript 1 to `release_systems` for "How Parole Eligibility is Determined"
-    release_systems = paste0(release_systems, "\u00B9"),
-
-    # Add superscript 1 to `citation` for consistency
-    citation = paste("\u00B9", citation, sep = " "),
-
     # Increment superscripts for notes by 1 to align with numbering conventions:
-    # Superscript 1 (\u00B9) becomes 2 (\u00B2), 2 becomes 3 (\u00B3), and so on.
-    estimation_note = gsub("\u00B9", "\u00B2", estimation_note),
-    rules_note = gsub("\u00B2", "\u00B3", rules_note),
-    projection_note = gsub("\u00B3", "\u2074", projection_note),
+    # Superscript 1 (\u00B2) becomes 3 (\u00B3), and so on.
+    estimation_note = gsub("\u00B9", "\u00B3", estimation_note),
+    rules_note = gsub("\u00B2", "\u2074", rules_note),
+    projection_note = gsub("\u00B3", "\u2075", projection_note),
 
     # Apply the same logic to source note columns
-    source_note1 = gsub("\u00B9", "\u00B2", source_note1),
-    source_note2 = gsub("\u00B2", "\u00B3", source_note2),
-    source_note3 = gsub("\u00B3", "\u2074", source_note3),
+    source_note1 = gsub("\u00B9", "\u00B3", source_note1),
+    source_note2 = gsub("\u00B2", "\u2074", source_note2),
+    source_note3 = gsub("\u00B3", "\u2075", source_note3),
 
     # Combine all imputation methodology details into a single HTML-compatible string
     methodology_notes = paste(estimation_note, matching_note, rules_note,
@@ -163,15 +172,19 @@ state_notes <- state_notes_raw |>
                               sep = "<br><br>"),
 
     # Combine all citations into a single field for display
-    citation = paste(citation, source_note1, source_note2, source_note3, sep = "<br><br>"),
+    citation = paste(pb_citation, pe_citation, source_note1, source_note2, source_note3, sep = "<br><br>"),
 
     # Remove unnecessary blank lines from the formatted output
     methodology_notes = gsub("<br><br><br>", "<br>", methodology_notes),
-    citation = gsub("<br><br><br>", "<br><br>", citation)############################# Amund, I will need to format when Seba provides updated info
+    citation = gsub("<br><br><br>", "<br><br>", citation)
   ) |>
 
   # Remove the second duplicate entry for Louisiana (if it exists)
   filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))
+
+# Format citations and URLs
+state_notes <- state_notes |>
+  mutate(citation = sapply(citation, fnc_format_citation))
 
 # Identify states where parole has been abolished.
 # These states are excluded from the analysis and tool.
