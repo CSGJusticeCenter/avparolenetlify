@@ -202,66 +202,48 @@ map_data <- parole_eligibility_table_projection_year |>
          currentperclabel = paste0(round(proj_pcnt_ppey_rounded, 0), "%"),
          currentperclabel = str_replace_all(currentperclabel, "NA%", "No Data"))
 
-
 # Calculate the breaks for the percent of people eligible for parole
 num_breaks <- length(gradient_colors) - 1
 breaks <- quantile(map_data$proj_pcnt_ppey_rounded, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
-breaks[1] <- 0  # Set the first break to 0
-breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
-breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
 
-# Add Color Gradients and Data Categories to the Map Data
+# Round breaks, ensuring no duplicates and strictly increasing order
+breaks <- unique(round(breaks, 0))
+breaks <- cummax(breaks)
+
 map_data_breaks <- map_data |>
   mutate(
-    # Assign gradient colors based on the rounded percentage of people past PEY
-    # - `findInterval` maps each percentage to a break range defined in `breaks`
-    # - `rightmost.closed` ensures the upper bound is inclusive
-    # - `all.inside` forces values outside breaks to be assigned to the closest range
     gradient_color = findInterval(proj_pcnt_ppey_rounded, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
-
-    # Map the numeric gradient category to the corresponding color, handling NA values
     gradient_color = ifelse(is.na(proj_pcnt_ppey_rounded), NA, gradient_colors[gradient_color]),
-
-    # Round the projected percentage past PEY to the nearest whole number for clarity
     proj_pcnt_ppey_rounded = round(proj_pcnt_ppey_rounded, 0),
-
-    # Convert gradient colors to numeric categories for use in visualizations
     data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
   ) |>
-
-  # Group by gradient color for calculating categories
   group_by(gradient_color) |>
-
-  # Define the data category labels based on gradient ranges
+  # First, define the data category ranges based on breaks
   mutate(
     data_category = case_when(
-      # Assign labels corresponding to each break range
       gradient_color == gradient_colors[1] ~ paste0(breaks[1], "% - ", breaks[2], "%"),
       gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
       gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
       gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
       gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$proj_pcnt_ppey_rounded, na.rm = TRUE), "%")
-    ),
-
-    # Handle NA values by assigning specific categories for missing data and no discretionary parole
+    )
+  ) |>
+  # Then handle special categories like missing data and no discretionary parole
+  mutate(
     data_category = case_when(
       is.na(data_category) & abolished_parole == "N" ~ "Missing Data",
       is.na(data_category) & abolished_parole == "Y" ~ "No Discretionary Parole",
       TRUE ~ data_category
     ),
-
-    # Assign default gradient colors for special categories (e.g., missing data and no parole)
     gradient_color = case_when(
-      is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,  # Dark gray for missing data
-      is.na(gradient_color) & data_category == "No Discretionary Parole" ~ "white",  # White for no parole
-      TRUE ~ gradient_color  # Retain original gradient color for valid categories
+      is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,
+      is.na(gradient_color) & data_category == "No Discretionary Parole" ~ "white",
+      TRUE ~ gradient_color
     ),
-
-    # Assign numeric identifiers for each data category
     data_category_num = case_when(
-      is.na(data_category_num) & data_category == "Missing Data" ~ 6,  # Assign 6 for missing data
-      is.na(data_category_num) & data_category == "No Discretionary Parole" ~ 5,  # Assign 5 for no parole
-      TRUE ~ data_category_num  # Retain original category number for valid data
+      is.na(data_category_num) & data_category == "Missing Data" ~ 6,
+      is.na(data_category_num) & data_category == "No Discretionary Parole" ~ 5,
+      TRUE ~ data_category_num
     )
   )
 
@@ -419,8 +401,8 @@ webshot2::webshot(
   file = file.path("img/map_proj_past_parole_eligibility_2023.png"),
   delay = 1,
   vwidth = 1200,
-  vheight = 500,
-  cliprect = c(0, 0, 1000, 625)
+  vheight = 500
+  # cliprect = c(0, 0, 1000, 625)
 )
 
 #------------------------------------------------------------------------------#
@@ -449,3 +431,81 @@ file_path <- file.path(app_folder, file_name)
 
 # Save csv
 write.csv(parole_eligibility_table_download, file_path, row.names = FALSE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # KEEP CODE FOR NOW
+# # Calculate the breaks for the percent of people eligible for parole
+# num_breaks <- length(gradient_colors) - 1
+# breaks <- quantile(map_data$proj_pcnt_ppey_rounded, probs = seq(0, 1, length.out = num_breaks + 1), na.rm = TRUE)
+# breaks[1] <- 0  # Set the first break to 0
+# breaks <- unique(c(breaks[1], round(breaks[-1], 0)))  # Round and remove duplicates
+# breaks <- cummax(breaks)  # Ensure breaks are strictly increasing
+#
+# # Add Color Gradients and Data Categories to the Map Data
+# map_data_breaks <- map_data |>
+#   mutate(
+#     # Assign gradient colors based on the rounded percentage of people past PEY
+#     # - `findInterval` maps each percentage to a break range defined in `breaks`
+#     # - `rightmost.closed` ensures the upper bound is inclusive
+#     # - `all.inside` forces values outside breaks to be assigned to the closest range
+#     gradient_color = findInterval(proj_pcnt_ppey_rounded, vec = breaks, rightmost.closed = TRUE, all.inside = TRUE),
+#
+#     # Map the numeric gradient category to the corresponding color, handling NA values
+#     gradient_color = ifelse(is.na(proj_pcnt_ppey_rounded), NA, gradient_colors[gradient_color]),
+#
+#     # Round the projected percentage past PEY to the nearest whole number for clarity
+#     proj_pcnt_ppey_rounded = round(proj_pcnt_ppey_rounded, 0),
+#
+#     # Convert gradient colors to numeric categories for use in visualizations
+#     data_category_num = as.numeric(factor(gradient_color, levels = gradient_colors))
+#   ) |>
+#
+#   # Group by gradient color for calculating categories
+#   group_by(gradient_color) |>
+#
+#   # Define the data category labels based on gradient ranges
+#   mutate(
+#     data_category = case_when(
+#       # Assign labels corresponding to each break range
+#       gradient_color == gradient_colors[1] ~ paste0(breaks[1], "% - ", breaks[2], "%"),
+#       gradient_color == gradient_colors[2] ~ paste0(breaks[2] + 1, "% - ", breaks[3], "%"),
+#       gradient_color == gradient_colors[3] ~ paste0(breaks[3] + 1, "% - ", breaks[4], "%"),
+#       gradient_color == gradient_colors[4] ~ paste0(breaks[4] + 1, "% - ", breaks[5], "%"),
+#       gradient_color == gradient_colors[5] ~ paste0(breaks[5] + 1, "% - ", max(map_data$proj_pcnt_ppey_rounded, na.rm = TRUE), "%")
+#     ),
+#
+#     # Handle NA values by assigning specific categories for missing data and no discretionary parole
+#     data_category = case_when(
+#       is.na(data_category) & abolished_parole == "N" ~ "Missing Data",
+#       is.na(data_category) & abolished_parole == "Y" ~ "No Discretionary Parole",
+#       TRUE ~ data_category
+#     ),
+#
+#     # Assign default gradient colors for special categories (e.g., missing data and no parole)
+#     gradient_color = case_when(
+#       is.na(gradient_color) & data_category == "Missing Data" ~ darkgray,  # Dark gray for missing data
+#       is.na(gradient_color) & data_category == "No Discretionary Parole" ~ "white",  # White for no parole
+#       TRUE ~ gradient_color  # Retain original gradient color for valid categories
+#     ),
+#
+#     # Assign numeric identifiers for each data category
+#     data_category_num = case_when(
+#       is.na(data_category_num) & data_category == "Missing Data" ~ 6,  # Assign 6 for missing data
+#       is.na(data_category_num) & data_category == "No Discretionary Parole" ~ 5,  # Assign 5 for no parole
+#       TRUE ~ data_category_num  # Retain original category number for valid data
+#     )
+#   )
