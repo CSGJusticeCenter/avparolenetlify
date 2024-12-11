@@ -65,23 +65,21 @@ proj_past_pe_1_in_x <- round(proj_prison_pop / proj_past_pe, 0)
 #-------------------------------------------------------------------------------
 
 # Configure image and visualization settings for the "1 in X" infographic
-if (whichimage == "person-2745706-bw") {
-  # Image height and width in pixels
-  px_h <- 521
-  px_w <- 323
+# Image height and width in pixels
+px_h <- 521
+px_w <- 323
 
-  # Adjustments for additional spacing
-  ex_h <- 0.005
-  ex_w <- 0.02
+# Adjustments for additional spacing
+ex_h <- 0.005
+ex_w <- 0.02
 
-  # Calculate aspect ratios for height-to-width and width-to-height
-  img_ar_hw <- (px_h * (1 + ex_h)) / (px_w * (1 + ex_w))
-  img_ar_wh <- (px_w * (1 + ex_w)) / (px_h * (1 + ex_h))
+# Calculate aspect ratios for height-to-width and width-to-height
+img_ar_hw <- (px_h * (1 + ex_h)) / (px_w * (1 + ex_w))
+img_ar_wh <- (px_w * (1 + ex_w)) / (px_h * (1 + ex_h))
 
-  # Load the raw image and invert pixel values (convert black to white and vice versa)
-  rawimg <- readPNG(file.path(wd, glue("img/{whichimage}.png")))
-  img <- ifelse(rawimg == 0, 1, 0)
-}
+# Load the raw image and invert pixel values (convert black to white and vice versa)
+rawimg <- readPNG(file.path(getwd(), glue("img/person-2745706-bw.png")))
+img <- ifelse(rawimg == 0, 1, 0)
 
 # Generate the infographic showing "1 in X" individuals past parole eligibility
 default_ncols <- proj_past_pe_1_in_x
