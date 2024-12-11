@@ -411,48 +411,6 @@ js_code <- "function() {
                     }
                   }"
 
-# Logos
-
-render_image <- JS("
-  function(){
-    this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 37, 140.1, 30)
-    .add();
-  }")
-
-render_image_print <- JS("
-  function(){
-    logo=this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 37, 140.1, 30)
-    .add(); this.print();
-  }")
-
-render_image_remove <- JS("function(){logo.element.remove();}")
-
-# define default setup for highcharter plots
-# add and configure exporting and accessibility modules
-# set justice center theme
-# set default tooltip text to be in input data column `tooltip`
-hc_export_setup <- function(x) {
-  hc_add_dependency(x, name = "modules/exporting.js") |>
-    hc_add_dependency(name = "modules/offline-exporting.js") |>
-    # hc_add_dependency(name = "modules/accessibility.js") |>
-    hc_exporting(
-      chartOptions = list(
-        chart = list(
-          events = list(
-            load = render_image
-          )
-        )
-      )
-    ) |>
-    hc_chart(
-      events = list(
-        beforePrint = render_image_print,
-        afterPrint = render_image_remove
-      )
-    )
-}
-
-
 # ---------------------------------------------------------------------------- #
 # Highcharter Helper Functions
 # ---------------------------------------------------------------------------- #

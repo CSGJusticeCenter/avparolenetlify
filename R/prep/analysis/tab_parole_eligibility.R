@@ -232,8 +232,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
       filename = paste0(gsub(" ", "_", tolower(title)), "_") # Set export file name
     ) |>
     hc_caption(text = paste0(ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source)) |> # Add source caption
-    fnc_add_hc_accessibility(hc_accessibility_text) |>
-    hc_export_setup()
+    fnc_add_hc_accessibility(hc_accessibility_text)
 })
 
 # Assign state names to the generated charts
