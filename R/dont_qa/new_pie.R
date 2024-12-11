@@ -143,8 +143,8 @@ all_sentence_pe_type <- {
     year <- unique(df$rptyear)
 
     # Get proportions of people currently eligible and those eligible in the future
-    current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
-    future_prop <- df |> filter(parelig_status == "Will Be Eligible Next Year") |> pull(prop)
+    current_prop <- df |> filter(parelig_status_new == "Past Parole Eligibility at End of Year") |> pull(prop)
+    future_prop <- df |> filter(parelig_status_new == "Will Be Eligible Next Year") |> pull(prop)
 
     # Construct the summary sentence for the state
     paste0(
