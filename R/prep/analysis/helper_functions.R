@@ -411,6 +411,48 @@ js_code <- "function() {
                     }
                   }"
 
+# Logos
+
+render_image <- JS("
+  function(){
+    this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 37, 140.1, 30)
+    .add();
+  }")
+
+render_image_print <- JS("
+  function(){
+    logo=this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 37, 140.1, 30)
+    .add(); this.print();
+  }")
+
+render_image_remove <- JS("function(){logo.element.remove();}")
+
+# define default setup for highcharter plots
+# add and configure exporting and accessibility modules
+# set justice center theme
+# set default tooltip text to be in input data column `tooltip`
+hc_export_setup <- function(x) {
+  hc_add_dependency(x, name = "modules/exporting.js") |>
+    hc_add_dependency(name = "modules/offline-exporting.js") |>
+    # hc_add_dependency(name = "modules/accessibility.js") |>
+    hc_exporting(
+      chartOptions = list(
+        chart = list(
+          events = list(
+            load = render_image
+          )
+        )
+      )
+    ) |>
+    hc_chart(
+      events = list(
+        beforePrint = render_image_print,
+        afterPrint = render_image_remove
+      )
+    )
+}
+
+
 # ---------------------------------------------------------------------------- #
 # Highcharter Helper Functions
 # ---------------------------------------------------------------------------- #
@@ -517,9 +559,9 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_add_theme(base_hc_theme) |> # Add a base theme
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", year)) |>
+      hc_exporting(enabled = TRUE, filename = paste0("prison_pop_by_parole_eligibility_status_", year)) |>
       hc_caption(text = paste0(source1, ", ", year, " and ", source2)) |> # Add chart caption with source information
-      fnc_add_hc_accessibility(accessibility_text) # Function to add accessibility text
+      fnc_add_hc_accessibility(accessibility_text)
   })
 
   # Assign state names to the charts list for clarity
@@ -607,7 +649,6 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_add_theme(base_hc_theme) |> # Apply the base theme
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |> # Add custom tooltip formatter
     hc_legend(enabled = FALSE) |> # Disable the legend
-    # hc_title(text = paste0(title, ", ", year)) |> # Add the chart title
     hc_title(text = title) |> # Add the chart title
     hc_exporting(enabled = TRUE, # Enable exporting functionality
                  filename = paste0(gsub(" ", "_", tolower(title)), "_", year)) |>
@@ -2640,3 +2681,6 @@ fnc_create_icons_homepage <- function(rri_raw, rri_digits = 1, fillcolor = "dark
   # Return the grid of icons as a ggplot object
   plot_grid(plotlist = plot_list, nrow = rows)
 }
+
+
+
