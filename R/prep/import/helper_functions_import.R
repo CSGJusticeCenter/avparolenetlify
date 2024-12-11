@@ -265,7 +265,8 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
         estimated_pey_status == "missing" ~ "Missing",
         estimated_pey_status == "future" ~ "Future",
         TRUE ~ estimated_pey_status
-      )
+      ),
+
     ) |>
 
     # Replace "NA" or actual missing values with "Unknown" for specified columns

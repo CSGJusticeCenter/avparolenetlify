@@ -210,6 +210,7 @@ which_overall_year <- projections_compl_2010_2020 |>
   select(state, year, excl_state_year) |> # Keep relevant columns for the analysis
   group_by(state) |> # Group data by state for processing state-specific rules
   mutate(year_to_use = case_when(
+    state == "Michigan" ~ 2017, # Special rule: Use 2017 for Michigan (Seba Guzman decision)
     excl_state_year[year == 2018] == 1 & excl_state_year[year == 2019] == 1 ~ NA_integer_, # Exclude if both years are unreliable
     excl_state_year[year == 2018] == 1 ~ 2019, # Use 2019 if 2018 is excluded
     excl_state_year[year == 2019] == 1 ~ 2018, # Use 2018 if 2019 is excluded
@@ -232,8 +233,8 @@ states_with_high_missing <- projections_compl_2010_2020 |>
 # These states will not be included in state-specific reports or National Snapshot page
 states_to_exclude <- states_with_high_missing |>
   bind_rows(states_abolished_parole) |> # Combine with another dataset containing states that abolished parole
-  distinct() # Ensure unique entries after combining the data
-
+  distinct() |>  # Ensure unique entries after combining the data
+  filter(state != "Michigan") # Make sure Michigan is included
 
 
 #------------------------------------------------------------------------------#
