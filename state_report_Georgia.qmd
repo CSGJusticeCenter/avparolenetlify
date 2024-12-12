@@ -689,7 +689,7 @@ Data collection and reporting practices vary significantly across states:
 
 **Small Sample Sizes and Interpretation**
 
-Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
+Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to the NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
 :::
 
 </div>
