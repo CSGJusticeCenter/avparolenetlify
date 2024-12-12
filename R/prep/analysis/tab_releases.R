@@ -59,11 +59,12 @@ all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
   # Calculate the percentage change between the earliest and latest years
   percent_change <- (latest_year_release - earliest_year_release) / earliest_year_release * 100
   change_type <- ifelse(percent_change < 0, "decreased", "increased")  # Determine if the trend is positive or negative
+  change_type1 <- ifelse(percent_change < 0, "dropping", "growing")
   percent_change_abs <- abs(round(percent_change, 0))  # Use absolute value for reporting
 
   # Construct a sentence summarizing the release trend for the state
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the number of people released from prison ",
-                      change_type, " ", percent_change_abs, " percent, dropping from ",
+                      change_type, " ", percent_change_abs, " percent, ", change_type1, " from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
   return(sentences)

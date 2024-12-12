@@ -18,8 +18,6 @@ website:
         href: national_trends.html
       - text: "State Reports"
         href: state_report_links.html
-      - text: "Testing"
-        href: testing.html
 
 format:
   html:
