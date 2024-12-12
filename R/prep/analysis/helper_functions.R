@@ -2240,6 +2240,7 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
     label <- case_when(
       label == "Hispanic, any race" ~ "Hispanic people",
       label == "Black, non-Hispanic" ~ "Black, non-Hispanic people",
+      label == "Male" ~ "Males",
       TRUE ~ label
     )
 

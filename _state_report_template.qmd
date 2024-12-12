@@ -459,6 +459,10 @@ if (no_infographic_male == TRUE & no_data_male == TRUE) {
 } else if (no_infographic_male == FALSE & no_data_male == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_male)
+} 
+
+if (no_infographic_male == FALSE & no_data_male == FALSE) {
+  HTML(state_sentence_pe_rri_male, "<br>")
 }
 
 # Display "No Data" message if no data
