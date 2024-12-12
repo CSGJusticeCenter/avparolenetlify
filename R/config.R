@@ -134,7 +134,7 @@ lightgray <- "#d7d7d7"
 #------------------------------------------------------------------------------#
 
 # Format sources that will go under each visualization
-csg_source   <- "CSG Justice Center Estimates"
+csg_source   <- "CSG Justice Center estimates"
 ncrp_source  <- "National Corrections Reporting Program"
 bjs_source   <- "BJS Prisoners in the United States"
 

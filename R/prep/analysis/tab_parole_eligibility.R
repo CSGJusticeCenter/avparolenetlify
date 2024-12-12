@@ -142,7 +142,7 @@ states <- unique(pe_proj_pop$state)
 
 # Generate summary sentences for all states
 # "From 2010 to 2020, the percent of people in prison past parole eligibility
-#  increased by 22 percent. Our forcasting model projects that the percentage of
+#  increased by 22 percent. Our forecasting model projects that the percentage of
 #  people past their initial parole eligibility will remain around 68 percent."
 # The `fnc_generate_projection_sentence` function creates state-specific summaries
 all_sentence_pop_pe_by_year <- map(states, ~ fnc_generate_projection_sentence(.x, pe_proj_pop)) |>
@@ -346,6 +346,7 @@ all_bar_pe_race$Georgia
 all_sentence_pe_race$Georgia
 all_bar_pe_race$Hawaii
 all_sentence_pe_race$Hawaii
+all_sentence_pe_fbi_index$`New York`
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

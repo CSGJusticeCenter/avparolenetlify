@@ -256,6 +256,8 @@ all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 all_bar_population_race$Georgia
 all_bar_population_sex$Georgia
 all_bar_population_ageyrend$Georgia
+all_sentence_population_fbi_index$`New York`
+all_sentence_population_fbi_index$Georgia
 
 #------------------------------------------------------------------------------#
 # SAVE DATA

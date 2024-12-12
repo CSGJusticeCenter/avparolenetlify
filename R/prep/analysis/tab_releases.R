@@ -59,12 +59,11 @@ all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
   # Calculate the percentage change between the earliest and latest years
   percent_change <- (latest_year_release - earliest_year_release) / earliest_year_release * 100
   change_type <- ifelse(percent_change < 0, "decreased", "increased")  # Determine if the trend is positive or negative
-  change_type1 <- ifelse(percent_change < 0, "dropping", "growing")
   percent_change_abs <- abs(round(percent_change, 0))  # Use absolute value for reporting
 
   # Construct a sentence summarizing the release trend for the state
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the number of people released from prison ",
-                      change_type, " ", percent_change_abs, " percent, ", change_type1, " from ",
+                      change_type, " ", percent_change_abs, " percent, from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
@@ -77,6 +76,8 @@ all_sentence_releases_by_year <- setNames(all_sentence_releases_by_year, states)
 all_sentence_releases_by_year$Georgia
 all_sentence_releases_by_year$Connecticut
 all_sentence_releases_by_year$Hawaii
+all_sentence_releases_by_year$`West Virginia`
+all_sentence_releases_by_year$Alaska
 
 # Generate line charts for prison releases trends for each state
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
@@ -131,7 +132,7 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 all_line_releases_by_year$Georgia
 all_line_releases_by_year$Connecticut
 all_line_releases_by_year$Hawaii
-
+all_line_releases_by_year$Alaska
 
 
 # ---------------------------------------------------------------------------- #
@@ -174,7 +175,7 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
 
   # Define chart title and accessibility text
-  title <- "People Released on Parole Eligibility Year vs. Past Parole Eligibility Year"
+  title <- "People Released in Parole Eligibility Year vs. Past Parole Eligibility Year"
   hc_accessibility_text <- "This stacked bar chart shows the proportion of parole-eligible people released in each year, either on or past their parole eligibility year."
 
   # Create Highcharts stacked bar chart
@@ -513,6 +514,7 @@ all_sentence_releases_fbi_index <- all_sentence_releases[["fbi_index"]]
 
 # Example state:
 all_bar_releases_race$Georgia
+all_sentence_releases_fbi_index$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

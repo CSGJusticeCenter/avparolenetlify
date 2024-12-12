@@ -310,6 +310,7 @@ all_sentence_avg_past_pe_race_offense <- fnc_generate_offense_disparity_sentence
 
 # Example state:
 all_sentence_avg_past_pe_race_offense$Georgia
+all_sentence_avg_past_pe_race_offense$Arkansas
 
 # SENTENCE: "The chart below shows the average time spent in prison past parole
 #            eligibility by offense type and sex. The largest disparity was
@@ -363,7 +364,7 @@ data_files <- list(
   all_sentence_avg_past_pe_race = "all_sentence_avg_past_pe_race.rds",
   all_sentence_avg_past_pe_sex  = "all_sentence_avg_past_pe_sex.rds",
 
-  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds",
+  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds", ############################ no sentence if disparity doesn't exist
   all_sentence_los_sex_offense          = "all_sentence_los_sex_offense.rds",
   all_scatter_los_race_offense          = "all_scatter_los_race_offense.rds",
   all_scatter_los_sex_offense           = "all_scatter_los_sex_offense.rds",

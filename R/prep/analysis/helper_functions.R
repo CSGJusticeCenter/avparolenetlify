@@ -693,7 +693,7 @@ fnc_generate_projection_sentence <- function(state_name, data) {
     } else "has insufficient data to determine a change. ",
     if (!is.na(earliest_year_proj) && !is.na(latest_year_proj)) {
       paste0(
-        "Our forcasting model projects that the percentage of people past their initial parole eligibility ",
+        "Our forecasting model projects that the percentage of people past their initial parole eligibility ",
         if (!is.na(change_proj)) {
           if (change_proj > 0) paste0("will increase by ", change_proj, " percent")
           else if (change_proj < 0) paste0("will decrease by ", abs(change_proj), " percent")
@@ -806,6 +806,97 @@ fnc_generate_sentences <- function(data, x_var, type_desc) {
 #' @examples
 #' sentence <- fnc_generate_columnchart_sentence("Georgia", data, "fbi_index", "Releases")
 #' @export
+# fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
+#   # Filter the data for the specified state and arrange by proportion in descending order
+#   df1 <- df |>
+#     filter(state == state_var) |>
+#     arrange(-prop)
+#
+#   # Extract the unique reporting year for the state
+#   year <- unique(df1$rptyear)
+#
+#   # Handle cases where data is missing or insufficient
+#   if (nrow(df1) < 1 || is.na(df1$prop[1])) {
+#     return(paste0("Data for ", state_var, " is missing or incomplete."))
+#   }
+#
+#   # Convert values to lowercase for "sex" variable
+#   if (x_var == "sex") {
+#     df1[[x_var]] <- tolower(df1[[x_var]])
+#   }
+#
+#   # Special handling for "fbi_index" variable
+#   if (x_var == "fbi_index") {
+#     # Identify the top categories based on the highest proportion
+#     max_prop <- max(round(df1$prop, 0))
+#     top_categories <- df1 |>
+#       filter(round(prop, 0) == max_prop) |>
+#       arrange(desc(prop))
+#
+#     # Create sentences for top offense categories
+#     fbi_sentences <- top_categories |>
+#       mutate(fbi_sentence = paste0(tolower(fbi_index), " (", round(prop, 0), " percent)")) |>
+#       pull(fbi_sentence)
+#
+#     # Format the final sentence using commas and "and" for readability
+#     fbi_sentence_final <- if (length(fbi_sentences) > 1) {
+#       paste(paste(fbi_sentences[-length(fbi_sentences)], collapse = ", "),
+#             ", and ", fbi_sentences[length(fbi_sentences)], sep = "")
+#     } else {
+#       fbi_sentences
+#     }
+#
+#     # Summarize violent and nonviolent offense proportions
+#     current_ped_offense_group <- df |>
+#       select(state, fbi_index, offense_group, n) |>
+#       filter(offense_group == "Violent" | offense_group == "Nonviolent") |>
+#       group_by(state, offense_group) |>
+#       summarise(total_offenses = sum(n), .groups = 'drop') |>
+#       group_by(state) |>
+#       mutate(prop = total_offenses / sum(total_offenses))
+#
+#     violent_prop <- current_ped_offense_group |>
+#       filter(state == state_var, offense_group == "Violent") |>
+#       pull(prop) |>
+#       round(2) * 100
+#     nonviolent_prop <- current_ped_offense_group |>
+#       filter(state == state_var, offense_group == "Nonviolent") |>
+#       pull(prop) |>
+#       round(2) * 100
+#
+#     # Construct the final sentence for "fbi_index"
+#     sentences <- paste0(#"In ", year, ", ",
+#       violent_prop, " percent of people ", type_desc,
+#       " were in prison for violent offenses and ",
+#       nonviolent_prop, " percent for nonviolent offenses. ",
+#       "Most people ", type_desc, " were incarcerated for ", fbi_sentence_final, " offenses.")
+#   }
+#   # Special handling for age-related variables
+#   else if (x_var == "ageyrend" | x_var == "agerlse") {
+#     age_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
+#     sentences <- paste0(#"In ", year, ", ",
+#       round(df1$prop[1], 0),
+#       " percent of people ", type_desc, " were between the ages of ",
+#       age_range[1], " and ", age_range[2], " old.")
+#   }
+#   # Special handling for sentence length variables
+#   else if (x_var == "sentlgth") {
+#     sent_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
+#     sentences <- paste0(#"In ", year, ", ",
+#       round(df1$prop[1], 0),
+#       " percent of people ", type_desc, " had sentence lengths between ",
+#       sent_range[1], " and ", sent_range[2], ".")
+#   }
+#   # General case for other variables
+#   else {
+#     sentences <- paste0(#"In ", year, ", ",
+#       round(df1$prop[1], 0),
+#       " percent of people ", type_desc, " were ",
+#       df1[[x_var]][1], ".")
+#   }
+#
+#   return(sentences)
+# }
 fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
   # Filter the data for the specified state and arrange by proportion in descending order
   df1 <- df |>
@@ -827,29 +918,10 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 
   # Special handling for "fbi_index" variable
   if (x_var == "fbi_index") {
-    # Identify the top categories based on the highest proportion
-    max_prop <- max(round(df1$prop, 0))
-    top_categories <- df1 |>
-      filter(round(prop, 0) == max_prop) |>
-      arrange(desc(prop))
-
-    # Create sentences for top offense categories
-    fbi_sentences <- top_categories |>
-      mutate(fbi_sentence = paste0(tolower(fbi_index), " (", round(prop, 0), " percent)")) |>
-      pull(fbi_sentence)
-
-    # Format the final sentence using commas and "and" for readability
-    fbi_sentence_final <- if (length(fbi_sentences) > 1) {
-      paste(paste(fbi_sentences[-length(fbi_sentences)], collapse = ", "),
-            ", and ", fbi_sentences[length(fbi_sentences)], sep = "")
-    } else {
-      fbi_sentences
-    }
-
     # Summarize violent and nonviolent offense proportions
     current_ped_offense_group <- df |>
       select(state, fbi_index, offense_group, n) |>
-      filter(offense_group == "Violent" | offense_group == "Nonviolent") |>
+      filter(offense_group %in% c("Violent", "Nonviolent")) |>
       group_by(state, offense_group) |>
       summarise(total_offenses = sum(n), .groups = 'drop') |>
       group_by(state) |>
@@ -864,17 +936,44 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
       pull(prop) |>
       round(2) * 100
 
+    # Identify all categories with the highest proportion
+    max_prop <- max(round(df1$prop, 0))
+    top_categories <- df1 |>
+      filter(round(prop, 0) == max_prop) |>
+      arrange(desc(prop))
+
+    # Create sentences for top categories, appending "offenses" to each
+    top_sentences <- top_categories |>
+      mutate(sentence = paste0(tolower(fbi_index), " offenses (", round(prop, 0), " percent)")) |>
+      pull(sentence)
+
+    # Determine whether to use "type" or "types"
+    type_word <- if (length(top_sentences) > 1) "types" else "type"
+
+    # Format the final sentence based on the number of items
+    if (length(top_sentences) > 2) {
+      top_sentence_final <- paste(
+        paste(top_sentences[-length(top_sentences)], collapse = ", "),
+        ", and ", top_sentences[length(top_sentences)], sep = ""
+      )
+    } else if (length(top_sentences) == 2) {
+      top_sentence_final <- paste(top_sentences[1], "and", top_sentences[2])
+    } else {
+      top_sentence_final <- top_sentences
+    }
+
     # Construct the final sentence for "fbi_index"
-    sentences <- paste0(#"In ", year, ", ",
+    sentences <- paste0(
       violent_prop, " percent of people ", type_desc,
       " were in prison for violent offenses and ",
       nonviolent_prop, " percent for nonviolent offenses. ",
-      "Most people ", type_desc, " were incarcerated for ", fbi_sentence_final, " offenses.")
+      "The most common offense ", type_word, " among people ", type_desc,
+      " were ", top_sentence_final, ".")
   }
   # Special handling for age-related variables
   else if (x_var == "ageyrend" | x_var == "agerlse") {
     age_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
-    sentences <- paste0(#"In ", year, ", ",
+    sentences <- paste0(
       round(df1$prop[1], 0),
       " percent of people ", type_desc, " were between the ages of ",
       age_range[1], " and ", age_range[2], " old.")
@@ -882,14 +981,14 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
   # Special handling for sentence length variables
   else if (x_var == "sentlgth") {
     sent_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
-    sentences <- paste0(#"In ", year, ", ",
+    sentences <- paste0(
       round(df1$prop[1], 0),
       " percent of people ", type_desc, " had sentence lengths between ",
       sent_range[1], " and ", sent_range[2], ".")
   }
   # General case for other variables
   else {
-    sentences <- paste0(#"In ", year, ", ",
+    sentences <- paste0(
       round(df1$prop[1], 0),
       " percent of people ", type_desc, " were ",
       df1[[x_var]][1], ".")
@@ -897,6 +996,8 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 
   return(sentences)
 }
+
+
 
 
 
@@ -1679,12 +1780,12 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 
       # Define phrasing based on `type`
       if (type == "in prison") {
-        summary_phrase <- "spend more time behind bars than White people"
-        less_phrase <- "spend less time behind bars than White people"
+        summary_phrase <- "spent more time behind bars than White people"
+        less_phrase <- "spent less time behind bars than White people"
         detail_suffix <- "in prison"
       } else if (type == "past parole eligibility") {
-        summary_phrase <- "spend more time behind bars after becoming eligible for parole than White people"
-        less_phrase <- "spend less time behind bars after becoming eligible for parole than White people"
+        summary_phrase <- "spent more time behind bars after becoming eligible for parole than White people"
+        less_phrase <- "spent less time behind bars after becoming eligible for parole than White people"
         detail_suffix <- "past parole eligibility"
       }
 
@@ -1913,22 +2014,22 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
         time_value <- if (abs_los_diff_female < 1) round(abs_los_diff_female * 12) else round(abs_los_diff_female, 1)
         time_unit <- if (abs_los_diff_female < 1) "months" else "years"
         sentence <- paste0(
-          "Females ",
+          "Women ",
           if (type == "in prison") "released" else "who were still incarcerated",
           " spent on average ", time_value, " more ", time_unit,
           " ", if (type == "in prison") "in prison" else "past parole eligibility",
-          " compared to males."
+          " compared to men."
         )
       } else if (los_diff_female < 0) {
         # Females spent less time on average
         time_value <- if (abs_los_diff_female < 1) round(abs_los_diff_female * 12) else round(abs_los_diff_female, 1)
         time_unit <- if (abs_los_diff_female < 1) "months" else "years"
         sentence <- paste0(
-          "Females ",
+          "Men ",
           if (type == "in prison") "released" else "who were still incarcerated",
           " spent on average ", time_value, " less ", time_unit,
           " ", if (type == "in prison") "in prison" else "past parole eligibility",
-          " compared to males."
+          " compared to women."
         )
       }
     }
@@ -1939,7 +2040,7 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
     return(sentence)  # Return the constructed sentence if disparity is found
   } else {
     return(paste0(
-      "Females and males spent the same average number of years ",
+      "Women and men spent the same average number of years ",
       if (type == "in prison") "in prison." else "past parole eligibility."
     ))
   }
@@ -2122,8 +2223,8 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
       df_disparity_filtered <- df_disparity |>
         dplyr::filter(group_shortest == "Female" & group_longest == "Male") |>
         dplyr::mutate(
-          group_longest = "males",
-          group_shortest = "females"
+          group_longest = "men",
+          group_shortest = "women"
         )
     }
 
@@ -2148,7 +2249,8 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
 
     # Adjust for months if disparity is less than 1 year
     time_value <- if (disparity_diff < 1) round(disparity_diff * 12) else round(disparity_diff, 1)
-    time_unit <- if (disparity_diff < 1) "months" else "years"
+    time_unit <- if (disparity_diff < 1) "month" else "year"
+    time_unit <- if (time_value == 1) time_unit else paste0(time_unit, "s")
 
     # Construct the descriptive sentence
     time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
@@ -2220,7 +2322,7 @@ fnc_calculate_rri <- function(data, comparison_group, category) {
 #' @export
 fnc_generate_rri_sentences <- function(data, category, label, color) {
   # Define comparison group and color based on category
-  comparison_group <- if (category == "race") "White people" else "females"
+  comparison_group <- if (category == "race") "White people" else "women"
   comparison_color <- if (category == "race") red else purple
 
   # Iterate over each state to generate sentences
@@ -2240,7 +2342,7 @@ fnc_generate_rri_sentences <- function(data, category, label, color) {
     label <- case_when(
       label == "Hispanic, any race" ~ "Hispanic people",
       label == "Black, non-Hispanic" ~ "Black, non-Hispanic people",
-      label == "Male" ~ "Males",
+      label == "Male" ~ "Men",
       TRUE ~ label
     )
 

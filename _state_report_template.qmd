@@ -68,7 +68,7 @@ div(
 
 ## How Parole Eligibility Is Determined
 
-Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
+Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Often, there is a minimum term a person must serve before becoming parole eligible. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
 
 `r paste(parole_eligibility_criteria, collapse = ", ")`
 
@@ -417,23 +417,6 @@ if ((no_infographic_black == TRUE & no_data_black == TRUE) &
 ### Sex
 
 ```{r results = 'asis'}
-# no_data_male <- !file.exists(pe_rri_infographic_male) 
-# 
-# if (file.exists(pe_rri_infographic_male)) {
-#   HTML("<br>")
-# }
-# if (file.exists(pe_rri_infographic_male)) {
-#   knitr::include_graphics(pe_rri_infographic_male)
-# }
-# if (!no_data_male) {
-#   HTML(paste0(state_sentence_pe_rri_male, "<br>"))
-# }
-# if (!no_data_male) {
-#   cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
-# }
-# if (no_data_male) {
-#   no_data_text
-# }
 no_infographic_male <- !file.exists(pe_rri_infographic_male)
 no_data_male <- !state_for_report %in% all_pe_rri_data_male$state
 rri_details_male <- all_pe_rri_data_male |> 
@@ -706,7 +689,7 @@ Data collection and reporting practices vary significantly across states:
 
 **Small Sample Sizes and Interpretation**
 
-Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
+Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to the NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
 :::
 
 </div>
