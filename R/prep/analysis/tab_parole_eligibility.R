@@ -342,6 +342,7 @@ all_bar_pe_fbi_index      <- all_bar_pe[["fbi_index"]]
 all_sentence_pe_fbi_index <- all_sentence_pe[["fbi_index"]]
 
 # Example states:
+all_bar_pe_fbi_index$Georgia
 all_bar_pe_race$Georgia
 all_sentence_pe_race$Georgia
 all_bar_pe_race$Hawaii
