@@ -46,7 +46,7 @@ total_pe_pop_by_rptyear <- ncrp_yearendpop_filtered |>
 pe_status_pop <- ncrp_yearendpop_filtered |>
   mutate(parelig_status = case_when(
     parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
-    parelig_status == "Future" ~ "Will Be Eligible Next Year",
+    parelig_status == "Future" ~ "Will Be Eligible In The Future",
     TRUE ~ parelig_status
   )) |>
   group_by(state, rptyear) |>
@@ -65,6 +65,7 @@ all_pie_pe_type <- fnc_hc_pie_chart(
 
 # State example:
 all_pie_pe_type$Georgia
+all_pie_pe_type$Michigan
 
 # Generate summary sentences for each state describing parole eligibility proportions
 #  "Most recent data shows that 69 percent of people in prison were eligible for
@@ -84,7 +85,7 @@ all_sentence_pe_type <- {
 
     # Get proportions of people currently eligible and those eligible in the future
     current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
-    future_prop <- df |> filter(parelig_status == "Will Be Eligible Next Year") |> pull(prop)
+    future_prop <- df |> filter(parelig_status == "Will Be Eligible In The Future") |> pull(prop)
 
     # Construct the summary sentence for the state
     paste0(
@@ -141,7 +142,7 @@ states <- unique(pe_proj_pop$state)
 
 # Generate summary sentences for all states
 # "From 2010 to 2020, the percent of people in prison past parole eligibility
-#  increased by 22 percent. Our forcasting model projects that the percentage of
+#  increased by 22 percent. Our forecasting model projects that the percentage of
 #  people past their initial parole eligibility will remain around 68 percent."
 # The `fnc_generate_projection_sentence` function creates state-specific summaries
 all_sentence_pop_pe_by_year <- map(states, ~ fnc_generate_projection_sentence(.x, pe_proj_pop)) |>
@@ -172,26 +173,26 @@ all_line_pop_pe_by_year <- map(states, function(x) {
 
   # Filter data for the current state and prepare for charting
   df1 <- df1 |>
-    complete(year = all_years, fill = list(pct_past_pe = NA, proj_pct_past_pe = NA)) |> # Ensure all years are included in graph
-    mutate(
-      # Get the last observed value for percentage past parole eligibility
-      last_value_past_pe = last(na.omit(pct_past_pe)),
-
-      # Identify the first year needing projection filling (if any)
-      year_to_fill = if (any(!is.na(proj_pct_past_pe))) {
-        min(year[!is.na(proj_pct_past_pe)], na.rm = TRUE) - 1 # Fill one year before the first projected year
-      } else {
-        NA_real_
-      },
-
-      # Fill projected values with the last observed value for identified years
-      proj_pct_past_pe = if_else(
-        is.na(proj_pct_past_pe) & year == year_to_fill,
-        last_value_past_pe,
-        proj_pct_past_pe
-      )
-    ) |>
-    select(-last_value_past_pe, -year_to_fill) # Remove helper columns after processing
+    complete(year = all_years, fill = list(pct_past_pe = NA, proj_pct_past_pe = NA)) # Ensure all years are included in graph
+    # mutate(
+    #   # Get the last observed value for percentage past parole eligibility
+    #   last_value_past_pe = last(na.omit(pct_past_pe)),
+    #
+    #   # Identify the first year needing projection filling (if any)
+    #   year_to_fill = if (any(!is.na(proj_pct_past_pe))) {
+    #     min(year[!is.na(proj_pct_past_pe)], na.rm = TRUE) - 1 # Fill one year before the first projected year
+    #   } else {
+    #     NA_real_
+    #   },
+    #
+    #   # Fill projected values with the last observed value for identified years
+    #   proj_pct_past_pe = if_else(
+    #     is.na(proj_pct_past_pe) & year == year_to_fill,
+    #     last_value_past_pe,
+    #     proj_pct_past_pe
+    #   )
+    # ) |>
+    # select(-last_value_past_pe, -year_to_fill) # Remove helper columns after processing
 
   # Define chart properties
   title <- "People in Prison Past Parole Eligibility by Year"
@@ -231,7 +232,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
       filename = paste0(gsub(" ", "_", tolower(title)), "_") # Set export file name
     ) |>
     hc_caption(text = paste0(ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source)) |> # Add source caption
-    fnc_add_hc_accessibility(hc_accessibility_text) # Add accessibility text
+    fnc_add_hc_accessibility(hc_accessibility_text)
 })
 
 # Assign state names to the generated charts
@@ -242,6 +243,7 @@ all_line_pop_pe_by_year$Georgia
 all_line_pop_pe_by_year$Colorado
 all_line_pop_pe_by_year$Idaho
 all_line_pop_pe_by_year$Hawaii
+all_line_pop_pe_by_year$Michigan
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 
@@ -340,10 +342,12 @@ all_bar_pe_fbi_index      <- all_bar_pe[["fbi_index"]]
 all_sentence_pe_fbi_index <- all_sentence_pe[["fbi_index"]]
 
 # Example states:
+all_bar_pe_fbi_index$Georgia
 all_bar_pe_race$Georgia
 all_sentence_pe_race$Georgia
 all_bar_pe_race$Hawaii
 all_sentence_pe_race$Hawaii
+all_sentence_pe_fbi_index$`New York`
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA
@@ -371,3 +375,5 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
+
+

@@ -37,7 +37,7 @@ desired_order <- c(
 )
 
 # Filter NCRP releases data and order offense categories
-ncrp_releases_filtered <- ncrp_releases_not_consolidated |>  ################ Change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_consolidated |>  ################ Change to ncrp_releases_consolidated when complete
   filter(!state %in% states_to_exclude$state) |>  # Exclude states with high missingness or abolished parole
   mutate(fbi_index = factor(fbi_index, levels = desired_order))  # Set factor levels for offense categories
 
@@ -122,8 +122,8 @@ avg_past_pe_race <- ncrp_past_pe |>
       (!state %in% states_use_other_race_eth$state &
          race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"))
   ) |>
-  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
+  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   group_by(state, race, rptyear) |>
   summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
             total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
@@ -310,6 +310,7 @@ all_sentence_avg_past_pe_race_offense <- fnc_generate_offense_disparity_sentence
 
 # Example state:
 all_sentence_avg_past_pe_race_offense$Georgia
+all_sentence_avg_past_pe_race_offense$Arkansas
 
 # SENTENCE: "The chart below shows the average time spent in prison past parole
 #            eligibility by offense type and sex. The largest disparity was
@@ -363,7 +364,7 @@ data_files <- list(
   all_sentence_avg_past_pe_race = "all_sentence_avg_past_pe_race.rds",
   all_sentence_avg_past_pe_sex  = "all_sentence_avg_past_pe_sex.rds",
 
-  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds",
+  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds", ############################ no sentence if disparity doesn't exist
   all_sentence_los_sex_offense          = "all_sentence_los_sex_offense.rds",
   all_scatter_los_race_offense          = "all_scatter_los_race_offense.rds",
   all_scatter_los_sex_offense           = "all_scatter_los_sex_offense.rds",
@@ -378,4 +379,3 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
-

@@ -83,7 +83,6 @@ write.csv(ncrp_term_records_2018, full_file_path)
 
 
 
-
 # # Define years, ICPSR codes, and versions
 # years <- 2014:2020
 # icpsr_codes <- c("36404", "36862", "37021", "37951", "37973", "38048", "38492")

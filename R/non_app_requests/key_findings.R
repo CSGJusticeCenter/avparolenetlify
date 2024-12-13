@@ -1,4 +1,3 @@
-
 # ---------------------------------------------------------------------------- #
 # Years Spent in Prison Past Parole Eligibility
 
@@ -7,40 +6,53 @@
 # UU states, serving an average of X years beyond parole eligibility, compared to X years for White individuals.
 # ---------------------------------------------------------------------------- #
 
-# Filter data to people currently eligible for parole or past parole eligibility
-ncrp_current_pe <-   fnc_filter_pe_population_criteria(ncrp_yearendpop_not_consolidated,
-                                                       exclude = states_to_exclude,
-                                                       dont_filter = states_nofilter) |>
-  filter(parelig_status == "Current") |>
+# Function that filters the population data to include only people in prison for new crimes
+# with sentence lengths 1+ years except life
+# Only includes states with parole systems and without high missingness
+# Includes states don't need to be filtered by admission type or sentence length
+ncrp_yearendpop_filtered <-
+  fnc_filter_pe_population_criteria(data = ncrp_yearendpop_consolidated,
+                                    exclude = states_to_exclude,
+                                    dont_filter = states_nofilter)
+
+# Get NCRP data for people in prison past parole eligibility
+ncrp_past_pe <- ncrp_yearendpop_filtered |> filter(parelig_status == "Current")
+
+# Get average time served past PE for people still in prison by race and ethnicity
+avg_past_pe_race_by_state <- ncrp_past_pe |>
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race) |>
-  # Join with which_overall_year to get the specific year for each state
-  left_join(which_overall_year, by = "state") |>
-  # Use mutate to create a year filter column and then filter
-  mutate(year_to_filter = rptyear == year_to_use) |>
-  filter(year_to_filter)
+  filter(race != "Unknown") |>
+  # Filter to White, Hispanic, and Black for all states except states in states_use_other_race_eth
+  filter(
+    state %in% states_use_other_race_eth$state |
+      (!state %in% states_use_other_race_eth$state &
+         race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"))
+  ) |>
+  # change negative to positive, negative means past parole eligibility year
+  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
+  group_by(state, race, rptyear) |>
+  summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
+            total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
+            people = n(),
+            .groups = "drop") |>
+  fnc_filter_by_year(which_overall_year)
 
 # Filter states that are using 2018 data
-states_using_2018_data <- ncrp_current_pe |>
+states_using_2018_data <- avg_past_pe_race_by_state |>
   filter(rptyear == 2018) |>
   pull(state) |>
   unique()
 
-# Get average time between parole ligibility date and rpt year (years_to_estimated_pey) by state and race
-avg_current_pe_race <- ncrp_current_pe |>
-  filter(race %in% c("White, non-Hispanic", "Black, non-Hispanic", "Hispanic, any race")) |>
-  mutate(race = factor(race,
-                       levels = c("Black, non-Hispanic", "White, non-Hispanic", "Hispanic, any race")),
-         # All are negative or zero since they are past parole eligibility
-         years_to_estimated_pey = abs(years_to_estimated_pey)) |>
-  # Change negative to positive, negative means past parole eligibility year
+# Calculate across states
+avg_past_pe_race <- avg_past_pe_race_by_state |>
   group_by(race) |>
-  summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
-            total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
-            people = n(),
+  summarise(avg_years_to_estimated_pey = mean(avg_years_to_estimated_pey, na.rm = TRUE),
+            total_years_past_pe = sum(total_years_past_pe, na.rm = TRUE),
+            people = sum(people, na.rm = TRUE),
             .groups = "drop")
 
 # Number of states included and excluded
-included_states <- unique(ncrp_current_pe$state)
+included_states <- unique(avg_past_pe_race_by_state$state)
 
 # Separate states with high missing data and high missing data for race and ethnicity
 high_missing_general_states <- unique(states_with_high_missing$state)
@@ -56,32 +68,32 @@ count_excluded_states <- length(excluded_states)
 count_included_states <- length(included_states)
 count_abolished_states <- length(states_abolished_parole$state)
 
-cat("In 2019,", comma(avg_current_pe_race$people[avg_current_pe_race$race == "White, non-Hispanic"]),
+cat("In 2019,", comma(avg_past_pe_race$people[avg_past_pe_race$race == "White, non-Hispanic"]),
     "White, non-Hispanic individuals collectively spent",
-    comma(round(avg_current_pe_race$total_years_past_pe[avg_current_pe_race$race == "White, non-Hispanic"], 1)),
+    comma(round(avg_past_pe_race$total_years_past_pe[avg_past_pe_race$race == "White, non-Hispanic"], 1)),
     "years in prison past their parole eligibility year across",
     count_included_states, "states, serving an average of",
-    round(avg_current_pe_race$avg_years_to_estimated_pey[avg_current_pe_race$race == "White, non-Hispanic"], 1),
+    round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "White, non-Hispanic"], 1),
     "years beyond parole eligibility.\n")
 
-cat("In 2019,", comma(avg_current_pe_race$people[avg_current_pe_race$race == "Black, non-Hispanic"]),
+cat("In 2019,", comma(avg_past_pe_race$people[avg_past_pe_race$race == "Black, non-Hispanic"]),
     "Black, non-Hispanic individuals collectively spent",
-    comma(round(avg_current_pe_race$total_years_past_pe[avg_current_pe_race$race == "Black, non-Hispanic"], 1)),
+    comma(round(avg_past_pe_race$total_years_past_pe[avg_past_pe_race$race == "Black, non-Hispanic"], 1)),
     "years in prison past their parole eligibility year across",
     count_included_states, "states, serving an average of",
-    round(avg_current_pe_race$avg_years_to_estimated_pey[avg_current_pe_race$race == "Black, non-Hispanic"], 1),
+    round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "Black, non-Hispanic"], 1),
     "years beyond parole eligibility, compared to",
-    round(avg_current_pe_race$avg_years_to_estimated_pey[avg_current_pe_race$race == "White, non-Hispanic"], 1),
+    round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "White, non-Hispanic"], 1),
     "years for White individuals.\n")
 
-cat("In 2019,", comma(avg_current_pe_race$people[avg_current_pe_race$race == "Hispanic, any race"]),
+cat("In 2019,", comma(avg_past_pe_race$people[avg_past_pe_race$race == "Hispanic, any race"]),
     "Hispanic individuals collectively spent",
-    comma(round(avg_current_pe_race$total_years_past_pe[avg_current_pe_race$race == "Hispanic, any race"], 1)),
+    comma(round(avg_past_pe_race$total_years_past_pe[avg_past_pe_race$race == "Hispanic, any race"], 1)),
     "years in prison past their parole eligibility year across",
     count_included_states, "states, serving an average of",
-    round(avg_current_pe_race$avg_years_to_estimated_pey[avg_current_pe_race$race == "Hispanic, any race"], 1),
+    round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "Hispanic, any race"], 1),
     "years beyond parole eligibility, compared to",
-    round(avg_current_pe_race$avg_years_to_estimated_pey[avg_current_pe_race$race == "White, non-Hispanic"], 1),
+    round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "White, non-Hispanic"], 1),
     "years for White individuals.\n")
 
 # Add the note about states using 2018 data
@@ -110,7 +122,7 @@ cat("States Abolished Parole (", count_abolished_states, "):", paste(states_abol
 # ---------------------------------------------------------------------------- #
 
 # Categorize offenses into violent vs. nonviolent, keeping "Unknown" offenses for initial analysis
-ncrp_current_pe_offense_initial <- ncrp_current_pe |>
+ncrp_past_pe_offense_initial <- ncrp_past_pe |>
   mutate(offense_group = case_when(
     fbi_index %in% c("Murder or Nonnegligent Manslaughter",
                      "Negligent Manslaughter",
@@ -122,7 +134,7 @@ ncrp_current_pe_offense_initial <- ncrp_current_pe |>
     TRUE ~ fbi_index))
 
 # Identify states with high missingness for offense type
-states_with_high_missing_offense <- ncrp_current_pe_offense_initial |>
+states_with_high_missing_offense <- ncrp_past_pe_offense_initial |>
   group_by(state) |>
   summarise(unknown_offense_count = sum(offense_group == "Unknown"),
             total_count = n(),
@@ -132,11 +144,11 @@ states_with_high_missing_offense <- ncrp_current_pe_offense_initial |>
   pull(state)  # Using a 50% threshold for high missingness
 
 # Filter out "Unknown" offenses for further analysis
-ncrp_current_pe_offense_filtered <- ncrp_current_pe_offense_initial |>
+ncrp_past_pe_offense_filtered <- ncrp_past_pe_offense_initial |>
   filter(offense_group != "Unknown")
 
 # Summarize counts for violent vs. nonviolent offenses
-offense_summary <- ncrp_current_pe_offense_filtered |>
+offense_summary <- ncrp_past_pe_offense_filtered |>
   group_by(offense_group) |>
   summarise(total_people = n(), .groups = "drop")
 
@@ -149,7 +161,7 @@ percent_violent <- (violent_offense_count / total_people_overall) * 100
 percent_nonviolent <- (nonviolent_offense_count / total_people_overall) * 100
 
 # Check if each state has all nonviolent offense types (Property, Drug, Public Order)
-states_with_all_offenses <- ncrp_current_pe_offense_filtered |>
+states_with_all_offenses <- ncrp_past_pe_offense_filtered |>
   filter(offense_group == "Nonviolent") |>
   group_by(state) |>
   summarise(has_property = any(fbi_index == "Property"),

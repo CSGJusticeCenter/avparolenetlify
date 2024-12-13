@@ -6,32 +6,101 @@
 #'
 #' @param citation A string containing the citation.
 #' @return A formatted string with report titles italicized and URLs as markdown links.
-fnc_format_citation <- function(citation) {
-  # Italicize the report title
-  formatted_citation <- str_replace_all(
-    citation,
-    "Prison-Release Discretion and Prison Population Size: State Report: [^\\(]+",
-    function(x) paste0("*", x, "*")
+# fnc_format_citation <- function(citation) {
+#   # Italicize the report title
+#   formatted_citation <- str_replace_all(
+#     citation,
+#     "Prison-Release Discretion and Prison Population Size: State Report: [^\\(]+",
+#     function(x) paste0("*", x, "*")
+#   )
+#
+#   # Replace "pdf." with "pdf"
+#   formatted_citation <- str_replace_all(
+#     formatted_citation,
+#     "pdf\\.",
+#     "pdf"
+#   )
+#
+#   # Convert URLs to markdown hyperlinks
+#   formatted_citation <- str_replace_all(
+#     formatted_citation,
+#     "(https?://[^\\s]+)",  # Match the URL pattern
+#     function(url) paste0("[", url, "](", url, ")")  # Convert to markdown link
+#   )
+#
+#   # Ensure the period is outside the link
+#   formatted_citation <- str_replace(formatted_citation, "\\]\\(.*\\)\\.", "].")
+#
+#   return(formatted_citation)
+# }
+# italicize_titles <- function(text) {
+#   # Define patterns for titles that need italicizing
+#   patterns <- c(
+#     "Prison-Release Discretion and Prison Population Size: State Report: [A-Za-z]+",
+#     "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z]+"
+#   )
+#
+#   # Apply italic formatting to each pattern
+#   for (pattern in patterns) {
+#     matches <- gregexpr(pattern, text, perl = TRUE)
+#     regmatches(text, matches) <- lapply(
+#       regmatches(text, matches),
+#       function(match) paste0("<i>", match, "</i>")
+#     )
+#   }
+#   return(text)
+# }
+# fnc_format_citation <- function(text) {
+#   # Define patterns for titles that need italicizing
+#   patterns <- c(
+#     "Prison-Release Discretion and Prison Population Size: State Report: [A-Za-z]+",
+#     "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z]+"
+#   )
+#
+#   # Apply italic formatting to each pattern
+#   for (pattern in patterns) {
+#     matches <- gregexpr(pattern, text, perl = TRUE)
+#     regmatches(text, matches) <- lapply(
+#       regmatches(text, matches),
+#       function(match) paste0("<i>", match, "</i>")
+#     )
+#   }
+#
+#   # Convert URLs into markdown-style links
+#   text <- gsub(
+#     "(https://[^ ,]+)",                  # Regex to capture URLs
+#     "\\[\\1\\](\\1)",                   # Format as markdown link [url](url)
+#     text,
+#     perl = TRUE
+#   )
+#
+#   return(text)
+# }
+fnc_format_citation <- function(text) {
+  # Define patterns for titles that need italicizing
+  patterns <- c(
+    "Prison-Release Discretion and Prison Population Size: State Report: [A-Za-z]+",
+    "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z]+"
   )
 
-  # Replace "pdf." with "pdf"
-  formatted_citation <- str_replace_all(
-    formatted_citation,
-    "pdf\\.",
-    "pdf"
+  # Apply italic formatting to each pattern
+  for (pattern in patterns) {
+    matches <- gregexpr(pattern, text, perl = TRUE)
+    regmatches(text, matches) <- lapply(
+      regmatches(text, matches),
+      function(match) paste0("<i>", match, "</i>")
+    )
+  }
+
+  # Convert URLs into markdown-style links
+  text <- gsub(
+    "(https://[a-zA-Z0-9./?=_&%-]+)(?=[.,\\s]|$)", # Regex to capture URLs without trailing period or comma
+    "\\[\\1\\](\\1)",                             # Format as markdown link [url](url)
+    text,
+    perl = TRUE
   )
 
-  # Convert URLs to markdown hyperlinks
-  formatted_citation <- str_replace_all(
-    formatted_citation,
-    "(https?://[^\\s]+)",  # Match the URL pattern
-    function(url) paste0("[", url, "](", url, ")")  # Convert to markdown link
-  )
-
-  # Ensure the period is outside the link
-  formatted_citation <- str_replace(formatted_citation, "\\]\\(.*\\)\\.", "].")
-
-  return(formatted_citation)
+  return(text)
 }
 
 #' Read a Stata File and Add a Year Column
@@ -185,7 +254,7 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
   df <- df |>
     mutate(
       # Update estimated parole eligibility status for specific states
-      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status),
+      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status), ################ CHECK WITH SEBA
       sentlgth_raw = sentlgth, # Backup original sentence length
       offdetail = trimws(offdetail), # Trim whitespace from offense details
       time_between_ped_rptyear = as.numeric(years_to_estimated_pey), # Rename and convert years to numeric
@@ -196,7 +265,8 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
         estimated_pey_status == "missing" ~ "Missing",
         estimated_pey_status == "future" ~ "Future",
         TRUE ~ estimated_pey_status
-      )
+      ),
+
     ) |>
 
     # Replace "NA" or actual missing values with "Unknown" for specified columns
@@ -208,7 +278,7 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
     fnc_create_admtype() |>
     mutate(
       # Categorize imputed sentence length values
-      calc_sent_lgth = case_when(
+      calc_sent_lgth_category = case_when(
         calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
         calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
         calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
@@ -217,9 +287,10 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
         calc_sent_lgth_compl >= 25 ~ ">=25 years",
         is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
         TRUE ~ "Unknown"
+        # TRUE ~ as.character(calc_sent_lgth_compl)
       ),
       # Replace missing `sentlgth` with categorized imputed values
-      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth, TRUE ~ sentlgth),
+      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth_category, TRUE ~ sentlgth),
 
       # Factor race with specified levels
       race = factor(race, levels = c("Unknown",
@@ -441,5 +512,4 @@ fnc_process_bjs_sex_data <- function(file_path, skip_rows, male_col, female_col,
     ) |>
     ungroup() # Remove grouping for final output
 }
-
 

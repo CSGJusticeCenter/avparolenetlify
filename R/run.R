@@ -1,60 +1,93 @@
+library(logger)
+
+# Configure logging
+log_appender(appender_tee("script_log.log"))
+log_threshold(INFO)
+
 # STEP 1) Load configuration settings and paths
-# [ACTION REQUIRED] in this R file - check file
+log_info("Loading configuration settings and paths...")
 source("R/config.R")
 
 # STEP 2) Import data and helper functions
 
-# Import helper functions for data processing and formatting
+log_info("Importing helper functions for data processing and formatting...")
 source("R/prep/import/helper_functions_import.R")
-source("R/prep/import/import_format.R")
+log_info("Helper functions imported successfully.")
 
-# Import custom helper functions for analysis (functions start with 'fnc_')
+log_info("Importing and formatting data...")
+source("R/prep/import/import_format.R")
+log_info("Data imported and formatted successfully.")
+
+log_info("Importing custom analysis helper functions...")
 source("R/prep/analysis/helper_functions.R")
+log_info("Helper functions imported successfully.")
 
 # Step 3) Run R files in this order
-source("R/prep/analysis/page_national_trends.R")
-source("R/prep/analysis/tab_parole_eligibility.R")
-source("R/prep/analysis/tab_population.R")
-source("R/prep/analysis/tab_releases.R")
-source("R/prep/analysis/tab_disparities.R")
-source("R/prep/analysis/tab_disparities_rris.R")
+log_info("Starting analysis scripts...")
+scripts <- c(
+  "R/prep/analysis/page_national_trends.R",
+  "R/prep/analysis/tab_parole_eligibility.R",
+  "R/prep/analysis/tab_population.R",
+  "R/prep/analysis/tab_releases.R",
+  "R/prep/analysis/tab_disparities.R",
+  "R/prep/analysis/tab_disparities_rris.R"
+)
+
+for (script in scripts) {
+  log_info("Running script: {script}")
+  tryCatch(
+    {
+      source(script)
+      log_success("Successfully completed: {script}")
+    },
+    error = function(e) {
+      log_error("Error in {script}: {e$message}")
+    }
+  )
+}
 
 # Step 4) Generate Quartos for state reports
+log_info("Generating state-specific Quarto reports...")
 
-# Function to replace placeholder text in the Quarto Markdown (QMD) template
-# Generates state-specific Quarto files for each state
 fnc_replace_write_qmd <- function(state) {
-  cleaned_state <- str_replace_all(state, "\\s+", "_") # Replace spaces with underscores
+  cleaned_state <- str_replace_all(state, "\\s+", "_")
+  log_debug("Processing state: {state} -> {cleaned_state}")
   str_replace(orig_qmd, "this_state", state) |>
     write_lines(paste0("state_report_", cleaned_state, ".qmd"))
 }
 
-# Save the current working directory for reference
+# Save the current working directory
 wd <- getwd()
+log_debug("Working directory: {wd}")
 
-# Load pre-processed data for analysis
-# States to exclude from th analysis
-# States that should be in the National Snapshot page but not have a report
+log_info("Loading data...")
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
 
-# States that need reports
+log_info("Filtering states for reports...")
 states <- parole_eligibility_table |>
   filter(!state %in% states_to_exclude$state) |>
   filter(!state %in% states_national_page_only$state) |>
   pull(state)
+# states <- "Georgia"
 
-# Read the Quarto template for state reports
+log_info("Reading Quarto template...")
 orig_qmd <- read_lines("_state_report_template.qmd")
 
-# Generate state-specific QMD files using the template
+log_info("Generating QMD files for {length(states)} states...")
 walk(states, fnc_replace_write_qmd)
 
 # Step 5) Render all pages and launch site
+log_info("Rendering all Quarto pages...")
+tryCatch(
+  {
+    quarto::quarto_render()
+    log_success("Quarto rendering completed successfully.")
+  },
+  error = function(e) {
+    log_error("Error during Quarto rendering: {e$message}")
+  }
+)
 
-# Render all generated Quarto Markdown (QMD) files
-# Note: Ensure Quarto is installed and properly configured before running this
-# Takes about 15 minutes to run
-quarto::quarto_render()
-
+log_info("Script completed.")

@@ -256,6 +256,8 @@ all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 all_bar_population_race$Georgia
 all_bar_population_sex$Georgia
 all_bar_population_ageyrend$Georgia
+all_sentence_population_fbi_index$`New York`
+all_sentence_population_fbi_index$Georgia
 
 #------------------------------------------------------------------------------#
 # SAVE DATA
@@ -263,7 +265,7 @@ all_bar_population_ageyrend$Georgia
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  all_sentence_population_by_year           = "all_sentence_population_by_year.rds",
+  all_sentence_population_by_year   = "all_sentence_population_by_year.rds",
   all_line_population_by_year       = "all_line_population_by_year.rds",
   all_sentence_population_race      = "all_sentence_population_race.rds",
   all_bar_population_race           = "all_bar_population_race.rds",
@@ -281,3 +283,4 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
+

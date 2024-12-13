@@ -54,7 +54,7 @@ div(
   div(id = "bold-text", style = "text-align: center;", 
       HTML("Prison Population Incarcerated<br>Past Parole Eligibility")),
   div(id = "bold-text", style = "text-align: center;", 
-      HTML("Parole Board<br>Members"))
+      HTML("Parole Board<br>Members<sup style='font-size: 0.5em;'>1</sup>"))
 )
 ```
 
@@ -68,7 +68,7 @@ div(
 
 ## How Parole Eligibility Is Determined
 
-Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
+Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Often, there is a minimum term a person must serve before becoming parole eligible. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
 
 `r paste(parole_eligibility_criteria, collapse = ", ")`
 
@@ -363,7 +363,7 @@ if (no_infographic_black == TRUE & no_data_black == TRUE) {
   no_data_needed_black_individuals <- TRUE
 } else if (no_infographic_black == TRUE & no_data_black == FALSE & no_rri_details_black == FALSE) {
   # Display "No RRI" message
-  HTML("<br>No significant disparities in incarceration rates past parole eligibility were identified between Black and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+  HTML("<br>No substantial disparities in incarceration rates past parole eligibility were identified between Black and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
 } else if (no_infographic_black == FALSE & no_data_black == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_black)
@@ -379,7 +379,7 @@ if (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) {
   no_data_needed_hispanic_individuals <- TRUE
 } else if (no_infographic_hispanic == TRUE & no_data_hispanic == FALSE & no_rri_details_hispanic == FALSE) {
   # Display "No RRI" message
-  HTML("No significant disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
+  HTML("No substantial disparities in incarceration rates past parole eligibility were identified between Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
 } else if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_hispanic)
@@ -394,7 +394,7 @@ if (use_other_race) {
   if (no_infographic_other == TRUE & no_data_other == TRUE) {
     no_data_needed_other_individuals <- TRUE
   } else if (no_infographic_other == TRUE & no_data_other == FALSE & no_rri_details_other == FALSE) {
-    HTML("No significant disparities in incarceration rates past parole eligibility were identified between Other race(s), non-Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
+    HTML("No substantial disparities in incarceration rates past parole eligibility were identified between Other race(s), non-Hispanic and White individuals, as indicated by a Relative Rate Index (RRI) of 1.<br>")
   } else if (no_infographic_other == FALSE & no_data_other == FALSE) {
     knitr::include_graphics(pe_rri_infographic_other)
   }
@@ -417,22 +417,42 @@ if ((no_infographic_black == TRUE & no_data_black == TRUE) &
 ### Sex
 
 ```{r results = 'asis'}
-no_data_male <- !file.exists(pe_rri_infographic_male) 
+no_infographic_male <- !file.exists(pe_rri_infographic_male)
+no_data_male <- !state_for_report %in% all_pe_rri_data_male$state
+rri_details_male <- all_pe_rri_data_male |> 
+  filter(state == state_for_report & sex == "Male") |> 
+  group_by(state, sex) |> 
+  summarise(
+    above_1 = rri > 1,
+    equal_1 = rri == 1,
+    below_1 = rri < 1
+  ) |> 
+  mutate(rri_exists = ifelse(equal_1 == FALSE, TRUE, FALSE))
+no_rri_details_male <- nrow(rri_details_male) == 0
 
-if (file.exists(pe_rri_infographic_male)) {
+if (no_infographic_male == FALSE) {
   HTML("<br>")
 }
-if (file.exists(pe_rri_infographic_male)) {
+if (no_infographic_male == TRUE & no_data_male == TRUE) {
+  # Display "No Data" message
+  no_data_needed_male_individuals <- TRUE
+} else if (no_infographic_male == TRUE & no_data_male == FALSE & no_rri_details_male == FALSE) {
+  # Display "No RRI" message
+  HTML("<br>No substantial disparities in incarceration rates past parole eligibility were identified between male and females, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+} else if (no_infographic_male == FALSE & no_data_male == FALSE) {
+  # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_male)
+} 
+
+if (no_infographic_male == FALSE & no_data_male == FALSE) {
+  HTML(state_sentence_pe_rri_male, "<br>")
 }
-if (!no_data_male) {
-  HTML(paste0(state_sentence_pe_rri_male, "<br>"))
-}
-if (!no_data_male) {
-  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
-}
-if (no_data_male) {
+
+# Display "No Data" message if no data
+if (no_infographic_male == TRUE & no_data_male == TRUE){
   no_data_text
+} else {
+  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 ```
 
@@ -669,11 +689,10 @@ Data collection and reporting practices vary significantly across states:
 
 **Small Sample Sizes and Interpretation**
 
-Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
+Interpret findings with small numbers cautiously, as they may introduce variability and yield less reliable estimates. We exclude individuals categorized as "Other race(s), non-Hispanic" when the sample size is too small to make meaningful comparisons. According to the NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race. Small sample sizes can produce unreliable or potentially misleading results in disparities analysis.
 :::
 
 </div>
-
 
 
 

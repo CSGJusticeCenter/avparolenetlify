@@ -34,17 +34,21 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_do
 <div id="body-section">
 
 ```{r highlights}
-# 3 Key Findings at Top of Page
 div(
   style = "
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    align-items: center;
+    align-items: start; /* Align all grid items at the top */
     text-align: center;
   ",
   div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
-  div(id = "national-highlight",
-      img(src = "img/pe_1_in_x.png", style = "margin: 0 auto; margin-bottom: 0px; margin-top: 0px; max-width: 50%; height: auto; text-align: center; align-self: center;")),
+  div(
+    id = "national-highlight",
+    img(
+      src = "img/pe_1_in_x.png", 
+      style = "margin: 0 auto; margin-bottom: 10px; max-width: 50%; height: auto; text-align: center;"
+    )
+  ),
   div(id = "national-highlight", "34"),
   div(id = "bold-text", HTML("People In Prison Past Parole Eligibility*<br><br>")),
   div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))),
@@ -145,7 +149,7 @@ reactable(
 ```
 
 <div id="footnotes-text"><br>
-Source: National Corrections Reporting Program and CSG Justice Center estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
+Source: National Corrections Reporting Program, 2010-2020 and CSG Justice Center Estimates. Estimate of people incarcerated beyond parole eligibility provided by Alabama Department of Corrections on X date.<br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
 <br></div>
 
 ```{r echo=FALSE}

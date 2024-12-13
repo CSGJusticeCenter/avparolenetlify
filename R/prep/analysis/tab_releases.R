@@ -27,7 +27,7 @@
 
 # Filter NCRP releases data to include only states with parole systems
 # Exclude states with high missingness or abolished parole (in `states_to_exclude`)
-ncrp_releases_filtered <- ncrp_releases_not_consolidated |> ############################# Amund, Will change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_consolidated |> ############################# Amund, Will change to ncrp_releases_consolidated when complete
   filter(!state %in% states_to_exclude$state)
 
 # Summarize total number of people released from prison by state and year
@@ -63,7 +63,7 @@ all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
 
   # Construct a sentence summarizing the release trend for the state
   sentences <- paste0("From ", earliest_year, " to ", latest_year, ", the number of people released from prison ",
-                      change_type, " ", percent_change_abs, " percent, dropping from ",
+                      change_type, " ", percent_change_abs, " percent, from ",
                       format(earliest_year_release, big.mark = ","), " in ",
                       earliest_year, " to ", format(latest_year_release, big.mark = ","), " in ", latest_year, ".")
   return(sentences)
@@ -76,6 +76,8 @@ all_sentence_releases_by_year <- setNames(all_sentence_releases_by_year, states)
 all_sentence_releases_by_year$Georgia
 all_sentence_releases_by_year$Connecticut
 all_sentence_releases_by_year$Hawaii
+all_sentence_releases_by_year$`West Virginia`
+all_sentence_releases_by_year$Alaska
 
 # Generate line charts for prison releases trends for each state
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
@@ -130,7 +132,7 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 all_line_releases_by_year$Georgia
 all_line_releases_by_year$Connecticut
 all_line_releases_by_year$Hawaii
-
+all_line_releases_by_year$Alaska
 
 
 # ---------------------------------------------------------------------------- #
@@ -141,7 +143,7 @@ all_line_releases_by_year$Hawaii
 # lengths not less than one year or life. Exclude states with high missingness
 # or abolished parole, and avoid filtering certain states based on other criteria.
 ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
-  data = ncrp_releases_not_consolidated,  ############################## Amund, I will update to `ncrp_releases_consolidated` when complete
+  data = ncrp_releases_consolidated,  ############################## Amund, I will update to `ncrp_releases_consolidated` when complete
   exclude = states_to_exclude,
   dont_filter = states_nofilter) |>
   left_join(which_overall_year, by = "state")
@@ -173,7 +175,7 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
 
   # Define chart title and accessibility text
-  title <- "People Released on Parole Eligibility Year vs. Past Parole Eligibility Year"
+  title <- "People Released in Parole Eligibility Year vs. Past Parole Eligibility Year"
   hc_accessibility_text <- "This stacked bar chart shows the proportion of parole-eligible people released in each year, either on or past their parole eligibility year."
 
   # Create Highcharts stacked bar chart
@@ -426,7 +428,7 @@ all_sentence_release_type$Georgia
 
 # Filter release data to include only the appropriate year for each state
 # This ensures that the analysis uses the best available year based on `which_overall_year`
-current_releases <- ncrp_releases_not_consolidated |>  ################################## Will Replace with `ncrp_releases_consolidated` when ready
+current_releases <- ncrp_releases_consolidated |>  ################################## Will Replace with `ncrp_releases_consolidated` when ready
   fnc_filter_by_year(which_overall_year)
 
 # Create a second filtered dataset for non-consolidated data
@@ -512,6 +514,7 @@ all_sentence_releases_fbi_index <- all_sentence_releases[["fbi_index"]]
 
 # Example state:
 all_bar_releases_race$Georgia
+all_sentence_releases_fbi_index$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA
@@ -539,4 +542,3 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
-

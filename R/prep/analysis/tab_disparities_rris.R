@@ -17,8 +17,8 @@ ncrp_yearendpop_filtered <- ncrp_yearendpop_consolidated |>
   # Only include people in prison for new court commitments and sentence lengths greater than 1 year but not life
   # Also allow Unknowns in this case to mirror Seba Guzman's methodology on RRIs in Stata
   filter(
-    !(admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
-      !(sentlgth_raw %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth_raw) | sentlgth_raw == "Unknown")
+    (!admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
+      (!sentlgth_raw %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth_raw) | sentlgth_raw == "Unknown")
   )
 
 # Exclude states with high missingness for race and ethnicity and filter by state-specific conditions
@@ -156,7 +156,7 @@ all_sentence_pe_rri_male <- fnc_generate_rri_sentences(
 
 # Example state:
 all_sentence_pe_rri_male$Georgia
-
+all_sentence_pe_rri_male$Idaho
 
 # ---------------------------------------------------------------------------- #
 # Infographics for RRIs
@@ -251,3 +251,5 @@ data_files <- list(
 invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
+
+
