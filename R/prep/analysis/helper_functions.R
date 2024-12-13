@@ -592,15 +592,6 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                                                  fontSize = "14px",
                                                  fontFamily = "Graphik",
                                                  textOutline = 0))) |>
-    # hc_xAxis(categories = xaxis_order, # Set x-axis categories
-    #          labels = list(
-    #            useHTML = TRUE,
-    #            enabled = TRUE,
-    #            formatter = JS(js_code), # Format labels with JavaScript
-    #            style = list(fontSize = "14px",
-    #                         fontFamily = "Graphik",
-    #                         textAlign = label_alignment) # Align labels based on orientation
-    #          )) |>
     hc_xAxis(categories = xaxis_order, # Set x-axis categories
              labels = list(
                useHTML = TRUE,
