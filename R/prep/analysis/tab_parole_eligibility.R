@@ -40,32 +40,91 @@ total_pe_pop_by_rptyear <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n(), .groups = "drop")
 
+# # Compute the prison population proportions by parole eligibility status
+# # Includes statuses: "Missing," "Current," or "Future"
+# # Joins with the total population to calculate percentages (`prop`) and adds tooltips
+# pe_status_pop <- ncrp_yearendpop_filtered |>
+#   mutate(parelig_status = case_when(
+#     parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
+#     parelig_status == "Future" ~ "Will Be Eligible In The Future",
+#     TRUE ~ parelig_status
+#   )) |>
+#   group_by(state, rptyear) |>
+#   count(parelig_status) |>
+#   left_join(total_pe_pop_by_rptyear, by = c("state", "rptyear")) |>
+#   mutate(prop = (n / yearendpop) * 100) |> # Calculate proportion
+#   fnc_create_tooltip(variable_label = "Parole Eligibility Status", variable = parelig_status) |> # Add tooltips
+#   fnc_filter_by_year(which_overall_year) # Filter data based on the best year for each state
+
 # Compute the prison population proportions by parole eligibility status
 # Includes statuses: "Missing," "Current," or "Future"
 # Joins with the total population to calculate percentages (`prop`) and adds tooltips
 pe_status_pop <- ncrp_yearendpop_filtered |>
-  mutate(parelig_status = case_when(
-    parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
-    parelig_status == "Future" ~ "Will Be Eligible In The Future",
-    TRUE ~ parelig_status
-  )) |>
+  mutate(parelig_status_new =
+           case_when(
+             parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
+             parelig_status == "Future" & time_between_ped_rptyear == 1 ~ "Will Be Eligible Next Year",
+             parelig_status == "Future" & time_between_ped_rptyear > 1 ~ "Will Be Eligible In 1+ Years",
+             TRUE ~ parelig_status),
+         parelig_status_new = factor(parelig_status_new,
+                                     levels = c(
+                                       "Past Parole Eligibility at End of Year",
+                                       "Will Be Eligible Next Year",
+                                       "Will Be Eligible In 1+ Years",
+                                       "Missing"
+                                     ))
+  ) |>
   group_by(state, rptyear) |>
-  count(parelig_status) |>
+  count(parelig_status_new) |>
   left_join(total_pe_pop_by_rptyear, by = c("state", "rptyear")) |>
   mutate(prop = (n / yearendpop) * 100) |> # Calculate proportion
-  fnc_create_tooltip(variable_label = "Parole Eligibility Status", variable = parelig_status) |> # Add tooltips
+  fnc_create_tooltip(variable_label = "Parole Eligibility Status", variable = parelig_status_new) |> # Add tooltips
   fnc_filter_by_year(which_overall_year) # Filter data based on the best year for each state
 
 # Generate pie charts visualizing parole eligibility status proportions for each state
 # `fnc_hc_pie_chart` creates individual charts with data and accessibility text for each state
-all_pie_pe_type <- fnc_hc_pie_chart(
+all_pie_pe_type <- fnc_hc_pie_chart_new(
   df = pe_status_pop,
-  variable = "parelig_status"
+  variable = "parelig_status_new"
 )
 
 # State example:
+all_pie_pe_type$Arkansas
+all_pie_pe_type$Colorado
 all_pie_pe_type$Georgia
 all_pie_pe_type$Michigan
+
+# # Generate summary sentences for each state describing parole eligibility proportions
+# #  "Most recent data shows that 69 percent of people in prison were eligible for
+# #   parole and incarcerated past parole eligibility at the end of the year, while
+# #   another 31 will reach their parole eligibility next year."
+# all_sentence_pe_type <- {
+#   # Get the list of unique states from the filtered data
+#   states <- unique(pe_status_pop$state)
+#
+#   # Use `map` to iterate over each state and generate a summary sentence
+#   map(states, function(state_name) {
+#     # Filter the data for the current state
+#     df <- pe_status_pop |> filter(state == state_name)
+#
+#     # Extract the reporting year for the current state (assumes consistency across rows)
+#     year <- unique(df$rptyear)
+#
+#     # Get proportions of people currently eligible and those eligible in the future
+#     current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
+#     future_prop <- df |> filter(parelig_status == "Will Be Eligible In The Future") |> pull(prop)
+#
+#     # Construct the summary sentence for the state
+#     paste0(
+#       "Most recent data shows that ",
+#       round(current_prop, 0),
+#       " percent of people in prison were eligible for parole and incarcerated ",
+#       "past parole eligibility at the end of the year,",
+#       " while another ", round(future_prop, 0),
+#       " were expected to reach their parole eligibility in the following year."
+#     )
+#   }) |> setNames(states) # Assign state names to the generated sentences
+# }
 
 # Generate summary sentences for each state describing parole eligibility proportions
 #  "Most recent data shows that 69 percent of people in prison were eligible for
@@ -83,24 +142,55 @@ all_sentence_pe_type <- {
     # Extract the reporting year for the current state (assumes consistency across rows)
     year <- unique(df$rptyear)
 
-    # Get proportions of people currently eligible and those eligible in the future
-    current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
-    future_prop <- df |> filter(parelig_status == "Will Be Eligible In The Future") |> pull(prop)
+    # Get proportions for different parole eligibility statuses
+    current_prop <- df |> filter(parelig_status_new == "Past Parole Eligibility at End of Year") |> pull(prop)
+    future_prop <- df |> filter(parelig_status_new == "Will Be Eligible Next Year") |> pull(prop)
+    future_1_prop <- df |> filter(parelig_status_new == "Will Be Eligible In 1+ Years") |> pull(prop)
+    missing_prop <- df |> filter(parelig_status_new == "Missing") |> pull(prop)
 
-    # Construct the summary sentence for the state
-    paste0(
-      "Most recent data shows that ",
-      round(current_prop, 0),
-      " percent of people in prison were eligible for parole and incarcerated ",
-      "past parole eligibility at the end of the year,",
-      " while another ", round(future_prop, 0),
-      " were expected to reach their parole eligibility in the following year."
+    # Construct the main sentence dynamically, excluding NULL or 0% values
+    sentence_parts <- c(
+      paste0(
+        "Most recent data shows that ", round(current_prop, 0),
+        " percent of people in prison were eligible for parole and incarcerated past parole eligibility at the end of the year"
+      ),
+      if (!is.na(future_prop) && length(future_prop) > 0 && round(future_prop, 0) > 0) {
+        paste0("another ", round(future_prop, 0), " percent will reach parole eligibility next year")
+      },
+      if (!is.na(future_1_prop) && length(future_1_prop) > 0 && round(future_1_prop, 0) > 0) {
+        paste0("and an additional ", round(future_1_prop, 0), " percent will reach parole eligibility in more than one year")
+      }
     )
+
+    # Check the number of non-NULL parts
+    valid_parts <- sentence_parts[!is.na(sentence_parts)]
+    if (length(valid_parts) == 2) {
+      # Combine without a comma for two parts
+      main_sentence <- paste0(paste(valid_parts, collapse = " and "), ".")
+    } else {
+      # Combine with commas for more than two parts
+      main_sentence <- paste0(paste(valid_parts, collapse = ", "), ".")
+    }
+
+    # Add a separate sentence for missing data if applicable and greater than 0
+    if (!is.na(missing_prop) && length(missing_prop) > 0 && round(missing_prop, 0) > 0) {
+      main_sentence <- paste0(
+        main_sentence,
+        " ", round(missing_prop, 0),
+        " percent of people had missing parole eligibility information."
+      )
+    }
+
+    # Return the generated sentence
+    main_sentence
   }) |> setNames(states) # Assign state names to the generated sentences
 }
 
-# State example:
+# Example usage:
+all_sentence_pe_type$Michigan
 all_sentence_pe_type$Georgia
+
+
 
 
 

@@ -458,7 +458,76 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #' - Adds accessibility text to describe the chart for screen readers.
 #' - Outputs charts with exporting options enabled for saving.
 #' @export
-fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
+# fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
+#   # Get unique states from the data
+#   states <- unique(df$state)
+#
+#   # Iterate over each state to generate pie charts
+#   all_pie_charts <- map(states, function(state_name) {
+#     # Filter the data for the current state
+#     df1 <- df |>
+#       ungroup() |> # Remove grouping to ensure accurate filtering
+#       filter(state == state_name) |> # Select data for the current state
+#       mutate(color = case_when( # Assign colors based on parole eligibility status
+#         parelig_status == "Will Be Eligible In The Future" ~ color2,
+#         parelig_status == "Missing" ~ darkgray,
+#         parelig_status == "Past Parole Eligibility at End of Year" ~ color4
+#       ))
+#
+#     # Extract the reporting year for the current state (assumes it's consistent within the state)
+#     year <- unique(df1$rptyear)
+#
+#     # Generate descriptive accessibility text for the pie chart
+#     category_counts <- df1 |>
+#       group_by(!!sym(variable)) |> # Group by the specified variable
+#       # Calculate percentage for each category
+#       summarise(percentage = round(sum(n) / sum(df1$n) * 100, 0)) |>
+#       arrange(desc(percentage)) # Sort categories by descending percentage
+#
+#     # Build a textual description of the chart for accessibility
+#     accessibility_text <- paste(
+#       "This pie chart shows the distribution of the prison population by", variable, "in", year, ".",
+#       paste(
+#         category_counts |>
+#           # Combine category and percentage
+#           transmute(text = paste0(!!sym(variable), ": ", percentage, "%")) |>
+#           pull(text), # Extract the formatted text
+#         collapse = ", " # Join all categories into a single string
+#       )
+#     )
+#
+#     # Create the Highcharts pie chart
+#     highchart() |>
+#       hc_chart(type = "pie") |>
+#       hc_plotOptions(pie = list(
+#         dataLabels = list( # Define label formatting for the chart
+#           enabled = TRUE,
+#           format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span>
+#           <br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
+#         ),
+#         # Use custom colors defined in the data
+#         colorByPoint = FALSE
+#       )) |>
+#       hc_series(list(
+#         # Add data to the chart
+#         data = list_parse(df1 |> mutate(y = n) |> transmute(
+#           name = !!sym(variable), y, color, tooltip
+#         ))
+#       )) |>
+#       hc_add_theme(base_hc_theme) |> # Add a base theme
+#       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
+#       hc_title(text = "Prison Population by Parole Eligibility Status") |>
+#       hc_exporting(enabled = TRUE, filename = paste0("prison_pop_by_parole_eligibility_status_", year)) |>
+#       hc_caption(text = paste0(source1, ", ", year, " and ", source2)) |> # Add chart caption with source information
+#       fnc_add_hc_accessibility(accessibility_text)
+#   })
+#
+#   # Assign state names to the charts list for clarity
+#   all_pie_charts <- setNames(all_pie_charts, states)
+#
+#   return(all_pie_charts)
+# }
+fnc_hc_pie_chart_new <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
   # Get unique states from the data
   states <- unique(df$state)
 
@@ -469,9 +538,10 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       ungroup() |> # Remove grouping to ensure accurate filtering
       filter(state == state_name) |> # Select data for the current state
       mutate(color = case_when( # Assign colors based on parole eligibility status
-        parelig_status == "Will Be Eligible In The Future" ~ color2,
-        parelig_status == "Missing" ~ darkgray,
-        parelig_status == "Past Parole Eligibility at End of Year" ~ color4
+        parelig_status_new == "Will Be Eligible In 1+ Year" ~ color2,
+        parelig_status_new == "Will Be Eligible Next Year" ~ color3,
+        parelig_status_new == "Missing" ~ darkgray,
+        parelig_status_new == "Past Parole Eligibility at End of Year" ~ color4
       ))
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
@@ -517,9 +587,9 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_add_theme(base_hc_theme) |> # Add a base theme
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_exporting(enabled = TRUE, filename = paste0("prison_pop_by_parole_eligibility_status_", year)) |>
+      hc_exporting(enabled = TRUE, filename = paste0("prison_population_", state_name, "_", year)) |>
       hc_caption(text = paste0(source1, ", ", year, " and ", source2)) |> # Add chart caption with source information
-      fnc_add_hc_accessibility(accessibility_text)
+      fnc_add_hc_accessibility(accessibility_text) # Function to add accessibility text
   })
 
   # Assign state names to the charts list for clarity
