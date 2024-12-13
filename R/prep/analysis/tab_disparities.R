@@ -122,8 +122,8 @@ avg_past_pe_race <- ncrp_past_pe |>
       (!state %in% states_use_other_race_eth$state &
          race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"))
   ) |>
-  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   # change negative to positive, negative means past parole eligibility year
+  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
   group_by(state, race, rptyear) |>
   summarise(avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
             total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
