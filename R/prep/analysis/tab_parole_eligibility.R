@@ -46,7 +46,7 @@ total_pe_pop_by_rptyear <- ncrp_yearendpop_filtered |>
 pe_status_pop <- ncrp_yearendpop_filtered |>
   mutate(parelig_status = case_when(
     parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
-    parelig_status == "Future" ~ "Will Be Eligible Next Year",
+    parelig_status == "Future" ~ "Will Be Eligible In The Future",
     TRUE ~ parelig_status
   )) |>
   group_by(state, rptyear) |>
@@ -85,7 +85,7 @@ all_sentence_pe_type <- {
 
     # Get proportions of people currently eligible and those eligible in the future
     current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
-    future_prop <- df |> filter(parelig_status == "Will Be Eligible Next Year") |> pull(prop)
+    future_prop <- df |> filter(parelig_status == "Will Be Eligible In The Future") |> pull(prop)
 
     # Construct the summary sentence for the state
     paste0(

@@ -48,6 +48,8 @@ proj_past_pe_count_rounded <- fnc_round_to_power(proj_past_pe)
 
 # Calculate the total prison population and the ratio "1 in X" individuals past PEY
 proj_prison_pop <- ncrp_population_projections |>
+  # Exclude specified states
+  filter(!state %in% states_abolished_parole$state) |>
   # Filter by projection year
   filter(year == projection_year) |>
   summarise(

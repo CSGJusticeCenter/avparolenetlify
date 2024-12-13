@@ -250,7 +250,7 @@ ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results
 
 # Import projections of prison populations created by Seba Guzman in Stata
 # These projections include imputed data for jurisdictional and custodial prison population totals.
-# When 2023 data is unavilable, use 2022 data.
+# When 2023 data is unavailable, use 2022 data.
 # The variable 'total_prison_population' prioritizes 'jurtott_incl_und' (jurisdictional total) when available.
 # If 'jurtott_incl_und' is missing, it defaults to 'custott_incl_und' (custodial total).
 ncrp_population_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_compl_2010_2020.dta")) |>

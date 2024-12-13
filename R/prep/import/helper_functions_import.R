@@ -254,7 +254,7 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
   df <- df |>
     mutate(
       # Update estimated parole eligibility status for specific states
-      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status),
+      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status), ################ CHECK WITH SEBA
       sentlgth_raw = sentlgth, # Backup original sentence length
       offdetail = trimws(offdetail), # Trim whitespace from offense details
       time_between_ped_rptyear = as.numeric(years_to_estimated_pey), # Rename and convert years to numeric
@@ -278,7 +278,7 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
     fnc_create_admtype() |>
     mutate(
       # Categorize imputed sentence length values
-      calc_sent_lgth = case_when(
+      calc_sent_lgth_category = case_when(
         calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
         calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
         calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
@@ -287,9 +287,10 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
         calc_sent_lgth_compl >= 25 ~ ">=25 years",
         is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
         TRUE ~ "Unknown"
+        # TRUE ~ as.character(calc_sent_lgth_compl)
       ),
       # Replace missing `sentlgth` with categorized imputed values
-      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth, TRUE ~ sentlgth),
+      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth_category, TRUE ~ sentlgth),
 
       # Factor race with specified levels
       race = factor(race, levels = c("Unknown",

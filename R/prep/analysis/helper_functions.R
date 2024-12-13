@@ -469,7 +469,7 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       ungroup() |> # Remove grouping to ensure accurate filtering
       filter(state == state_name) |> # Select data for the current state
       mutate(color = case_when( # Assign colors based on parole eligibility status
-        parelig_status == "Will Be Eligible Next Year" ~ color2,
+        parelig_status == "Will Be Eligible In The Future" ~ color2,
         parelig_status == "Missing" ~ darkgray,
         parelig_status == "Past Parole Eligibility at End of Year" ~ color4
       ))
