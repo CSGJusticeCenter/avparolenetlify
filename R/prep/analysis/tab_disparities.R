@@ -187,6 +187,8 @@ all_sentence_los_race <-
                                    los_col = "average_los")
 # Example state:
 all_sentence_los_race$Idaho
+all_sentence_los_race$Georgia
+all_sentence_los_race$Mississippi
 
 # Generate sentence about average time served sentence by sex
 # SENTENCE: Females released spent on average 1.2 less years in prison compared to males."
@@ -196,7 +198,7 @@ all_sentence_los_sex <-
                                    compare_var = "sex",
                                    los_col = "average_los")
 # Example state:
-all_sentence_los_sex$Georgia
+all_sentence_los_sex$Mississippi
 
 # Generate lollipop charts of time served by race and ethnicity
 all_lollipop_los_race <- fnc_generate_lollipop_charts(
@@ -206,7 +208,6 @@ all_lollipop_los_race <- fnc_generate_lollipop_charts(
 
 # Example states:
 all_lollipop_los_race$Georgia
-all_lollipop_los_race$Hawaii
 
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
@@ -215,8 +216,7 @@ all_lollipop_los_sex <- fnc_generate_lollipop_charts(
 )
 
 # Example states:
-all_lollipop_los_sex$Georgia
-all_lollipop_los_sex$Louisiana
+all_lollipop_los_sex$Mississippi
 
 # Time served by race and offense
 # SENTENCE:  "The chart below shows the average time served in prison by offense
