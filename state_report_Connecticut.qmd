@@ -508,13 +508,13 @@ if (!no_data) {
       id = "grid-container",
       style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
       div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 2), " Years")
       ),
       div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 2), " Years")
       ),
       div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
+          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 2), " Years")
       ),
       div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
       div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),

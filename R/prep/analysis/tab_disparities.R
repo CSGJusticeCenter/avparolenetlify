@@ -187,6 +187,7 @@ all_sentence_los_race <-
                                    los_col = "average_los")
 # Example state:
 all_sentence_los_race$Georgia
+all_sentence_los_race$Colorado
 
 # Generate sentence about average time served sentence by sex
 # SENTENCE: Females released spent on average 1.2 less years in prison compared to males."
@@ -250,8 +251,7 @@ all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
 )
 
 # Example state:
-all_scatter_los_race_offense$Georgia
-all_scatter_los_race_offense$Hawaii
+all_scatter_los_race_offense$Connecticut
 
 # Create scatter charts for average time served by sex and offense
 all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
@@ -283,9 +283,7 @@ all_sentence_avg_past_pe_race <-
                                    los_col = "avg_years_to_estimated_pey")
 
 # Example state:
-all_sentence_avg_past_pe_race$Georgia
-all_sentence_avg_past_pe_race$`South Carolina`
-all_sentence_avg_past_pe_race$Hawaii
+all_sentence_avg_past_pe_race$Connecticut
 
 # Generate sentence about average time served sentence by sex
 # SENTENCE: Females who were still incarcerated spent on average 1.7 less years
@@ -333,7 +331,7 @@ all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
 )
 
 # Example state:
-all_scatter_avg_past_pe_race_offense$Georgia
+all_scatter_avg_past_pe_race_offense$Connecticut
 
 # Create scatter charts for average time served by sex and offense
 all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(

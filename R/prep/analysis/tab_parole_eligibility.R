@@ -89,8 +89,7 @@ all_pie_pe_type <- fnc_hc_pie_chart_new(
 )
 
 # State example:
-all_pie_pe_type$Arkansas
-all_pie_pe_type$Colorado
+all_pie_pe_type$Connecticut
 all_pie_pe_type$Georgia
 all_pie_pe_type$Michigan
 

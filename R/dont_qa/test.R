@@ -139,7 +139,7 @@
 #
 #   return(all_sentences)
 # }
-fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
+_fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 
   # Extract unique states for iteration
   states <- unique(df$state)
