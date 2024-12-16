@@ -470,7 +470,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #       filter(state == state_name) |> # Select data for the current state
 #       mutate(color = case_when( # Assign colors based on parole eligibility status
 #         parelig_status == "Will Be Eligible In The Future" ~ color2,
-#         parelig_status == "Missing" ~ darkgray,
+#         parelig_status == "Missing Data" ~ darkgray,
 #         parelig_status == "Past Parole Eligibility at End of Year" ~ color4
 #       ))
 #
@@ -540,7 +540,7 @@ fnc_hc_pie_chart_new <- function(df, variable, source1 = ncrp_source, source2 = 
       mutate(color = case_when( # Assign colors based on parole eligibility status
         parelig_status_new == "Will Be Eligible In 1+ Year" ~ color2,
         parelig_status_new == "Will Be Eligible Next Year" ~ color3,
-        parelig_status_new == "Missing" ~ darkgray,
+        parelig_status_new == "Missing Data" ~ darkgray,
         parelig_status_new == "Past Parole Eligibility at End of Year" ~ color4
       ))
 
@@ -651,6 +651,13 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
   # Adjust label alignment for horizontal orientation
   label_alignment <- ifelse(orientation == "horizontal", "right", "center")
 
+  # Check if "Other race(s), non-Hispanic" exists in the x-axis variable
+  other_race_note <- if (x_var == "race" && any(df1[[x_var]] == "Other race(s), non-Hispanic")) {
+    "<br><br>According to the NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race."
+  } else {
+    ""
+  }
+
   # Create the Highcharts chart
   highcharts <- highchart() |>
     hc_add_series(df1, # Add the data series
@@ -690,7 +697,8 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_caption(
       text = paste0(
         source1, ", ", year,
-        if (!is.null(source2)) paste0(" and ", source2) else ""
+        if (!is.null(source2)) paste0(" and ", source2) else "",
+        other_race_note # Add the note dynamically
       )
     )
 
@@ -990,6 +998,11 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
   # Convert values to lowercase for "sex" variable
   if (x_var == "sex") {
     df1[[x_var]] <- tolower(df1[[x_var]])
+  }
+
+  # Adjust specific race text
+  if (x_var == "race") {
+    df1[[x_var]] <- gsub("^Other race\\(s\\), non-Hispanic$", "other race(s), non-Hispanic", df1[[x_var]])
   }
 
   # Special handling for "fbi_index" variable
@@ -2115,7 +2128,11 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 
         if (!is.na(los_diff_black)) {
           time_value <- if (abs_los_diff_black < 1) round(abs_los_diff_black * 12) else round(abs_los_diff_black, 1)
-          time_unit <- if (time_value == 1) "month" else if (abs_los_diff_black < 1) "months" else "years"
+          time_unit <- if (abs_los_diff_black < 1) {
+            if (time_value == 1) "month" else "months"
+          } else {
+            if (time_value == 1) "year" else "years"
+          }
           black_sentence <- if (los_diff_black > 0) {
             groups_more <- c(groups_more, "Black people")
             paste0("Black people spent on average ", time_value, " more ", time_unit, " ", detail_suffix)
@@ -2134,7 +2151,11 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 
         if (!is.na(los_diff_hispanic)) {
           time_value <- if (abs_los_diff_hispanic < 1) round(abs_los_diff_hispanic * 12) else round(abs_los_diff_hispanic, 1)
-          time_unit <- if (time_value == 1) "month" else if (abs_los_diff_hispanic < 1) "months" else "years"
+          time_unit <- if (abs_los_diff_hispanic < 1) {
+            if (time_value == 1) "month" else "months"
+          } else {
+            if (time_value == 1) "year" else "years"
+          }
           hispanic_sentence <- if (los_diff_hispanic > 0) {
             groups_more <- c(groups_more, "Hispanic people")
             paste0("Hispanic people spent on average ", time_value, " more ", time_unit, " ", detail_suffix)

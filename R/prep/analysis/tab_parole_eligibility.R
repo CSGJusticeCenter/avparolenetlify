@@ -65,13 +65,14 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
              parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
              parelig_status == "Future" & time_between_ped_rptyear == 1 ~ "Will Be Eligible Next Year",
              parelig_status == "Future" & time_between_ped_rptyear > 1 ~ "Will Be Eligible In 1+ Years",
+             parelig_status == "Missing" ~ "Missing Data",
              TRUE ~ parelig_status),
          parelig_status_new = factor(parelig_status_new,
                                      levels = c(
                                        "Past Parole Eligibility at End of Year",
                                        "Will Be Eligible Next Year",
                                        "Will Be Eligible In 1+ Years",
-                                       "Missing"
+                                       "Missing Data"
                                      ))
   ) |>
   group_by(state, rptyear) |>
@@ -145,7 +146,7 @@ all_sentence_pe_type <- {
     current_prop <- df |> filter(parelig_status_new == "Past Parole Eligibility at End of Year") |> pull(prop)
     future_prop <- df |> filter(parelig_status_new == "Will Be Eligible Next Year") |> pull(prop)
     future_1_prop <- df |> filter(parelig_status_new == "Will Be Eligible In 1+ Years") |> pull(prop)
-    missing_prop <- df |> filter(parelig_status_new == "Missing") |> pull(prop)
+    missing_prop <- df |> filter(parelig_status_new == "Missing Data") |> pull(prop)
 
     # Construct the main sentence dynamically, excluding NULL or 0% values
     sentence_parts <- c(
@@ -437,6 +438,7 @@ all_sentence_pe_race$Georgia
 all_bar_pe_race$Hawaii
 all_sentence_pe_race$Hawaii
 all_sentence_pe_fbi_index$`New York`
+all_bar_pe_sex$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

@@ -186,8 +186,7 @@ all_sentence_los_race <-
                                    compare_var = "race",
                                    los_col = "average_los")
 # Example state:
-all_sentence_los_race$Georgia
-all_sentence_los_race$Colorado
+all_sentence_los_race$Idaho
 
 # Generate sentence about average time served sentence by sex
 # SENTENCE: Females released spent on average 1.2 less years in prison compared to males."
@@ -229,6 +228,7 @@ all_sentence_los_race_offense <- fnc_generate_offense_disparity_sentence(los_rac
                                                                          "average_los")
 # Example state:
 all_sentence_los_race_offense$Georgia
+all_sentence_los_race_offense$Idaho
 
 # Time served by race and offense
 # SENTENCE: "The chart below shows the average time served in prison by offense
