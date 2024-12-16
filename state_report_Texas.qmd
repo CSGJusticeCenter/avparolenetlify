@@ -438,7 +438,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE) {
   no_data_needed_male_individuals <- TRUE
 } else if (no_infographic_male == TRUE & no_data_male == FALSE & no_rri_details_male == FALSE) {
   # Display "No RRI" message
-  HTML("<br>No substantial disparities in incarceration rates past parole eligibility were identified between male and females, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
+  HTML("<br>No substantial disparities in incarceration rates past parole eligibility were identified between men and women, as indicated by a Relative Rate Index (RRI) of 1.<br><br>")
 } else if (no_infographic_male == FALSE & no_data_male == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_male)
