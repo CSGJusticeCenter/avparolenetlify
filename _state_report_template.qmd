@@ -303,7 +303,13 @@ fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases
 
 # Disparities
 
-## Disparities in Parole Release
+Disparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in four types of metrics by race, ethnicity, and sex:   
+
+(1) the proportion of the incarcerated population who are past their parole eligibility date,   
+(2) the average number of years individuals spent behind bars past their parole eligibility date,   
+(3) the average time individuals served in prison, and (4) the average time individuals served in prison by offense type.  
+
+## Disparities in People Incarcerated Past Parole Eligibility
 
 ::: {.panel-tabset .custom-tabs-disp}
 
