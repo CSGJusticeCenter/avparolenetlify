@@ -3967,5 +3967,54 @@
     "title": "Key Findings",
     "section": "By Offense",
     "text": "By Offense\nSummary:\nThis section analyzes the offense types of individuals held past their parole eligibility year, distinguishing between violent and nonviolent offenses. Nonviolent offenses are further categorized into Property, Drug, and Public Order offenses.\nFinding:\n\nCode\n# Categorize offenses into violent vs. nonviolent, keeping \"Unknown\" offenses for initial analysis\nncrp_past_pe_offense_initial &lt;- ncrp_past_pe |&gt;\n  mutate(offense_group = case_when(\n    fbi_index %in% c(\"Murder or Nonnegligent Manslaughter\",\n                     \"Negligent Manslaughter\",\n                     \"Rape or Sexual Assault\",\n                     \"Robbery\",\n                     \"Aggravated or Simple Assault\",\n                     \"Other Violent Offenses\") ~ \"Violent\",\n    fbi_index %in% c(\"Drug\", \"Public Order\", \"Property\") ~ \"Nonviolent\",\n    TRUE ~ fbi_index))\n\n# Filter out \"Unknown\" offenses for further analysis\nncrp_past_pe_offense_filtered &lt;- ncrp_past_pe_offense_initial |&gt;\n  filter(offense_group != \"Unknown\") |&gt;\n  fnc_filter_by_year(which_overall_year)\n\n# Check if each state has all nonviolent offense types (Property, Drug, Public Order)\nstates_with_all_offenses &lt;- ncrp_past_pe_offense_filtered |&gt;\n  filter(offense_group == \"Nonviolent\") |&gt;\n  group_by(state) |&gt;\n  summarise(has_property = any(fbi_index == \"Property\"),\n            has_drug = any(fbi_index == \"Drug\"),\n            has_public_order = any(fbi_index == \"Public Order\"),\n            .groups = \"drop\") |&gt;\n  filter(has_property & has_drug & has_public_order) |&gt;\n  pull(state)\n\n# Summarize counts for nonviolent offense subcategories\n# Property, Drug, Public Order\nnonviolent_summary &lt;- ncrp_past_pe_offense_filtered |&gt;\n  filter(offense_group == \"Nonviolent\") |&gt;\n  group_by(fbi_index) |&gt; \n  summarise(total_people = n(), .groups = \"drop\")\n\n# Extract counts for subcategories\nproperty_offense_count &lt;- nonviolent_summary$total_people[nonviolent_summary$fbi_index == \"Property\"]\ndrug_offense_count &lt;- nonviolent_summary$total_people[nonviolent_summary$fbi_index == \"Drug\"]\npublic_order_offense_count &lt;- nonviolent_summary$total_people[nonviolent_summary$fbi_index == \"Public Order\"]\n\n# Total nonviolent count and states with all offenses\nnonviolent_offense_count &lt;- sum(nonviolent_summary$total_people)\nstates_with_nonviolent &lt;- length(states_with_all_offenses)\n\n# Generate output sentence\ncat(\"Over\", highlight_number(comma(nonviolent_offense_count)), \n    \"people held past their parole eligibility year were convicted of nonviolent offenses in\", \n    highlight_number(states_with_nonviolent), \"states. Thousands of people who have not committed violent offenses remain incarcerated after their parole eligibility date. This includes approximately\",\n    highlight_number(comma(property_offense_count)), \"people convicted of property offenses,\",\n    highlight_number(comma(drug_offense_count)), \"convicted of drug offenses, and\",\n    highlight_number(comma(public_order_offense_count)), \"convicted of public order offenses.\\n\\n\")\n\nOver 90,002 people held past their parole eligibility year were convicted of nonviolent offenses in 24 states. Thousands of people who have not committed violent offenses remain incarcerated after their parole eligibility date. This includes approximately 34,546 people convicted of property offenses, 29,932 convicted of drug offenses, and 25,524 convicted of public order offenses.\nNote: The following states used 2018 data due to unreliable 2019 data: Hawaii Included states ( 24 ): Arkansas, Colorado, Connecticut, Georgia, Hawaii, Idaho, Iowa, Kentucky, Maryland, Massachusetts, Mississippi, Missouri, Montana, Nevada, New Hampshire, New York, North Dakota, Pennsylvania, Rhode Island, South Carolina, Tennessee, Texas, West Virginia, Wyoming"
+  },
+  {
+    "objectID": "state_report_Georgia.html#disparities-in-people-incarcerated-past-parole-eligibility",
+    "href": "state_report_Georgia.html#disparities-in-people-incarcerated-past-parole-eligibility",
+    "title": "Georgia",
+    "section": "Disparities in People Incarcerated Past Parole Eligibility",
+    "text": "Disparities in People Incarcerated Past Parole Eligibility\n\nRace and EthnicitySex\n\n\n\n\nBlack, non-Hispanic people were incarcerated in state prison past parole eligibility at a rate 1.1 times higher than White people, when accounting for prison population sizes in Georgia. \n\nHispanic people were incarcerated in state prison past parole eligibility at a rate 1.1 times higher than White people, when accounting for prison population sizes in Georgia.Hispanic RRI should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity. \n\n National Corrections Reporting Program, 2019 and CSG Justice Center Estimates\n\n\n\n\n\nMen were incarcerated in state prison past parole eligibility at a rate 1.3 times higher than women, when accounting for prison population sizes in Georgia. \n\n National Corrections Reporting Program, 2019 and CSG Justice Center Estimates"
+  },
+  {
+    "objectID": "state_report_Georgia.html#disparities-1",
+    "href": "state_report_Georgia.html#disparities-1",
+    "title": "Georgia",
+    "section": "Disparities",
+    "text": "Disparities\nDisparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in four types of metrics by race, ethnicity, and sex:\n\nthe proportion of the incarcerated population who are past their parole eligibility date,\n\nthe average number of years individuals spent behind bars past their parole eligibility date,\n\nthe average time individuals served in prison, and (4) the average time individuals served in prison by offense type."
+  },
+  {
+    "objectID": "state_report_Georgia.html#measuring-disparities",
+    "href": "state_report_Georgia.html#measuring-disparities",
+    "title": "Georgia",
+    "section": "Measuring Disparities",
+    "text": "Measuring Disparities\nDisparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in four types of metrics by race, ethnicity, and sex:\n(1) the proportion of the incarcerated population who are past their parole eligibility date, (2) the average number of years individuals spent behind bars past their parole eligibility date, (3) the average time individuals served in prison, and (4) the average time individuals served in prison by offense type."
+  },
+  {
+    "objectID": "state_report_Colorado.html#measuring-disparities",
+    "href": "state_report_Colorado.html#measuring-disparities",
+    "title": "Colorado",
+    "section": "Measuring Disparities",
+    "text": "Measuring Disparities\nDisparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in four types of metrics by race, ethnicity, and sex:\n(1) the proportion of the incarcerated population who are past their parole eligibility date, (2) the average number of years individuals spent behind bars past their parole eligibility date, (3) the average time individuals served in prison, and (4) the average time individuals served in prison by offense type."
+  },
+  {
+    "objectID": "state_report_Colorado.html#disparities-in-people-incarcerated-past-parole-eligibility",
+    "href": "state_report_Colorado.html#disparities-in-people-incarcerated-past-parole-eligibility",
+    "title": "Colorado",
+    "section": "Disparities in People Incarcerated Past Parole Eligibility",
+    "text": "Disparities in People Incarcerated Past Parole Eligibility\n\nRace and EthnicitySex\n\n\n\n\nBlack, non-Hispanic people were 10 percent less likely to be incarcerated in state prison past parole eligibility compared to White people, when accounting for population sizes in Colorado. \nHispanic people were incarcerated in state prison past their parole eligibility at the same rate as White people, when accounting for prison population sizes in Colorado.\n\n National Corrections Reporting Program, 2019 and CSG Justice Center Estimates\n\n\n\nMen were incarcerated in state prison past their parole eligibility at the same rate as \n     Women, when accounting for prison population sizes in Colorado.\n\n National Corrections Reporting Program, 2019 and CSG Justice Center Estimates"
+  },
+  {
+    "objectID": "state_report_Hawaii.html#measuring-disparities",
+    "href": "state_report_Hawaii.html#measuring-disparities",
+    "title": "Hawaii",
+    "section": "Measuring Disparities",
+    "text": "Measuring Disparities\nDisparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in four types of metrics by race, ethnicity, and sex:\n(1) the proportion of the incarcerated population who are past their parole eligibility date, (2) the average number of years individuals spent behind bars past their parole eligibility date, (3) the average time individuals served in prison, and (4) the average time individuals served in prison by offense type."
+  },
+  {
+    "objectID": "state_report_Hawaii.html#disparities-in-people-incarcerated-past-parole-eligibility",
+    "href": "state_report_Hawaii.html#disparities-in-people-incarcerated-past-parole-eligibility",
+    "title": "Hawaii",
+    "section": "Disparities in People Incarcerated Past Parole Eligibility",
+    "text": "Disparities in People Incarcerated Past Parole Eligibility\n\nRace and EthnicitySex\n\n\nBlack, non-Hispanic people were incarcerated in state prison past their parole eligibility at the same rate as White people, when accounting for prison population sizes in Hawaii.\nHispanic people were incarcerated in state prison past their parole eligibility at the same rate as White people, when accounting for prison population sizes in Hawaii.\n\n National Corrections Reporting Program, 2018 and CSG Justice Center Estimates\n\n\n\nMen were incarcerated in state prison past their parole eligibility at the same rate as \n     Women, when accounting for prison population sizes in Hawaii.\n\n National Corrections Reporting Program, 2018 and CSG Justice Center Estimates"
   }
 ]
