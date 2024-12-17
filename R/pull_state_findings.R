@@ -399,6 +399,8 @@ load(file = paste0(sp_data_path, "/data/analysis/app/avg_past_pe_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/avg_past_pe_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_sex.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_past_pe_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_past_pe_sex.rds"))
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_race_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_sex_offense.rds"))
@@ -407,7 +409,9 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_past_pe_sex
 
 state_sentence_avg_past_pe_race <- all_sentence_avg_past_pe_race[[state_for_report]]
 
-state_sentence_avg_past_pe_race_offense <- all_sentence_avg_past_pe_race_offense[[state_for_report]]
+state_lollipop_avg_past_pe_race <- apply_chart_settings(
+  all_lollipop_avg_past_pe_race[[state_for_report]]
+)
 
 state_scatter_avg_past_pe_race_offense <- apply_chart_settings(
   all_scatter_avg_past_pe_race_offense[[state_for_report]],
@@ -415,6 +419,18 @@ state_scatter_avg_past_pe_race_offense <- apply_chart_settings(
 )
 
 state_sentence_avg_past_pe_sex <- all_sentence_avg_past_pe_sex[[state_for_report]]
+
+state_lollipop_avg_past_pe_sex <- apply_chart_settings(
+  all_lollipop_avg_past_pe_sex[[state_for_report]],
+  height = 150
+)
+
+state_sentence_avg_past_pe_race_offense <- all_sentence_avg_past_pe_race_offense[[state_for_report]]
+
+state_scatter_avg_past_pe_race_offense <- apply_chart_settings(
+  all_scatter_avg_past_pe_race_offense[[state_for_report]],
+  height = 600
+)
 
 state_sentence_avg_past_pe_sex_offense <- all_sentence_avg_past_pe_sex_offense[[state_for_report]]
 

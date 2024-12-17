@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 
 # This will change depending on the state
-state_for_report <- "Idaho"
+state_for_report <- "this_state"
 
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")
@@ -310,6 +310,7 @@ Disparities can be measured in many different ways by comparing the outcomes of 
 (1\) the proportion of the incarcerated population who are past their parole eligibility date,<br>
 (2\) the average number of years individuals spent behind bars past their parole eligibility date,<br>
 (3\) the average time individuals served in prison, and<br>
+(4\) the average time individuals served in prison by offense type.<br>
 
 <br>
 <div class="divider"></div>

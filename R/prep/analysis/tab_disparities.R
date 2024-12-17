@@ -37,7 +37,7 @@ desired_order <- c(
 )
 
 # Filter NCRP releases data and order offense categories
-ncrp_releases_filtered <- ncrp_releases_consolidated |>  ################ Change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_consolidated |>
   filter(!state %in% states_to_exclude$state) |>  # Exclude states with high missingness or abolished parole
   mutate(fbi_index = factor(fbi_index, levels = desired_order))  # Set factor levels for offense categories
 
@@ -203,7 +203,8 @@ all_sentence_los_sex$Mississippi
 # Generate lollipop charts of time served by race and ethnicity
 all_lollipop_los_race <- fnc_generate_lollipop_charts(
   df = los_race,
-  compare_var = "race"
+  group_var = "race",
+  value_var = "average_los"
 )
 
 # Example states:
@@ -212,7 +213,8 @@ all_lollipop_los_race$Georgia
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
   df = los_sex,
-  compare_var = "sex"
+  group_var = "sex",
+  value_var = "average_los"
 )
 
 # Example states:
@@ -297,6 +299,26 @@ all_sentence_avg_past_pe_sex <-
 # Example state:
 all_sentence_avg_past_pe_sex$Georgia
 
+# Generate lollipop charts of time served by race and ethnicity
+all_lollipop_avg_past_pe_race <- fnc_generate_lollipop_charts(
+  df = avg_past_pe_race,
+  group_var = "race",
+  value_var = "avg_years_to_estimated_pey"
+)
+
+# Example states:
+all_lollipop_avg_past_pe_race$Georgia
+
+# Generate lollipop charts of time served by sex
+all_lollipop_avg_past_pe_sex <- fnc_generate_lollipop_charts(
+  df = avg_past_pe_sex,
+  group_var = "sex",
+  value_var = "avg_years_to_estimated_pey"
+)
+
+# Example states:
+all_lollipop_avg_past_pe_sex$Mississippi
+
 # SENTENCE: "The chart below shows the average time spent in prison past parole
 #            eligibility by offense type and race and ethnicity. The largest
 #            disparity was observed among negligent manslaughter offenses, where
@@ -359,10 +381,12 @@ data_files <- list(
   all_sentence_los_sex          = "all_sentence_los_sex.rds",
   all_lollipop_los_sex          = "all_lollipop_los_sex.rds",
 
+  all_lollipop_avg_past_pe_sex  = "all_lollipop_avg_past_pe_sex.rds",
+  all_lollipop_avg_past_pe_race = "all_lollipop_avg_past_pe_race.rds",
   all_sentence_avg_past_pe_race = "all_sentence_avg_past_pe_race.rds",
   all_sentence_avg_past_pe_sex  = "all_sentence_avg_past_pe_sex.rds",
 
-  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds", ############################ no sentence if disparity doesn't exist
+  all_sentence_los_race_offense         = "all_sentence_los_race_offense.rds",
   all_sentence_los_sex_offense          = "all_sentence_los_sex_offense.rds",
   all_scatter_los_race_offense          = "all_scatter_los_race_offense.rds",
   all_scatter_los_sex_offense           = "all_scatter_los_sex_offense.rds",

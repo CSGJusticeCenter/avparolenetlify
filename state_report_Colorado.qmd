@@ -305,7 +305,7 @@ fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases
 
 ## Measuring Disparities
 
-Disparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in four types of metrics by race, ethnicity, and sex:   
+Disparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in three types of metrics by race, ethnicity, and sex:   
 
 (1\) the proportion of the incarcerated population who are past their parole eligibility date,<br>
 (2\) the average number of years individuals spent behind bars past their parole eligibility date,<br>
@@ -486,62 +486,14 @@ if (no_infographic_male == TRUE & no_data_male == TRUE){
 ### Race and Ethnicity
 
 ```{r results = 'asis'}
-df1 <- avg_past_pe_race |>
-  filter(state == state_for_report)
-
-no_data <- nrow(df1) == 0
+no_data <- is.null(state_sentence_avg_past_pe_race)
 
 if (!no_data) {
-  HTML(paste0("<br>", state_sentence_avg_past_pe_race, "<br>"))
+  HTML(paste0("<br>", state_sentence_avg_past_pe_race, "<br><br>"))
 }
 
 if (!no_data) {
-  if ("Other race(s), non-Hispanic" %in% df1$race) {
-    # Create html_output with "Other race(s), non-Hispanic"
-    html_output <- div(
-      id = "grid-container",
-      style = "display: grid; grid-template-columns: repeat(4, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
-      div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
-      ),
-      div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
-      ),
-      div(style = "color: #938ebf; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Other race(s), non-Hispanic"], 1), " Years")
-      ),
-      div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
-      ),
-      div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
-      div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
-      div(style = "color: #938ebf; text-align: center; font-size: 16px; font-weight: bold;", HTML("Other")),
-      div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
-    )
-  } else {
-    # Create html_output without "Other race(s), non-Hispanic"
-    html_output <- div(
-      id = "grid-container",
-      style = "display: grid; grid-template-columns: repeat(3, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",
-      div(style = "color: #49a7a1; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Black, non-Hispanic"], 1), " Years")
-      ),
-      div(style = "color: #55b4e5; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "Hispanic, any race"], 1), " Years")
-      ),
-      div(style = "color: #d97d68; text-align: center; font-size: 24px; font-weight: bold;",
-          paste0(round(df1$avg_years_to_estimated_pey[df1$race == "White, non-Hispanic"], 1), " Years")
-      ),
-      div(style = "color: #49a7a1; text-align: center; font-size: 16px; font-weight: bold;", HTML("Black")),
-      div(style = "color: #55b4e5; text-align: center; font-size: 16px; font-weight: bold;", HTML("Hispanic")),
-      div(style = "color: #d97d68; text-align: center; font-size: 16px; font-weight: bold;", HTML("White"))
-    )
-  }
-
-  cat(as.character(br()))
-  cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
-  cat(as.character(html_output))
-  cat(as.character(div(id = "sourcenotes-text", br(), ncrp_csg_source_year)))
+  div(id = "small-visualization", state_lollipop_avg_past_pe_race)
 }
 
 if (!is.null(state_scatter_avg_past_pe_race_offense)) {
@@ -561,34 +513,14 @@ if (no_data) {
 ### Sex
 
 ```{r results = 'asis'}
-df1 <- avg_past_pe_sex |>
-  filter(state == state_for_report)
-
-no_data <- nrow(df1) == 0
+no_data <- is.null(state_sentence_avg_past_pe_sex)
 
 if (!no_data) {
-  HTML(paste0("<br>", state_sentence_avg_past_pe_sex, "<br>"))
+  HTML(paste0("<br>", state_sentence_avg_past_pe_sex, "<br><br>"))
 }
 
 if (!no_data) {
-  html_output <- div(
-    id = "grid-container",
-    style = "display: grid; grid-template-columns: repeat(2, auto); justify-content: center; align-items: center; text-align: center; column-gap: 50px;",  # Reduced column gap to bring them closer
-    # First column: Years for Male, Second column: Years for Female
-    div(style = "color: #49a7a1; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Male"], 1), " Years")
-    ),
-    div(style = "color: #938ebf; font-size: 24px; font-weight: bold; margin: 0;", 
-        paste0(round(df1$avg_years_to_estimated_pey[df1$sex == "Female"], 1), " Years")
-    ),
-    # First column: Male label, Second column: Female label
-    div(style = "color: #49a7a1; font-size: 16px; font-weight: bold; margin: 0;", HTML("Male")),
-    div(style = "color: #938ebf; font-size: 16px; font-weight: bold; margin: 0;", HTML("Female"))
-  )
-  cat(as.character(br()))
-  cat(as.character(div(id = "bold-text", "Average Years in Prison Past Parole Eligibility", br())))
-  cat(as.character(html_output))
-  cat(as.character(div(id = "sourcenotes-text", br(), ncrp_csg_source_year)))
+  div(id = "small-visualization", state_lollipop_avg_past_pe_sex)
 }
 
 if (!is.null(state_scatter_avg_past_pe_sex_offense)) {
