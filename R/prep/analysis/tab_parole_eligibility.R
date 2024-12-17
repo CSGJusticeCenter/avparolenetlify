@@ -446,6 +446,7 @@ all_bar_pe_sex$Georgia
 
 # Define the data objects and their corresponding file names
 data_files <- list(
+  ncrp_yearendpop_filtered    = "ncrp_yearendpop_filtered.rds",
   all_sentence_pe_type        = "all_sentence_pe_type.rds",
   all_pie_pe_type             = "all_pie_pe_type.rds",
   all_sentence_pop_pe_by_year = "all_sentence_pop_pe_by_year.rds",

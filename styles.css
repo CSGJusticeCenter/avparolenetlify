@@ -18,6 +18,9 @@
 */
 /* Commented out, but if enabled, this would allow vertical scrolling in the main content area */
 
+#toc, .toc, .toc-container {
+    display: none;  /* Hides the TOC */
+}
 
 /* Body section styling */
 body {

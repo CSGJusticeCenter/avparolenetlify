@@ -18,6 +18,8 @@ website:
         href: national_trends.html
       - text: "State Reports"
         href: state_report_links.html
+      - text: "Key Findings (Research Only)"
+        href: key_findings.html
 
 format:
   html:
