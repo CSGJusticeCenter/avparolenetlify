@@ -208,7 +208,7 @@ all_lollipop_los_race <- fnc_generate_lollipop_charts(
 )
 
 # Example states:
-all_lollipop_los_race$Georgia
+all_lollipop_los_race$Idaho
 
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
