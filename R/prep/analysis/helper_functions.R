@@ -1264,15 +1264,6 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
 }
 
 
-
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-
 fnc_time_format <- function(time_in_years) {
   if (time_in_years < 1) {
     # Convert to months for times under 1 year
@@ -1609,116 +1600,6 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
   }
 }
 
-# fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "average_los") {
-#
-#   # Extract unique states to iterate over
-#   states <- unique(data$state)
-#
-#   # Generate sentences for each state
-#   all_sentences <- purrr::map(.x = states, .f = function(x) {
-#
-#     # Filter data for the specified state and exclude unspecified offense types
-#     df1 <- data |>
-#       dplyr::filter(state == x & fbi_index != "Other or Unspecified")
-#
-#     # Extract the year for this state's data
-#     year <- unique(df1$rptyear)
-#
-#     # Handle missing data: If no data exists for the state, return a message
-#     if (nrow(df1) == 0) {
-#       return(paste0("No data available for ", x))
-#     }
-#
-#     # Calculate disparities between groups for each offense type
-#     df_disparity <- df1 |>
-#       dplyr::group_by(fbi_index) |>
-#       dplyr::reframe(
-#         max_los = max(!!rlang::sym(time_var)),               # Maximum value of time_var
-#         min_los = min(!!rlang::sym(time_var)),               # Minimum value of time_var
-#         diff_los = max_los - min_los,                        # Difference between max and min
-#         group_longest = .data[[grouping_var]][which.max(!!rlang::sym(time_var))],  # Group with max value
-#         group_shortest = .data[[grouping_var]][which.min(!!rlang::sym(time_var))]  # Group with min value
-#       ) |>
-#       dplyr::arrange(dplyr::desc(diff_los))                 # Sort by largest disparities
-#
-#     # Standardize group labels for race or sex
-#     if (grouping_var == "race") {
-#       df_disparity <- df_disparity |>
-#         dplyr::mutate(
-#           group_longest = dplyr::case_when(
-#             group_longest == "Black, non-Hispanic" ~ "Black",
-#             group_longest == "White, non-Hispanic" ~ "White",
-#             group_longest == "Hispanic, any race" ~ "Hispanic",
-#             group_longest == "Other race(s), non-Hispanic" ~ "non-Hispanic people of other races",
-#             TRUE ~ group_longest
-#           ),
-#           group_shortest = dplyr::case_when(
-#             group_shortest == "Black, non-Hispanic" ~ "Black",
-#             group_shortest == "White, non-Hispanic" ~ "White",
-#             group_shortest == "Hispanic, any race" ~ "Hispanic",
-#             group_shortest == "Other race(s), non-Hispanic" ~ "non-Hispanic people of other races",
-#             TRUE ~ group_shortest
-#           )
-#         )
-#     }
-#
-#     # Focus on relevant comparisons: e.g., Black, Hispanic vs. White (for race) or Male vs. Female (for sex)
-#     if (grouping_var == "race") {
-#       df_disparity_filtered <- df_disparity |>
-#         dplyr::filter(group_shortest == "White" & group_longest %in% c("Black", "Hispanic", "non-Hispanic people of other races"))
-#     } else {
-#       df_disparity_filtered <- df_disparity |>
-#         dplyr::filter(group_shortest == "Female" & group_longest == "Male") |>
-#         dplyr::mutate(
-#           group_longest = "men",
-#           group_shortest = "women"
-#         )
-#     }
-#
-#     # Handle cases with no significant disparities
-#     if (nrow(df_disparity_filtered) == 0) {
-#       time_description <- ifelse(time_var == "time_served", "time served in prison", "time spent in prison past parole eligibility")
-#       return(paste0("The chart below shows the average ", time_description, " by offense type and ",
-#                     ifelse(grouping_var == "race", "race and ethnicity", grouping_var), "."))
-#     }
-#
-#     # Keep for commented code now - may want to exclude other later
-#     # # Exclude "Other Violent Offenses" if it's the largest disparity (and there are other offenses)
-#     # if (df_disparity_filtered$fbi_index[1] == "Other Violent Offenses" & nrow(df_disparity_filtered) > 1) {
-#     #   df_disparity_filtered <- df_disparity_filtered |> dplyr::slice(2)
-#     # }
-#
-#     # Extract details for the largest disparity
-#     largest_disparity <- df_disparity_filtered |> dplyr::slice(1)
-#     offense_type <- largest_disparity$fbi_index
-#     group_longest <- largest_disparity$group_longest
-#     group_shortest <- largest_disparity$group_shortest
-#     disparity_diff <- largest_disparity$diff_los
-#
-#     # Adjust for months if disparity is less than 1 year
-#     time_value <- if (disparity_diff < 1) round(disparity_diff * 12) else round(disparity_diff, 1)
-#     time_unit <- if (disparity_diff < 1) "month" else "year"
-#     time_unit <- if (time_value == 1) time_unit else paste0(time_unit, "s")
-#
-#     # Construct the descriptive sentence
-#     time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
-#     sentence <- paste0(
-#       "The chart below shows the average ", time_description, " by offense type and ",
-#       ifelse(grouping_var == "race", "race and ethnicity", grouping_var), ". ",
-#       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
-#       group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",
-#       " spent on average ", time_value, " more ", time_unit, " in prison compared to ",
-#       group_shortest, if (grouping_var == "race") " people" else "", "."
-#     )
-#
-#     return(sentence)
-#   })
-#
-#   # Assign state names to the resulting list
-#   all_sentences <- setNames(all_sentences, states)
-#
-#   return(all_sentences)
-# }
 fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race", time_var = "average_los") {
 
   # Extract unique states to iterate over
@@ -1731,77 +1612,106 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
     df1 <- data |>
       dplyr::filter(state == x & fbi_index != "Other or Unspecified")
 
-    # Extract the year for this state's data
-    year <- unique(df1$rptyear)
-
     # Handle missing data: If no data exists for the state, return a message
     if (nrow(df1) == 0) {
       return(paste0("No data available for ", x))
     }
 
-    # Calculate disparities between groups for each offense type
-    df_disparity <- df1 |>
-      dplyr::group_by(fbi_index) |>
-      dplyr::reframe(
-        max_los = max(!!rlang::sym(time_var)),               # Maximum value of time_var
-        min_los = min(!!rlang::sym(time_var)),               # Minimum value of time_var
-        diff_los = max_los - min_los,                        # Difference between max and min
-        group_longest = .data[[grouping_var]][which.max(!!rlang::sym(time_var))],  # Group with max value
-        group_shortest = .data[[grouping_var]][which.min(!!rlang::sym(time_var))]  # Group with min value
-      ) |>
-      dplyr::arrange(dplyr::desc(diff_los))                 # Sort by largest disparities
-
-    # Standardize group labels for race or sex
     if (grouping_var == "race") {
-      df_disparity <- df_disparity |>
-        dplyr::mutate(
-          group_longest = dplyr::case_when(
-            group_longest == "Black, non-Hispanic" ~ "Black",
-            group_longest == "White, non-Hispanic" ~ "White",
-            group_longest == "Hispanic, any race" ~ "Hispanic",
-            group_longest == "Other race(s), non-Hispanic" ~ "non-Hispanic people of other races",
-            TRUE ~ group_longest
+      # Transforming data into wide format
+      df_wide_largest <- df1 |>
+        group_by(state, race, fbi_index) |>
+        summarize(avg_time = mean(.data[[time_var]], na.rm = TRUE), .groups = "drop") |>
+        pivot_wider(
+          names_from = race,
+          values_from = avg_time,
+          names_prefix = "",
+          names_glue = "{race}_average_time"
+        ) |>
+        rename(
+          White_average_time = `White, non-Hispanic_average_time`,
+          Hispanic_average_time = `Hispanic, any race_average_time`,
+          Black_average_time = `Black, non-Hispanic_average_time`
+        ) |>
+        mutate(diff_Hispanic_White = Hispanic_average_time - White_average_time,
+               diff_Black_White = Black_average_time - White_average_time) |>
+        select(state, fbi_index, diff_Hispanic_White, diff_Black_White) |>
+        rowwise() |>
+        mutate(
+          largest_diff = ifelse(
+            all(is.na(c_across(c(diff_Hispanic_White, diff_Black_White)))),
+            NA_real_,
+            max(c_across(c(diff_Hispanic_White, diff_Black_White)), na.rm = TRUE)
           ),
-          group_shortest = dplyr::case_when(
-            group_shortest == "Black, non-Hispanic" ~ "Black",
-            group_shortest == "White, non-Hispanic" ~ "White",
-            group_shortest == "Hispanic, any race" ~ "Hispanic",
-            group_shortest == "Other race(s), non-Hispanic" ~ "non-Hispanic people of other races",
-            TRUE ~ group_shortest
+          chosen_column = case_when(
+            largest_diff == diff_Hispanic_White ~ "diff_Hispanic_White",
+            largest_diff == diff_Black_White ~ "diff_Black_White",
+            TRUE ~ NA_character_
           )
-        )
-    }
+        ) |>
+        ungroup() |>
+        filter(!is.na(largest_diff)) |>
+        slice_max(largest_diff, with_ties = TRUE)
 
-    # Focus on relevant comparisons: e.g., Black, Hispanic vs. White (for race) or Male vs. Female (for sex)
-    if (grouping_var == "race") {
-      df_disparity_filtered <- df_disparity |>
-        dplyr::filter(group_shortest == "White" & group_longest %in% c("Black", "Hispanic", "non-Hispanic people of other races"))
-    } else {
-      df_disparity_filtered <- df_disparity |>
-        dplyr::filter(group_shortest == "Female" & group_longest == "Male") |>
-        dplyr::mutate(
-          group_longest = "men",
-          group_shortest = "women"
-        )
-    }
+    } else if (grouping_var == "sex") {
 
-    # Handle cases with no significant disparities
-    if (nrow(df_disparity_filtered) == 0) {
-      time_description <- ifelse(time_var == "time_served", "time served in prison", "time spent in prison past parole eligibility")
-      return(paste0("The chart below shows the average ", time_description, " by offense type and ",
-                    ifelse(grouping_var == "race", "race and ethnicity", grouping_var), "."))
+      df_wide_largest <- df1 |>
+        group_by(state, sex, fbi_index) |>
+        summarize(avg_time = mean(.data[[time_var]], na.rm = TRUE), .groups = "drop") |>
+        pivot_wider(
+          names_from = sex,
+          values_from = avg_time,
+          names_prefix = "",
+          names_glue = "{sex}_average_time"
+        ) |>
+        mutate(diff_Male_Female = Male_average_time - Female_average_time) |>
+        select(state, fbi_index, diff_Male_Female) |>
+        rowwise() |>
+        mutate(
+          largest_diff = ifelse(
+            all(is.na(diff_Male_Female)),
+            NA_real_,
+            max(diff_Male_Female, na.rm = TRUE)
+          ),
+          chosen_column = ifelse(!is.na(largest_diff), "diff_Male_Female", NA_character_)
+        ) |>
+        ungroup() |>
+        filter(!is.na(largest_diff)) |>
+        slice_max(largest_diff, with_ties = TRUE)
     }
 
     # Extract details for the largest disparity
-    largest_disparity <- df_disparity_filtered |> dplyr::slice(1)
-    offense_type <- largest_disparity$fbi_index
-    group_longest <- largest_disparity$group_longest
-    group_shortest <- largest_disparity$group_shortest
-    disparity_diff <- largest_disparity$diff_los
+    if (nrow(df_wide_largest) == 0 || all(is.na(df_wide_largest$largest_diff))) {
+      # Default sentence when no significant differences are found
+      time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
+      return(paste0(
+        "The chart below shows the average ", time_description, " by offense type and ",
+        ifelse(grouping_var == "race", "race and ethnicity", grouping_var), "."
+      ))
+    }
 
-    # Determine if the difference is "more" or "less"
-    comparison_phrase <- ifelse(disparity_diff > 0, "more", "less")
-    formatted_time <- fnc_time_format(abs(disparity_diff))  # Format time difference
+    # Extract details for the largest disparity
+    offense_type <- df_wide_largest$fbi_index
+    chosen_column <- df_wide_largest$chosen_column
+    group_longest <- case_when(
+      chosen_column == "diff_Hispanic_White" ~ "Hispanic",
+      chosen_column == "diff_Black_White" ~ "Black",
+      chosen_column == "diff_Male_Female" ~ "men",
+      TRUE ~ NA_character_
+    )
+    group_shortest <- ifelse(chosen_column %in% c("diff_Hispanic_White", "diff_Black_White"), "White", "women")
+    disparity_diff <- df_wide_largest$largest_diff
+
+    if (is.na(group_longest)) {
+      time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
+      return(paste0(
+        "The chart below shows the average ", time_description, " by offense type and ",
+        ifelse(grouping_var == "race", "race and ethnicity", grouping_var), "."
+      ))
+    }
+
+    # Format time to years and months
+    formatted_time <- fnc_time_format(abs(disparity_diff))
 
     # Construct the descriptive sentence
     time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
@@ -1810,7 +1720,7 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
       ifelse(grouping_var == "race", "race and ethnicity", grouping_var), ". ",
       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
       group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",
-      " spent on average ", formatted_time, " ", comparison_phrase, " in prison compared to ",
+      " spent on average ", formatted_time, " more in prison compared to ",
       group_shortest, if (grouping_var == "race") " people" else "", "."
     )
 
