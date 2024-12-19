@@ -152,7 +152,7 @@ ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
 # Summarize release data by parole eligibility status
 # - Calculate proportions within each group (on parole eligibility vs. past parole eligibility)
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
-  filter(estimated_pey_status %in% c("past", "current_year")) |> # both currently and past parole eligibility
+  filter(estimated_pey_status %in% c("past", "current_year")) |> ############################# ASK SEBA both currently and past parole eligibility
   group_by(state, rptyear, year_to_use, estimated_pey_status) |>
   summarise(n = n(), .groups = "drop") |>  # Count the number of releases
   group_by(state, rptyear, year_to_use) |>

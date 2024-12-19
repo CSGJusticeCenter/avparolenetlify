@@ -1321,6 +1321,124 @@ fnc_generate_lollipop_charts <- function(df, group_var, value_var, height = 200,
 #' @param source A string for the chart's source caption (default is `ncrp_csg_source`).
 #' @return A named list of Highcharts objects, each corresponding to a state.
 #' @export
+# fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, source2 = NULL) {
+#
+#   # Extract unique states to iterate over
+#   states <- unique(df$state)
+#
+#   # Iterate through each state to generate scatter charts
+#   all_charts <- purrr::map(.x = states, .f = function(state_name) {
+#
+#     # Define group-specific labels, colors, and shapes
+#     if (group_var == "sex") {
+#       group_labels <- c("Male", "Female")
+#       colors <- c(teal, purple)  # Colors for male and female
+#       shapes <- c("circle", "triangle")  # Shapes for male and female
+#     } else {
+#       group_labels <- c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic")
+#       colors <- c(teal, blue, purple, red)  # Colors for race groups
+#       shapes <- c("square", "circle", "diamond", "triangle")  # Shapes for race groups
+#     }
+#
+#     # Filter data for the specific state and prepare for visualization
+#     df1 <- df |>
+#       ungroup() |>
+#       filter(state == state_name) |>
+#       arrange(desc(!!sym(measure))) |>
+#       mutate(group_num = row_number())
+#
+#     # Define the desired order of offense types
+#     desired_order <- c(
+#       "Drug",
+#       "Public Order",
+#       "Property",
+#       "Aggravated or Simple Assault",
+#       "Robbery",
+#       "Rape or Sexual Assault",
+#       "Negligent Manslaughter",
+#       "Murder or Nonnegligent Manslaughter",
+#       "Other Violent Offenses"
+#     )
+#
+#     # Map offense types to their positions
+#     y_labels <- setNames(as.list(desired_order), seq_along(desired_order))
+#
+#     # Extract the year of the data for labeling
+#     year <- unique(df1$rptyear)
+#
+#     # Define dynamic titles and labels for the chart
+#     x_axis_title <- ifelse(measure == "average_los", "Average Time Served (Years)", "Average Years Past Parole Eligibility")
+#     chart_title <- paste0("Average ", ifelse(measure == "average_los", "Time Served", "Years Past Parole Eligibility"),
+#                           " by Offense and ", ifelse(group_var == "sex", "Sex", "Race and Ethnicity"))
+#
+#     # Generate accessibility text for the chart
+#     accessibility_measure <- ifelse(measure == "average_los", "average length of stay", "average years past parole eligibility")
+#     accessibility_text <- paste0("The chart shows the ", accessibility_measure, " for different ",
+#                                  group_var, " groups in ", state_name, ".")
+#
+#     # Set maximum value for scaling
+#     max_los <- max(df1[[measure]], na.rm = TRUE)
+#
+#     # Initialize Highcharts object
+#     highcharts <- highchart() |>
+#       hc_title(text = chart_title) |>
+#       hc_yAxis(
+#         title = list(text = ""),  # Y-axis title
+#         labels = list(enabled = TRUE, style = list(color = "black")),  # Style Y-axis labels
+#         categories = y_labels,  # Map dynamically filtered categories to offense types
+#         gridLineColor = "transparent",  # Remove grid lines
+#         reversed = TRUE  # Reverse order for better readability
+#       ) |>
+#       hc_xAxis(
+#         title = list(text = x_axis_title, style = list(color = "black")),  # X-axis title
+#         labels = list(style = list(color = "black")),  # Style X-axis labels
+#         gridLineDashStyle = "Dash",  # Dashed grid lines
+#         gridLineWidth = 1,  # Set grid line width
+#         gridLineColor = "lightgray",  # Set grid line color
+#         tickLength = 0  # Remove tick marks
+#       ) |>
+#       hc_tooltip(
+#         useHTML = TRUE,
+#         formatter = JS("function() {
+#           return '<b>' + this.series.name + '</b><br/>' +
+#                  'Offense: ' + (this.point.fbi_index || 'Unknown') + '<br/>' +
+#                  'Average Years: ' + this.point.x.toFixed(1) + '<br/>' +
+#                  'People: ' + (this.point.people ? this.point.people.toLocaleString() : 'N/A');
+#         }")  # Tooltip with offense, years, and people count
+#       ) |>
+#       hc_legend(layout = "horizontal", verticalAlign = "top") |>
+#       hc_add_theme(base_hc_theme) |>
+#       fnc_add_hc_accessibility(accessibility_text) |>
+#       hc_caption(
+#         text = paste0(
+#           source1, ", ", year,
+#           if (!is.null(source2)) paste0(" and ", source2) else ""
+#         )
+#       ) |>
+#       hc_exporting(enabled = TRUE,
+#                    filename = paste0(gsub(" ", "_", tolower(chart_title)), "_",
+#                                      year))
+#
+#     # Add scatter series for each group dynamically
+#     for (i in seq_along(group_labels)) {
+#       highcharts <- highcharts |>
+#         hc_add_series(
+#           df1 |> filter(!!sym(group_var) == group_labels[i]),  # Filter for the group
+#           type = 'scatter',  # Scatter plot
+#           color = colors[i],  # Assign color
+#           hcaes(x = !!sym(measure), y = as.numeric(factor(fbi_index, levels = y_labels)), group = !!sym(group_var)),
+#           marker = list(symbol = shapes[i], radius = 5)  # Assign marker shape and size
+#         )
+#     }
+#
+#     return(highcharts)
+#   })
+#
+#   # Assign state names to the resulting charts list
+#   all_charts <- setNames(all_charts, states)
+#
+#   return(all_charts)
+# }
 fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, source2 = NULL) {
 
   # Extract unique states to iterate over
@@ -1421,12 +1539,13 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
 
     # Add scatter series for each group dynamically
     for (i in seq_along(group_labels)) {
+
       highcharts <- highcharts |>
         hc_add_series(
-          df1 |> filter(!!sym(group_var) == group_labels[i]),  # Filter for the group
+          df1 |> filter(!!sym(group_var) == group_labels[i]),
           type = 'scatter',  # Scatter plot
           color = colors[i],  # Assign color
-          hcaes(x = !!sym(measure), y = as.numeric(factor(fbi_index, levels = y_labels)), group = !!sym(group_var)),
+          hcaes(x = !!sym(measure), y = as.numeric(factor(fbi_index, levels = desired_order)), group = !!sym(group_var)),
           marker = list(symbol = shapes[i], radius = 5)  # Assign marker shape and size
         )
     }
