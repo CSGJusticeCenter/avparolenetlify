@@ -19,7 +19,7 @@
 # Filter NCRP projections for the specified year
 # Exclude states listed in `states_to_exclude` and process data for rounded values
 # This table forms the basis for parole eligibility statistics by state
-parole_eligibility_table_projection_year <- ncrp_projections |>
+parole_eligibility_table_projection_year <- projections_key_years_2010_2020 |>
   # Filter by projection year
   filter(year == projection_year & !is.na(proj_pop_past_pey)) |>
   # Exclude specified states
@@ -34,7 +34,7 @@ parole_eligibility_table_projection_year <- ncrp_projections |>
 
 # Calculate the total projected population past parole eligibility (PE)
 # This calculation aggregates the population across all states
-proj_past_pe <- ncrp_projections |>
+proj_past_pe <- projections_key_years_2010_2020 |>
   # Filter by projection year
   filter(year == projection_year) |>
   summarise(
@@ -47,7 +47,7 @@ proj_past_pe <- ncrp_projections |>
 proj_past_pe_count_rounded <- fnc_round_to_power(proj_past_pe)
 
 # Calculate the total prison population and the ratio "1 in X" individuals past PEY
-proj_prison_pop <- ncrp_population_projections |>
+proj_prison_pop <- projections_compl_2010_2020 |>
   # Exclude specified states
   # filter(!state %in% states_abolished_parole$state) |> # we may want this but not now
   # Filter by projection year

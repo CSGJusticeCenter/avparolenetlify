@@ -204,7 +204,7 @@ all_sentence_pe_type$Georgia
 # ---------------------------------------------------------------------------- #
 
 # Transform projection data for past parole eligibility
-pe_proj_pop <- ncrp_projections |>
+pe_proj_pop <- projections_short_2010_2020 |>
   select(state, year, pcnt_ppey_rules_wf, proj_pcnt_ppey, excl_state_year) |>
   mutate(
     # Assign observed percentage past parole eligibility (2010–2020)

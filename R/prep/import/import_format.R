@@ -245,15 +245,21 @@ states_to_exclude <- states_with_high_missing |>
 # Seba Guzman's NCRP Projections for 2021 to 2023
 #------------------------------------------------------------------------------#
 
+# Load 2023 projections ############################################################################################ NEED TO SEE IF I STILL NEED projections_compl_2010_2020.dta
+projections_key_years_2010_2020 <- read_excel(file.path(sp_data_path,"data/analysis/ncrp_results/projections_key_years_2010_2020.xlsx")) |>
+  rename(state = State) |>
+  mutate(proj_pcnt_ppey    = `Projected percent past PEY (excl. life and >1 yr. sentences)`,
+         proj_pop_past_pey = `Projected pop. past PEY (filtered)`)
+
 # Import parole eligibility projections created by Seba Guzman in Stata
-ncrp_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_short_2010_2020.dta"))
+projections_short_2010_2020 <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_short_2010_2020.dta"))
 
 # Import projections of prison populations created by Seba Guzman in Stata
 # These projections include imputed data for jurisdictional and custodial prison population totals.
 # When 2023 data is unavailable, use 2022 data.
 # The variable 'total_prison_population' prioritizes 'jurtott_incl_und' (jurisdictional total) when available.
 # If 'jurtott_incl_und' is missing, it defaults to 'custott_incl_und' (custodial total).
-ncrp_population_projections <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_compl_2010_2020.dta")) |>
+projections_compl_2010_2020 <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/projections_compl_2010_2020.dta")) |>
   select(state, year, jurtott_incl_und, custott_incl_und) |>
   group_by(state) |>
   arrange(state, year) |>  # Ensure data is sorted by state and year for lag calculations
@@ -503,8 +509,9 @@ bjs_prison_pop_by_sex <- bjs_prison_pop_by_sex |>
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  ncrp_projections                 = "ncrp_projections.rds",
-  ncrp_population_projections      = "ncrp_population_projections.rds",
+  projections_key_years_2010_2020  = "projections_key_years_2010_2020.rds",
+  projections_compl_2010_2020      = "projections_compl_2010_2020.rds",
+  projections_short_2010_2020      = "projections_short_2010_2020.rds",
   ncrp_releases_not_consolidated   = "ncrp_releases_not_consolidated.rds",
   ncrp_releases_consolidated       = "ncrp_releases_consolidated.rds",
   ncrp_yearendpop_consolidated     = "ncrp_yearendpop_consolidated.rds",
@@ -534,26 +541,26 @@ invisible(lapply(names(data_files), function(obj) {
   save(list = obj, file = file.path(app_folder, data_files[[obj]]))
 }))
 
-# ARCHIVE CODE BUT KEEP FOR NOW FOR EASY DATA LOADING
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_projections.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_population_projections.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_not_consolidated.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_consolidated.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_combined.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_combined.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
-load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
+# # ARCHIVE CODE BUT KEEP FOR NOW FOR EASY DATA LOADING
+# load(file = paste0(sp_data_path, "/data/analysis/app/projections_key_years_2010_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/projections_compl_2010_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_not_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_not_consolidated.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_combined.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_combined.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_race.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_sex.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/bjs_prison_pop_by_rptyear.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/hex_gj.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_national_page_only.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
