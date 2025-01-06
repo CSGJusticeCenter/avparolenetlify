@@ -484,7 +484,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE){
 ::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
-
+ 
 ```{r results = 'asis'}
 no_data <- is.null(state_sentence_avg_past_pe_race)
 
