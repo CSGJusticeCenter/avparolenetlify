@@ -204,17 +204,20 @@ all_sentence_los_sex$Mississippi
 all_lollipop_los_race <- fnc_generate_lollipop_charts(
   df = los_race,
   group_var = "race",
-  value_var = "average_los"
+  value_var = "average_los",
+  source = ncrp_source
 )
 
 # Example states:
 all_lollipop_los_race$Idaho
+all_lollipop_los_race$Georgia
 
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
   df = los_sex,
   group_var = "sex",
-  value_var = "average_los"
+  value_var = "average_los",
+  source = ncrp_source
 )
 
 # Example states:
@@ -253,7 +256,7 @@ all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
 )
 
 # Example state:
-all_scatter_los_race_offense$Connecticut
+all_scatter_los_race_offense$Georgia
 
 # Create scatter charts for average time served by sex and offense
 all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
@@ -303,7 +306,9 @@ all_sentence_avg_past_pe_sex$Georgia
 all_lollipop_avg_past_pe_race <- fnc_generate_lollipop_charts(
   df = avg_past_pe_race,
   group_var = "race",
-  value_var = "avg_years_to_estimated_pey"
+  value_var = "avg_years_to_estimated_pey",
+  source = ncrp_source,
+  second_source = csg_source
 )
 
 # Example states:
@@ -313,7 +318,9 @@ all_lollipop_avg_past_pe_race$Georgia
 all_lollipop_avg_past_pe_sex <- fnc_generate_lollipop_charts(
   df = avg_past_pe_sex,
   group_var = "sex",
-  value_var = "avg_years_to_estimated_pey"
+  value_var = "avg_years_to_estimated_pey",
+  source = ncrp_source,
+  second_source = csg_source
 )
 
 # Example states:
