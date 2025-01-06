@@ -1583,6 +1583,27 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
   # Extract unique states for iteration
   states <- unique(df$state)
 
+  # Determine the introductory sentence based on compare_var and type
+  intro_sentence <- if (compare_var == "sex") {
+    if (type == "in prison") {
+      "The chart below shows the average time served in prison by sex among released individuals."
+    } else if (type == "past parole eligibility") {
+      "The chart below shows the average time spent in prison past parole eligibility by sex for individuals still incarcerated."
+    } else {
+      ""
+    }
+  } else if (compare_var == "race") {
+    if (type == "in prison") {
+      "The chart below shows the average time served in prison by race and ethnicity for individuals released from prison."
+    } else if (type == "past parole eligibility") {
+      "The chart below shows the average time spent in prison past parole eligibility by race and ethnicity for individuals still incarcerated."
+    } else {
+      ""
+    }
+  } else {
+    ""
+  }
+
   # Generate sentences for each state
   all_sentences <- purrr::map(.x = states, .f = function(state_var) {
     # Use helper function to filter data by state and year
@@ -1635,10 +1656,10 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
           formatted_time <- fnc_time_format_months(abs(los_diff_black))
           black_sentence <- if (los_diff_black > 0) {
             groups_more <- c(groups_more, "Black people")
-            paste0("Black people spent on average ", formatted_time, " more behind bars ", detail_suffix)
+            paste0("Black people spent on average ", formatted_time, " more ", detail_suffix)
           } else {
             groups_less <- c(groups_less, "Black people")
-            paste0("Black people spent on average ", formatted_time, " less behind bars ", detail_suffix)
+            paste0("Black people spent on average ", formatted_time, " less ", detail_suffix)
           }
         }
       }
@@ -1653,10 +1674,10 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
           formatted_time <- fnc_time_format_months(abs(los_diff_hispanic))
           hispanic_sentence <- if (los_diff_hispanic > 0) {
             groups_more <- c(groups_more, "Hispanic people")
-            paste0("Hispanic people spent on average ", formatted_time, " more behind bars ", detail_suffix)
+            paste0("Hispanic people spent on average ", formatted_time, " more ", detail_suffix)
           } else {
             groups_less <- c(groups_less, "Hispanic people")
-            paste0("Hispanic people spent on average ", formatted_time, " less behind bars ", detail_suffix)
+            paste0("Hispanic people spent on average ", formatted_time, " less ", detail_suffix)
           }
         }
       }
@@ -1671,10 +1692,10 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
           formatted_time <- fnc_time_format_months(abs(los_diff_other))
           other_sentence <- if (los_diff_other > 0) {
             groups_more <- c(groups_more, "non-Hispanic people of other races")
-            paste0("non-Hispanic people of other races spent on average ", formatted_time, " more behind bars ", detail_suffix)
+            paste0("non-Hispanic people of other races spent on average ", formatted_time, " more ", detail_suffix)
           } else {
             groups_less <- c(groups_less, "non-Hispanic people of other races")
-            paste0("non-Hispanic people of other races spent on average ", formatted_time, " less behind bars ", detail_suffix)
+            paste0("non-Hispanic people of other races spent on average ", formatted_time, " less ", detail_suffix)
           }
         }
       }
@@ -1713,6 +1734,7 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
         # Correct "Non-Hispanic" capitalization if needed
         final_sentence <- gsub("Non-Hispanic", "non-Hispanic", final_sentence)
         final_sentence <- gsub("\\. and", " and", final_sentence) # Fix edge cases with unnecessary ". and"
+        final_sentence <- paste0(intro_sentence, " ", final_sentence)
 
         return(final_sentence)
       } else {
@@ -1732,6 +1754,14 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
   # Filter the data for males
   df_male <- df1 |> dplyr::filter(sex == "Male")
+
+  if (type == "in prison") {
+    intro_sentence <- "The chart below shows the average time served in prison by sex among released individuals."
+  } else if (type == "past parole eligibility") {
+    intro_sentence <- "The chart below shows the average time spent in prison past parole eligibility by sex for individuals still incarcerated."
+  } else {
+    intro_sentence <- ""
+  }
 
   # Initialize an empty sentence variable
   sentence <- ""
@@ -1753,6 +1783,7 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
       if (los_diff_female > 0) {
         # Males spent more time on average
         sentence <- paste0(
+          intro_sentence, " ",
           "Men ",
           if (type == "in prison") "released" else "who were still incarcerated",
           " spent on average ", formatted_time, " more ",
@@ -1762,6 +1793,7 @@ fnc_generate_sentence_sex <- function(df1, year, type, los_col, state_var) {
       } else if (los_diff_female < 0) {
         # Females spent less time on average
         sentence <- paste0(
+          intro_sentence, " ",
           "Women ",
           if (type == "in prison") "released" else "who were still incarcerated",
           " spent on average ", formatted_time, " less ",
@@ -2069,7 +2101,8 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
     time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
     sentence <- paste0(
       "The chart below shows the average ", time_description, " by offense type and ",
-      ifelse(grouping_var == "race", "race and ethnicity", grouping_var), ". ",
+      ifelse(grouping_var == "race", "race and ethnicity", grouping_var),
+      ifelse(time_var == "average_los", " for individuals released from prison", " for individuals still incarcerated"), ". ",
       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
       group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",
       " spent on average ", formatted_time, " more in prison compared to ",

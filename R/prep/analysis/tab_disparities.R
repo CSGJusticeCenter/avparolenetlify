@@ -186,7 +186,6 @@ all_sentence_los_race <-
                                    compare_var = "race",
                                    los_col = "average_los")
 # Example state:
-all_sentence_los_race$Idaho
 all_sentence_los_race$Georgia
 all_sentence_los_race$Mississippi
 
