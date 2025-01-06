@@ -1264,26 +1264,6 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
 }
 
 
-fnc_time_format <- function(time_in_years) {
-  if (time_in_years < 1) {
-    # Convert to months for times under 1 year
-    months <- round(time_in_years * 12)
-    paste0(months, " ", ifelse(months == 1, "month", "months"))
-  } else {
-    # Calculate years and remaining months for times over 1 year
-    years <- floor(time_in_years)
-    months <- round((time_in_years - years) * 12)
-    year_part <- paste0(years, " ", ifelse(years == 1, "year", "years"))
-    if (months > 0) {
-      month_part <- paste0(months, " ", ifelse(months == 1, "month", "months"))
-      paste0(year_part, " ", month_part)
-    } else {
-      year_part
-    }
-  }
-}
-
-
 fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, height = 200, source) {
 
   # Define consistent group labels, colors, and shapes
@@ -1436,6 +1416,29 @@ fnc_generate_lollipop_charts <- function(df, group_var, value_var, height = 200,
 
   return(all_charts)
 }
+
+
+
+
+fnc_time_format <- function(time_in_years) {
+  if (time_in_years < 1) {
+    # Convert to months for times under 1 year
+    months <- round(time_in_years * 12)
+    paste0(months, " ", ifelse(months == 1, "month", "months"))
+  } else {
+    # Calculate years and remaining months for times over 1 year
+    years <- floor(time_in_years)
+    months <- round((time_in_years - years) * 12)
+    year_part <- paste0(years, " ", ifelse(years == 1, "year", "years"))
+    if (months > 0) {
+      month_part <- paste0(months, " ", ifelse(months == 1, "month", "months"))
+      paste0(year_part, " ", month_part)
+    } else {
+      year_part
+    }
+  }
+}
+
 
 fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 

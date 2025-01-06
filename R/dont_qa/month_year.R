@@ -1,4 +1,4 @@
-fnc_time_format <- function(time_in_years) {
+fnc_time_format1 <- function(time_in_years) {
   if (time_in_years < 1) {
     # Convert to months for times under 1 year
     months <- round(time_in_years * 12)
@@ -17,7 +17,7 @@ fnc_time_format <- function(time_in_years) {
   }
 }
 
-fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
+fnc_generate_disparity_sentences1 <- function(df, type, compare_var, los_col) {
 
   # Extract unique states for iteration
   states <- unique(df$state)
@@ -69,7 +69,7 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
       if (nrow(df_black) > 0 && nrow(df_white) > 0) {
         los_diff_black <- df_black[[los_col]] - df_white[[los_col]]
         if (!is.na(los_diff_black)) {
-          formatted_time <- fnc_time_format(abs(los_diff_black))
+          formatted_time <- fnc_time_format1(abs(los_diff_black))
           black_sentence <- if (los_diff_black > 0) {
             groups_more <- c(groups_more, "Black people")
             paste0("Black people spent on average ", formatted_time, " more behind bars ", detail_suffix)
@@ -85,7 +85,7 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
       if (nrow(df_hispanic) > 0 && nrow(df_white) > 0) {
         los_diff_hispanic <- df_hispanic[[los_col]] - df_white[[los_col]]
         if (!is.na(los_diff_hispanic)) {
-          formatted_time <- fnc_time_format(abs(los_diff_hispanic))
+          formatted_time <- fnc_time_format1(abs(los_diff_hispanic))
           hispanic_sentence <- if (los_diff_hispanic > 0) {
             groups_more <- c(groups_more, "Hispanic people")
             paste0("Hispanic people spent on average ", formatted_time, " more behind bars ", detail_suffix)
@@ -130,7 +130,7 @@ fnc_generate_disparity_sentences <- function(df, type, compare_var, los_col) {
 
 
 all_sentence_los_race <-
-  fnc_generate_disparity_sentences(df = los_race,
+  fnc_generate_disparity_sentences1(df = los_race,
                                    type = "in prison",
                                    compare_var = "race",
                                    los_col = "average_los")

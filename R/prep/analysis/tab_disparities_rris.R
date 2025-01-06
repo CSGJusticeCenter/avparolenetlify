@@ -95,7 +95,7 @@ all_sentence_pe_rri_hispanic <- map(
   all_sentence_pe_rri_hispanic,
   ~ paste0(
     .,
-    "<br><span style='color: gray; font-size: 0.8em;'><i>Hispanic RRI should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity.</i></span>"
+    "<br><span style='color: gray; font-size: 0.8em;'><i>Analysis of disparities for Hispanic people should be interpreted with caution due to inconsistencies in how each state collects and reports data on ethnicity.</i></span>"
   )
 )
 
