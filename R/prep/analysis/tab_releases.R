@@ -143,7 +143,7 @@ all_line_releases_by_year$Alaska
 # lengths not less than one year or life. Exclude states with high missingness
 # or abolished parole, and avoid filtering certain states based on other criteria.
 ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
-  data = ncrp_releases_consolidated,  ############################## Amund, I will update to `ncrp_releases_consolidated` when complete
+  data = ncrp_releases_consolidated,
   exclude = states_to_exclude,
   dont_filter = states_nofilter) |>
   left_join(which_overall_year, by = "state")
@@ -152,7 +152,7 @@ ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
 # Summarize release data by parole eligibility status
 # - Calculate proportions within each group (on parole eligibility vs. past parole eligibility)
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
-  filter(estimated_pey_status %in% c("past", "current_year")) |> ############################# ASK SEBA both currently and past parole eligibility
+  filter(estimated_pey_status %in% c("past", "current_year")) |> ######################################## ASK SEBA both currently and past parole eligibility????
   group_by(state, rptyear, year_to_use, estimated_pey_status) |>
   summarise(n = n(), .groups = "drop") |>  # Count the number of releases
   group_by(state, rptyear, year_to_use) |>

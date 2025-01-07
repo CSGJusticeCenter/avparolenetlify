@@ -78,7 +78,7 @@ orig_qmd <- read_lines("_state_report_template.qmd")
 log_info("Generating QMD files for {length(states)} states...")
 walk(states, fnc_replace_write_qmd)
 
-# Step 5) Render all pages and launch site
+# Step 5) Render all pages and launch site - takes ~15 min to run
 log_info("Rendering all Quarto pages...")
 tryCatch(
   {
