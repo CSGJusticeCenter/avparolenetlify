@@ -111,24 +111,32 @@ state_methodology_clean <- state_methodology %>%
 state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
-  mutate(pe_citation = paste(pe_citation_1,
-                             pe_citation_2,
-                             sep = "<br><br>"),
+  mutate(
+    # Combine PE citations, skipping missing ones
+    pe_citation = paste0(
+      pe_citation_1,
+      ifelse(!is.na(pe_citation_2) & pe_citation_2 != "", "<br><br>", ""),
+      ifelse(!is.na(pe_citation_2) & pe_citation_2 != "", pe_citation_2, ""),
+      ifelse(!is.na(pe_citation_3) & pe_citation_3 != "", "<br><br>", ""),
+      ifelse(!is.na(pe_citation_3) & pe_citation_3 != "", pe_citation_3, "")
+    ),
 
-         pb_citation = paste(pb_citation_1,
-                             pb_citation_2,
-                             sep = "<br><br>"),
+    # Combine PB citations, skipping missing ones
+    pb_citation = paste0(
+      pb_citation_1,
+      ifelse(!is.na(pb_citation_2) & pb_citation_2 != "", "<br><br>", ""),
+      ifelse(!is.na(pb_citation_2) & pb_citation_2 != "", pb_citation_2, "")
+    ),
 
-         # Add superscript 1 to PB citation
-         pb_citation = paste("\u00B9", pb_citation, sep = " "),
+    # Add superscript 1 to PB citation
+    pb_citation = paste("\u00B9", pb_citation, sep = " "),
 
-         # Add superscript 2 to PE citation
-         pe_citation = paste("\u00B2", pe_citation, sep = " "),
+    # Add superscript 2 to PE citation
+    pe_citation = paste("\u00B2", pe_citation, sep = " "),
 
-         # Superscript 1 will be added to "Parole Board Members" in Quarto document
-         # Add superscript 2 to `release_systems` for "How Parole Eligibility is Determined" section
-         release_systems = paste0(release_systems, "\u00B2")
-         )
+    # Add superscript 2 to `release_systems` for "How Parole Eligibility is Determined" section
+    release_systems = paste0(release_systems, "\u00B2")
+  )
 
 
 #------------------------------------------------------------------------------#

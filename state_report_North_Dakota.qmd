@@ -307,11 +307,9 @@ fnc_display_sentence_chart(state_sentence_releases_fbi_index, state_bar_releases
 
 Disparities can be measured in many different ways by comparing the outcomes of different groups. This page details disparities in three types of metrics by race, ethnicity, and sex:   
 
-(1\) the proportion of the incarcerated population who are past their parole eligibility date,<br>
-(2\) the average number of years individuals spent behind bars past their parole eligibility date,<br>
-(3\) the average time individuals served in prison, and<br>
-(4\) the average time individuals served in prison by offense type.<br>
-
+(1\) Relative Rate Indexes (RRIs), which measure the rate at which one group experiences an outcome relative to another group,<br>
+(2\) the average number of years individuals spent behind bars past their parole eligibility date, including by offense type, and<br> 
+(3\) the average time individuals served in prison, also broken down by offense.<br>
 <br>
 <div class="divider"></div>
 
@@ -471,7 +469,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE){
   cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 ```
-
+ 
 :::
 
 
@@ -484,7 +482,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE){
 ::: {.panel-tabset .custom-tabs-disp}
 
 ### Race and Ethnicity
-
+ 
 ```{r results = 'asis'}
 no_data <- is.null(state_sentence_avg_past_pe_race)
 
@@ -614,7 +612,7 @@ if (no_data) {
 
 **Understanding Disparities in Parole Outcomes**
 
-In examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in incarceration rates past parole eligibility across race, ethnicity, and sex.
+In examining disparities in parole release rates, this analysis uses the Relative Rate Index (RRI) as a metric to assess differences in incarceration past parole eligibility across race, ethnicity, and sex.
 
 The RRI is calculated by dividing the rate for Black or Hispanic individuals by the rate for White individuals, with values above 1.0 indicating that a group experiences the outcome at a higher rate relative to White individuals, and values below 1.0 indicating a lower rate. This allows for a comparative analysis of which groups are more likely to remain incarcerated past their parole eligibility.
 
@@ -622,7 +620,7 @@ The RRI is calculated by dividing the rate for Black or Hispanic individuals by 
 
 Our visualizations present three main metrics to highlight disparities across race, ethnicity, and sex:
 
-- **RRI of Parole Release:** This metric compares the proportion of individuals past parole eligibility within the total prison population by race, ethnicity, and sex. It provides a snapshot of who remains in prison despite being eligible for parole.
+- **RRI of Incarceration Past Parole Eligibility:** This metric quantifies the relative likelihood of remaining incarcerated past parole eligibility, comparing Black and Hispanic individuals to White individuals. An RRI above 1.0 signals a higher likelihood of delayed parole release, whereas an RRI below 1.0 indicates a lower likelihood. These disparities shed light on inequities in the parole release process.
 - **Average Time Past Parole Eligibility:** For those individuals who remain incarcerated past their parole eligibility date, we show the average additional time spent in prison. This is broken down by race, ethnicity, and sex, highlighting the length of delay in parole release among different groups.
 - **Average Total Time Served:** We also display the average total time served in prison by race, ethnicity, and sex, providing insight into sentencing and incarceration length disparities.
 
