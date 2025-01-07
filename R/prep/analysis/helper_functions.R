@@ -138,10 +138,15 @@ fnc_summarize_data <- function(df, count_column) {
     # Filter out missing values and optionally exclude "Unknown" values
     # - Always exclude `NA`.
     # - Exclude "Unknown" unless the column is `race`.
+    # filter(
+    #   !is.na(!!count_column) &                             # Exclude missing values
+    #     (!(deparse(substitute(count_column)) != "race" &   # For non-"race" columns: Exclude "Unknown"
+    #          (!!count_column == "Unknown")))
+    # ) |>
     filter(
-      !is.na(!!count_column) &                                   # Exclude missing values
-        (!(deparse(substitute(count_column)) != "race" &           # For non-"race" columns:
-             (!!count_column == "Unknown")))                         # Exclude "Unknown".
+      !is.na(!!count_column) &                 # Exclude missing values
+        (!(quo_name(count_column) != "race" &  # Check column name (string comparison)
+             !!count_column == "Unknown"))     # Remove "Unknown" for non-"race" columns
     ) |>
 
     # Count occurrences of each value in the specified column

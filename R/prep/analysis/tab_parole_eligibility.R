@@ -2,17 +2,15 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Last Updated: November 15, 2024 (MAR)
+# Last Updated: January 7, 2025 (MAR)
 # Description:
-#   This script analyzes and visualizes prison population data related to parole
-#   eligibility. It prepares data for various demographic and offense-related
+#   This script analyzes and visualizes people in prison past parole eligibility.
+#   It prepares data for various demographic and offense-related
 #   analyses, generates pie charts and bar charts, constructs summary sentences,
-#   and saves the outputs for downstream use.
+#   and saves the outputs for tool's Parole Eligibility tab.
 #
 #   - Filtering and summarizing prison population data based on parole eligibility
 #     status, including current, future, and missing eligibility categories.
-#   - Generating pie charts to visualize proportions of the prison population
-#     by parole eligibility status across states.
 #   - Creating bar charts and summary sentences for demographics (race, sex,
 #     age), offense types, and sentence lengths.
 #   - Analyzing trends and projections for people past their parole eligibility
@@ -25,7 +23,7 @@
 # Pie charts of the prison population by parole eligibility status
 # ---------------------------------------------------------------------------- #
 
-# Filter the prison population data based on specified criteria
+# Filter the yearendpop data based on specified criteria
 # The function filters to include only:
 #   - People in prison for new crimes with sentence lengths of 1+ years (except life)
 #   - States with active parole systems and low missingness (not in `states_to_exclude`)
@@ -36,28 +34,14 @@ ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(data = ncrp_yearen
 
 # Calculate the total prison population by state and reporting year
 # This serves as the denominator for proportion calculations later
+# Each row is a person for that rptyear
 total_pe_pop_by_rptyear <- ncrp_yearendpop_filtered |>
   group_by(state, rptyear) |>
   summarise(yearendpop = n(), .groups = "drop")
 
-# # Compute the prison population proportions by parole eligibility status
-# # Includes statuses: "Missing," "Current," or "Future"
-# # Joins with the total population to calculate percentages (`prop`) and adds tooltips
-# pe_status_pop <- ncrp_yearendpop_filtered |>
-#   mutate(parelig_status = case_when(
-#     parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
-#     parelig_status == "Future" ~ "Will Be Eligible In The Future",
-#     TRUE ~ parelig_status
-#   )) |>
-#   group_by(state, rptyear) |>
-#   count(parelig_status) |>
-#   left_join(total_pe_pop_by_rptyear, by = c("state", "rptyear")) |>
-#   mutate(prop = (n / yearendpop) * 100) |> # Calculate proportion
-#   fnc_create_tooltip(variable_label = "Parole Eligibility Status", variable = parelig_status) |> # Add tooltips
-#   fnc_filter_by_year(which_overall_year) # Filter data based on the best year for each state
-
-# Compute the prison population proportions by parole eligibility status
+# Compute the prison population by parole eligibility status
 # Includes statuses: "Missing," "Current," or "Future"
+# Recategorize into easier to understand categories
 # Joins with the total population to calculate percentages (`prop`) and adds tooltips
 pe_status_pop <- ncrp_yearendpop_filtered |>
   mutate(parelig_status_new =
@@ -84,7 +68,7 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
 
 # Generate pie charts visualizing parole eligibility status proportions for each state
 # `fnc_hc_pie_chart` creates individual charts with data and accessibility text for each state
-all_pie_pe_type <- fnc_hc_pie_chart_new(
+all_pie_pe_type <- fnc_hc_pie_chart_new( ##################################################################can rename once approved
   df = pe_status_pop,
   variable = "parelig_status_new"
 )
@@ -93,38 +77,6 @@ all_pie_pe_type <- fnc_hc_pie_chart_new(
 all_pie_pe_type$Connecticut
 all_pie_pe_type$Georgia
 all_pie_pe_type$Michigan
-
-# # Generate summary sentences for each state describing parole eligibility proportions
-# #  "Most recent data shows that 69 percent of people in prison were eligible for
-# #   parole and incarcerated past parole eligibility at the end of the year, while
-# #   another 31 will reach their parole eligibility next year."
-# all_sentence_pe_type <- {
-#   # Get the list of unique states from the filtered data
-#   states <- unique(pe_status_pop$state)
-#
-#   # Use `map` to iterate over each state and generate a summary sentence
-#   map(states, function(state_name) {
-#     # Filter the data for the current state
-#     df <- pe_status_pop |> filter(state == state_name)
-#
-#     # Extract the reporting year for the current state (assumes consistency across rows)
-#     year <- unique(df$rptyear)
-#
-#     # Get proportions of people currently eligible and those eligible in the future
-#     current_prop <- df |> filter(parelig_status == "Past Parole Eligibility at End of Year") |> pull(prop)
-#     future_prop <- df |> filter(parelig_status == "Will Be Eligible In The Future") |> pull(prop)
-#
-#     # Construct the summary sentence for the state
-#     paste0(
-#       "Most recent data shows that ",
-#       round(current_prop, 0),
-#       " percent of people in prison were eligible for parole and incarcerated ",
-#       "past parole eligibility at the end of the year,",
-#       " while another ", round(future_prop, 0),
-#       " were expected to reach their parole eligibility in the following year."
-#     )
-#   }) |> setNames(states) # Assign state names to the generated sentences
-# }
 
 # Generate summary sentences for each state describing parole eligibility proportions
 #  "Most recent data shows that 69 percent of people in prison were eligible for
@@ -209,8 +161,7 @@ pe_proj_pop <- projections_short_2010_2020 |>
   mutate(
     # Assign observed percentage past parole eligibility (2010–2020)
     pct_past_pe = if_else(
-      year >= 2010 & year <= 2020 & !is.na(pcnt_ppey_rules_wf),
-      pcnt_ppey_rules_wf, # Use observed data
+      year >= 2010 & year <= 2020 & !is.na(pcnt_ppey_rules_wf), pcnt_ppey_rules_wf, # Use observed data
       if_else(year >= 2019 & year <= 2020, NA_real_, NA_real_) # Set as NA for specific years if no data exists
     ),
     # Assign projected percentages for 2021–2023
@@ -344,7 +295,7 @@ rm(states)  # Cleanup: Remove the temporary `states` variable
 
 # Filter data to include only individuals who are currently eligible for parole
 current_pe <- ncrp_yearendpop_filtered |>
-  filter(parelig_status == "Current") |>  # Currently eligible for parole
+  filter(parelig_status == "Current") |>  # Currently eligible for parole and also past parole eligibility since it's end of year
   fnc_filter_by_year(which_overall_year)  # Ensure only data from the year needed by state
 
 # Use the unconsolidated file for age since `ageyrend` is not available in the consolidated file

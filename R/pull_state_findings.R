@@ -1,4 +1,4 @@
-# Load Prepared Data
+# Load prepared data created in import_format.R
 load(file = paste0(sp_data_path, "/data/analysis/app/state_notes.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/state_methodology.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
@@ -10,14 +10,14 @@ select_year <- which_overall_year |> filter(state == state_for_report) |> pull(y
 ncrp_csg_source_year <- paste0("National Corrections Reporting Program, ", select_year, " and CSG Justice Center estimates")
 
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
-additional_asterisks_text <- if (state_for_report %in% states_nofilter) {
+additional_asterisks_text <- if (state_for_report %in% states_nofilter$state) {
   "*Projection based on 2023 prison population. Includes people in prison with any admission type or sentence length."
 } else {
-  "*Projection based on 2023 prison population. Includes people in prison with sentences more than one year who have not already been released on parole and excludes people with life sentences."
+  "*Projection based on 2023 prison population. This and other figures regarding people past parole eligibility includes people in prison with sentences of more than one year who have not already been released on parole and excludes people with life sentences."
 }
 
 # Define the secondary asterisk text based on the states that were likely undercounted
-additional_asterisks_text1 <- if (state_for_report %in% states_undercounted) {
+additional_asterisks_text1 <- if (state_for_report %in% states_undercounted$state) {
   "Due to missing or unreported data, we are likely underestimating the percent of people past their parole eligibility year, especially for people with longer sentences. Results should be interpreted with caution."
 } else {
   NULL
