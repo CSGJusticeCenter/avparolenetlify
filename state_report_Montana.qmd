@@ -469,7 +469,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE){
   cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
 }
 ```
- 
+
 :::
 
 
