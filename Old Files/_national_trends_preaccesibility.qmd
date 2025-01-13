@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   dev = "ragg_png"
 )
 
-# Run configuration file
+# Run configeration file
 source("R/config.R")
 
 # Load saved data and pngs
@@ -31,7 +31,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rd
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
 ```
 
-<div id="body-section" tabindex="0">
+<div id="body-section">
 
 ```{r highlights}
 div(
@@ -59,14 +59,14 @@ div(
 </div>
 <br>
 <!-- HTML code for asterisks notes -->
-<div id ="footnotes-text" tabindex="0">
-*These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence. As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year.<br>
-**Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system.
+<div id ="footnotes-text">
+\*These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence.As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year.<br>
+\*\*Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system.
 </div>
-<div class="divider" tabindex="0"></div>
+<div class="divider"></div>
 <br>
 
-<div id="map-section" tabindex="0">
+<div id="map-section">
 
 ```{r map}
 # Map of Percent of People in Prison Past Parole Eligibility
@@ -75,12 +75,12 @@ map_percent
 </div>
 
 <!-- HTML code for the download button -->
-<a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button" tabindex="0">
+<a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button">
   Download Map
 </a>
 <br><br>
 
-<div id="body-section" tabindex="0">
+<div id="body-section">
 <div class="divider"></div>
 
 ## Parole Eligibility by State
@@ -148,7 +148,7 @@ reactable(
 )
 ```
 
-<div id="footnotes-text" tabindex="0"><br>
+<div id="footnotes-text"><br>
 Source: National Corrections Reporting Program, 2010-2020 and CSG Justice Center Estimates. <br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
 <br></div>
 

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: national_trends.R
 # Authors: Mari Roberts
-# Date last updated: December 5, 2024 (MAR)
+# Date last updated: January 13, 2025 (MAR)
 # Description:
 #    This script generates a parole eligibility map, tables, and other visualizations
 #    for the national trends page of the AV Parole project. It includes:
@@ -265,6 +265,10 @@ map_percent <- highchart(height = 625) |>
     df = map_data_breaks,                   # Data to populate the map
     joinBy = "state_abb",                   # Join key for state abbreviations
     value = "data_category_num",            # Numeric category for color mapping
+    accessibility = list(
+      description = "This map shows state-level projected data for people in prison past their parole eligibility.",
+      exposeAsGroupOnly = TRUE
+    ),
     dataLabels = list(
       enabled = TRUE,
       useHTML = TRUE,
@@ -329,7 +333,7 @@ map_percent <- highchart(height = 625) |>
       linkedDescription = paste0(
         "This hexagonal map visualizes the projected proportion of people in prison ",
         "past their parole eligibility across U.S. states in 2023. Colors indicate ",
-        "percentage ranges, with special categories for states with abolished parole ",
+        "percentage ranges, with special categories for states that abolished discretionary parole ",
         "and missing data."
       ),
       landmarkVerbosity = "one"
