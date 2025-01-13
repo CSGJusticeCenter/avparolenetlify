@@ -41,18 +41,59 @@ div(
     align-items: start; /* Align all grid items at the top */
     text-align: center;
   ",
-  div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
+  # Highlight for Projection Count
   div(
     id = "national-highlight",
+    tabindex = "0",
+    role = "region",
+    `aria-label` = "Projection: People in Prison Past Parole Eligibility",
+    formattable::comma(proj_past_pe_count_rounded, digits = 0)
+  ),
+  
+  # Highlight for Infographic
+  div(
+    id = "national-highlight",
+    tabindex = "0",
     img(
       src = "img/pe_1_in_x.png", 
+      alt = "Infographic showing 1 in X people are in prison past parole eligibility",
       style = "margin: 0 auto; margin-bottom: 10px; max-width: 50%; height: auto; text-align: center;"
     )
   ),
-  div(id = "national-highlight", "34"),
-  div(id = "bold-text", HTML("People In Prison Past Parole Eligibility*<br><br>")),
-  div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))),
-  div(id = "bold-text", HTML("States With Discretionary Parole**<br><br>"))
+  
+  # Highlight for States with Discretionary Parole
+  div(
+    id = "national-highlight",
+    tabindex = "0",
+    role = "region",
+    `aria-label` = "34 States With Discretionary Parole",
+    "34"
+  ),
+  
+  # Bold Text for Explanatory Notes
+  div(
+    id = "bold-text",
+    tabindex = "0",
+    role = "region",
+    `aria-label` = "Explanation: People in Prison Past Parole Eligibility",
+    HTML("People In Prison Past Parole Eligibility*<br><br>")
+  ),
+  
+  div(
+    id = "bold-text",
+    tabindex = "0",
+    role = "region",
+    `aria-label` = "Explanation: 1 in X People Past Parole Eligibility",
+    HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))
+  ),
+  
+  div(
+    id = "bold-text",
+    tabindex = "0",
+    role = "region",
+    `aria-label` = "Explanation: States With Discretionary Parole",
+    HTML("States With Discretionary Parole**<br><br>")
+  )
 )
 ```
 
