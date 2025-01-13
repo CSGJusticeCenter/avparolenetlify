@@ -133,6 +133,13 @@ fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 <br>
 <div class="divider"></div>
 
+## Key Terms and Data Sources
+
+TBD
+
+<br>
+<div class="divider"></div>
+
 ## Estimation Methodology
 
 `r paste(state_imputation_notes, collapse = ", ")`
@@ -143,8 +150,6 @@ fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 ## Endnotes
 
 `r paste(state_citation, collapse = ", ")`
-
-Data analysis was conducted using information from the National Corrections Reporting Program and the National Prisoner Statistics Program. See “National Corrections Reporting Program (NCRP),” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp](https://bjs.ojp.gov/data-collection/national-corrections-reporting-program-ncrp); “Prisoners - Statistical Tables,” Bureau of Justice Statistics, accessed September 25, 2024, [https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners](https://bjs.ojp.gov/library/publications/list?series_filter=Prisoners).
 
 
 

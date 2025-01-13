@@ -7,13 +7,16 @@
 #' @param citation A string containing the citation.
 #' @return A formatted string with report titles italicized and URLs as markdown links.
 fnc_format_citation <- function(text) {
-  # Define patterns for titles that need italicizing
+  # Italicize content inside {it: ...}
+  text <- gsub("\\{it:([^}]+)\\}", "<i>\\1</i>", text, perl = TRUE)
+
+  # Define patterns for specific titles that need italicizing
   patterns <- c(
     "Prison-Release Discretion and Prison Population Size: State Report: [A-Za-z]+",
     "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z]+"
   )
 
-  # Apply italic formatting to each pattern
+  # Apply italic formatting to specific patterns
   for (pattern in patterns) {
     matches <- gregexpr(pattern, text, perl = TRUE)
     regmatches(text, matches) <- lapply(
@@ -30,8 +33,12 @@ fnc_format_citation <- function(text) {
     perl = TRUE
   )
 
+  # Replace double periods with a single period
+  text <- gsub("\\.\\.", ".", text, perl = TRUE)
+
   return(text)
 }
+
 
 #' Read a Stata File and Add a Year Column
 #'
