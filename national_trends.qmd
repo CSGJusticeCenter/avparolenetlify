@@ -41,12 +41,16 @@ div(
     align-items: start; /* Align all grid items at the top */
     text-align: center;
   ",
+  
   # Highlight for Projection Count
   div(
     id = "national-highlight",
     tabindex = "0",
     role = "region",
-    `aria-label` = "Projection: People in Prison Past Parole Eligibility",
+    `aria-label` = paste(
+      "Projection: People in Prison Past Parole Eligibility,",
+      formattable::comma(proj_past_pe_count_rounded, digits = 0)
+    ),
     formattable::comma(proj_past_pe_count_rounded, digits = 0)
   ),
   
@@ -54,6 +58,8 @@ div(
   div(
     id = "national-highlight",
     tabindex = "0",
+    role = "region",
+    `aria-label` = "Infographic showing the ratio of people past parole eligibility",
     img(
       src = "img/pe_1_in_x.png", 
       alt = "Infographic showing 1 in X people are in prison past parole eligibility",
@@ -75,7 +81,7 @@ div(
     id = "bold-text",
     tabindex = "0",
     role = "region",
-    `aria-label` = "Explanation: People in Prison Past Parole Eligibility",
+    `aria-label` = "People In Prison Past Parole Eligibility",
     HTML("People In Prison Past Parole Eligibility*<br><br>")
   ),
   
@@ -83,7 +89,10 @@ div(
     id = "bold-text",
     tabindex = "0",
     role = "region",
-    `aria-label` = "Explanation: 1 in X People Past Parole Eligibility",
+    `aria-label` = paste(
+      "1 in", proj_past_pe_1_in_x,
+      "People Are Incarcerated Past Parole Eligibility"
+    ),
     HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))
   ),
   
@@ -91,11 +100,12 @@ div(
     id = "bold-text",
     tabindex = "0",
     role = "region",
-    `aria-label` = "Explanation: States With Discretionary Parole",
+    `aria-label` = "States With Discretionary Parole",
     HTML("States With Discretionary Parole**<br><br>")
   )
 )
 ```
+
 
 </div>
 <br>
