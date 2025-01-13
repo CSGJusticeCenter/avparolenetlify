@@ -1,4 +1,4 @@
-fnc_hc_pie_chart_new <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
+fnc_hc_pie_chart_new_ <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
   # Get unique states from the data
   states <- unique(df$state)
 

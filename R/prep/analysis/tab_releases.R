@@ -361,7 +361,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
   # Create a pie chart visualization
   highcharts <- highchart() |>
     hc_chart(type = "pie") |>
-    hc_title(text = paste0("Percentage of Conditional vs. Unconditional Releases")) |>
+    hc_title(text = paste0("Conditional vs. Unconditional Releases")) |>
     hc_plotOptions(pie = list(
       # Rotate the chart by 90 degrees if all releases are conditional
       startAngle = if (is_100_conditional) 90 else 0,

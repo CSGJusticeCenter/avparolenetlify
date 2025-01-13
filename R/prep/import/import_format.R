@@ -6,7 +6,7 @@
 # Description:
 #    This script handles the import, transformation, and integration of multiple
 #    datasets for the AV Parole project. It includes:
-#    - Importing and processing the hex map shapefile for the interactive map on
+#    - Importing and processing the hex map shape file for the interactive map on
 #      National Snapshot page.
 #    - Importing state-specific notes and rules for data exclusions, missingness,
 #      and projections.
@@ -88,7 +88,6 @@ states_use_other_race_eth <- state_rules |>
 # Import state-specific imputation methodology
 # The file was created by Seba Guzman (CSG Research) in Stata and contains
 # methodology details for imputing state-level parole eligibility information.
-########################################################################################### THIS WORK IS STILL IN PROCESS AND SUBJECT TO CHANGE
 state_methodology <- read_dta(file.path(sp_data_path, "data/analysis/ncrp_results/state_notes_2020.dta"))
 
 # Clean source notes of leading and trailing white space
@@ -108,7 +107,6 @@ state_methodology_clean <- state_methodology %>%
 # - "How is Parole Eligibility Determined?" information
 # - Number of parole board members
 # - Citations
-########################################################################################### THIS WORK IS STILL IN PROCESS AND SUBJECT TO CHANGE
 state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/av_parole_state_notes.csv")) |>
   clean_names() |>
   mutate(across(where(is.character), str_trim)) |>
