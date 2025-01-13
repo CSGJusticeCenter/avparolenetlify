@@ -13,7 +13,8 @@ fnc_format_citation <- function(text) {
   # Define patterns for specific titles that need italicizing
   patterns <- c(
     "Prison-Release Discretion and Prison Population Size: State Report: [A-Za-z]+",
-    "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z]+"
+    "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z]+",
+    "Profiles in Parole"
   )
 
   # Apply italic formatting to specific patterns

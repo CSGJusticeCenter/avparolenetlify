@@ -189,10 +189,7 @@ state_notes <- state_notes_raw |>
     # Remove unnecessary blank lines from the formatted output
     methodology_notes = gsub("<br><br><br>", "<br>", methodology_notes),
     citation = gsub("<br><br><br>", "<br><br>", citation)
-  ) |>
-
-  # Remove the second duplicate entry for Louisiana (if it exists)
-  filter(!(state == "Louisiana" & row_number() == which(state == "Louisiana")[2]))
+  )
 
 # Format citations and URLs
 state_notes <- state_notes |>
