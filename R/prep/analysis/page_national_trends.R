@@ -400,7 +400,7 @@ map_percent_download <- map_percent |>
   hc_chart(events = list(render = render_image),
            marginBottom = 120) |>
   hc_caption(
-    text = "National Corrections Reporting Program, 2019 and CSG Justice Center Estimates",
+    text = "National Corrections Reporting Program, 2019 and CSG Justice Center estimates",
     y = -40
   )
 map_percent_download

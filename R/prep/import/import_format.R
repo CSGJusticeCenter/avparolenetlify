@@ -543,6 +543,7 @@ invisible(lapply(names(data_files), function(obj) {
 # # ARCHIVE CODE BUT KEEP FOR NOW FOR EASY DATA LOADING
 # load(file = paste0(sp_data_path, "/data/analysis/app/projections_key_years_2010_2020.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/projections_compl_2010_2020.rds"))
+# load(file = paste0(sp_data_path, "/data/analysis/app/projections_short_2010_2020.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_not_consolidated.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_consolidated.rds"))
 # load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_releases_consolidated.rds"))
