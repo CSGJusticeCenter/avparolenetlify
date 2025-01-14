@@ -175,7 +175,7 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
 
   # Define chart title and accessibility text
-  title <- "People Released in Parole Eligibility Year vs. Past Parole Eligibility Year"
+  title <- "People Released On Parole Eligibility Year vs. Past Parole Eligibility Year"
   hc_accessibility_text <- "This stacked bar chart shows the proportion of parole-eligible people released in each year, either on or past their parole eligibility year."
 
   # Create Highcharts stacked bar chart
