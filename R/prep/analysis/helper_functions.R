@@ -732,6 +732,70 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 #' @examples
 #' sentence <- fnc_generate_projection_sentence("Georgia", pe_proj_pop)
 #' @export
+# fnc_generate_projection_sentence <- function(state_name, data) {
+#   # Filter data for the specified state
+#   state_data <- data |> filter(state == state_name)
+#
+#   # Extract years with valid percent of people past parole eligibility and projected data
+#   valid_past_years <- state_data |> filter(!is.na(pct_past_pe)) |> pull(year)
+#   valid_proj_years <- state_data |> filter(!is.na(proj_pct_past_pe)) |> pull(year)
+#
+#   # Determine earliest and latest years for original and projected data
+#   earliest_year_past <- min(valid_past_years, na.rm = TRUE) # First year with valid past data
+#   latest_year_past <- max(valid_past_years, na.rm = TRUE) # Last year with valid past data
+#   earliest_year_proj <- if (length(valid_proj_years) > 0) min(valid_proj_years, na.rm = TRUE) else NA # First projection year
+#   latest_year_proj <- if (length(valid_proj_years) > 0) max(valid_proj_years, na.rm = TRUE) else NA # Last projection year
+#
+#   # Extract percentage values for the earliest and latest past years
+#   pct_earliest <- state_data |> filter(year == earliest_year_past) |> pull(pct_past_pe)
+#   pct_latest <- state_data |> filter(year == latest_year_past) |> pull(pct_past_pe)
+#
+#   # Calculate the percentage change for past data (if available)
+#   change_past <- if (!is.na(pct_earliest) && !is.na(pct_latest)) {
+#     round(((pct_latest - pct_earliest) / pct_earliest) * 100, 0)
+#   } else NA
+#
+#   # Extract percentage values for the earliest and latest projected years
+#   proj_earliest <- if (!is.na(earliest_year_proj)) state_data |> filter(year == earliest_year_proj) |> pull(proj_pct_past_pe) else NA
+#   proj_latest <- if (!is.na(latest_year_proj)) state_data |> filter(year == latest_year_proj) |> pull(proj_pct_past_pe) else NA
+#
+#   # Calculate the percentage change for projected data (if available)
+#   change_proj <- if (!is.na(proj_earliest) && !is.na(proj_latest)) {
+#     round(((proj_latest - proj_earliest) / proj_earliest) * 100, 0)
+#   } else NA
+#
+#   # Generate a note if projections were used for specific years
+#   note <- case_when(
+#     state_data |> filter(year == 2019) |> pull(used_projected_flag) ~ " Note: 2019 data uses projections.",
+#     state_data |> filter(year == 2020) |> pull(used_projected_flag) ~ " Note: 2020 data uses projections.",
+#     TRUE ~ ""
+#   )
+#
+#   # Construct the summary sentence
+#   sentence <- paste0(
+#     "From ", earliest_year_past, " to ", latest_year_past,
+#     ", the percent of people in prison past parole eligibility ",
+#     if (!is.na(change_past)) {
+#       if (change_past > 0) paste0("increased by ", change_past, " percent. ")
+#       else if (change_past < 0) paste0("decreased by ", abs(change_past), " percent. ")
+#       else "remained the same. "
+#     } else "has insufficient data to determine a change. ",
+#     if (!is.na(earliest_year_proj) && !is.na(latest_year_proj)) {
+#       paste0(
+#         "Our projection estimates that the percent of people past their initial parole eligibility ",
+#         if (!is.na(change_proj)) {
+#           if (change_proj > 0) paste0("increased by ", change_proj, " percent from 2021 to 2023")
+#           else if (change_proj < 0) paste0("decreased by ", abs(change_proj), " percent from 2021 to 2023")
+#           else paste0("remained around ", round(proj_latest, 0), " percent from 2021 to 2023")
+#         } else "has insufficient data to project a change",
+#         "."
+#       )
+#     } else "Projected data is insufficient to provide a future change.",
+#     note
+#   )
+#
+#   return(sentence)
+# }
 fnc_generate_projection_sentence <- function(state_name, data) {
   # Filter data for the specified state
   state_data <- data |> filter(state == state_name)
@@ -760,8 +824,8 @@ fnc_generate_projection_sentence <- function(state_name, data) {
   proj_latest <- if (!is.na(latest_year_proj)) state_data |> filter(year == latest_year_proj) |> pull(proj_pct_past_pe) else NA
 
   # Calculate the percentage change for projected data (if available)
-  change_proj <- if (!is.na(proj_earliest) && !is.na(proj_latest)) {
-    round(((proj_latest - proj_earliest) / proj_earliest) * 100, 0)
+  change_proj <- if (!is.na(pct_latest) && !is.na(proj_latest)) {
+    round(((proj_latest - pct_latest) / pct_latest) * 100, 0)
   } else NA
 
   # Generate a note if projections were used for specific years
@@ -782,11 +846,11 @@ fnc_generate_projection_sentence <- function(state_name, data) {
     } else "has insufficient data to determine a change. ",
     if (!is.na(earliest_year_proj) && !is.na(latest_year_proj)) {
       paste0(
-        "Our forecasting model projects that the percentage of people past their initial parole eligibility ",
+        "Our projection estimates that the percent of people past their initial parole eligibility ",
         if (!is.na(change_proj)) {
-          if (change_proj > 0) paste0("will increase by ", change_proj, " percent")
-          else if (change_proj < 0) paste0("will decrease by ", abs(change_proj), " percent")
-          else paste0("will remain around ", round(proj_latest, 0), " percent")
+          if (change_proj > 0) paste0("increased by ", change_proj, " percent from ", latest_year_past, " to ", latest_year_proj)
+          else if (change_proj < 0) paste0("decreased by ", abs(change_proj), " percent from ", latest_year_past, " to ", latest_year_proj)
+          else paste0("remained around ", round(proj_latest, 0), " percent from ", latest_year_past, " to ", latest_year_proj)
         } else "has insufficient data to project a change",
         "."
       )
@@ -796,6 +860,7 @@ fnc_generate_projection_sentence <- function(state_name, data) {
 
   return(sentence)
 }
+
 
 #' Generate Bar Charts for Multiple States
 #'

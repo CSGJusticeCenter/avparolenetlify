@@ -215,25 +215,6 @@ all_line_pop_pe_by_year <- map(states, function(x) {
   # Filter data for the current state and prepare for charting
   df1 <- df1 |>
     complete(year = all_years, fill = list(pct_past_pe = NA, proj_pct_past_pe = NA)) # Ensure all years are included in graph
-    # mutate(
-    #   # Get the last observed value for percentage past parole eligibility
-    #   last_value_past_pe = last(na.omit(pct_past_pe)),
-    #
-    #   # Identify the first year needing projection filling (if any)
-    #   year_to_fill = if (any(!is.na(proj_pct_past_pe))) {
-    #     min(year[!is.na(proj_pct_past_pe)], na.rm = TRUE) - 1 # Fill one year before the first projected year
-    #   } else {
-    #     NA_real_
-    #   },
-    #
-    #   # Fill projected values with the last observed value for identified years
-    #   proj_pct_past_pe = if_else(
-    #     is.na(proj_pct_past_pe) & year == year_to_fill,
-    #     last_value_past_pe,
-    #     proj_pct_past_pe
-    #   )
-    # ) |>
-    # select(-last_value_past_pe, -year_to_fill) # Remove helper columns after processing
 
   # Define chart properties
   title <- "People in Prison Past Parole Eligibility by Year"
