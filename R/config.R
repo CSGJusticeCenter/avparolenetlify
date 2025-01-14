@@ -138,3 +138,22 @@ csg_source   <- "CSG Justice Center estimates"
 ncrp_source  <- "National Corrections Reporting Program"
 bjs_source   <- "BJS Prisoners in the United States"
 
+
+
+#------------------------------------------------------------------------------#
+# Logos
+#------------------------------------------------------------------------------#
+
+render_image <- JS("
+  function(){
+    this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 50, 140.1, 30)
+    .add();
+  }")
+
+render_image_print <- JS("
+  function(){
+    logo=this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 50, 140.1, 30)
+    .add(); this.print();
+  }")
+
+render_image_remove <- JS("function(){logo.element.remove();}")
