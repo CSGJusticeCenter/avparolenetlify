@@ -449,7 +449,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #' - Adds accessibility text to describe the chart for screen readers.
 #' - Outputs charts with exporting options enabled for saving.
 #' @export
-fnc_hc_pie_chart_new <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
+fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
   # Get unique states from the data
   states <- unique(df$state)
 
@@ -488,6 +488,9 @@ fnc_hc_pie_chart_new <- function(df, variable, source1 = ncrp_source, source2 = 
       )
     )
 
+    # Generate title of chart
+    title <- paste0("prison_pop_by_parelig_status_", state_name, "_", year)
+
     # Create the Highcharts pie chart
     highchart() |>
       hc_chart(type = "pie") |>
@@ -509,7 +512,6 @@ fnc_hc_pie_chart_new <- function(df, variable, source1 = ncrp_source, source2 = 
       hc_add_theme(base_hc_theme) |> # Add a base theme
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_exporting(enabled = TRUE, filename = paste0("prison_pop_by_parelig_status_", state_name, "_", year)) |>
       hc_caption(text = paste0(source1, ", ", year, " and ", source2)) |> # Add chart caption with source information
       fnc_add_hc_accessibility(accessibility_text) # Function to add accessibility text
   })

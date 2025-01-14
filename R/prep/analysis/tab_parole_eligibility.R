@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Last Updated: January 7, 2025 (MAR)
+# Last Updated: January 14, 2025 (MAR)
 # Description:
 #   This script analyzes and visualizes people in prison past parole eligibility.
 #   It prepares data for various demographic and offense-related
@@ -68,7 +68,7 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
 
 # Generate pie charts visualizing parole eligibility status proportions for each state
 # `fnc_hc_pie_chart` creates individual charts with data and accessibility text for each state
-all_pie_pe_type <- fnc_hc_pie_chart_new( ##################################################################can rename once approved
+all_pie_pe_type <- fnc_hc_pie_chart(
   df = pe_status_pop,
   variable = "parelig_status_new"
 )
