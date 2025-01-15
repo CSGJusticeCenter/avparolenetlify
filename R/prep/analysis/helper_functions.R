@@ -351,7 +351,9 @@ hc_theme_with_line <- hc_theme(
     lineColor = "black"
   ),
   yAxis = list(
-    labels = list(enabled = TRUE, style = common_style)
+    labels = list(enabled = TRUE, style = common_style),
+    gridLineColor = "lightgray", # Color of the gridlines
+    gridLineWidth = 0.5          # Width of the gridlines
   ),
   caption = list(
     align = "left",
