@@ -218,7 +218,7 @@ state_sentence_population_race <- all_sentence_population_race[[state_for_report
 
 state_bar_population_race <- apply_chart_settings(
   all_bar_population_race[[state_for_report]],
-  height = 300,
+  height = 450,
   color = color2
 )
 
@@ -226,7 +226,7 @@ state_sentence_population_sex <- all_sentence_population_sex[[state_for_report]]
 
 state_bar_population_sex <- apply_chart_settings(
   all_bar_population_sex[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color2
 )
 
@@ -234,7 +234,7 @@ state_sentence_population_ageyrend <- all_sentence_population_ageyrend[[state_fo
 
 state_bar_population_ageyrend <- apply_chart_settings(
   all_bar_population_ageyrend[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color2
 )
 
@@ -242,7 +242,7 @@ state_sentence_population_fbi_index <- all_sentence_population_fbi_index[[state_
 
 state_bar_population_fbi_index <- apply_chart_settings(
   all_bar_population_fbi_index[[state_for_report]],
-  height = 500,
+  height = 550,
   color = color2
 )
 
@@ -309,7 +309,7 @@ state_sentence_releases_race <- all_sentence_releases_race[[state_for_report]]
 
 state_bar_releases_race <- apply_chart_settings(
   all_bar_releases_race[[state_for_report]],
-  height = 300,
+  height = 450,
   color = color5
 )
 
@@ -317,7 +317,7 @@ state_sentence_releases_sex <- all_sentence_releases_sex[[state_for_report]]
 
 state_bar_releases_sex <- apply_chart_settings(
   all_bar_releases_sex[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color5
 )
 
@@ -325,7 +325,7 @@ state_sentence_releases_agerlse <- all_sentence_releases_agerlse[[state_for_repo
 
 state_bar_releases_agerlse <- apply_chart_settings(
   all_bar_releases_agerlse[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color5
 )
 
@@ -333,7 +333,7 @@ state_sentence_releases_fbi_index <- all_sentence_releases_fbi_index[[state_for_
 
 state_bar_releases_fbi_index <- apply_chart_settings(
   all_bar_releases_fbi_index[[state_for_report]],
-  height = 500,
+  height = 550,
   color = color5
 )
 
