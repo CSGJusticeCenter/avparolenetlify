@@ -146,6 +146,6 @@ bjs_source   <- "BJS Prisoners in the United States"
 
 render_image <- JS("
   function(){
-    this.renderer.image('https://avparoleproject.netlify.app/img/csgjc-logo.png', 0, this.chartHeight - 50, 140.1, 30)
+    this.renderer.image('https://avparoleproject.netlify.app/img/csgjc-logo.png', 10, this.chartHeight - 50, 140.1, 30)
     .add();
   }")
