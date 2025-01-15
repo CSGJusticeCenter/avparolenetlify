@@ -224,7 +224,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
   are past their parole eligibility year, with projections highlighted in red."
 
   # Download file title
-  download_title <- paste0(gsub(" ", "_", tolower(title)), "_")
+  download_title <- paste0(gsub(" ", "_", tolower(title)))
 
   # Space below chart to accompany logo
   bottom_margin_value <- 120
@@ -377,6 +377,8 @@ all_bar_pe_race$Hawaii
 all_sentence_pe_race$Hawaii
 all_sentence_pe_fbi_index$`New York`
 all_bar_pe_sex$Georgia
+all_bar_pe_sentlgth$Georgia
+all_bar_pe_ageyrend$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

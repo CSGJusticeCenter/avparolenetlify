@@ -613,6 +613,12 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                                " by ", tolower(metric), " in ",
                                year, " in the state of ", state_var, ".")
 
+  # Download file title
+  download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- 100
+
   # Define the x-axis order based on the data
   xaxis_order <- df1[[x_var]]
 
@@ -628,6 +634,8 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
   } else {
     ""
   }
+
+  y_caption <-
 
   # Create the Highcharts chart
   highcharts <- highchart() |>
@@ -662,16 +670,16 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |> # Add custom tooltip formatter
     hc_legend(enabled = FALSE) |> # Disable the legend
     hc_title(text = title) |> # Add the chart title
-    hc_exporting(enabled = TRUE, # Enable exporting functionality
-                 filename = paste0(gsub(" ", "_", tolower(title)), "_", year)) |>
     fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
     hc_caption(
       text = paste0(
         source1, ", ", year,
         if (!is.null(source2)) paste0(" and ", source2) else "",
         other_race_note # Add the note dynamically
-      )
-    )
+      ),
+     y = caption_y
+    ) |>
+    fnc_add_logo_and_export(download_title, bottom_margin_value)
 
   return(highcharts) # Return the generated Highchart
 }
