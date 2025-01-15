@@ -145,7 +145,7 @@ state_sentence_pe_race <- all_sentence_pe_race[[state_for_report]]
 
 state_bar_pe_race <- apply_chart_settings(
   all_bar_pe_race[[state_for_report]],
-  height = 500,
+  height = 450,
   color = color4
 )
 
