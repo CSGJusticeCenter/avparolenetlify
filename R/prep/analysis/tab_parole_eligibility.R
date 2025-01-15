@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Last Updated: January 14, 2025 (MAR)
+# Last Updated: January 15, 2025 (MAR)
 # Description:
 #   This script analyzes and visualizes people in prison past parole eligibility.
 #   It prepares data for various demographic and offense-related
@@ -216,10 +216,18 @@ all_line_pop_pe_by_year <- map(states, function(x) {
   df1 <- df1 |>
     complete(year = all_years, fill = list(pct_past_pe = NA, proj_pct_past_pe = NA)) # Ensure all years are included in graph
 
-  # Define chart properties
+  # Title
   title <- "People in Prison Past Parole Eligibility by Year"
+
+  # Accessibility text
   hc_accessibility_text <- "This chart shows the percentage of people in prison who
   are past their parole eligibility year, with projections highlighted in red."
+
+  # Download file title
+  download_title <- paste0(gsub(" ", "_", tolower(title)), "_")
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- 120
 
   # Create Highcharts object
   highchart() |>
@@ -249,11 +257,9 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = TRUE) |>
-    hc_exporting(
-      enabled = TRUE,
-      filename = paste0(gsub(" ", "_", tolower(title)), "_") # Set export file name
-    ) |>
-    hc_caption(text = paste0(ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source)) |> # Add source caption
+    hc_caption(text = paste0(ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source),
+               y = -40) |> # Add source caption
+    fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 })
 
@@ -378,7 +384,7 @@ all_bar_pe_sex$Georgia
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  ncrp_yearendpop_filtered    = "ncrp_yearendpop_filtered.rds",
+  # ncrp_yearendpop_filtered    = "ncrp_yearendpop_filtered.rds", ################################################ uncomment when done
   all_sentence_pe_type        = "all_sentence_pe_type.rds",
   all_pie_pe_type             = "all_pie_pe_type.rds",
   all_sentence_pop_pe_by_year = "all_sentence_pop_pe_by_year.rds",

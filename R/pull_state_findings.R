@@ -126,6 +126,7 @@ apply_chart_settings <- function(chart, height = NULL, color = NULL) {
 }
 
 # State-specific data assignments
+
 state_sentence_pe_type <- all_sentence_pe_type[[state_for_report]]
 
 state_pie_pe_type <- apply_chart_settings(
@@ -137,7 +138,7 @@ state_sentence_pop_pe_by_year <- all_sentence_pop_pe_by_year[[state_for_report]]
 
 state_line_pop_pe_by_year <- apply_chart_settings(
   all_line_pop_pe_by_year[[state_for_report]],
-  height = 400
+  height = 500
 )
 
 state_sentence_pe_race <- all_sentence_pe_race[[state_for_report]]
