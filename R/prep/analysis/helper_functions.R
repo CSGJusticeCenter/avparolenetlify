@@ -617,7 +617,13 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
   download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
 
   # Space below chart to accompany logo
-  bottom_margin_value <- 100
+  bottom_margin_value <- if (x_var == "race") {
+    160
+  } else if (x_var %in% c("fbi_index")) {
+    100
+  } else {
+    100
+  }
 
   # Define the x-axis order based on the data
   xaxis_order <- df1[[x_var]]
@@ -635,7 +641,14 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     ""
   }
 
-  y_caption <-
+  # Determine caption_y based on x_var
+  caption_y <- if (x_var == "race") {
+    -30
+  } else if (x_var %in% c("fbi_index")) {
+    -30
+  } else {
+    -30 # Default space for other variables
+  }
 
   # Create the Highcharts chart
   highcharts <- highchart() |>

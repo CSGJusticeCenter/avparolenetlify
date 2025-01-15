@@ -145,7 +145,7 @@ state_sentence_pe_race <- all_sentence_pe_race[[state_for_report]]
 
 state_bar_pe_race <- apply_chart_settings(
   all_bar_pe_race[[state_for_report]],
-  height = 300,
+  height = 500,
   color = color4
 )
 
@@ -153,7 +153,7 @@ state_sentence_pe_sex <- all_sentence_pe_sex[[state_for_report]]
 
 state_bar_pe_sex <- apply_chart_settings(
   all_bar_pe_sex[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color4
 )
 
@@ -161,7 +161,7 @@ state_sentence_pe_ageyrend <- all_sentence_pe_ageyrend[[state_for_report]]
 
 state_bar_pe_ageyrend <- apply_chart_settings(
   all_bar_pe_ageyrend[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color4
 )
 
@@ -169,7 +169,7 @@ state_sentence_pe_fbi_index <- all_sentence_pe_fbi_index[[state_for_report]]
 
 state_bar_pe_fbi_index <- apply_chart_settings(
   all_bar_pe_fbi_index[[state_for_report]],
-  height = 500,
+  height = 550,
   color = color4
 )
 
