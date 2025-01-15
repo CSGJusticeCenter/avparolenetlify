@@ -243,7 +243,7 @@ fnc_group_offense_type <- function(data) {
 #' @return A list of common style elements to maintain consistent appearance across visualizations.
 #' @export
 common_style <- list(
-  fontFamily = "Helvetica",
+  fontFamily = "Graphik",
   color = "black",
   fontSize = "14px",
   fontWeight = "regular"
@@ -257,7 +257,7 @@ common_style <- list(
 #' @return A list of common chart style elements for Highcharts.
 #' @export
 common_chart_style <- list(
-  fontFamily = "Helvetica",
+  fontFamily = "Graphik",
   fontSize = "14px",
   color = "black"
 )
@@ -270,7 +270,7 @@ common_chart_style <- list(
 #' @return A list of common title style elements for charts.
 #' @export
 common_title_style <- list(
-  fontFamily = "Helvetica",
+  fontFamily = "Graphik",
   fontWeight = "bold",
   color = "black"
 )
@@ -435,6 +435,48 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
     ))
 }
 
+#' Add Logo and Export Options to a Highcharter Chart
+#'
+#' This function enhances a Highcharter chart by adding export options (e.g., PNG download) and a custom logo.
+#' It configures chart exporting dependencies, style settings, and bottom margin adjustments.
+#'
+#' @param hc A Highcharter object. The chart to which export options and a logo will be added.
+#' @param title A string. The filename to use when exporting the chart.
+#' @param bottom_margin_value A numeric value. The bottom margin size for the chart in pixels.
+#'
+#' @return A modified Highcharter object with export and styling options applied.
+#'
+#' @examples
+#' library(highcharter)
+#' hc <- highchart() |>
+#'   hc_add_series(name = "Sample", data = c(1, 2, 3))
+#' hc <- fnc_add_logo_and_export(hc, title = "my_chart", bottom_margin_value = 50)
+#'
+#' @export
+fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {###############################################################################################################
+  hc |>
+    hc_add_dependency(name = "modules/exporting.js") |>
+    hc_add_dependency(name = "modules/offline-exporting.js") |>
+    hc_exporting(
+      filename = title,
+      enabled = TRUE,
+      buttons = list(contextButton = list(menuItems = list("downloadPNG"))),
+      chartOptions = list(
+        chart = list(
+          style = list(
+            style = list(fontFamily = "Helvetica, sans-serif")
+          ),
+          events = list(
+            load = render_image
+          )
+        )
+      )
+    ) |>
+    hc_chart(
+      marginBottom = bottom_margin_value
+    )
+}
+
 #' Create Highcharts Pie Chart
 #'
 #' Generates Highcharts pie charts for each state in the input data frame, visualizing
@@ -489,7 +531,8 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
     )
 
     # Generate title of chart
-    title <- paste0("prison_pop_by_parelig_status_", state_name, "_", year)
+    download_title <- paste0("prison_pop_by_parelig_status_", state_name, "_", year)
+    bottom_margin_value <- 120
 
     # Create the Highcharts pie chart
     highchart() |>
@@ -509,11 +552,13 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
           name = !!sym(variable), y, color, tooltip
         ))
       )) |>
-      hc_add_theme(base_hc_theme) |> # Add a base theme
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_caption(text = paste0(source1, ", ", year, " and ", source2)) |> # Add chart caption with source information
-      fnc_add_hc_accessibility(accessibility_text) # Function to add accessibility text
+      hc_caption(text = paste0(source1, ", ", year, " and ", source2),
+                 y = -40) |>
+      fnc_add_hc_accessibility(accessibility_text) |>
+      fnc_add_logo_and_export(download_title, bottom_margin_value) |>  # Add logo and export options
+      hc_add_theme(base_hc_theme)
   })
 
   # Assign state names to the charts list for clarity
@@ -591,7 +636,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                                     format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
                                                  fontSize = "14px",
-                                                 fontFamily = "Helvetica",
+                                                 fontFamily = "Graphik",
                                                  textOutline = 0))) |>
     hc_xAxis(categories = xaxis_order, # Set x-axis categories
              labels = list(
@@ -600,7 +645,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                formatter = JS(js_code), # Format labels with JavaScript
                style = list(
                  fontSize = "14px",
-                 fontFamily = "Helvetica",
+                 fontFamily = "Graphik",
                  textAlign = label_alignment,
                  overflow = "justify" # Prevent clipping of labels
                ),

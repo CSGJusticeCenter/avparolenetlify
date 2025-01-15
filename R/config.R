@@ -144,35 +144,8 @@ bjs_source   <- "BJS Prisoners in the United States"
 # Logos
 #------------------------------------------------------------------------------#
 
-# render_image <- JS("
-#   function(){
-#     this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 50, 140.1, 30)
-#     .add();
-#   }")
-#
-# render_image_print <- JS("
-#   function(){
-#     logo=this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 50, 140.1, 30)
-#     .add(); this.print();
-#   }")
-#
-# render_image_remove <- JS("function(){logo.element.remove();}")
 render_image <- JS("
   function(){
-    this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 70, 140.1, 30)
+    this.renderer.image('https://avparoleproject.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 37, 140.1, 30)
     .add();
-  }")
-
-render_image_print <- JS("
-  function(){
-    logo=this.renderer.image('https://csg-state-violent-crime.netlify.app/img/csgjc-logo.png', 30, this.chartHeight - 70, 140.1, 30)
-    .add(); this.print();
-  }")
-
-render_image_remove <- JS("
-  function(){
-    if (this.logo) {
-      this.logo.destroy(); // Safely remove the logo
-      this.logo = null; // Reset the reference
-    }
   }")

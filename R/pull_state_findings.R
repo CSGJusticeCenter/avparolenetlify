@@ -7,6 +7,8 @@ load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
 
 # Determine select year
 select_year <- which_overall_year |> filter(state == state_for_report) |> pull(year_to_use)
+
+# Create NCRP/CSG source
 ncrp_csg_source_year <- paste0("National Corrections Reporting Program, ", select_year, " and CSG Justice Center estimates")
 
 # Define the base additional asterisk text based on the state that weren't filtered by adm type and sentence length
@@ -46,10 +48,13 @@ no_data_text <- HTML(paste0("<div style='text-align:center;'>
 # Citations (import_format.R)
 #------------------------------------------------------------------------------#
 
+# state_notes created in import_format.R
+# Get citations
 state_citation <- state_notes |>
   filter(state == state_for_report) |>
   pull(citation)
 
+# Get estimation methodology
 state_imputation_notes <- state_notes |>
   filter(state == state_for_report) |>
   pull(methodology_notes)
@@ -63,7 +68,7 @@ parole_eligibility_criteria <- subset(state_notes,
 # Highlighted Findings (page_national_trends.R)
 #------------------------------------------------------------------------------#
 
-# Load Prepared Data
+# Load data created in page_national_trends.R
 load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
 
@@ -74,8 +79,13 @@ if (state_for_report %in% unique(parole_eligibility_table$state)) {
   state_data <- no_data_text
 }
 
+# Get projected population past PE
 proj_ppey <- parole_eligibility_table |> filter(state == state_for_report) |> pull(proj_pop_past_pey_rounded)
+
+# Get percent projected population past PE
 proj_pcnt_ppey <- parole_eligibility_table |> filter(state == state_for_report) |> pull(proj_pcnt_ppey_rounded)
+
+# Get number of parole board members
 parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report) |> pull(members)
 
 
@@ -86,7 +96,7 @@ parole_board_mem <- parole_eligibility_table |> filter(state == state_for_report
 # Parole Eligibility
 #------------------------------------------------------------------------------#
 
-# Load necessary data files
+# Load necessary data files created in tab_parole_eligiblity.R
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_pe_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pop_pe_by_year.rds"))
@@ -120,7 +130,7 @@ state_sentence_pe_type <- all_sentence_pe_type[[state_for_report]]
 
 state_pie_pe_type <- apply_chart_settings(
   all_pie_pe_type[[state_for_report]],
-  height = 300
+  height = 400
 )
 
 state_sentence_pop_pe_by_year <- all_sentence_pop_pe_by_year[[state_for_report]]
