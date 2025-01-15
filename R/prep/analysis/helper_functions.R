@@ -243,7 +243,7 @@ fnc_group_offense_type <- function(data) {
 #' @return A list of common style elements to maintain consistent appearance across visualizations.
 #' @export
 common_style <- list(
-  fontFamily = "Graphik",
+  fontFamily = "Helvetica",
   color = "black",
   fontSize = "14px",
   fontWeight = "regular"
@@ -257,7 +257,7 @@ common_style <- list(
 #' @return A list of common chart style elements for Highcharts.
 #' @export
 common_chart_style <- list(
-  fontFamily = "Graphik",
+  fontFamily = "Helvetica",
   fontSize = "14px",
   color = "black"
 )
@@ -270,7 +270,7 @@ common_chart_style <- list(
 #' @return A list of common title style elements for charts.
 #' @export
 common_title_style <- list(
-  fontFamily = "Graphik",
+  fontFamily = "Helvetica",
   fontWeight = "bold",
   color = "black"
 )
@@ -591,7 +591,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                                     format = "{point.prop_label}",
                                     style = list(fontWeight = "regular",
                                                  fontSize = "14px",
-                                                 fontFamily = "Graphik",
+                                                 fontFamily = "Helvetica",
                                                  textOutline = 0))) |>
     hc_xAxis(categories = xaxis_order, # Set x-axis categories
              labels = list(
@@ -600,7 +600,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                formatter = JS(js_code), # Format labels with JavaScript
                style = list(
                  fontSize = "14px",
-                 fontFamily = "Graphik",
+                 fontFamily = "Helvetica",
                  textAlign = label_alignment,
                  overflow = "justify" # Prevent clipping of labels
                ),
