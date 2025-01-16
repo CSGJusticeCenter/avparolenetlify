@@ -153,7 +153,7 @@ fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 
 - **Prison Populations, prior to 2023:** The number of people who are incarcerated by race, ethnicity, and sex was derived from the [Bureau of Justice Statistics (BJS) Prisoners Series](https://bjs.ojp.gov/library/publications/prisoners-2022-statistical-tables) and the [National Prisoner Statistics (NPS)](https://bjs.ojp.gov/data-collection/national-prisoner-statistics-nps). These datasets are collected annually from all 50 states and provide detailed aggregate information on prison populations for each state, including data on race and sex of people who are incarcerated. The most recent data available at the time of our analysis was for 2022.
 
-- **Prison Populations, 2023:** Our modelling approach required more recent prison population numbers than were available from the NPS, so we manually collected prison population data from state departments of corrections for 2023. These are cited on each state’s page in this web tool.
+- **Prison Populations, 2023:** Our modelling approach required more recent prison population numbers than were available from the NPS, so we manually collected prison population data from state departments of corrections for 2023.<sup>3</sup>
 
 <br>
 <div class="divider"></div>

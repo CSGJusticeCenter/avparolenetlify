@@ -49,14 +49,14 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
              parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
              parelig_status == "Future" & time_between_ped_rptyear == 1 ~ "Will Be Eligible Next Year",
              parelig_status == "Future" & time_between_ped_rptyear > 1 ~ "Will Be Eligible In 1+ Years",
-             parelig_status == "Missing" ~ "Missing Data",
+             parelig_status == "Missing" ~ "Missing Data or Possibly Never Eligible",
              TRUE ~ parelig_status),
          parelig_status_new = factor(parelig_status_new,
                                      levels = c(
                                        "Past Parole Eligibility at End of Year",
                                        "Will Be Eligible Next Year",
                                        "Will Be Eligible In 1+ Years",
-                                       "Missing Data"
+                                       "Missing Data or Possibly Never Eligible"
                                      ))
   ) |>
   group_by(state, rptyear) |>

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: import_format.R
 # Authors: Mari Roberts
-# Date last updated: December 5, 2024 (MAR)
+# Date last updated: January 16, 2025 (MAR)
 # Description:
 #    This script handles the import, transformation, and integration of multiple
 #    datasets for the AV Parole project. It includes:
@@ -162,25 +162,15 @@ state_notes <- state_notes_raw |>
     # Append a period to `matching_note` if missing
     matching_note = paste0(matching_note, "."),
 
-    # Increment superscripts for notes by 1 to align with numbering conventions:
-    # Superscript 1 (\u00B2) becomes 3 (\u00B3), and so on.
-    estimation_note = gsub("\u00B9", "\u00B3", estimation_note),
-    rules_note      = gsub("\u00B2", "\u2074", rules_note),
-    projection_note = gsub("\u00B3", "\u2075", projection_note),
-
-    # Apply the same logic to source note columns
-    source_note1 = gsub("\u00B9", "\u00B3", source_note1),
-    source_note2 = gsub("\u00B2", "\u2074", source_note2),
-    source_note3 = gsub("\u00B3", "\u2075", source_note3),
-
     # Combine all imputation methodology details into a single HTML-compatible string
+    rules_note_combined = paste(rules_note, rules_note_contd, sep = " "),
     methodology_notes = paste(estimation_note,
                               matching_note,
-                              rules_note,
-                              last_year_note,
+                              rules_note_combined,
                               manual_checks_note,
-                              year_excluded_note,
+                              last_year_note,
                               projection_note,
+                              pop_estimation_note,
                               sep = "<br><br>"),
 
     # Combine all citations into a single field for display

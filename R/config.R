@@ -101,13 +101,13 @@ options(highcharter.lang = hcoptslang)
 #------------------------------------------------------------------------------#
 
 # Colors by Eleventy
-blue <- "#55b4e5"
-teal <- "#49a7a1"
+blue      <- "#55b4e5"
+teal      <- "#49a7a1"
 lightteal <- "#b1d4d5"
-yellow <-  "#decf64"
-red <- "#d97d68"
-purple <- "#938ebf"
-brown <- "#9e6c10"
+yellow    <- "#decf64"
+red       <- "#d97d68"
+purple    <- "#938ebf"
+brown     <- "#9e6c10"
 
 # Assign numbers so colors can be changed universally
 color1 <- red
@@ -124,7 +124,7 @@ gradient3    = "#176f6d"
 gradient4    = "#104040"
 
 # Gray colors
-darkgray <- "#969696"
+darkgray  <- "#969696"
 lightgray <- "#d7d7d7"
 
 
