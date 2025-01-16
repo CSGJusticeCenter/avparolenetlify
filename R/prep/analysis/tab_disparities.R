@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_disparities.R
 # Authors: Mari Roberts
-# Last Updated: December 5, 2024 (MAR)
+# Last Updated: January 16, 2025 (MAR)
 # Description:
 #   This script analyzes and visualizes disparities in race, ethnicity, and sex,
 #   focusing on two key areas: time served and years past parole eligibility.

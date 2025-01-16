@@ -209,7 +209,7 @@ state_sentence_population <- all_sentence_population_by_year[[state_for_report]]
 
 state_line_population_by_year <- apply_chart_settings(
   all_line_population_by_year[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color2
 )
 
@@ -286,7 +286,7 @@ state_sentence_releases <- all_sentence_releases_by_year[[state_for_report]]
 
 state_line_releases_by_year <- apply_chart_settings(
   all_line_releases_by_year[[state_for_report]],
-  height = 300,
+  height = 400,
   color = color5
 )
 
@@ -294,14 +294,14 @@ state_sentence_pe_proportion_released <- all_sentence_pe_proportion_released[[st
 
 state_stackedbar_pe_release <- apply_chart_settings(
   all_stackedbar_pe_release[[state_for_report]],
-  height = 400
+  height = 450
 )
 
 state_sentence_release_type <- all_sentence_release_type[[state_for_report]]
 
 state_pie_release_type <- apply_chart_settings(
   all_pie_release_type[[state_for_report]],
-  height = 300,
+  height = 350,
   color = c(color5, color3)
 )
 

@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_releases.R
 # Authors: Mari Roberts
-# Last Updated: December 5, 2024 (MAR)
+# Last Updated: January 6, 2025 (MAR)
 # Description:
 #   This script analyzes and visualizes trends in prison releases across states
 #   and generates summary sentences and charts for key demographic and
@@ -27,7 +27,7 @@
 
 # Filter NCRP releases data to include only states with parole systems
 # Exclude states with high missingness or abolished parole (in `states_to_exclude`)
-ncrp_releases_filtered <- ncrp_releases_consolidated |> ############################# Amund, Will change to ncrp_releases_consolidated when complete
+ncrp_releases_filtered <- ncrp_releases_consolidated |>
   filter(!state %in% states_to_exclude$state)
 
 # Summarize total number of people released from prison by state and year
@@ -95,6 +95,12 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   hc_accessibility_text <- paste0("This graph shows the number of releases in ",
                                   "the state of ", x, " by year.")
 
+  # Download file title
+  download_title <- "people_released_from_prison_by_year"
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- 120
+
   # Create the Highchart
   highcharts <-
     hc <- highchart() |>
@@ -116,9 +122,10 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE) |>
     hc_colors(c(color5)) |>
-    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
+    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear)),
+               y = -40) |>
+    fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -178,6 +185,13 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   title <- "People Released On Parole Eligibility Year vs. Past Parole Eligibility Year"
   hc_accessibility_text <- "This stacked bar chart shows the proportion of parole-eligible people released in each year, either on or past their parole eligibility year."
 
+  # Download file title
+  download_title <- paste0(gsub(" ", "_", tolower(title)), "_",
+                           min(df1$rptyear), "_", max(df1$rptyear))
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- 120
+
   # Create Highcharts stacked bar chart
   highcharts <- df1 |>
     hchart(
@@ -199,17 +213,16 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
           (this.y * 100).toFixed(0) + '%</b><br/>';
       }
     ")) |>
-    hc_exporting(enabled = TRUE,
-                 filename = paste0(gsub(" ", "_", tolower(title)), "_",
-                                   min(df1$rptyear), "_", max(df1$rptyear))) |>
     hc_title(text = paste0(title, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_plotOptions(series = list(stacking = "normal",  # Enable stacking
                                  animation = FALSE,
                                  cursor = "pointer",
                                  borderWidth = 3,
                                  minPointLength = 4)) |>
-    fnc_add_hc_accessibility(hc_accessibility_text) |>
-    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear), " and ", csg_source))
+    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear), " and ", csg_source),
+               y = -40) |>
+    fnc_add_logo_and_export(download_title, bottom_margin_value) |>
+    fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
 })
@@ -358,6 +371,12 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
   # Check if 100% of the releases are "Conditional Release"
   is_100_conditional <- all(df1$reltype == "Conditional Release")
 
+  # Download file title
+  download_title <- paste0("conditional_vs_unconditional_releases_", year)
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- 120
+
   # Create a pie chart visualization
   highcharts <- highchart() |>
     hc_chart(type = "pie") |>
@@ -380,9 +399,10 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     )) |>
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color4, color2)) |>
-    hc_exporting(enabled = TRUE) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
-    hc_caption(text = paste0(ncrp_source, ", ", year)) |>
+    hc_caption(text = paste0(ncrp_source, ", ", year),
+               y = -40) |>
+    fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -441,7 +461,7 @@ ncrp_releases_race <- fnc_summarize_data(current_releases, "race") |>
   # Exclude states with high missingness for race data
   fnc_filter_exclude_high_missing_race(states_with_high_missing_race)
 ncrp_releases_sex <- fnc_summarize_data(current_releases, "sex")
-ncrp_releases_agerlse <- fnc_summarize_data(current_releases, "agerlse")  ################### Consider changing to `agerelease` if necessary
+ncrp_releases_agerlse <- fnc_summarize_data(current_releases, "agerlse")
 ncrp_releases_fbi_index <- fnc_summarize_data(current_releases, "fbi_index") |>
   # Group offenses into categories like "Violent" and "Nonviolent"
   fnc_group_offense_type()

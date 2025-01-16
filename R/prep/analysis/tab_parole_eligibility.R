@@ -258,7 +258,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = TRUE) |>
     hc_caption(text = paste0(ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source),
-               y = -40) |> # Add source caption
+               y = -30) |> # Add source caption
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 })
@@ -386,7 +386,7 @@ all_bar_pe_ageyrend$Georgia
 
 # Define the data objects and their corresponding file names
 data_files <- list(
-  # ncrp_yearendpop_filtered    = "ncrp_yearendpop_filtered.rds", ################################################ uncomment when done
+  #ncrp_yearendpop_filtered    = "ncrp_yearendpop_filtered.rds", ################################################ uncomment when done
   all_sentence_pe_type        = "all_sentence_pe_type.rds",
   all_pie_pe_type             = "all_pie_pe_type.rds",
   all_sentence_pop_pe_by_year = "all_sentence_pop_pe_by_year.rds",

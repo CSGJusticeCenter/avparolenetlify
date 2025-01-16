@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_population.R
 # Authors: Mari Roberts
-# Last Updated: December 5, 2024 (MAR)
+# Last Updated: January 16, 2025 (MAR)
 # Description:
 #   This script analyzes and visualizes trends in the prison population across
 #   states and generates summary sentences and charts for key demographic and
@@ -115,6 +115,13 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
   # Define the chart title
   title <- "Prison Population by Year"
 
+  # Download file title
+  download_title <- paste0(gsub(" ", "_", tolower(title)), "_",
+                           min(df1$rptyear), "-", max(df1$rptyear))
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- 120
+
   # Create the Highchart
   highcharts <-
     hc <- highchart() |>
@@ -136,11 +143,10 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
-    hc_exporting(enabled = TRUE,
-                 filename = paste0(gsub(" ", "_", tolower(title)), "_",
-                                   min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_caption(text = paste0(bjs_source, ", ",
-                             min(df1$rptyear), "-", max(df1$rptyear))) |>
+                             min(df1$rptyear), "-", max(df1$rptyear)),
+               y = -40) |>
+    fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
   return(highcharts)
@@ -256,6 +262,7 @@ all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 all_bar_population_race$Georgia
 all_bar_population_sex$Georgia
 all_bar_population_ageyrend$Georgia
+all_bar_population_sentlgth$Georgia
 all_sentence_population_fbi_index$`New York`
 all_sentence_population_fbi_index$Georgia
 
