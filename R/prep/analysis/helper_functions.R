@@ -466,7 +466,7 @@ fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {###########
       chartOptions = list(
         chart = list(
           style = list(
-            style = list(fontFamily = "Helvetica, sans-serif")
+            style = list(fontFamily = "Helvetica")
           ),
           events = list(
             load = render_image
