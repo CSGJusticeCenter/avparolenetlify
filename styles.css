@@ -9,16 +9,19 @@ nav {
 }
 
 /* If enabled, they would remove the margin and padding of the entire page and hide scrollbars */
+/*
 html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
+*/
 
 /* If enabled, this would allow vertical scrolling in the main content area */
+/*
 #main-content {
   overflow-y: auto;
-}
+}*/
 
 #toc, .toc, .toc-container {
     display: none;  /* Hides the TOC */
