@@ -1,22 +1,24 @@
+/* Hide navigation bar */
+nav {
+    display: none;
+    position: absolute;
+    visibility: hidden;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+}
 
-/******************************************************************************/
-/* Overview */
-/******************************************************************************/
-
-/* html, body {
+/* If enabled, they would remove the margin and padding of the entire page and hide scrollbars */
+html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
-*/
-/* These styles are commented out. If enabled, they would remove the margin and padding of the entire page and hide scrollbars */
 
-/*
+/* If enabled, this would allow vertical scrolling in the main content area */
 #main-content {
   overflow-y: auto;
 }
-*/
-/* Commented out, but if enabled, this would allow vertical scrolling in the main content area */
 
 #toc, .toc, .toc-container {
     display: none;  /* Hides the TOC */
@@ -39,27 +41,6 @@ body {
   padding: 0; /* Removes padding */
 }
 
-/*
-@media (max-width: 768px) {
-
-  .nav-tabs {
-    display: block;
-    width: 100%;
-  }
-
-  .nav-tabs .nav-item {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-
-  .nav-tabs .nav-link {
-    width: 100%;
-    text-align: center;
-  }
-}
-*/
-
-
 /* Container styling */
 .container {
   width: 100%; /* Sets container to full width */
@@ -73,8 +54,6 @@ body {
 * {
   border-radius: 0!important; /* Ensures no element has rounded corners */
 }
-
-
 
 
 /* .download-button {
@@ -144,7 +123,6 @@ html,
 body {
   font-family: 'Graphik', sans-serif; /* Applies Graphik font globally */
   color: black!important; /* Forces text color to be black */
-  /* background-color: lightblue; */ /* Commented out background color */
 }
 
 
