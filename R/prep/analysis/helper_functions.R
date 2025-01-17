@@ -563,7 +563,7 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
       hc_caption(text = paste0(source1, ", ", year, " and ", source2),
                  y = -40) |>
-      fnc_add_hc_accessibility(accessibility_text) |>
+      # fnc_add_hc_accessibility(accessibility_text) |>
       #hc_add_theme(base_hc_theme) |>
       fnc_add_logo_and_export(download_title, bottom_margin_value)  # Add logo and export options
   })
