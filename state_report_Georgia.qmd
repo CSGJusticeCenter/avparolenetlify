@@ -22,46 +22,7 @@ state_for_report <- "Georgia"
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")
 source("R/pull_state_findings.R")
-
-# Function to display data and sentences
-# Display no data if data is missing
-fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualization", final_text = no_data_text) {
-  # Check if both sentence and chart are missing
-  no_data <- is.null(sentence) || is.null(chart) 
-  
-  # Display the sentence and chart if available
-  if (!no_data) {
-    cat(sentence)
-    div(id = chart_type, chart)
-  } else {
-    # Show "no data" message only once if both are missing
-    final_text
-  }
-}
 ```
-
-<div id="state-body-section">
-
-```{r highlight}
-div(
-  id = "grid-container",
-  style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
-  div(id = "highlight-text", formattable::comma(proj_ppey, digits = 0)),
-  div(id = "highlight-text", paste0(round(proj_pcnt_ppey, 0), "%")),
-  div(id = "highlight-text", formattable::comma(parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: center;", 
-      HTML("People In Prison Past<br>Parole Eligibility*")),
-  div(id = "bold-text", style = "text-align: center;", 
-      HTML("Prison Population Incarcerated<br>Past Parole Eligibility")),
-  div(id = "bold-text", style = "text-align: center;", 
-      HTML("Parole Board<br>Members<sup style='font-size: 0.5em;'>1</sup>"))
-)
-```
-
-<br>
-<div id="asterisk-section"> `r additional_asterisks_combined` </div><br>
-
-::: {.panel-tabset .nav-pills}
  
 # Parole Eligibility
 
@@ -96,30 +57,11 @@ hc |>
   )
 ```
 
-
-## How Parole Eligibility Is Determined
-
-Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Often, there is a minimum term a person must serve before becoming parole eligible. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
-
-`r paste(parole_eligibility_criteria, collapse = ", ")`
-
-<br>
-<div class="divider"></div>
-
 ## In Prison Past Parole Eligibility
 
 ```{r}
 all_pie_pe_type[[state_for_report]]
 ```
-
-<br>
-<div class="divider"></div>
-
-:::
-
-</div>
- 
-
 
 
 
