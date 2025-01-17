@@ -130,6 +130,16 @@ hc |>
   )
 ```
 
+
+## How Parole Eligibility Is Determined
+
+Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Often, there is a minimum term a person must serve before becoming parole eligible. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
+
+`r paste(parole_eligibility_criteria, collapse = ", ")`
+
+<br>
+<div class="divider"></div>
+
 ---
 title: "`r state_for_report`"
 ---
