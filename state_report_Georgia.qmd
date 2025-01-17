@@ -109,7 +109,7 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 ## In Prison Past Parole Eligibility
 
 ```{r}
-state_pie_pe_type
+all_pie_pe_type[[state_for_report]]
 ```
 
 <br>
