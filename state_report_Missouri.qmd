@@ -141,7 +141,7 @@ fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 
 - **Parole-Eligible Individual:** A person who is serving a sentence for a criminal offense who remains incarcerated past their PEY. This excludes individuals who were returned to prison from parole and people with life sentences or sentences of less than one year.
 
-- **Projections:** Statistical models used to estimate future values based on historical trends. Here, projections estimate the number of people incarcerated past their parole eligibility date in 2023, based on trends from 2010 to 2020.
+- **Projections:** Statistical models used to estimate future values based on historical trends. Here, projections estimate the number of people incarcerated past their parole eligibility date in 2023, based on trends from 2010 to 2020. 
 
 - **Racial Disparities:** Racial disparities refer to measurable differences in outcomes, access, or treatment between racial or ethnic groups. Racial disparities have many causes and are manifested in statistics like arrest rates, sentencing lengths, and prison populations. Racial disparities should not be confused with individual acts of racism or prejudice. While individual bias can contribute to disparities, these patterns exist at a systemic level across institutions.
 
