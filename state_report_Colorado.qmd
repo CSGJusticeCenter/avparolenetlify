@@ -139,7 +139,7 @@ fnc_display_sentence_chart(state_sentence_pe_sentlgth, state_bar_pe_sentlgth)
 
 - **Parole Eligibility Year (PEY):** The first year in which a person is eligible for discretionary parole, determined by state-specific sentencing practices. PEY reflects the point at which a person who is incarcerated can be considered for release, though it does not guarantee release. If a parole board has discretion to set that date, PEY is the first year that the board can set a hearing.
 
-- **Potential Parole-Eligible Individual:** A person who is serving a sentence for a criminal offense who remains incarcerated past their PEY. This excludes individuals who were returned to prison from parole and people with life sentences or sentences of less than one year.
+- **Parole-Eligible Individual:** A person who is serving a sentence for a criminal offense who remains incarcerated past their PEY. This excludes individuals who were returned to prison from parole and people with life sentences or sentences of less than one year.
 
 - **Projections:** Statistical models used to estimate future values based on historical trends. Here, projections estimate the number of people incarcerated past their parole eligibility date in 2023, based on trends from 2010 to 2020.
 
