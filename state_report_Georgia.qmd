@@ -56,11 +56,11 @@ hc |>
     style = list(fontWeight = 400, fontFamily = "Times New Roman")
   )
 ```
-
+ 
 ## In Prison Past Parole Eligibility
 
 ```{r}
-all_pie_pe_type[[state_for_report]]
+# all_pie_pe_type[[state_for_report]]
 ```
 
 
