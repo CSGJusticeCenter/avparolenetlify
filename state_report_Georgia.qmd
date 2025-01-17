@@ -109,8 +109,8 @@ Parole eligibility refers to the point in a person's prison sentence when they b
 ## In Prison Past Parole Eligibility
 
 ```{r results = 'asis', state_sentence_pe_type}
-fnc_display_sentence_chart(state_sentence_pe_type, state_pie_pe_type); br()
-fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_line_pop_pe_by_year)
+# fnc_display_sentence_chart(state_sentence_pe_type, state_pie_pe_type); br()
+# fnc_display_sentence_chart(state_sentence_pop_pe_by_year, state_line_pop_pe_by_year)
 ```
 
 <br>
