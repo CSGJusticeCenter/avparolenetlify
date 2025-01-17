@@ -13,6 +13,8 @@ format:
 ```{r setup, include=FALSE}
 # Load config file and pregenerated sentences and visualizations
 source("R/config.R")
+state_for_report <- "Georgia"
+source("R/pull_state_findings.R")
 ```
 
 # Parole Eligibility
