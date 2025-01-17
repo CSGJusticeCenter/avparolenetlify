@@ -1,7 +1,6 @@
 ---
 format:
   html:
-    css: styles.css
     embed-resources: TRUE
     code-fold: true
     page-layout: full
