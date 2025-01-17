@@ -78,13 +78,6 @@ body {
   display: none !important;
 }
 
-/* Download button hover - keep for now
-.download-button:hover {
-  background-color: #d97d68;
-  color: black;
-}*/
-
-
 /* Ensures code blocks are responsive on smaller screens */
 pre {
   white-space: pre-wrap;       /* Allows code blocks to wrap to fit the screen */
