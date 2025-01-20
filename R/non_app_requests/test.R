@@ -306,8 +306,8 @@ fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg
       )) |>
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_caption(text = paste0(source1, ", ", year, " and ", source2)
-                 #y = -40
+      hc_caption(text = paste0(source1, ", ", year, " and ", source2),
+                 y = -40
                  ) |>
       fnc_add_hc_accessibility1(accessibility_text) |>
       hc_add_theme(base_hc_theme) |>
