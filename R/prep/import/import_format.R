@@ -79,6 +79,17 @@ states_national_page_only <- state_rules |>
 states_use_other_race_eth <- state_rules |>
   filter(use_other_race_ethnicity == 1)
 
+# States that are missing data:
+# 1) "Missing data" includes individuals for whom parole eligibility information
+#     is unavailable and could not be estimated due to other data also missing,
+#     such as admission year or maximum sentence length.
+# 2) "Missing, possibly due to eligibility rules" includes individuals for whom
+#     parole eligibility information is unavailable and could not be estimated.
+#     This could be because due to the state's eligibility rules they may have
+#     never been eligible, or because other data was also missing, such as
+#     admission year or maximum sentence length."
+states_missing_data <- state_rules |>
+  select(state, missing_due_to_rules)
 
 #------------------------------------------------------------------------------#
 # State-Specific Notes for "How is Parole Eligibility Determined?" and
@@ -192,6 +203,8 @@ states_abolished_parole <- state_notes |>
   filter(abolished_parole == "Y") |>
   select(state)
 
+
+
 #------------------------------------------------------------------------------#
 # Projections
 #------------------------------------------------------------------------------#
@@ -236,6 +249,7 @@ states_to_exclude <- states_with_high_missing |>
   bind_rows(states_abolished_parole) |> # Combine with another dataset containing states that abolished parole
   distinct() |>  # Ensure unique entries after combining the data
   filter(state != "Michigan") # Make sure Michigan is included
+
 
 
 #------------------------------------------------------------------------------#
@@ -522,6 +536,7 @@ data_files <- list(
   states_with_high_missing_race    = "states_with_high_missing_race.rds",
   states_national_page_only        = "states_national_page_only.rds",
   states_use_other_race_eth        = "states_use_other_race_eth.rds",
+  states_missing_data              = "states_missing_data.rds",
   which_overall_year               = "which_overall_year.rds"
 )
 

@@ -243,7 +243,7 @@ fnc_add_logo_and_export1 <- function(hc, title, bottom_margin_value) {
 #' - Adds accessibility text to describe the chart for screen readers.
 #' - Outputs charts with exporting options enabled for saving.
 #' @export
-fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg_source) {
+fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg_source, missing_data_df) {
   # Get unique states from the data
   states <- unique(df$state)
   states <- "Georgia"
@@ -256,9 +256,20 @@ fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg
       mutate(color = case_when( # Assign colors based on parole eligibility status
         parelig_status_new == "Will Be Eligible In 1+ Year" ~ color2,
         parelig_status_new == "Will Be Eligible Next Year" ~ color3,
-        parelig_status_new == "Missing Data or Possibly Never Eligible" ~ darkgray,
+        parelig_status_new == "Missing Data" ~ darkgray, # Adjusted for "Missing Data"
+        parelig_status_new == "Missing, Possibly Due to Eligibility Rules" ~ darkgray, # Adjusted for "Missing, Possibly Due to Eligibility Rules"
         parelig_status_new == "Past Parole Eligibility at End of Year" ~ color4
       ))
+
+    # Missing data text depending on state
+    missing_data_text <- missing_data_df |>
+      filter(state == state_name) |>
+      mutate(missing_data_text = ifelse(
+        missing_due_to_rules == 0,
+        "Missing, Possibly Due to Eligibility Rules: This includes individuals for whom parole eligibility information is unavailable and could not be estimated. This could be because, due to the state's eligibility rules, they may have never been eligible, or because other data was also missing, such as admission year or maximum sentence length.",
+        "Missing Data: This includes individuals for whom parole eligibility information is unavailable and could not be estimated due to other missing data, such as admission year or maximum sentence length."
+      )) |>
+      pull(missing_data_text)
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
     year <- unique(df1$rptyear)
@@ -306,8 +317,9 @@ fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg
       )) |>
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_caption(text = paste0(source1, ", ", year, " and ", source2),
-                 y = -40
+      hc_caption(text = paste0("Source: ", source1, ", ", year, " and ", source2, ".<br>",
+                               missing_data_text)
+                 #y = -0
                  ) |>
       fnc_add_hc_accessibility1(accessibility_text) |>
       hc_add_theme(base_hc_theme) |>
@@ -324,7 +336,8 @@ fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg
 # `fnc_hc_pie_chart1` creates individual charts with data and accessibility text for each state
 all_pie_pe_type <- fnc_hc_pie_chart1(
   df = pe_status_pop,
-  variable = "parelig_status_new"
+  variable = "parelig_status_new",
+  missing_data_df = states_missing_data
 )
 
 all_pie_pe_type$Georgia
