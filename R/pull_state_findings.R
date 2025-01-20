@@ -131,7 +131,7 @@ state_sentence_pe_type <- all_sentence_pe_type[[state_for_report]]
 
 state_pie_pe_type <- apply_chart_settings(
   all_pie_pe_type[[state_for_report]],
-  height = 300
+  height = 350
 )
 
 state_sentence_pop_pe_by_year <- all_sentence_pop_pe_by_year[[state_for_report]]
