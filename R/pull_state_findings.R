@@ -5,7 +5,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/states_undercounted.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
 
-# Determine select year
+# Determine select year depending on state
 select_year <- which_overall_year |> filter(state == state_for_report) |> pull(year_to_use)
 
 # Create NCRP/CSG source
@@ -49,7 +49,7 @@ no_data_text <- HTML(paste0("<div style='text-align:center;'>
 #------------------------------------------------------------------------------#
 
 # state_notes created in import_format.R
-# Get citations
+# Get citations; state notes created in import_format.R
 state_citation <- state_notes |>
   filter(state == state_for_report) |>
   pull(citation)
@@ -60,6 +60,8 @@ state_imputation_notes <- state_notes |>
   pull(methodology_notes)
 
 # TITLE: How is Parole Eligibility Determined?
+# Release Systems by State Doc is where release_systems from and they were added
+# to state_notes so they are in csv format.
 parole_eligibility_criteria <- subset(state_notes,
                                       state == state_for_report)$release_systems
 
@@ -125,13 +127,11 @@ apply_chart_settings <- function(chart, height = NULL, color = NULL) {
   return(chart)
 }
 
-# State-specific data assignments
-
 state_sentence_pe_type <- all_sentence_pe_type[[state_for_report]]
 
 state_pie_pe_type <- apply_chart_settings(
   all_pie_pe_type[[state_for_report]],
-  height = 400
+  height = 300
 )
 
 state_sentence_pop_pe_by_year <- all_sentence_pop_pe_by_year[[state_for_report]]
@@ -190,17 +190,14 @@ state_bar_pe_sentlgth <- apply_chart_settings(
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_population_by_year.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_ageyrend.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_ageyrend.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_fbi_index.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_fbi_index.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_population_sentlgth.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_population_sentlgth.rds"))
 
@@ -265,20 +262,16 @@ state_bar_population_sentlgth <- apply_chart_settings(
 
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_by_year.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_line_releases_by_year.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_release_type.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_pie_release_type.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_pe_proportion_released.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_stackedbar_pe_release.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_agerlse.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_agerlse.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_releases_fbi_index.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_bar_releases_fbi_index.rds"))
 
@@ -336,13 +329,6 @@ state_bar_releases_fbi_index <- apply_chart_settings(
   height = 550,
   color = color5
 )
-
-
-
-
-
-
-
 
 
 
@@ -412,7 +398,6 @@ load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_ra
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_sex.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_past_pe_race.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_lollipop_avg_past_pe_sex.rds"))
-
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_race_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_sentence_avg_past_pe_sex_offense.rds"))
 load(file = paste0(sp_data_path, "/data/analysis/app/all_scatter_avg_past_pe_race_offense.rds"))

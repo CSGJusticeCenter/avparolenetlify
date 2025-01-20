@@ -455,7 +455,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #' hc <- fnc_add_logo_and_export(hc, title = "my_chart", bottom_margin_value = 50)
 #'
 #' @export
-fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {###############################################################################################################
+fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {
   hc |>
     hc_add_dependency(name = "modules/exporting.js") |>
     hc_add_dependency(name = "modules/offline-exporting.js") |>
@@ -466,9 +466,16 @@ fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {###########
       chartOptions = list(
         chart = list(
           style = list(fontFamily = "Helvetica"),
-          events = list(
-            load = render_image
-          )
+          events = list(load = render_image)
+        ),
+        title = list(
+          style = list(fontFamily = "Helvetica")
+        ),
+        subtitle = list(
+          style = list(fontFamily = "Helvetica")
+        ),
+        caption = list(
+          style = list(fontFamily = "Helvetica")
         )
       )
     ) |>
@@ -561,8 +568,8 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
       hc_caption(text = paste0(source1, ", ", year, " and ", source2),
                  y = -40) |>
-      # fnc_add_hc_accessibility(accessibility_text) |>
-      # hc_add_theme(base_hc_theme) |>
+      fnc_add_hc_accessibility(accessibility_text) |>
+      hc_add_theme(base_hc_theme) |>
       fnc_add_logo_and_export(download_title, bottom_margin_value)  # Add logo and export options
   })
 
