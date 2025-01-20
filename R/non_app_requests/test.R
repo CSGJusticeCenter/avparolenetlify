@@ -1,6 +1,6 @@
 render_image <- JS("
   function(){
-    this.renderer.image('https://avparoleproject.netlify.app/img/csgjc-logo.png', 10, this.chartHeight - 30, 140.1, 30)
+    this.renderer.image('https://avparoleproject.netlify.app/img/csgjc-logo.png', 10, this.chartHeight - 0, 140.1, 30)
     .add();
   }")
 
