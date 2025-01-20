@@ -262,14 +262,22 @@ fnc_hc_pie_chart1 <- function(df, variable, source1 = ncrp_source, source2 = csg
       ))
 
     # Missing data text depending on state
-    missing_data_text <- missing_data_df |>
-      filter(state == state_name) |>
+    missing_data <- missing_data_df |>
+      filter(state == state_name)
+
+    missing_data_text <- missing_data |>
       mutate(missing_data_text = ifelse(
-        missing_due_to_rules == 0,
+        missing_due_to_rules == 1,
         "Missing, Possibly Due to Eligibility Rules: This includes individuals for whom parole eligibility information is unavailable and could not be estimated. This could be because, due to the state's eligibility rules, they may have never been eligible, or because other data was also missing, such as admission year or maximum sentence length.",
         "Missing Data: This includes individuals for whom parole eligibility information is unavailable and could not be estimated due to other missing data, such as admission year or maximum sentence length."
       )) |>
       pull(missing_data_text)
+
+    # Change missing data category depending on state
+    df1 <- df1 |>
+      mutate(parelig_status_new = if_else(missing_data$missing_due_to_rules == 0,
+                                          "Missing Data", "Missing Data Due to Eligibility Rules"
+      ))
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
     year <- unique(df1$rptyear)
