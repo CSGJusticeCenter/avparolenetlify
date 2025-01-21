@@ -123,7 +123,8 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
     hc_colors(c(color5)) |>
-    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear)),
+    hc_caption(text = paste0("Source: ", ncrp_source, ", ", min(df1$rptyear), "-",
+                             max(df1$rptyear), "."),
                y = -40) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
@@ -219,7 +220,8 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
                                  cursor = "pointer",
                                  borderWidth = 3,
                                  minPointLength = 4)) |>
-    hc_caption(text = paste0(ncrp_source, ", ", min(df1$rptyear), "-", max(df1$rptyear), " and ", csg_source),
+    hc_caption(text = paste0("Source: ", ncrp_source, ", ", min(df1$rptyear), "-",
+                             max(df1$rptyear), " and ", csg_source, "."),
                y = -40) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
@@ -400,7 +402,7 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color4, color2)) |>
     hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
-    hc_caption(text = paste0(ncrp_source, ", ", year),
+    hc_caption(text = paste0("Source: ", ncrp_source, ", ", year, "."),
                y = -40) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
@@ -506,7 +508,7 @@ for (category in categories) {
     data       = category$data,
     x_var      = category$x_var,
     metric     = category$metric,
-    type_desc  = "released from prison",
+    type       = "released from prison",
     title_type = "People Released from Prison",
     y_var      = "prop",
     source1    = category$source1,
@@ -516,7 +518,7 @@ for (category in categories) {
   all_sentence_releases[[category$x_var]] <- fnc_generate_sentences(
     data      = category$data,
     x_var     = category$x_var,
-    type_desc = "released from prison"
+    type      = "released from prison"
   )
 }
 

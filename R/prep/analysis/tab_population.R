@@ -143,9 +143,9 @@ all_line_population_by_year <- map(.x = states, .f = function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = FALSE) |>
-    hc_caption(text = paste0(bjs_source, ", ",
-                             min(df1$rptyear), "-", max(df1$rptyear)),
-               y = -40) |>
+    hc_caption(text = paste0("Source: ", bjs_source, ", ",
+                             min(df1$rptyear), "-", max(df1$rptyear), "."),
+               y = -30) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
@@ -231,7 +231,7 @@ for (category in categories) {
     data       = category$data,
     x_var      = category$x_var,
     metric     = category$metric,
-    type_desc  = "the prison population",
+    type       = "the prison population",
     title_type = "People in Prison",
     y_var      = "prop",
     source1    = category$source1,
@@ -242,7 +242,7 @@ for (category in categories) {
   all_sentence_population[[category$x_var]] <- fnc_generate_sentences(
     data      = category$data,
     x_var     = category$x_var,
-    type_desc = "in prison"
+    type      = "in prison"
   )
 }
 
@@ -259,10 +259,11 @@ all_bar_population_fbi_index      <- all_bar_population[["fbi_index"]]
 all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 
 # Example states:
+all_bar_population_sentlgth$Georgia
 all_bar_population_race$Georgia
 all_bar_population_sex$Georgia
 all_bar_population_ageyrend$Georgia
-all_bar_population_sentlgth$Georgia
+all_bar_population_sentlgth$Arkansas
 all_sentence_population_fbi_index$`New York`
 all_sentence_population_fbi_index$Georgia
 

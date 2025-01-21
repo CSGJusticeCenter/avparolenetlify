@@ -507,7 +507,6 @@ fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {
 fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_source, missing_data_df) {
   # Get unique states from the data
   states <- unique(df$state)
-  states <- "Georgia"
   # Iterate over each state to generate pie charts
   all_pie_charts <- map(states, function(state_name) {
     # Filter the data for the current state
@@ -587,12 +586,12 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
       hc_caption(text = paste0("Source: ", source1, ", ", year, " and ", source2, ".<br>",
-                               missing_data_text)
-                 #y = -0
-      ) |>
-      fnc_add_hc_accessibility1(accessibility_text) |>
+                               missing_data_text),
+                 y = -30
+                 ) |>
+      fnc_add_hc_accessibility(accessibility_text) |>
       hc_add_theme(base_hc_theme) |>
-      fnc_add_logo_and_export1(download_title, bottom_margin_value)  # Add logo and export options
+      fnc_add_logo_and_export(download_title, bottom_margin_value)  # Add logo and export options
   })
 
   # Assign state names to the charts list for clarity
@@ -600,7 +599,6 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
 
   return(all_pie_charts)
 }
-
 
 #' Generate Projection Sentence for Past Parole Eligibility Trends
 #'
@@ -742,7 +740,7 @@ fnc_hc_columnchart <- function(state_var,
     160
   } else if (x_var %in% c("fbi_index")) {
     100
-  } else if (type == "the prison population" & x_var %in% c("sentlgth")) {
+  } else if (x_var %in% c("sentlgth")) {
     160
   } else {
     100
@@ -769,13 +767,13 @@ fnc_hc_columnchart <- function(state_var,
     -30
   } else if (x_var %in% c("fbi_index")) {
     -30
-  # } else if (type == "the prison population" & x_var %in% c("sentlgth")) {
-  #   20
+  } else if (x_var %in% c("sentlgth")) {
+    -30
   } else {
     -30 # Default space for other variables
   }
 
-  # Create the Highcharts chart
+  # Create the highcharts chart
   highcharts <- highchart() |>
     hc_add_series(df1, # Add the data series
                   type = chart_type, # Use bar or column based on orientation
@@ -810,9 +808,9 @@ fnc_hc_columnchart <- function(state_var,
     hc_title(text = title) |> # Add the chart title
     fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
     hc_caption(
-      text = paste0(
+      text = paste0("Source: ",
         source1, ", ", year,
-        if (!is.null(source2)) paste0(" and ", source2) else "",
+        if (!is.null(source2)) paste0(" and ", source2) else "", ".",
         other_race_note # Add the note dynamically
       ),
       y = caption_y
@@ -830,7 +828,7 @@ fnc_hc_columnchart <- function(state_var,
 #' @param data A data frame containing the data to visualize, with a `state` column.
 #' @param x_var A string representing the variable to use on the x-axis (e.g., "fbi_index").
 #' @param metric A string representing the label for the metric being visualized.
-#' @param type_desc A string describing the type of data (e.g., "Releases" or "Admissions").
+#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
 #' @param title_type A string representing the title prefix for the chart.
 #' @param y_var A string representing the variable to use on the y-axis (default: "prop").
 #' @param source A string providing the source information for the chart caption.
@@ -841,7 +839,7 @@ fnc_hc_columnchart <- function(state_var,
 #' @examples
 #' charts <- fnc_generate_bar_charts(data, "fbi_index", "Crime Type", "Releases", "Release Trends", "prop", "CSG Data Source")
 #' @export
-fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, y_var = "prop", source1, source2 = NULL) {
+fnc_generate_bar_charts <- function(data, x_var, metric, type, title_type, y_var = "prop", source1, source2 = NULL) {
   # Extract unique states from the data
   states <- unique(data$state)
 
@@ -858,7 +856,7 @@ fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, 
       x_var       = x_var,        # X-axis variable
       y_var       = y_var,        # Y-axis variable (default: "prop")
       metric      = metric,       # Metric label
-      type        = type_desc,    # Type description (e.g., "Releases")
+      type        = type,         # Type description (e.g., "Releases")
       title_type  = title_type,   # Title prefix
       orientation = orientation,  # Determine horizontal or vertical orientation
       source1     = source1,      # Source 1
@@ -877,14 +875,14 @@ fnc_generate_bar_charts <- function(data, x_var, metric, type_desc, title_type, 
 #'
 #' @param data A data frame containing the data to summarize, with a `state` column.
 #' @param x_var A string representing the variable to summarize (e.g., "fbi_index").
-#' @param type_desc A string describing the type of data (e.g., "Releases" or "Admissions").
+#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
 #' @return A named list of sentences, one for each state.
 #' @details
 #' - Uses `fnc_generate_columnchart_sentence` to create state-specific summaries.
 #' @examples
 #' sentences <- fnc_generate_sentences(data, "fbi_index", "Releases")
 #' @export
-fnc_generate_sentences <- function(data, x_var, type_desc) {
+fnc_generate_sentences <- function(data, x_var, type) {
   # Extract unique states from the data
   states <- unique(data$state)
 
@@ -895,7 +893,7 @@ fnc_generate_sentences <- function(data, x_var, type_desc) {
       state_var = state_name, # Current state
       df        = data,       # Filtered data
       x_var     = x_var,      # X-axis variable for grouping
-      type      = type_desc   # Type description (e.g., "Releases")
+      type      = type        # Type description (e.g., "Releases")
     )
   })
 
@@ -950,15 +948,6 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
   # Download file title
   download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
 
-  # Space below chart to accompany logo
-  bottom_margin_value <- if (x_var == "race") {
-    160
-  } else if (x_var %in% c("fbi_index")) {
-    100
-  } else {
-    100
-  }
-
   # Define the x-axis order based on the data
   xaxis_order <- df1[[x_var]]
 
@@ -980,8 +969,21 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     -30
   } else if (x_var %in% c("fbi_index")) {
     -30
+  } else if (x_var %in% c("sentlgth") & type == "the prison population") {
+    -20
   } else {
     -30 # Default space for other variables
+  }
+
+  # Space below chart to accompany logo
+  bottom_margin_value <- if (x_var == "race") {
+    160
+  } else if (x_var %in% c("fbi_index")) {
+    100
+  } else if (x_var %in% c("sentlgth") & type == "the prison population") {
+    130
+  } else {
+    100
   }
 
   # Create the Highcharts chart
@@ -1019,9 +1021,9 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_title(text = title) |> # Add the chart title
     fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
     hc_caption(
-      text = paste0(
+      text = paste0("Source: ",
         source1, ", ", year,
-        if (!is.null(source2)) paste0(" and ", source2) else "",
+        if (!is.null(source2)) paste0(" and ", source2) else "", ".",
         other_race_note # Add the note dynamically
       ),
       y = caption_y
@@ -1039,7 +1041,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 #' @param state_var A string representing the state name or code.
 #' @param df A data frame containing data to summarize, with a `state` column.
 #' @param x_var A string representing the variable to summarize (e.g., "fbi_index").
-#' @param type_desc A string describing the type of data (e.g., "Releases" or "Admissions").
+#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
 #' @return A string summarizing trends or distributions for the specified state and variable.
 #' @details
 #' - Handles special cases for `fbi_index`, `sex`, age-related variables, and sentence length.
@@ -1048,7 +1050,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
 #' @examples
 #' sentence <- fnc_generate_columnchart_sentence("Georgia", data, "fbi_index", "Releases")
 #' @export
-fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
+fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
   # Filter the data for the specified state and arrange by proportion in descending order
   df1 <- df |>
     filter(state == state_var) |>
@@ -1120,10 +1122,10 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
 
     # Construct the final sentence for "fbi_index"
     sentences <- paste0(
-      violent_prop, " percent of people ", type_desc,
+      violent_prop, " percent of people ", type,
       " were in prison for violent offenses and ",
       nonviolent_prop, " percent for nonviolent offenses. ",
-      "The most common offense ", type_word, " among people ", type_desc,
+      "The most common offense ", type_word, " among people ", type,
       " were ", top_sentence_final, ".")
   }
   # Special handling for age-related variables
@@ -1131,7 +1133,7 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
     age_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
     sentences <- paste0(
       round(df1$prop[1], 0),
-      " percent of people ", type_desc, " were between the ages of ",
+      " percent of people ", type, " were between the ages of ",
       age_range[1], " and ", age_range[2], " old.")
   }
   # Special handling for sentence length variables
@@ -1139,14 +1141,14 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type_desc) {
     sent_range <- strsplit(as.character(df1[[x_var]][1]), "-")[[1]]
     sentences <- paste0(
       round(df1$prop[1], 0),
-      " percent of people ", type_desc, " had sentence lengths between ",
+      " percent of people ", type, " had sentence lengths between ",
       sent_range[1], " and ", sent_range[2], ".")
   }
   # General case for other variables
   else {
     sentences <- paste0(
       round(df1$prop[1], 0),
-      " percent of people ", type_desc, " were ",
+      " percent of people ", type, " were ",
       df1[[x_var]][1], ".")
   }
 
@@ -1329,9 +1331,9 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
       hc_legend(layout = "horizontal", verticalAlign = "top") |>
       hc_add_theme(base_hc_theme) |>
       hc_caption(
-        text = paste0(
+        text = paste0("Source: ",
           source1, ", ", year,
-          if (!is.null(source2)) paste0(" and ", source2) else ""
+          if (!is.null(source2)) paste0(" and ", source2) else "", "."
         ),
         y = -20
       ) |>
@@ -1455,9 +1457,9 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
 
   # Add axes, themes, and captions
   caption_text <- if (!is.null(second_source)) {
-    paste0(source, ", ", year, " and ", second_source)
+    paste0("Source: ", source, ", ", year, " and ", second_source, ".")
   } else {
-    paste0(source, ", ", year)
+    paste0("Source: ", source, ", ", year, ".")
   }
 
   # Download file title

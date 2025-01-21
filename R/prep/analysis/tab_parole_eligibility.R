@@ -70,13 +70,15 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
 # `fnc_hc_pie_chart` creates individual charts with data and accessibility text for each state
 all_pie_pe_type <- fnc_hc_pie_chart(
   df = pe_status_pop,
-  variable = "parelig_status_new"
+  variable = "parelig_status_new",
+  missing_data_df = states_missing_data
 )
 
 # State example:
 all_pie_pe_type$Connecticut
 all_pie_pe_type$Georgia
-all_pie_pe_type$Michigan
+all_pie_pe_type$Hawaii
+all_pie_pe_type$Maryland
 
 # Generate summary sentences for each state describing parole eligibility proportions
 #  "Most recent data shows that 69 percent of people in prison were eligible for
@@ -257,7 +259,7 @@ all_line_pop_pe_by_year <- map(states, function(x) {
     ) |>
     hc_add_theme(hc_theme_with_line) |>
     hc_legend(enabled = TRUE) |>
-    hc_caption(text = paste0(ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source),
+    hc_caption(text = paste0("Source: ", ncrp_source, ", ", min(df1$year), "-", max_year, " and ", csg_source, "."),
                y = -30) |> # Add source caption
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
@@ -342,7 +344,7 @@ for (category in categories) {
     data       = category$data,                                    # Data for the current category
     x_var      = category$x_var,                                   # X-axis variable (e.g., race, sex)
     metric     = category$metric,                                  # Metric label (e.g., "Race and Ethnicity")
-    type_desc  = "the prison population past parole eligibility",  # Description of the data type
+    type       = "the prison population past parole eligibility",  # Description of the data type
     title_type = "People in Prison Past Parole Eligibility",       # Chart title prefix
     y_var      = "prop",                                           # Y-axis variable
     source1    = category$source1,                                 # Source 1 (NCRP)
@@ -353,7 +355,7 @@ for (category in categories) {
   all_sentence_pe[[category$x_var]] <- fnc_generate_sentences(
     data      = category$data,                       # Data for the current category
     x_var     = category$x_var,                      # X-axis variable
-    type_desc = "in prison past parole eligibility"  # Description of the data type
+    type      = "in prison past parole eligibility"  # Description of the data type
   )
 }
 

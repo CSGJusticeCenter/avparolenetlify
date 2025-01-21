@@ -80,14 +80,7 @@ walk(states, fnc_replace_write_qmd)
 
 # Step 5) Render all pages and launch site - takes ~15 min to run
 log_info("Rendering all Quarto pages...")
-tryCatch(
-  {
-    quarto::quarto_render()
-    log_success("Quarto rendering completed successfully.")
-  },
-  error = function(e) {
-    log_error("Error during Quarto rendering: {e$message}")
-  }
-)
 
+quarto::quarto_render()
+log_success("Quarto rendering completed successfully.")
 log_info("Script completed.")
