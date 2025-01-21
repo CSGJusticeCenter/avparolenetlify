@@ -418,7 +418,7 @@ state_sentence_avg_past_pe_sex <- all_sentence_avg_past_pe_sex[[state_for_report
 
 state_lollipop_avg_past_pe_sex <- apply_chart_settings(
   all_lollipop_avg_past_pe_sex[[state_for_report]],
-  height = 150
+  height = 175
 )
 
 state_sentence_avg_past_pe_race_offense <- all_sentence_avg_past_pe_race_offense[[state_for_report]]
@@ -461,7 +461,7 @@ state_sentence_los_sex <- all_sentence_los_sex[[state_for_report]]
 
 state_lollipop_los_sex <- apply_chart_settings(
   all_lollipop_los_sex[[state_for_report]],
-  height = 150
+  height = 175
 )
 
 state_sentence_los_sex_offense <- all_sentence_los_sex_offense[[state_for_report]]
