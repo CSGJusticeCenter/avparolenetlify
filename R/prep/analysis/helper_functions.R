@@ -1467,7 +1467,7 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
                            year)
 
   # Space below chart to accompany logo
-  bottom_margin_value <- 50
+  bottom_margin_value <- 70
 
   # Add axes, themes, and captions
   highcharts <- highcharts |>
@@ -1501,7 +1501,7 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
     hc_legend(enabled = FALSE) |>
     hc_size(height = height) |>
     hc_caption(text = caption_text,
-               y = -5) |>
+               y = -20) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(accessibility_text)
 
