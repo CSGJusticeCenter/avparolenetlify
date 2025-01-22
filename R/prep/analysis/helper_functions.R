@@ -559,7 +559,7 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
 
     # Generate title of chart
     download_title <- paste0("prison_pop_by_parelig_status_", state_name, "_", year)
-    bottom_margin_value <- 130
+    bottom_margin_value <- 120
 
     # Create the Highcharts pie chart
     highchart() |>
@@ -583,7 +583,7 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
       hc_caption(text = paste0("Source: ", source1, ", ", year, " and ", source2, ".<br>",
                                missing_data_text),
-                 y = -40
+                 y = -30
                  ) |>
       fnc_add_hc_accessibility(accessibility_text) |>
       hc_add_theme(base_hc_theme) |>
