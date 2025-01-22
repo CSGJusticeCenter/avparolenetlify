@@ -15,7 +15,7 @@ ncrp_csg_source_year <- paste0("National Corrections Reporting Program, ", selec
 additional_asterisks_text <- if (state_for_report %in% states_nofilter$state) {
   "*Projection based on 2023 prison population. Includes people in prison with any admission type or sentence length."
 } else {
-  "*Projection based on 2023 prison population. This and other figures regarding people past parole eligibility includes people in prison with sentences of more than one year who have not already been released on parole and excludes people with life sentences."
+  "*Projection based on 2023 prison population. This and other figures regarding people past parole eligibility include people in prison with sentences of more than one year who have not already been released on parole and excludes people with life sentences."
 }
 
 # Define the secondary asterisk text based on the states that were likely undercounted

@@ -112,7 +112,6 @@ fnc_display_sentence_chart(state_sentence_pe_ageyrend, state_bar_pe_ageyrend,
 
 :::
 
-<br>
 <div class="divider"></div>
 
 ## Offense Types
@@ -216,7 +215,6 @@ fnc_display_sentence_chart(state_sentence_population_ageyrend, state_bar_populat
 
 :::
 
-<br>
 <div class="divider"></div>
 
 ## Offense Types
@@ -299,7 +297,6 @@ fnc_display_sentence_chart(state_sentence_releases_agerlse, state_bar_releases_a
 
 :::
   
-<br>
 <div class="divider"></div>
 
 ## Offense Types

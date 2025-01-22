@@ -327,10 +327,10 @@ ncrp_yearendpop_consolidated_combined <- fnc_combine_files(yearendpop_consolidat
 # Transform the data to align with state-specific rules for parole eligibility
 # This step standardizes the data format for releases and year-end populations based on state-specific earliest parole eligibility dates.
 # Final data sets are either consolidated or not consildated. Consolidated are used the most throughout the tool
-ncrp_releases_not_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_combined, states_earliest_pe)
-ncrp_releases_consolidated       <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined, states_earliest_pe)
-ncrp_yearendpop_not_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_combined, states_earliest_pe)
-ncrp_yearendpop_consolidated     <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined, states_earliest_pe)
+ncrp_releases_not_consolidated   <- fnc_transform_ncrp_data(ncrp_releases_combined)
+ncrp_releases_consolidated       <- fnc_transform_ncrp_data(ncrp_releases_consolidated_combined)
+ncrp_yearendpop_not_consolidated <- fnc_transform_ncrp_data(ncrp_yearendpop_combined)
+ncrp_yearendpop_consolidated     <- fnc_transform_ncrp_data(ncrp_yearendpop_consolidated_combined)
 
 # Calculate time served for non-consolidated release data
 # Adds a new variable `time_between_admission_release` by calculating the difference between the release year and admission year

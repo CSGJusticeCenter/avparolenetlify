@@ -168,7 +168,7 @@ ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
     prop = n / sum(n),  # Calculate proportion of releases for each group
     estimated_pey_status = case_when(
       estimated_pey_status == "past" ~ "Past Parole Eligibility",
-      estimated_pey_status == "current_year" ~ "On Parole Eligibility"
+      estimated_pey_status == "current_year" ~ "In Parole Eligibility"
     )
   ) |>
   filter(rptyear >= 2010 & rptyear <= year_to_use)  # Include data from 2010 onwards up to the year by state
@@ -183,7 +183,7 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
 
   # Define chart title and accessibility text
-  title <- "People Released On Parole Eligibility Year vs. Past Parole Eligibility Year"
+  title <- "People Released In Parole Eligibility Year vs. Past Parole Eligibility Year"
   hc_accessibility_text <- "This stacked bar chart shows the proportion of parole-eligible people released in each year, either on or past their parole eligibility year."
 
   # Download file title

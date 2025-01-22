@@ -152,20 +152,14 @@ fnc_create_admtype <- function(df) {
 #' and categorizing key fields. It is used to clean and prepare NCRP datasets for further analysis.
 #'
 #' @param df A data frame containing NCRP data to be transformed.
-#' @param states_to_update A vector of state names where specific variables should be updated.
 #' @return A transformed version of the input data frame with standardized and categorized variables.
 #' @details
 #' - Updates variables such as `estimated_pey_status` and `sentlgth`.
 #' - Handles missing data, categorizes offense types and admission types, and applies age group transformations.
 #' - Factors variables like `race` and `sentlgth` for consistent ordering in analysis.
 #' @export
-fnc_transform_ncrp_data <- function(df, states_to_update) {
+fnc_transform_ncrp_data <- function(df) {
   print("Transforming NCRP data...")
-
-  # Ensure that `states_to_update` is available
-  if (!exists("states_to_update")) {
-    stop("The object 'states_to_update' is not defined in the global environment.")
-  }
 
   # Define the columns to transform if they exist in the dataset
   columns_to_check <- c("race", "sex", "admtype", "sentlgth", "offdetail")
@@ -191,8 +185,6 @@ fnc_transform_ncrp_data <- function(df, states_to_update) {
   # Begin transformations
   df <- df |>
     mutate(
-      # Update estimated parole eligibility status for specific states
-      estimated_pey_status = if_else(state %in% states_to_update, earliest_pey1_status, estimated_pey_status), ################ CHECK WITH SEBA
       sentlgth_raw = sentlgth, # Backup original sentence length
       offdetail = trimws(offdetail), # Trim whitespace from offense details
       time_between_ped_rptyear = as.numeric(years_to_estimated_pey), # Rename and convert years to numeric
