@@ -76,10 +76,6 @@ all_pie_pe_type <- fnc_hc_pie_chart(
 
 # State example:
 all_pie_pe_type$Arkansas
-all_pie_pe_type$Connecticut
-all_pie_pe_type$Georgia
-all_pie_pe_type$Hawaii
-all_pie_pe_type$Maryland
 
 # Generate summary sentences for each state describing parole eligibility proportions
 #  "Most recent data shows that 69 percent of people in prison were eligible for

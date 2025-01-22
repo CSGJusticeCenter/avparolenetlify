@@ -462,7 +462,6 @@ fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {
       chartOptions = list(
         chart = list(
           style = list(fontFamily = "Helvetica"),
-          #marginBottom = bottom_margin_value,
           events = list(load = render_image)
         ),
         title = list(
@@ -473,6 +472,14 @@ fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {
         ),
         caption = list(
           style = list(fontFamily = "Helvetica")
+        ),
+        xAxis = list(
+          labels = list(style = list(fontFamily = "Helvetica")),
+          title = list(style = list(fontFamily = "Helvetica"))
+        ),
+        yAxis = list(
+          labels = list(style = list(fontFamily = "Helvetica")),
+          title = list(style = list(fontFamily = "Helvetica"))
         )
       )
     ) |>
