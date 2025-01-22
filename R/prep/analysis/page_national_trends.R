@@ -363,7 +363,7 @@ map_percent <- highchart(height = 625) |>
     style = list(fontSize = "1.75em", fontWeight = "bold")
   ) |>
   hc_caption(
-    text = "National Corrections Reporting Program, 2019 and CSG Justice Center Estimates",
+    text = "National Corrections Reporting Program, 2019 and CSG Justice Center estimates",
     y = 0
   ) |>
 
