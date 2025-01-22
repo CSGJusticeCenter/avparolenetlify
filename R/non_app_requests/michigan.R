@@ -60,3 +60,46 @@ mi_pe_status_pop <- ncrp_yearendpop_filtered |>
 
 table(mi_pe_status_pop$estimated_pey_status_new)
 table(mi_pe_status_pop$estimated_pey_status)
+
+
+# Funciton for filtering
+fnc_filter_pe_population_criteria <- function(data, exclude) {
+  # Extract the list of states to exclude (e.g., due to missing data or abolished parole)
+  exclude <- exclude |> pull(state)
+
+  # Apply filtering criteria to the data
+  # 1. Exclude states in the `exclude` list
+  # 2. For other states:
+  #    - Filter individuals with "New court commitment" as `admtype`
+  #    - Include only those with sentence lengths of 1+ years, excluding life sentences
+  filtered_data <- data |>
+    filter(!(state %in% exclude)) |>
+    filter(
+       !(admtype %in% c("Other", "Parole return/revocation"))
+      #  !(sentlgth %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death"))
+    )
+
+  # Return the filtered dataset
+  return(filtered_data)
+}
+
+
+# Original file - ncrp_yearendpop_consolidated
+michigan1 <- ncrp_yearendpop_consolidated |> filter(state == "Michigan") |> filter(rptyear == 2017)
+
+ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(data = ncrp_yearendpop_consolidated,
+                                                              exclude = states_to_exclude)
+
+# Filtered file
+michigan2 <- ncrp_yearendpop_filtered |> filter(state == "Michigan") |> filter(rptyear == 2017)
+
+nrow(michigan1)
+nrow(michigan2)
+
+table(michigan1$sentlgth)
+table(michigan2$sentlgth)
+
+table(michigan1$admtype)
+table(michigan2$admtype)
+
+

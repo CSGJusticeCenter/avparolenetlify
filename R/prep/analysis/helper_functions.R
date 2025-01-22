@@ -669,7 +669,7 @@ fnc_generate_projection_sentence <- function(state_name, data) {
     } else "has insufficient data to determine a change. ",
     if (!is.na(earliest_year_proj) && !is.na(latest_year_proj)) {
       paste0(
-        "Our projection estimates that the percent of people past their initial parole eligibility ",
+        "Our projection model estimated that the percent of people past their initial parole eligibility ",
         if (!is.na(change_proj)) {
           if (change_proj > 0) paste0("increased by ", change_proj, " percent from ", latest_year_past, " to ", latest_year_proj)
           else if (change_proj < 0) paste0("decreased by ", abs(change_proj), " percent from ", latest_year_past, " to ", latest_year_proj)
@@ -682,226 +682,6 @@ fnc_generate_projection_sentence <- function(state_name, data) {
   )
 
   return(sentence)
-}
-
-#' Create Highcharts Column or Bar Chart
-#'
-#' Generates a Highcharts column or bar chart for a specific state, visualizing
-#' metrics like percentages or proportions by a given variable.
-#'
-#' @param state_var The state for which the chart is being created.
-#' @param df A data frame containing the data for multiple states.
-#' @param x_var The variable to use on the x-axis.
-#' @param y_var The variable to use on the y-axis (e.g., percentages or proportions).
-#' @param metric A label for the variable being visualized (e.g., "Race").
-#' @param type The type of data being visualized (e.g., "Releases").
-#' @param title_type A title prefix for the chart (e.g., "Prison Population").
-#' @param source A string providing the source information for the chart caption (default: `ncrp_csg_source`).
-#' @param orientation The orientation of the chart ("vertical" for column, "horizontal" for bar).
-#' @return A Highcharts object visualizing the data for the specified state.
-#' @details
-#' - Adjusts orientation and label alignment based on the `orientation` parameter.
-#' - Includes accessibility text and exporting functionality.
-#' @export
-fnc_hc_columnchart <- function(state_var,
-                               df,
-                               x_var,
-                               y_var,
-                               metric,
-                               type,
-                               title_type,
-                               source1,
-                               source2 = NULL,
-                               orientation = "vertical") {
-
-  # Filter the data for the specified state
-  df1 <- df |>
-    filter(state == state_var) |> # Filter by state
-    fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var)) # Add tooltips for better interactivity
-
-  # Extract the reporting year for the state
-  year <- unique(df1$rptyear)
-
-  # Conditionally arrange data by proportions for certain variables
-  if (x_var %in% c("race", "fbi_index", "sex")) {
-    df1 <- df1 |> arrange(desc(prop)) # Arrange by descending proportions
-  }
-
-  # Construct the chart title
-  title <- paste0(title_type, " by ", metric)
-
-  # Generate accessibility text describing the chart
-  accessibility_text <- paste0("This graph shows the percentage of ", type,
-                               " by ", tolower(metric), " in ",
-                               year, " in the state of ", state_var, ".")
-
-  # Download file title
-  download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
-
-  # Space below chart to accompany logo
-  bottom_margin_value <- if (x_var == "race") {
-    160
-  } else if (x_var %in% c("fbi_index")) {
-    100
-  } else if (x_var %in% c("sentlgth")) {
-    160
-  } else {
-    100
-  }
-
-  # Define the x-axis order based on the data
-  xaxis_order <- df1[[x_var]]
-
-  # Determine chart type based on orientation
-  chart_type <- ifelse(orientation == "horizontal", "bar", "column")
-
-  # Adjust label alignment for horizontal orientation
-  label_alignment <- ifelse(orientation == "horizontal", "right", "center")
-
-  # Check if "Other race(s), non-Hispanic" exists in the x-axis variable
-  other_race_note <- if (x_var == "race" && any(df1[[x_var]] == "Other race(s), non-Hispanic")) {
-    "<br><br>According to the NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race."
-  } else {
-    ""
-  }
-
-  # Determine caption_y based on x_var
-  caption_y <- if (x_var == "race") {
-    -30
-  } else if (x_var %in% c("fbi_index")) {
-    -30
-  } else if (x_var %in% c("sentlgth")) {
-    -30
-  } else {
-    -30 # Default space for other variables
-  }
-
-  # Create the highcharts chart
-  highcharts <- highchart() |>
-    hc_add_series(df1, # Add the data series
-                  type = chart_type, # Use bar or column based on orientation
-                  hcaes(x = !!sym(x_var), y = !!sym(y_var)), # Map x and y variables
-                  dataLabels = list(enabled = TRUE, # Enable data labels
-                                    format = "{point.prop_label}",
-                                    style = list(fontWeight = "regular",
-                                                 fontSize = "14px",
-                                                 fontFamily = "Graphik",
-                                                 textOutline = 0))) |>
-    hc_xAxis(categories = xaxis_order, # Set x-axis categories
-             labels = list(
-               useHTML = TRUE,
-               enabled = TRUE,
-               formatter = JS(js_code), # Format labels with JavaScript
-               style = list(
-                 fontSize = "14px",
-                 fontFamily = "Graphik",
-                 textAlign = label_alignment,
-                 overflow = "justify" # Prevent clipping of labels
-               ),
-               x = ifelse(orientation == "horizontal", -10, 0) # Add padding only for horizontal orientation
-             )
-    ) |>
-    hc_yAxis(max = 100, # Set y-axis maximum to 100% for proportions
-             labels = list(
-               formatter = JS("function() { return this.value + '%'; }") # Append % to y-axis labels
-             )) |>
-    hc_add_theme(base_hc_theme) |> # Apply the base theme
-    hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |> # Add custom tooltip formatter
-    hc_legend(enabled = FALSE) |> # Disable the legend
-    hc_title(text = title) |> # Add the chart title
-    fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
-    hc_caption(
-      text = paste0("Source: ",
-        source1, ", ", year,
-        if (!is.null(source2)) paste0(" and ", source2) else "", ".",
-        other_race_note # Add the note dynamically
-      ),
-      y = caption_y
-    ) |>
-    fnc_add_logo_and_export(download_title, bottom_margin_value)
-
-  return(highcharts) # Return the generated Highchart
-}
-
-#' Generate Bar Charts for Multiple States
-#'
-#' Creates a collection of bar charts for each state based on the input data,
-#' visualizing a specified metric grouped by a given variable.
-#'
-#' @param data A data frame containing the data to visualize, with a `state` column.
-#' @param x_var A string representing the variable to use on the x-axis (e.g., "fbi_index").
-#' @param metric A string representing the label for the metric being visualized.
-#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
-#' @param title_type A string representing the title prefix for the chart.
-#' @param y_var A string representing the variable to use on the y-axis (default: "prop").
-#' @param source A string providing the source information for the chart caption.
-#' @return A named list of Highcharts bar or column charts, one for each state.
-#' @details
-#' - Automatically determines the orientation (horizontal or vertical) based on the `x_var`.
-#' - Passes the source and orientation dynamically to the chart creation function.
-#' @examples
-#' charts <- fnc_generate_bar_charts(data, "fbi_index", "Crime Type", "Releases", "Release Trends", "prop", "CSG Data Source")
-#' @export
-fnc_generate_bar_charts <- function(data, x_var, metric, type, title_type, y_var = "prop", source1, source2 = NULL) {
-  # Extract unique states from the data
-  states <- unique(data$state)
-
-  # Generate charts for each state
-  charts <- map(states, function(state_name) {
-    # Determine chart orientation dynamically
-    # Offense type, use horizontal bars
-    orientation <- if (x_var == "fbi_index") "horizontal" else "vertical"
-
-    # Call the column chart creation function for each state
-    fnc_hc_columnchart(
-      state_var   = state_name,   # Current state
-      df          = data,         # Filtered data
-      x_var       = x_var,        # X-axis variable
-      y_var       = y_var,        # Y-axis variable (default: "prop")
-      metric      = metric,       # Metric label
-      type        = type,         # Type description (e.g., "Releases")
-      title_type  = title_type,   # Title prefix
-      orientation = orientation,  # Determine horizontal or vertical orientation
-      source1     = source1,      # Source 1
-      source2     = source2       # Source 2
-    )
-  })
-
-  # Assign state names to the generated charts
-  setNames(charts, states)
-}
-
-#' Generate Summary Sentences for Multiple States
-#'
-#' Creates a collection of summary sentences for each state based on the input data,
-#' describing trends or distributions for a specified variable.
-#'
-#' @param data A data frame containing the data to summarize, with a `state` column.
-#' @param x_var A string representing the variable to summarize (e.g., "fbi_index").
-#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
-#' @return A named list of sentences, one for each state.
-#' @details
-#' - Uses `fnc_generate_columnchart_sentence` to create state-specific summaries.
-#' @examples
-#' sentences <- fnc_generate_sentences(data, "fbi_index", "Releases")
-#' @export
-fnc_generate_sentences <- function(data, x_var, type) {
-  # Extract unique states from the data
-  states <- unique(data$state)
-
-  # Generate sentences for each state
-  sentences <- map(states, function(state_name) {
-    # Call the sentence generation function for each state
-    fnc_generate_columnchart_sentence(
-      state_var = state_name, # Current state
-      df        = data,       # Filtered data
-      x_var     = x_var,      # X-axis variable for grouping
-      type      = type        # Type description (e.g., "Releases")
-    )
-  })
-
-  # Assign state names to the generated sentences
-  setNames(sentences, states)
 }
 
 #' Create Highcharts Column or Bar Chart
@@ -1004,7 +784,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
              labels = list(
                useHTML = TRUE,
                enabled = TRUE,
-               formatter = JS(js_code), # Format labels with JavaScript
+               # formatter = JS(js_code), # Format labels with JavaScript
                style = list(
                  fontSize = "14px",
                  fontFamily = "Graphik",
@@ -1025,15 +805,96 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
     hc_caption(
       text = paste0("Source: ",
-        source1, ", ", year,
-        if (!is.null(source2)) paste0(" and ", source2) else "", ".",
-        other_race_note # Add the note dynamically
+                    source1, ", ", year,
+                    if (!is.null(source2)) paste0(" and ", source2) else "", ".",
+                    other_race_note # Add the note dynamically
       ),
       y = caption_y
     ) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value)
 
   return(highcharts) # Return the generated Highchart
+}
+
+#' Generate Bar Charts for Multiple States
+#'
+#' Creates a collection of bar charts for each state based on the input data,
+#' visualizing a specified metric grouped by a given variable.
+#'
+#' @param data A data frame containing the data to visualize, with a `state` column.
+#' @param x_var A string representing the variable to use on the x-axis (e.g., "fbi_index").
+#' @param metric A string representing the label for the metric being visualized.
+#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
+#' @param title_type A string representing the title prefix for the chart.
+#' @param y_var A string representing the variable to use on the y-axis (default: "prop").
+#' @param source A string providing the source information for the chart caption.
+#' @return A named list of Highcharts bar or column charts, one for each state.
+#' @details
+#' - Automatically determines the orientation (horizontal or vertical) based on the `x_var`.
+#' - Passes the source and orientation dynamically to the chart creation function.
+#' @examples
+#' charts <- fnc_generate_bar_charts(data, "fbi_index", "Crime Type", "Releases", "Release Trends", "prop", "CSG Data Source")
+#' @export
+fnc_generate_bar_charts <- function(data, x_var, metric, type, title_type, y_var = "prop", source1, source2 = NULL) {
+  # Extract unique states from the data
+  states <- unique(data$state)
+
+  # Generate charts for each state
+  charts <- map(states, function(state_name) {
+    # Determine chart orientation dynamically
+    # Offense type, use horizontal bars
+    orientation <- if (x_var == "fbi_index") "horizontal" else "vertical"
+
+    # Call the column chart creation function for each state
+    fnc_hc_columnchart(
+      state_var   = state_name,   # Current state
+      df          = data,         # Filtered data
+      x_var       = x_var,        # X-axis variable
+      y_var       = y_var,        # Y-axis variable (default: "prop")
+      metric      = metric,       # Metric label
+      type        = type,         # Type description (e.g., "Releases")
+      title_type  = title_type,   # Title prefix
+      orientation = orientation,  # Determine horizontal or vertical orientation
+      source1     = source1,      # Source 1
+      source2     = source2       # Source 2
+    )
+  })
+
+  # Assign state names to the generated charts
+  setNames(charts, states)
+}
+
+#' Generate Summary Sentences for Multiple States
+#'
+#' Creates a collection of summary sentences for each state based on the input data,
+#' describing trends or distributions for a specified variable.
+#'
+#' @param data A data frame containing the data to summarize, with a `state` column.
+#' @param x_var A string representing the variable to summarize (e.g., "fbi_index").
+#' @param type A string describing the type of data (e.g., "Releases" or "Admissions").
+#' @return A named list of sentences, one for each state.
+#' @details
+#' - Uses `fnc_generate_columnchart_sentence` to create state-specific summaries.
+#' @examples
+#' sentences <- fnc_generate_sentences(data, "fbi_index", "Releases")
+#' @export
+fnc_generate_sentences <- function(data, x_var, type) {
+  # Extract unique states from the data
+  states <- unique(data$state)
+
+  # Generate sentences for each state
+  sentences <- map(states, function(state_name) {
+    # Call the sentence generation function for each state
+    fnc_generate_columnchart_sentence(
+      state_var = state_name, # Current state
+      df        = data,       # Filtered data
+      x_var     = x_var,      # X-axis variable for grouping
+      type      = type        # Type description (e.g., "Releases")
+    )
+  })
+
+  # Assign state names to the generated sentences
+  setNames(sentences, states)
 }
 
 #' Generate a Column Chart Summary Sentence
