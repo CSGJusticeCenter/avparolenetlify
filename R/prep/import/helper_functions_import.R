@@ -138,7 +138,7 @@ fnc_create_admtype <- function(df) {
   df <- df |>
     mutate(admtype = case_when(
       admtype == "Other admission (including unsentenced, transfer, AWOL/escapee return)" ~ "Other",
-      is.na(admtype) ~ "Unknown",
+      is.na(admtype) | admtype == "NA" ~ "Unknown",
       TRUE ~ admtype
     ))
 

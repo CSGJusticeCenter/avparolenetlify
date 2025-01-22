@@ -49,14 +49,14 @@ pe_status_pop <- ncrp_yearendpop_filtered |>
              parelig_status == "Current" ~ "Past Parole Eligibility at End of Year",
              parelig_status == "Future" & time_between_ped_rptyear == 1 ~ "Will Be Eligible Next Year",
              parelig_status == "Future" & time_between_ped_rptyear > 1 ~ "Will Be Eligible In 1+ Years",
-             parelig_status == "Missing" ~ "Missing Data or Possibly Never Eligible",
+             parelig_status == "Missing" ~ "Missing Data",
              TRUE ~ parelig_status),
          parelig_status_new = factor(parelig_status_new,
                                      levels = c(
                                        "Past Parole Eligibility at End of Year",
                                        "Will Be Eligible Next Year",
                                        "Will Be Eligible In 1+ Years",
-                                       "Missing Data or Possibly Never Eligible"
+                                       "Missing Data"
                                      ))
   ) |>
   group_by(state, rptyear) |>
@@ -75,6 +75,7 @@ all_pie_pe_type <- fnc_hc_pie_chart(
 )
 
 # State example:
+all_pie_pe_type$Arkansas
 all_pie_pe_type$Connecticut
 all_pie_pe_type$Georgia
 all_pie_pe_type$Hawaii

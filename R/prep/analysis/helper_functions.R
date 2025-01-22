@@ -35,16 +35,12 @@ fnc_filter_pe_population_criteria <- function(data, exclude, dont_filter) {
   # 2. For other states:
   #    - Filter individuals with "New court commitment" as `admtype`
   #    - Include only those with sentence lengths of 1+ years, excluding life sentences
-  #    - Skip filtering entirely for states in the `dont_filter` list
+  #    - Skip filtering entirely for states in the `dont_filter` list --- removed for now but keep just in case
   filtered_data <- data |>
-    filter(!(state %in% exclude)) |> # Exclude states with missing data or no parole system
+    filter(!(state %in% exclude)) |>
     filter(
-      (state %in% dont_filter) | # Include states in dont_filter without further filtering
-        # (admtype == "New court commitment" & # Filter for "New court commitment" admission type
-        #    sentlgth %in% c("1-1.9 years", "2-4.9 years", # Include specific sentence length categories
-        #                    "5-9.9 years", "10-24.9 years", ">=25 years"))
-        !(admtype %in% c("Other", "Parole return/revocation") | is.na(admtype) | admtype == "Unknown") &
-        !(sentlgth %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death") | is.na(sentlgth) | sentlgth == "Unknown")
+        !(admtype %in% c("Other", "Parole return/revocation")) &
+        !(sentlgth %in% c("< 1 year", "Life, LWOP, Life plus additional years, Death"))
     )
 
   # Return the filtered dataset
@@ -517,7 +513,6 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
         parelig_status_new == "Will Be Eligible In 1+ Year" ~ color2,
         parelig_status_new == "Will Be Eligible Next Year" ~ color3,
         parelig_status_new == "Missing Data" ~ darkgray, # Adjusted for "Missing Data"
-        parelig_status_new == "Missing, Possibly Due to Eligibility Rules" ~ darkgray, # Adjusted for "Missing, Possibly Due to Eligibility Rules"
         parelig_status_new == "Past Parole Eligibility at End of Year" ~ color4
       ))
 
@@ -533,11 +528,12 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       )) |>
       pull(missing_data_text)
 
-    # Change missing data category depending on state
-    df1 <- df1 |>
-      mutate(parelig_status_new = if_else(missing_data$missing_due_to_rules == 0,
-                                          "Missing Data", "Missing Data Due to Eligibility Rules"
-      ))
+    # # Change missing data category depending on state
+    # df1 <- df1 |>
+    #   mutate(parelig_status_new = case_when(missing_data$missing_due_to_rules == 0 ~ "Missing Data",
+    #                                         missing_data$missing_due_to_rules == 1 ~ "Missing Data Due to Eligibility Rules",
+    #                                         TRUE ~ parelig_status_new
+    #   ))
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
     year <- unique(df1$rptyear)
