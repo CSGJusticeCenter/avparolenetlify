@@ -296,7 +296,7 @@ fnc_display_sentence_chart(state_sentence_releases_agerlse, state_bar_releases_a
 ```
 
 :::
-  
+    
 <div class="divider"></div>
 
 ## Offense Types
