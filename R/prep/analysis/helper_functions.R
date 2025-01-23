@@ -451,7 +451,7 @@ fnc_add_hc_accessibility <- function(hc_object, accessibility_text) {
 #' hc <- fnc_add_logo_and_export(hc, title = "my_chart", bottom_margin_value = 50)
 #'
 #' @export
-fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {
+fnc_add_logo_and_export <- function(hc, title, bottom_margin_value, marginleft = NULL) {
   hc |>
     hc_add_dependency(name = "modules/exporting.js") |>
     hc_add_dependency(name = "modules/offline-exporting.js") |>
@@ -462,6 +462,7 @@ fnc_add_logo_and_export <- function(hc, title, bottom_margin_value) {
       chartOptions = list(
         chart = list(
           style = list(fontFamily = "Helvetica"),
+          marginLeft = marginleft,
           events = list(load = render_image)
         ),
         title = list(
@@ -1325,7 +1326,7 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
         ),
         y = -30
       ) |>
-      fnc_add_logo_and_export(download_title, bottom_margin_value) |>
+      fnc_add_logo_and_export(download_title, bottom_margin_value, 200) |>
       fnc_add_hc_accessibility(accessibility_text)
 
     # Add scatter series for each group dynamically
