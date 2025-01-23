@@ -1323,7 +1323,7 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
           source1, ", ", year,
           if (!is.null(source2)) paste0(" and ", source2) else "", "."
         ),
-        y = -20
+        y = -30
       ) |>
       fnc_add_logo_and_export(download_title, bottom_margin_value) |>
       fnc_add_hc_accessibility(accessibility_text)
