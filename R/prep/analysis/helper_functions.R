@@ -564,7 +564,7 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
     )
 
     # Generate title of chart
-    download_title <- paste0("prison_pop_by_parelig_status_", state_name, "_", year)
+    download_title <- paste0("prison_pop_by_parelig_status_", year)
     bottom_margin_value <- 120
 
     # Create the Highcharts pie chart
@@ -977,7 +977,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
   } else if (x_var %in% c("fbi_index")) {
     100
   } else if (x_var %in% c("sentlgth") & type == "the prison population") {
-    130
+    140
   } else {
     100
   }
@@ -1446,10 +1446,14 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
     group_labels <- c("Male", "Female")
     colors <- c(teal, purple)
     shapes <- c("circle", "triangle")
+    bottom_margin_value <- 80
+    caption_y <- -30
   } else {
     group_labels <- c("Black, non-Hispanic", "Hispanic, any race", "Other race(s), non-Hispanic", "White, non-Hispanic")
     colors <- c(teal, blue, purple, red)
     shapes <- c("square", "circle", "diamond", "triangle")
+    bottom_margin_value <- 80
+    caption_y <- -30
   }
 
   # Filter and prepare data for the specified state
@@ -1542,9 +1546,6 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
   download_title <- paste0(gsub(" ", "_", tolower(chart_title)), "_",
                            year)
 
-  # Space below chart to accompany logo
-  bottom_margin_value <- 70
-
   # Add axes, themes, and captions
   highcharts <- highcharts |>
     hc_add_theme(base_hc_theme) |>
@@ -1577,7 +1578,7 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
     hc_legend(enabled = FALSE) |>
     hc_size(height = height) |>
     hc_caption(text = caption_text,
-               y = -20) |>
+               y = caption_y) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(accessibility_text)
 
