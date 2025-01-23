@@ -334,7 +334,8 @@ map_percent <- highchart(height = 625) |>
         "This hexagonal map visualizes the projected proportion of people in prison ",
         "past their parole eligibility across U.S. states in 2023. Colors indicate ",
         "percentage ranges, with special categories for states that abolished discretionary parole ",
-        "and missing data."
+        "and missing data. The table below provides details on the number of people in prison, ",
+        " percentage of people in prison past parole eligiblity, and number of parole board members by state."
       ),
       landmarkVerbosity = "one"
     )

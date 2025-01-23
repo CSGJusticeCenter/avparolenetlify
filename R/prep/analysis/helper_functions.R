@@ -524,24 +524,22 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
         parelig_status_new == "Past Parole Eligibility at End of Year" ~ color4
       ))
 
-    # Missing data text depending on state
-    missing_data <- missing_data_df |>
-      filter(state == state_name)
+    # Check if "Missing Data" is present in the current state's data
+    include_missing_text <- "Missing Data" %in% df1$parelig_status_new
 
-    missing_data_text <- missing_data |>
-      mutate(missing_data_text = ifelse(
-        missing_due_to_rules == 1,
-        "Missing, Possibly Due to Eligibility Rules: This includes individuals for whom parole eligibility information is unavailable and could not be estimated. This could be because, due to the state's eligibility rules, they may have never been eligible, or because other data was also missing, such as admission year or maximum sentence length.",
-        "Missing Data: This includes individuals for whom parole eligibility information is unavailable and could not be estimated due to other missing data, such as admission year or maximum sentence length."
-      )) |>
-      pull(missing_data_text)
-
-    # # Change missing data category depending on state
-    # df1 <- df1 |>
-    #   mutate(parelig_status_new = case_when(missing_data$missing_due_to_rules == 0 ~ "Missing Data",
-    #                                         missing_data$missing_due_to_rules == 1 ~ "Missing Data Due to Eligibility Rules",
-    #                                         TRUE ~ parelig_status_new
-    #   ))
+    # Generate missing data text only if "Missing Data" is present
+    missing_data_text <- if (include_missing_text) {
+      missing_data_df |>
+        filter(state == state_name) |>
+        mutate(missing_data_text = ifelse(
+          missing_due_to_rules == 1,
+          "Missing, Possibly Due to Eligibility Rules: This includes individuals for whom parole eligibility information is unavailable and could not be estimated. This could be because, due to the state's eligibility rules, they may have never been eligible, or because other data was also missing, such as admission year or maximum sentence length.",
+          "Missing Data: This includes individuals for whom parole eligibility information is unavailable and could not be estimated due to other missing data, such as admission year or maximum sentence length."
+        )) |>
+        pull(missing_data_text)
+    } else {
+      NULL
+    }
 
     # Extract the reporting year for the current state (assumes it's consistent within the state)
     year <- unique(df1$rptyear)
@@ -589,10 +587,11 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
       )) |>
       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
       hc_title(text = "Prison Population by Parole Eligibility Status") |>
-      hc_caption(text = paste0("Source: ", source1, ", ", year, " and ", source2, ".<br>",
-                               missing_data_text),
-                 y = -30
-                 ) |>
+      hc_caption(
+        text = paste0("Source: ", source1, ", ", year, " and ", source2, ".",
+                      if (!is.null(missing_data_text)) paste0("<br>", missing_data_text)),
+        y = -30
+      ) |>
       fnc_add_hc_accessibility(accessibility_text) |>
       hc_add_theme(base_hc_theme) |>
       fnc_add_logo_and_export(download_title, bottom_margin_value)  # Add logo and export options
@@ -603,6 +602,94 @@ fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_
 
   return(all_pie_charts)
 }
+# fnc_hc_pie_chart <- function(df, variable, source1 = ncrp_source, source2 = csg_source, missing_data_df) {
+#   # Get unique states from the data
+#   states <- unique(df$state)
+#   # Iterate over each state to generate pie charts
+#   all_pie_charts <- map(states, function(state_name) {
+#     # Filter the data for the current state
+#     df1 <- df |>
+#       ungroup() |> # Remove grouping to ensure accurate filtering
+#       filter(state == state_name) |> # Select data for the current state
+#       mutate(color = case_when( # Assign colors based on parole eligibility status
+#         parelig_status_new == "Will Be Eligible In 1+ Year" ~ color2,
+#         parelig_status_new == "Will Be Eligible Next Year" ~ color3,
+#         parelig_status_new == "Missing Data" ~ darkgray, # Adjusted for "Missing Data"
+#         parelig_status_new == "Past Parole Eligibility at End of Year" ~ color4
+#       ))
+#
+#     # Missing data text depending on state
+#     missing_data <- missing_data_df |>
+#       filter(state == state_name)
+#
+#     missing_data_text <- missing_data |>
+#       mutate(missing_data_text = ifelse(
+#         missing_due_to_rules == 1,
+#         "Missing, Possibly Due to Eligibility Rules: This includes individuals for whom parole eligibility information is unavailable and could not be estimated. This could be because, due to the state's eligibility rules, they may have never been eligible, or because other data was also missing, such as admission year or maximum sentence length.",
+#         "Missing Data: This includes individuals for whom parole eligibility information is unavailable and could not be estimated due to other missing data, such as admission year or maximum sentence length."
+#       )) |>
+#       pull(missing_data_text)
+#
+#     # Extract the reporting year for the current state (assumes it's consistent within the state)
+#     year <- unique(df1$rptyear)
+#
+#     # Generate descriptive accessibility text for the pie chart
+#     category_counts <- df1 |>
+#       group_by(!!sym(variable)) |> # Group by the specified variable
+#       # Calculate percentage for each category
+#       summarise(percentage = round(sum(n) / sum(df1$n) * 100, 0)) |>
+#       arrange(desc(percentage)) # Sort categories by descending percentage
+#
+#     # Build a textual description of the chart for accessibility
+#     accessibility_text <- paste(
+#       "This pie chart shows the distribution of the prison population by", variable, "in", year, ".",
+#       paste(
+#         category_counts |>
+#           # Combine category and percentage
+#           transmute(text = paste0(!!sym(variable), ": ", percentage, "%")) |>
+#           pull(text), # Extract the formatted text
+#         collapse = ", " # Join all categories into a single string
+#       )
+#     )
+#
+#     # Generate title of chart
+#     download_title <- paste0("prison_pop_by_parelig_status_", state_name, "_", year)
+#     bottom_margin_value <- 120
+#
+#     # Create the Highcharts pie chart
+#     highchart() |>
+#       hc_chart(type = "pie") |>
+#       hc_plotOptions(pie = list(
+#         dataLabels = list( # Define label formatting for the chart
+#           enabled = TRUE,
+#           format = '<span style="font-size:1em; font-weight:normal">{point.name}: </span>
+#           <br><span style="font-size:2em; font-weight:normal">{point.percentage:.0f}%</span>'
+#         ),
+#         # Use custom colors defined in the data
+#         colorByPoint = FALSE
+#       )) |>
+#       hc_series(list(
+#         # Add data to the chart
+#         data = list_parse(df1 |> mutate(y = n) |> transmute(
+#           name = !!sym(variable), y, color, tooltip
+#         ))
+#       )) |>
+#       hc_tooltip(formatter = JS("function () { return this.point.tooltip; }")) |>
+#       hc_title(text = "Prison Population by Parole Eligibility Status") |>
+#       hc_caption(text = paste0("Source: ", source1, ", ", year, " and ", source2, ".<br>",
+#                                missing_data_text),
+#                  y = -30
+#                  ) |>
+#       fnc_add_hc_accessibility(accessibility_text) |>
+#       hc_add_theme(base_hc_theme) |>
+#       fnc_add_logo_and_export(download_title, bottom_margin_value)  # Add logo and export options
+#   })
+#
+#   # Assign state names to the charts list for clarity
+#   all_pie_charts <- setNames(all_pie_charts, states)
+#
+#   return(all_pie_charts)
+# }
 
 #' Generate Projection Sentence for Past Parole Eligibility Trends
 #'
@@ -858,7 +945,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                                year, " in the state of ", state_var, ".")
 
   # Download file title
-  download_title <- paste0(gsub(" ", "", tolower(title)), "", year)
+  download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
 
   # Determine chart type based on orientation
   chart_type <- ifelse(orientation == "horizontal", "bar", "column")
