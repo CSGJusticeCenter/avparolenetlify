@@ -703,6 +703,118 @@ fnc_generate_projection_sentence <- function(state_name, data) {
 #' - Adjusts orientation and label alignment based on the `orientation` parameter.
 #' - Includes accessibility text and exporting functionality.
 #' @export
+# fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type,
+#                                source1, source2 = NULL,
+#                                orientation = "vertical") {
+#
+#   # Filter the data for the specified state
+#   df1 <- df |>
+#     filter(state == state_var) |> # Filter by state
+#     fnc_create_tooltip(variable_label = metric, variable = !!sym(x_var)) # Add tooltips for better interactivity
+#
+#   # Extract the reporting year for the state
+#   year <- unique(df1$rptyear)
+#
+#   # Conditionally arrange data by proportions for certain variables
+#   if (x_var %in% c("race", "fbi_index", "sex")) {
+#     df1 <- df1 |> arrange(desc(prop)) # Arrange by descending proportions
+#   }
+#
+#   # Construct the chart title
+#   title <- paste0(title_type, " by ", metric)
+#
+#   # Generate accessibility text describing the chart
+#   accessibility_text <- paste0("This graph shows the percentage of ", type,
+#                                " by ", tolower(metric), " in ",
+#                                year, " in the state of ", state_var, ".")
+#
+#   # Download file title
+#   download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
+#
+#   # Define the x-axis order based on the data
+#   xaxis_order <- df1[[x_var]]
+#
+#   # Determine chart type based on orientation
+#   chart_type <- ifelse(orientation == "horizontal", "bar", "column")
+#
+#   # Adjust label alignment for horizontal orientation
+#   label_alignment <- ifelse(orientation == "horizontal", "right", "center")
+#
+#   # Check if "Other race(s), non-Hispanic" exists in the x-axis variable
+#   other_race_note <- if (x_var == "race" && any(df1[[x_var]] == "Other race(s), non-Hispanic")) {
+#     "<br><br>According to the NCRP, the “Other race(s)” category may include American Indian or Alaska Native, Asian, Native Hawaiian or Other Pacific Islander, and individuals identifying as more than one race."
+#   } else {
+#     ""
+#   }
+#
+#   # Determine caption_y based on x_var
+#   caption_y <- if (x_var == "race") {
+#     -30
+#   } else if (x_var %in% c("fbi_index")) {
+#     -30
+#   } else if (x_var %in% c("sentlgth") & type == "the prison population") {
+#     -20
+#   } else {
+#     -30 # Default space for other variables
+#   }
+#
+#   # Space below chart to accompany logo
+#   bottom_margin_value <- if (x_var == "race") {
+#     160
+#   } else if (x_var %in% c("fbi_index")) {
+#     100
+#   } else if (x_var %in% c("sentlgth") & type == "the prison population") {
+#     130
+#   } else {
+#     100
+#   }
+#
+#   # Create the Highcharts chart
+#   highcharts <- highchart() |>
+#     hc_add_series(df1, # Add the data series
+#                   type = chart_type, # Use bar or column based on orientation
+#                   hcaes(x = !!sym(x_var), y = !!sym(y_var)), # Map x and y variables
+#                   dataLabels = list(enabled = TRUE, # Enable data labels
+#                                     format = "{point.prop_label}",
+#                                     style = list(fontWeight = "regular",
+#                                                  fontSize = "14px",
+#                                                  fontFamily = "Graphik",
+#                                                  textOutline = 0))) |>
+#     hc_xAxis(categories = xaxis_order, # Set x-axis categories
+#              labels = list(
+#                useHTML = TRUE,
+#                enabled = TRUE,
+#                # formatter = JS(js_code), # Format labels with JavaScript
+#                style = list(
+#                  fontSize = "14px",
+#                  fontFamily = "Graphik",
+#                  textAlign = label_alignment,
+#                  overflow = "justify" # Prevent clipping of labels
+#                ),
+#                x = ifelse(orientation == "horizontal", -10, 0) # Add padding only for horizontal orientation
+#              )
+#     ) |>
+#     hc_yAxis(max = 100, # Set y-axis maximum to 100% for proportions
+#              labels = list(
+#                formatter = JS("function() { return this.value + '%'; }") # Append % to y-axis labels
+#              )) |>
+#     hc_add_theme(base_hc_theme) |> # Apply the base theme
+#     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |> # Add custom tooltip formatter
+#     hc_legend(enabled = FALSE) |> # Disable the legend
+#     hc_title(text = title) |> # Add the chart title
+#     fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
+#     hc_caption(
+#       text = paste0("Source: ",
+#                     source1, ", ", year,
+#                     if (!is.null(source2)) paste0(" and ", source2) else "", ".",
+#                     other_race_note # Add the note dynamically
+#       ),
+#       y = caption_y
+#     ) |>
+#     fnc_add_logo_and_export(download_title, bottom_margin_value)
+#
+#   return(highcharts) # Return the generated Highchart
+# }
 fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_type,
                                source1, source2 = NULL,
                                orientation = "vertical") {
@@ -720,6 +832,22 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     df1 <- df1 |> arrange(desc(prop)) # Arrange by descending proportions
   }
 
+  # Adjust labels for fbi_index if needed
+  if (x_var == "fbi_index") {
+    label_map <- c(
+      "Murder or Nonnegligent Manslaughter" = "Murder or Nonnegligent<br>Manslaughter",
+      "Aggravated or Simple Assault" = "Aggravated or<br>Simple Assault"
+    )
+    df1[[x_var]] <- factor(
+      df1[[x_var]],
+      levels = levels(df1[[x_var]]), # Preserve factor ordering
+      labels = sapply(levels(df1[[x_var]]), function(x) ifelse(x %in% names(label_map), label_map[x], x))
+    )
+  }
+
+  # Define x-axis order based on the data
+  xaxis_order <- df1[[x_var]]
+
   # Construct the chart title
   title <- paste0(title_type, " by ", metric)
 
@@ -729,10 +857,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
                                year, " in the state of ", state_var, ".")
 
   # Download file title
-  download_title <- paste0(gsub(" ", "_", tolower(title)), "_", year)
-
-  # Define the x-axis order based on the data
-  xaxis_order <- df1[[x_var]]
+  download_title <- paste0(gsub(" ", "", tolower(title)), "", year)
 
   # Determine chart type based on orientation
   chart_type <- ifelse(orientation == "horizontal", "bar", "column")
@@ -784,7 +909,6 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
              labels = list(
                useHTML = TRUE,
                enabled = TRUE,
-               # formatter = JS(js_code), # Format labels with JavaScript
                style = list(
                  fontSize = "14px",
                  fontFamily = "Graphik",
@@ -802,7 +926,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
     hc_tooltip(formatter = JS("function(){return(this.point.tooltip)}")) |> # Add custom tooltip formatter
     hc_legend(enabled = FALSE) |> # Disable the legend
     hc_title(text = title) |> # Add the chart title
-    fnc_add_hc_accessibility(accessibility_text) |>  # Add accessibility text
+    fnc_add_hc_accessibility(accessibility_text) |> # Add accessibility text
     hc_caption(
       text = paste0("Source: ",
                     source1, ", ", year,
