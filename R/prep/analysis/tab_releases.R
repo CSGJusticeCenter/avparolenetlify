@@ -73,11 +73,11 @@ all_sentence_releases_by_year <- map(.x = states, .f = function(x) {
 all_sentence_releases_by_year <- setNames(all_sentence_releases_by_year, states)
 
 # Example states:
-all_sentence_releases_by_year$Georgia
-all_sentence_releases_by_year$Connecticut
-all_sentence_releases_by_year$Hawaii
-all_sentence_releases_by_year$`West Virginia`
-all_sentence_releases_by_year$Alaska
+# all_sentence_releases_by_year$Georgia
+# all_sentence_releases_by_year$Connecticut
+# all_sentence_releases_by_year$Hawaii
+# all_sentence_releases_by_year$`West Virginia`
+# all_sentence_releases_by_year$Alaska
 
 # Generate line charts for prison releases trends for each state
 all_line_releases_by_year <- map(.x = states,  .f = function(x) {
@@ -137,10 +137,10 @@ all_line_releases_by_year <- setNames(all_line_releases_by_year, states)
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 # Example states:
-all_line_releases_by_year$Georgia
-all_line_releases_by_year$Connecticut
-all_line_releases_by_year$Hawaii
-all_line_releases_by_year$Alaska
+# all_line_releases_by_year$Georgia
+# all_line_releases_by_year$Connecticut
+# all_line_releases_by_year$Hawaii
+# all_line_releases_by_year$Alaska
 
 
 # ---------------------------------------------------------------------------- #
@@ -233,36 +233,36 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
 all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
 
 # Example states:
-all_stackedbar_pe_release$Alabama
-all_stackedbar_pe_release$Arkansas
-all_stackedbar_pe_release$Colorado
-all_stackedbar_pe_release$Connecticut
-all_stackedbar_pe_release$Georgia
-all_stackedbar_pe_release$Hawaii ########### look weird
-all_stackedbar_pe_release$Idaho  ########### look weird
-all_stackedbar_pe_release$Iowa
-all_stackedbar_pe_release$Kentucky
-all_stackedbar_pe_release$Louisiana
-all_stackedbar_pe_release$Maryland ######### missing data in 2014 and 2015
-all_stackedbar_pe_release$Massachusetts
-all_stackedbar_pe_release$Michigan
-all_stackedbar_pe_release$Mississippi
-all_stackedbar_pe_release$Missouri
-all_stackedbar_pe_release$Montana
-all_stackedbar_pe_release$Nevada
-all_stackedbar_pe_release$`New Hampshire`
-all_stackedbar_pe_release$`New Jersey`
-all_stackedbar_pe_release$`New York`
-all_stackedbar_pe_release$`North Dakota`
-all_stackedbar_pe_release$Oklahoma
-all_stackedbar_pe_release$Pennsylvania
-all_stackedbar_pe_release$`Rhode Island`
-all_stackedbar_pe_release$`South Carolina`
-all_stackedbar_pe_release$`South Dakota`
-all_stackedbar_pe_release$Tennessee
-all_stackedbar_pe_release$Texas
-all_stackedbar_pe_release$`West Virginia`
-all_stackedbar_pe_release$Wyoming
+# all_stackedbar_pe_release$Alabama
+# all_stackedbar_pe_release$Arkansas
+# all_stackedbar_pe_release$Colorado
+# all_stackedbar_pe_release$Connecticut
+# all_stackedbar_pe_release$Georgia
+# all_stackedbar_pe_release$Hawaii ########### look weird
+# all_stackedbar_pe_release$Idaho  ########### look weird
+# all_stackedbar_pe_release$Iowa
+# all_stackedbar_pe_release$Kentucky
+# all_stackedbar_pe_release$Louisiana
+# all_stackedbar_pe_release$Maryland ######### missing data in 2014 and 2015
+# all_stackedbar_pe_release$Massachusetts
+# all_stackedbar_pe_release$Michigan
+# all_stackedbar_pe_release$Mississippi
+# all_stackedbar_pe_release$Missouri
+# all_stackedbar_pe_release$Montana
+# all_stackedbar_pe_release$Nevada
+# all_stackedbar_pe_release$`New Hampshire`
+# all_stackedbar_pe_release$`New Jersey`
+# all_stackedbar_pe_release$`New York`
+# all_stackedbar_pe_release$`North Dakota`
+# all_stackedbar_pe_release$Oklahoma
+# all_stackedbar_pe_release$Pennsylvania
+# all_stackedbar_pe_release$`Rhode Island`
+# all_stackedbar_pe_release$`South Carolina`
+# all_stackedbar_pe_release$`South Dakota`
+# all_stackedbar_pe_release$Tennessee
+# all_stackedbar_pe_release$Texas
+# all_stackedbar_pe_release$`West Virginia`
+# all_stackedbar_pe_release$Wyoming
 
 # Generate summary sentences describing the proportion of people released past their parole eligibility year
 # "In the most recent year of data available, 76 percent of parole-eligible people
@@ -323,7 +323,7 @@ all_sentence_pe_proportion_released <- setNames(all_sentence_pe_proportion_relea
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 # Example state:
-all_sentence_pe_proportion_released$Georgia
+# all_sentence_pe_proportion_released$Georgia
 
 
 
@@ -414,8 +414,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
 all_pie_release_type <- setNames(all_pie_release_type, states)
 
 # Example states:
-all_pie_release_type$Georgia
-all_pie_release_type$`South Dakota`
+# all_pie_release_type$Georgia
+# all_pie_release_type$`South Dakota`
 
 # Generate sentences describing the proportion of conditional vs. unconditional releases
 all_sentence_release_type <- map(.x = states, .f = function(x) {
@@ -440,7 +440,7 @@ all_sentence_release_type <- setNames(all_sentence_release_type, states)
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 # Example state:
-all_sentence_release_type$Georgia
+# all_sentence_release_type$Georgia
 
 
 
@@ -535,8 +535,8 @@ all_bar_releases_fbi_index      <- all_bar_releases[["fbi_index"]]
 all_sentence_releases_fbi_index <- all_sentence_releases[["fbi_index"]]
 
 # Example state:
-all_bar_releases_race$Georgia
-all_sentence_releases_fbi_index$Georgia
+# all_bar_releases_race$Georgia
+# all_sentence_releases_fbi_index$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

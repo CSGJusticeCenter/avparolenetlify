@@ -75,9 +75,7 @@ all_pie_pe_type <- fnc_hc_pie_chart(
 )
 
 # State example:
-all_pie_pe_type$Arkansas
-all_pie_pe_type$Georgia
-all_pie_pe_type$`New York`
+# all_pie_pe_type$Arkansas
 
 # Generate summary sentences for each state describing parole eligibility proportions
 #  "Most recent data shows that 69 percent of people in prison were eligible for
@@ -140,8 +138,8 @@ all_sentence_pe_type <- {
 }
 
 # Example usage:
-all_sentence_pe_type$Michigan
-all_sentence_pe_type$Georgia
+# all_sentence_pe_type$Michigan
+# all_sentence_pe_type$Georgia
 
 
 
@@ -191,10 +189,10 @@ all_sentence_pop_pe_by_year <- map(states, ~ fnc_generate_projection_sentence(.x
   setNames(states) # Assign state names to the sentences for easy retrieval
 
 # State examples:
-all_sentence_pop_pe_by_year$Georgia
-all_sentence_pop_pe_by_year$Colorado
-all_sentence_pop_pe_by_year$Idaho
-all_sentence_pop_pe_by_year$Hawaii
+# all_sentence_pop_pe_by_year$Georgia
+# all_sentence_pop_pe_by_year$Colorado
+# all_sentence_pop_pe_by_year$Idaho
+# all_sentence_pop_pe_by_year$Hawaii
 
 # Generate Line Charts for Past Parole Eligibility Projections
 all_line_pop_pe_by_year <- map(states, function(x) {
@@ -268,11 +266,11 @@ all_line_pop_pe_by_year <- map(states, function(x) {
 all_line_pop_pe_by_year <- setNames(all_line_pop_pe_by_year, states)
 
 # Example state:
-all_line_pop_pe_by_year$Georgia
-all_line_pop_pe_by_year$Colorado
-all_line_pop_pe_by_year$Idaho
-all_line_pop_pe_by_year$Hawaii
-all_line_pop_pe_by_year$Michigan
+# all_line_pop_pe_by_year$Georgia
+# all_line_pop_pe_by_year$Colorado
+# all_line_pop_pe_by_year$Idaho
+# all_line_pop_pe_by_year$Hawaii
+# all_line_pop_pe_by_year$Michigan
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 
@@ -371,15 +369,15 @@ all_bar_pe_fbi_index      <- all_bar_pe[["fbi_index"]]
 all_sentence_pe_fbi_index <- all_sentence_pe[["fbi_index"]]
 
 # Example states:
-all_bar_pe_fbi_index$Georgia
-all_bar_pe_race$Georgia
-all_sentence_pe_race$Georgia
-all_bar_pe_race$Hawaii
-all_sentence_pe_race$Hawaii
-all_sentence_pe_fbi_index$`New York`
-all_bar_pe_sex$Georgia
-all_bar_pe_sentlgth$Georgia
-all_bar_pe_ageyrend$Georgia
+# all_bar_pe_fbi_index$Georgia
+# all_bar_pe_race$Georgia
+# all_sentence_pe_race$Georgia
+# all_bar_pe_race$Hawaii
+# all_sentence_pe_race$Hawaii
+# all_sentence_pe_fbi_index$`New York`
+# all_bar_pe_sex$Georgia
+# all_bar_pe_sentlgth$Georgia
+# all_bar_pe_ageyrend$Georgia
 
 # ---------------------------------------------------------------------------- #
 # SAVE DATA

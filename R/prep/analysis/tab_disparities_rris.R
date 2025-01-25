@@ -100,9 +100,9 @@ all_sentence_pe_rri_hispanic <- map(
 )
 
 # Example states:
-all_sentence_pe_rri_hispanic$Georgia
-all_sentence_pe_rri_black$Georgia
-all_sentence_pe_rri_other$Hawaii
+# all_sentence_pe_rri_hispanic$Georgia
+# all_sentence_pe_rri_black$Georgia
+# all_sentence_pe_rri_other$Hawaii
 
 # ---------------------------------------------------------------------------- #
 # Data Preparation for Sex-Based Disparity Analysis
@@ -155,8 +155,8 @@ all_sentence_pe_rri_male <- fnc_generate_rri_sentences(
 )
 
 # Example state:
-all_sentence_pe_rri_male$Georgia
-all_sentence_pe_rri_male$Idaho
+# all_sentence_pe_rri_male$Georgia
+# all_sentence_pe_rri_male$Idaho
 
 # ---------------------------------------------------------------------------- #
 # Infographics for RRIs

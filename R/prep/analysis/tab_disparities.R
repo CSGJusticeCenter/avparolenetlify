@@ -186,8 +186,8 @@ all_sentence_los_race <-
                                    compare_var = "race",
                                    los_col = "average_los")
 # Example state:
-all_sentence_los_race$Georgia
-all_sentence_los_race$Mississippi
+# all_sentence_los_race$Georgia
+# all_sentence_los_race$Mississippi
 
 # Generate sentence about average time served sentence by sex
 # SENTENCE: Females released spent on average 1.2 less years in prison compared to males."
@@ -197,7 +197,7 @@ all_sentence_los_sex <-
                                    compare_var = "sex",
                                    los_col = "average_los")
 # Example state:
-all_sentence_los_sex$Mississippi
+# all_sentence_los_sex$Mississippi
 
 # Generate lollipop charts of time served by race and ethnicity
 all_lollipop_los_race <- fnc_generate_lollipop_charts(
@@ -208,8 +208,8 @@ all_lollipop_los_race <- fnc_generate_lollipop_charts(
 )
 
 # Example states:
-all_lollipop_los_race$Idaho
-all_lollipop_los_race$Georgia
+# all_lollipop_los_race$Idaho
+# all_lollipop_los_race$Georgia
 
 # Generate lollipop charts of time served by sex
 all_lollipop_los_sex <- fnc_generate_lollipop_charts(
@@ -220,7 +220,7 @@ all_lollipop_los_sex <- fnc_generate_lollipop_charts(
 )
 
 # Example states:
-all_lollipop_los_sex$Mississippi
+# all_lollipop_los_sex$Mississippi
 
 # Time served by race and offense
 # SENTENCE:  "The chart below shows the average time served in prison by offense
@@ -231,8 +231,8 @@ all_sentence_los_race_offense <- fnc_generate_offense_disparity_sentence(los_rac
                                                                          "race",
                                                                          "average_los")
 # Example state:
-all_sentence_los_race_offense$Georgia
-all_sentence_los_race_offense$Idaho
+# all_sentence_los_race_offense$Georgia
+# all_sentence_los_race_offense$Idaho
 
 # Time served by race and offense
 # SENTENCE: "The chart below shows the average time served in prison by offense
@@ -243,8 +243,8 @@ all_sentence_los_sex_offense <- fnc_generate_offense_disparity_sentence(los_sex_
                                                                         "sex",
                                                                         "average_los")
 # Example state:
-all_sentence_los_sex_offense$Georgia
-all_sentence_los_sex_offense$Louisiana
+# all_sentence_los_sex_offense$Georgia
+# all_sentence_los_sex_offense$Louisiana
 
 # Create scatter charts for average time served by race, ethnicity, and offense
 all_scatter_los_race_offense <- fnc_create_scatter_charts_by_state(
@@ -266,8 +266,8 @@ all_scatter_los_sex_offense <- fnc_create_scatter_charts_by_state(
 )
 
 # Example state:
-all_scatter_los_sex_offense$Georgia
-all_scatter_los_sex_offense$Louisiana
+# all_scatter_los_sex_offense$Georgia
+# all_scatter_los_sex_offense$Louisiana
 
 
 
@@ -287,7 +287,7 @@ all_sentence_avg_past_pe_race <-
                                    los_col = "avg_years_to_estimated_pey")
 
 # Example state:
-all_sentence_avg_past_pe_race$Connecticut
+# all_sentence_avg_past_pe_race$Connecticut
 
 # Generate sentence about average time served sentence by sex
 # SENTENCE: Females who were still incarcerated spent on average 1.7 less years
@@ -299,7 +299,7 @@ all_sentence_avg_past_pe_sex <-
                                    los_col = "avg_years_to_estimated_pey")
 
 # Example state:
-all_sentence_avg_past_pe_sex$Georgia
+# all_sentence_avg_past_pe_sex$Georgia
 
 # Generate lollipop charts of time served by race and ethnicity
 all_lollipop_avg_past_pe_race <- fnc_generate_lollipop_charts(
@@ -311,7 +311,7 @@ all_lollipop_avg_past_pe_race <- fnc_generate_lollipop_charts(
 )
 
 # Example states:
-all_lollipop_avg_past_pe_race$Georgia
+# all_lollipop_avg_past_pe_race$Georgia
 
 # Generate lollipop charts of time served by sex
 all_lollipop_avg_past_pe_sex <- fnc_generate_lollipop_charts(
@@ -323,7 +323,7 @@ all_lollipop_avg_past_pe_sex <- fnc_generate_lollipop_charts(
 )
 
 # Example states:
-all_lollipop_avg_past_pe_sex$Mississippi
+# all_lollipop_avg_past_pe_sex$Mississippi
 
 # SENTENCE: "The chart below shows the average time spent in prison past parole
 #            eligibility by offense type and race and ethnicity. The largest
@@ -335,8 +335,8 @@ all_sentence_avg_past_pe_race_offense <- fnc_generate_offense_disparity_sentence
                                                                                  "avg_years_to_estimated_pey")
 
 # Example state:
-all_sentence_avg_past_pe_race_offense$Georgia
-all_sentence_avg_past_pe_race_offense$Arkansas
+# all_sentence_avg_past_pe_race_offense$Georgia
+# all_sentence_avg_past_pe_race_offense$Arkansas
 
 # SENTENCE: "The chart below shows the average time spent in prison past parole
 #            eligibility by offense type and sex. The largest disparity was
@@ -347,7 +347,7 @@ all_sentence_avg_past_pe_sex_offense <- fnc_generate_offense_disparity_sentence(
                                                                                 "avg_years_to_estimated_pey")
 
 # Example state:
-all_sentence_avg_past_pe_sex_offense$Georgia
+# all_sentence_avg_past_pe_sex_offense$Georgia
 
 # Create scatter charts for average time served by race, ethnicity, and offense
 all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
@@ -359,7 +359,7 @@ all_scatter_avg_past_pe_race_offense <- fnc_create_scatter_charts_by_state(
 )
 
 # Example state:
-all_scatter_avg_past_pe_race_offense$Connecticut
+# all_scatter_avg_past_pe_race_offense$Connecticut
 
 # Create scatter charts for average time served by sex and offense
 all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(
@@ -371,7 +371,7 @@ all_scatter_avg_past_pe_sex_offense <- fnc_create_scatter_charts_by_state(
 )
 
 # Example state:
-all_scatter_avg_past_pe_sex_offense$Georgia
+# all_scatter_avg_past_pe_sex_offense$Georgia
 
 # ---------------------------------------------------------------------------- #
 # Save Data

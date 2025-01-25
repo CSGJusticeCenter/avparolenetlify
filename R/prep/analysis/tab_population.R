@@ -88,7 +88,9 @@ all_sentence_population_by_year <- map(.x = states, .f = function(x) {
 
 # Assign state names to the generated sentences for easy access
 all_sentence_population_by_year <- setNames(all_sentence_population_by_year, states)
-all_sentence_population_by_year$Georgia
+
+# Example state:
+# all_sentence_population_by_year$Georgia
 
 # Generate line charts for each state's prison population trends over time
 all_line_population_by_year <- map(.x = states, .f = function(x) {
@@ -157,8 +159,8 @@ all_line_population_by_year <- setNames(all_line_population_by_year, states)
 rm(states)  # Cleanup: Remove the temporary `states` variable
 
 # Example states:
-all_line_population_by_year$Georgia
-all_line_population_by_year$Hawaii
+# all_line_population_by_year$Georgia
+# all_line_population_by_year$Hawaii
 
 # ---------------------------------------------------------------------------- #
 # Prepare Column Charts Data (Demographics, Offense Type, Sentence Length)
@@ -259,13 +261,13 @@ all_bar_population_fbi_index      <- all_bar_population[["fbi_index"]]
 all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 
 # Example states:
-all_bar_population_sentlgth$Georgia
-all_bar_population_race$Georgia
-all_bar_population_sex$Georgia
-all_bar_population_ageyrend$Georgia
-all_bar_population_sentlgth$Arkansas
-all_sentence_population_fbi_index$`New York`
-all_sentence_population_fbi_index$Georgia
+# all_bar_population_sentlgth$Georgia
+# all_bar_population_race$Georgia
+# all_bar_population_sex$Georgia
+# all_bar_population_ageyrend$Georgia
+# all_bar_population_sentlgth$Arkansas
+# all_sentence_population_fbi_index$`New York`
+# all_sentence_population_fbi_index$Georgia
 
 #------------------------------------------------------------------------------#
 # SAVE DATA
