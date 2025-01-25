@@ -966,7 +966,7 @@ fnc_hc_columnchart <- function(state_var, df, x_var, y_var, metric, type, title_
   } else if (x_var %in% c("fbi_index")) {
     -30
   } else if (x_var %in% c("sentlgth") & type == "the prison population") {
-    -20
+    -40
   } else {
     -30 # Default space for other variables
   }

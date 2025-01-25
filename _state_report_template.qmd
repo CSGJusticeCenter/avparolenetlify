@@ -330,7 +330,7 @@ Disparities can be measured in many different ways by comparing the outcomes of 
 <br>
 <div class="divider"></div>
 
-## Disparities Among People Incarcerated Past Parole Eligibility
+## Disparities among People Incarcerated Past Parole Eligibility
 
 ::: {.panel-tabset .custom-tabs-disp}
 
