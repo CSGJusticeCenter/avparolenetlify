@@ -150,7 +150,9 @@ reactable(
 )
 ```
 
-<div id="footnotes-text"><br>
+<div id="footnotes-text" role="note" aria-label="Source: National Corrections Reporting Program, 2010-2020 and CSG Justice Center estimates.*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ." tabindex="0">
+
+<br>
 Source: National Corrections Reporting Program, 2010-2020 and CSG Justice Center estimates. <br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
 <br></div>
 
