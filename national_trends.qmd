@@ -58,9 +58,9 @@ div(
 
 </div>
 <br>
-<div id ="footnotes-text" role="note" aria-label="These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence.As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year. Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system." tabindex="0">
+<div id ="footnotes-text" role="note" aria-label="These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25% to 75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence.As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year. Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system." tabindex="0">
 
-\*These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence.As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year.<br>
+\*These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence. As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year.<br>
 \*\*Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system.
 
 </div>
@@ -75,18 +75,19 @@ map_percent
 ```
 </div>
 
-<!-- HTML code for the download button -->
-<a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button">
-  Download Map
-</a>
+<a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button">Download Map</a>
 <br><br>
 
 <div id="body-section">
 <div class="divider"></div>
 
-## Parole Eligibility by State
-
+<div id="parole-eligibility-section" role="region" tabindex="0" 
+aria-label="Parole Eligibility by State. The table below provides estimates for the percentage and number of incarcerated individuals who are past their parole eligibility date in 30 of the 34 paroling states. It also highlights the number of parole board members for each state.">
+<h2>Parole Eligibility by State</h2>
+<p>
 The table below provides estimates for the percentage and number of incarcerated individuals who are past their parole eligibility date in 30 of the 34 paroling states. It also highlights the number of parole board members for each state.
+</p>
+</div>
 
 ```{r table}
 # Custom function to create data bars with NA handling
