@@ -417,18 +417,17 @@ if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
 }
 
 # Only process "Other race(s), non-Hispanic" if the state is in the specified list
-if (use_other_race) {
-  if (no_infographic_other == TRUE & no_data_other == TRUE) {
-    no_data_needed_other_individuals <- TRUE
-  } else if (no_infographic_other == TRUE & no_data_other == FALSE & no_rri_details_other == FALSE) {
-    HTML(paste0("<br><span style='font-weight:bold; color:#938ebf;'>Non-Hispanic people of other race(s)</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", state_for_report, ".<br>"))
-  } else if (no_infographic_other == FALSE & no_data_other == FALSE) {
-    knitr::include_graphics(pe_rri_infographic_other)
-  }
+if (no_infographic_other == TRUE & no_data_other == TRUE) {
+  cat("") # Nothing to output
+} else if (use_other_race == TRUE & no_infographic_other == TRUE & no_data_other == FALSE & no_rri_details_other == FALSE) {
+  HTML(paste0("<br><span style='font-weight:bold; color:#938ebf;'>Non-Hispanic people of other race(s)</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", state_for_report, ".<br>"))
+} else if (use_other_race == TRUE & no_infographic_other == FALSE & no_data_other == FALSE) {
+  knitr::include_graphics(pe_rri_infographic_other)
+}
 
-  if (no_infographic_other == FALSE & no_data_other == FALSE) {
-    HTML(state_sentence_pe_rri_other, "<br>")
-  }
+# Render the state sentence
+if (no_infographic_other == FALSE & no_data_other == FALSE) {
+  cat(state_sentence_pe_rri_other, "<br>")
 }
 
 # Display "No Data" message if all three groups (Black, Hispanic, Other) have no data

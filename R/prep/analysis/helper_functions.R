@@ -2033,12 +2033,21 @@ fnc_generate_offense_disparity_sentence <- function(data, grouping_var = "race",
 
     # Construct the descriptive sentence
     time_description <- ifelse(time_var == "average_los", "time served in prison", "time spent in prison past parole eligibility")
+    # sentence <- paste0(
+    #   "The chart below shows the average ", time_description, " by offense type and ",
+    #   ifelse(grouping_var == "race", "race and ethnicity", grouping_var),
+    #   ifelse(time_var == "average_los", " for individuals released from prison", " for individuals still incarcerated"), ". ",
+    #   "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
+    #   group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",
+    #   " spent on average ", formatted_time, " more in prison compared to ",
+    #   group_shortest, if (grouping_var == "race") " people" else "", "."
+    # )
     sentence <- paste0(
       "The chart below shows the average ", time_description, " by offense type and ",
       ifelse(grouping_var == "race", "race and ethnicity", grouping_var),
       ifelse(time_var == "average_los", " for individuals released from prison", " for individuals still incarcerated"), ". ",
       "The largest disparity was observed among ", tolower(offense_type), " offenses, where ",
-      group_longest, if (grouping_var == "race" && group_longest != "White") " people" else "",
+      group_longest, if (grouping_var == "race" && group_longest != "White" && !grepl("people", group_longest)) " people" else "",
       " spent on average ", formatted_time, " more in prison compared to ",
       group_shortest, if (grouping_var == "race") " people" else "", "."
     )

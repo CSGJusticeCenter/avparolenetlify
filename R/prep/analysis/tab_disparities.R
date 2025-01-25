@@ -233,6 +233,7 @@ all_sentence_los_race_offense <- fnc_generate_offense_disparity_sentence(los_rac
 # Example state:
 # all_sentence_los_race_offense$Georgia
 # all_sentence_los_race_offense$Idaho
+all_sentence_los_race_offense$Hawaii
 
 # Time served by race and offense
 # SENTENCE: "The chart below shows the average time served in prison by offense

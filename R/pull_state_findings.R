@@ -367,11 +367,8 @@ pe_rri_infographic_other <- paste0(
   formatted_state_for_report, ".png"
 )
 
-
 state_sentence_pe_rri_black <- all_sentence_pe_rri_black[[state_for_report]]
-
 state_sentence_pe_rri_hispanic <- all_sentence_pe_rri_hispanic[[state_for_report]]
-
 state_sentence_pe_rri_other <- all_sentence_pe_rri_other[[state_for_report]]
 
 # Sex
