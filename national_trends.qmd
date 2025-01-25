@@ -31,7 +31,7 @@ load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rd
 load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
 ```
 
-<div id="body-section" role="region" aria-label="A highlight section showing three key metrics: 220,000 people are in prison past parole eligibility, 1 in 5 people are incarcerated past parole eligibility, and 34 states have discretionary parole.">
+<div id="body-section" role="region" aria-label="A highlight section showing three key metrics: 220,000 people are in prison past parole eligibility, 1 in 5 people are incarcerated past parole eligibility, and 34 states have discretionary parole." tabindex="0">
 
 ```{r highlights}
 div(
