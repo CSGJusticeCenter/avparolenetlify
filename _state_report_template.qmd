@@ -32,7 +32,9 @@ fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualizat
   # Display the sentence and chart if available
   if (!no_data) {
     cat(sentence)
-    div(id = chart_type, chart)
+    div(id = chart_type,
+        role = "region", tabindex = "0",
+        chart)
   } else {
     # Show "no data" message only once if both are missing
     final_text
@@ -77,7 +79,7 @@ div(
 ```
 
 <br>
-<div id="asterisk-section" > `r additional_asterisks_combined` </div><br>
+<div id="asterisk-section" tabindex="0"> `r additional_asterisks_combined` </div><br>
 </div>
 
 ::: {.panel-tabset .nav-pills}
@@ -88,9 +90,7 @@ div(
 
 Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Often, there is a minimum term a person must serve before becoming parole eligible. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
 
-`r paste(parole_eligibility_criteria, collapse = ", ")`
-
-<br>
+<div id="parole-eligibility-section" tabindex="0"> `r paste(parole_eligibility_criteria, collapse = ", ")` </div><br>
 <div class="divider"></div>
 
 ## In Prison Past Parole Eligibility

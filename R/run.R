@@ -49,6 +49,7 @@ for (script in scripts) {
 # Step 4) Generate Quartos for state reports
 log_info("Generating state-specific Quarto reports...")
 
+# Function to generate qmds based on _state_report_template.qmd
 fnc_replace_write_qmd <- function(state) {
   cleaned_state <- str_replace_all(state, "\\s+", "_")
   log_debug("Processing state: {state} -> {cleaned_state}")
@@ -70,7 +71,7 @@ states <- parole_eligibility_table |>
   filter(!state %in% states_to_exclude$state) |>
   filter(!state %in% states_national_page_only$state) |>
   pull(state)
-# states <- c("Arkansas", "Georgia", "Colorado", "Hawaii", "Louisiana")
+states <- c("Arkansas", "Georgia", "Colorado", "Hawaii", "Louisiana")
 states <- c("Georgia" ,"Hawaii")
 log_info("Reading Quarto template...")
 orig_qmd <- read_lines("_state_report_template.qmd")
