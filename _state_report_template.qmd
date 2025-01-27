@@ -46,20 +46,38 @@ fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualizat
 div(
   id = "grid-container",
   style = "display: grid; grid-template-columns: repeat(3, 1fr); grid-row-gap: 0px; grid-column-gap: 20px;",
-  div(id = "highlight-text", formattable::comma(proj_ppey, digits = 0)),
-  div(id = "highlight-text", paste0(round(proj_pcnt_ppey, 0), "%")),
-  div(id = "highlight-text", formattable::comma(parole_board_mem, digits = 0)),
-  div(id = "bold-text", style = "text-align: center;", 
+  
+  div(id = "highlight-text", 
+      role = "region", tabindex = "0",
+      `aria-label` = paste0("There were ", formattable::comma(proj_ppey, digits = 0), " people past parole eligibility."),
+      formattable::comma(proj_ppey, digits = 0)),
+  
+  div(id = "highlight-text", 
+      role = "region", tabindex = "0",
+      `aria-label` = paste0(round(proj_pcnt_ppey, 0), "% of the prison population was past parole eligibility."),
+      paste0(round(proj_pcnt_ppey, 0), "%")),
+  
+  div(id = "highlight-text", 
+      role = "region", tabindex = "0",
+      `aria-label` = paste0("There are ", formattable::comma(parole_board_mem, digits = 0), "parole board members in ", state_for_report),
+      formattable::comma(parole_board_mem, digits = 0)),
+  
+  div(id = "bold-text", 
+      style = "text-align: center;", 
       HTML("People In Prison Past<br>Parole Eligibility*")),
-  div(id = "bold-text", style = "text-align: center;", 
+  
+  div(id = "bold-text", 
+      style = "text-align: center;", 
       HTML("Prison Population Incarcerated<br>Past Parole Eligibility")),
-  div(id = "bold-text", style = "text-align: center;", 
+  
+  div(id = "bold-text", 
+      style = "text-align: center;", 
       HTML("Parole Board<br>Members<sup style='font-size: 0.5em;'>1</sup>"))
 )
 ```
 
 <br>
-<div id="asterisk-section"> `r additional_asterisks_combined` </div><br>
+<div id="asterisk-section" > `r additional_asterisks_combined` </div><br>
 </div>
 
 ::: {.panel-tabset .nav-pills}
