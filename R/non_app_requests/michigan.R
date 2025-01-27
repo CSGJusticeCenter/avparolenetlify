@@ -23,7 +23,7 @@ summary(michigan$time_between_ped_rptyear)
 
 # 79325
 
-ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(data = ncrp_yearendpop_consolidated,
+ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria1(data = ncrp_yearendpop_consolidated,
                                                               exclude = states_to_exclude,
                                                               dont_filter = states_nofilter)
 michigan <- ncrp_yearendpop_filtered |>
@@ -63,7 +63,7 @@ table(mi_pe_status_pop$estimated_pey_status)
 
 
 # Funciton for filtering
-fnc_filter_pe_population_criteria <- function(data, exclude) {
+fnc_filter_pe_population_criteria1 <- function(data, exclude) {
   # Extract the list of states to exclude (e.g., due to missing data or abolished parole)
   exclude <- exclude |> pull(state)
 
@@ -87,7 +87,7 @@ fnc_filter_pe_population_criteria <- function(data, exclude) {
 # Original file - ncrp_yearendpop_consolidated
 michigan1 <- ncrp_yearendpop_consolidated |> filter(state == "Michigan") |> filter(rptyear == 2017)
 
-ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(data = ncrp_yearendpop_consolidated,
+ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria1(data = ncrp_yearendpop_consolidated,
                                                               exclude = states_to_exclude)
 
 # Filtered file

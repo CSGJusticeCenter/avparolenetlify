@@ -160,7 +160,7 @@ ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
 # Summarize release data by parole eligibility status
 # - Calculate proportions within each group (on parole eligibility vs. past parole eligibility)
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
-  filter(estimated_pey_status %in% c("past", "current_year")) |> ######################################## ASK SEBA both currently and past parole eligibility????
+  filter(estimated_pey_status %in% c("past", "current_year")) |>
   group_by(state, rptyear, year_to_use, estimated_pey_status) |>
   summarise(n = n(), .groups = "drop") |>  # Count the number of releases
   group_by(state, rptyear, year_to_use) |>
@@ -208,12 +208,18 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color3, color5)) |>
     hc_legend(enabled = TRUE) |>
+    # hc_tooltip(formatter = JS("
+    #   function() {
+    #     return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+    #       (this.y * 100).toFixed(0) + '%</b><br/>';
+    #   }
+    # ")) |>
     hc_tooltip(formatter = JS("
-      function() {
-        return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
-          (this.y * 100).toFixed(0) + '%</b><br/>';
-      }
-    ")) |>
+    function() {
+      return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+        (this.y * 100).toFixed(0) + '%</b> (' + this.point.n + ' people)<br/>';
+    }
+  ")) |>
     hc_title(text = paste0(title, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_plotOptions(series = list(stacking = "normal",  # Enable stacking
                                  animation = FALSE,
@@ -238,7 +244,7 @@ all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
 # all_stackedbar_pe_release$Colorado
 # all_stackedbar_pe_release$Connecticut
 # all_stackedbar_pe_release$Georgia
-# all_stackedbar_pe_release$Hawaii ########### look weird
+all_stackedbar_pe_release$Hawaii ########### look weird
 # all_stackedbar_pe_release$Idaho  ########### look weird
 # all_stackedbar_pe_release$Iowa
 # all_stackedbar_pe_release$Kentucky

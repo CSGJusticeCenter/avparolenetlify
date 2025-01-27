@@ -220,7 +220,8 @@ fnc_transform_ncrp_data <- function(df) {
         # TRUE ~ as.character(calc_sent_lgth_compl)
       ),
       # Replace missing `sentlgth` with categorized imputed values
-      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth_category, TRUE ~ sentlgth),
+      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth_category,
+                           TRUE ~ sentlgth),
 
       # Factor race with specified levels
       race = factor(race, levels = c("Unknown",
