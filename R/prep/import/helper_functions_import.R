@@ -215,7 +215,7 @@ fnc_transform_ncrp_data <- function(df) {
         calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
         calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
         calc_sent_lgth_compl >= 25 ~ ">=25 years",
-        is.na(calc_sent_lgth_compl) ~ "Life, LWOP, Life plus additional years, Death",
+        is.na(calc_sent_lgth_compl) ~ "Unknown",
         TRUE ~ "Unknown"
         # TRUE ~ as.character(calc_sent_lgth_compl)
       ),

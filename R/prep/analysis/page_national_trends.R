@@ -364,7 +364,7 @@ map_percent <- highchart(height = 625) |>
     style = list(fontSize = "1.75em", fontWeight = "bold")
   ) |>
   hc_caption(
-    text = "Source: National Corrections Reporting Program, 2019 and CSG Justice Center estimates",
+    text = "Source: National Corrections Reporting Program, 2019 and CSG Justice Center estimates.",
     y = 0
   ) |>
 
@@ -379,7 +379,11 @@ map_percent <- highchart(height = 625) |>
     y = -30,
     itemMarginTop = 2,
     itemMarginBottom = 2
-  )
+  ) |>
+  hc_exporting(
+    filename = "map_proj_past_parole_eligibility_2023.png",
+    enabled = TRUE,
+    buttons = list(contextButton = list(menuItems = list("downloadPNG"))))
 
 # Add custom JavaScript to style the "No Discretionary Parole" legend item
 # White circle needs a gray circle - can't do this in highcharter legend
@@ -401,7 +405,7 @@ map_percent_download <- map_percent |>
   hc_chart(events = list(render = render_image),
            marginBottom = 120) |>
   hc_caption(
-    text = "Source: National Corrections Reporting Program, 2019 and CSG Justice Center estimates",
+    text = "Source: National Corrections Reporting Program, 2019 and CSG Justice Center estimates.",
     y = -40
   )
 map_percent_download
