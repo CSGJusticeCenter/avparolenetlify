@@ -1219,6 +1219,10 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
       round(df1$prop[1], 0),
       " percent of people ", type, " had sentence lengths between ",
       sent_range[1], " and ", sent_range[2], ".")
+    # Replace special case "between < 1 year and NA" with "of less than one year"
+    sentences <- gsub("between < 1 year and NA", "of less than one year", sentences)
+    # Replace special case "between < 1 year and NA" with "of less than one year"
+    sentences <- gsub("between Life, LWOP, Life plus additional years, Death and NA", "of life, life without parole, life plus additional years or death", sentences)
   }
   # General case for other variables
   else {
