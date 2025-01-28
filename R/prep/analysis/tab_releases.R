@@ -214,12 +214,19 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
     #       (this.y * 100).toFixed(0) + '%</b><br/>';
     #   }
     # ")) |>
+  #   hc_tooltip(formatter = JS("
+  #   function() {
+  #     return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+  #       (this.y * 100).toFixed(0) + '%</b> (' + this.point.n + ' people)<br/>';
+  #   }
+  # ")) |>
     hc_tooltip(formatter = JS("
     function() {
-      return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
-        (this.y * 100).toFixed(0) + '%</b> (' + this.point.n + ' people)<br/>';
+      return '<b>Released:</b> ' + this.series.name + ' Year<br>' +
+             '<b>Number of People:</b> ' + this.point.n + '<br>' +
+             '<b>Percentage of Those Released:</b> ' + (this.y * 100).toFixed(0) + '%';
     }
-  ")) |>
+")) |>
     hc_title(text = paste0(title, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
     hc_plotOptions(series = list(stacking = "normal",  # Enable stacking
                                  animation = FALSE,
@@ -243,8 +250,8 @@ all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
 # all_stackedbar_pe_release$Arkansas
 # all_stackedbar_pe_release$Colorado
 # all_stackedbar_pe_release$Connecticut
-# all_stackedbar_pe_release$Georgia
-all_stackedbar_pe_release$Hawaii ########### look weird
+all_stackedbar_pe_release$Georgia
+# all_stackedbar_pe_release$Hawaii ########### look weird
 # all_stackedbar_pe_release$Idaho  ########### look weird
 # all_stackedbar_pe_release$Iowa
 # all_stackedbar_pe_release$Kentucky
