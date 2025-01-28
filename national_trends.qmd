@@ -3,6 +3,7 @@ title: "National Snapshot"
 format:
   html:
     css: styles.css
+    anchor-links: false
     embed-resources: TRUE
     code-fold: true
     page-layout: full

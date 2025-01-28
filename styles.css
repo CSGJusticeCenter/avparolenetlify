@@ -115,9 +115,14 @@ body {
 /* Headers */
 /******************************************************************************/
 
-/* Hides anchor elements that might automatically appear with headers */
+/* Hides anchor elements that might automatically appear with headers - not sure if this works but save for now*/
 h1 a.anchor, h2 a.anchor, h3 a.anchor, h4 a.anchor {
   display: none !important;
+}
+
+/* Hides anchor elements that might automatically appear with headers - this actually works*/
+h1 > a, h2 > a, h3 > a, h4 > a {
+    display: none !important;
 }
 
 /* Header styling */
