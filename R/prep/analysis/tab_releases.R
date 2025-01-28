@@ -407,7 +407,8 @@ all_pie_release_type <- map(.x = states, .f = function(x) {
     )) |>
     hc_add_theme(base_hc_theme) |>
     hc_colors(c(color4, color2)) |>
-    hc_tooltip(pointFormat = 'Number of People Released: {point.y}<br>Percentage of People Released: {point.percentage:.0f}%') |>
+    hc_tooltip(headerFormat = '<b>Release Type:</b> {point.key}',
+               pointFormat = '<br><b>Number of People Released:</b> {point.y}<br><b>Percentage of People Released:</b> {point.percentage:.0f}%') |>
     hc_caption(text = paste0("Source: ", ncrp_source, ", ", year, "."),
                y = -40) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>

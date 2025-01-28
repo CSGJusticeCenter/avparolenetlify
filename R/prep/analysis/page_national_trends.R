@@ -379,11 +379,7 @@ map_percent <- highchart(height = 625) |>
     y = -30,
     itemMarginTop = 2,
     itemMarginBottom = 2
-  ) |>
-  hc_exporting(
-    filename = "map_proj_past_parole_eligibility_2023.png",
-    enabled = TRUE,
-    buttons = list(contextButton = list(menuItems = list("downloadPNG"))))
+  )
 
 # Add custom JavaScript to style the "No Discretionary Parole" legend item
 # White circle needs a gray circle - can't do this in highcharter legend
