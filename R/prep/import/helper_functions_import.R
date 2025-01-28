@@ -207,21 +207,22 @@ fnc_transform_ncrp_data <- function(df) {
     fnc_create_fbi_index() |>
     fnc_create_admtype() |>
     mutate(
-      # Categorize imputed sentence length values
-      calc_sent_lgth_category = case_when(
-        calc_sent_lgth_compl >= 0 & calc_sent_lgth_compl < 1 ~ "< 1 year",
-        calc_sent_lgth_compl >= 1 & calc_sent_lgth_compl < 2 ~ "1-1.9 years",
-        calc_sent_lgth_compl >= 2 & calc_sent_lgth_compl < 5 ~ "2-4.9 years",
-        calc_sent_lgth_compl >= 5 & calc_sent_lgth_compl < 10 ~ "5-9.9 years",
-        calc_sent_lgth_compl >= 10 & calc_sent_lgth_compl < 25 ~ "10-24.9 years",
-        calc_sent_lgth_compl >= 25 ~ ">=25 years",
-        is.na(calc_sent_lgth_compl) ~ "Unknown",
-        TRUE ~ "Unknown"
-        # TRUE ~ as.character(calc_sent_lgth_compl)
-      ),
-      # Replace missing `sentlgth` with categorized imputed values
-      sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth_category,
-                           TRUE ~ sentlgth),
+      # SAVE CODE FOR NOW
+      # # Categorize imputed sentence length values
+      # calc_sent_lgth_category = case_when(
+      #   calc_sent_lgth  >= 0 & calc_sent_lgth  < 1 ~ "< 1 year",
+      #   calc_sent_lgth  >= 1 & calc_sent_lgth  < 2 ~ "1-1.9 years",
+      #   calc_sent_lgth  >= 2 & calc_sent_lgth  < 5 ~ "2-4.9 years",
+      #   calc_sent_lgth  >= 5 & calc_sent_lgth  < 10 ~ "5-9.9 years",
+      #   calc_sent_lgth  >= 10 & calc_sent_lgth  < 25 ~ "10-24.9 years",
+      #   calc_sent_lgth  >= 25 ~ ">=25 years",
+      #   is.na(calc_sent_lgth) ~ "Unknown",
+      #   TRUE ~ "Unknown"
+      #   # TRUE ~ as.character(calc_sent_lgth)
+      # ),
+      # # Replace missing `sentlgth` with categorized imputed values
+      # sentlgth = case_when(sentlgth == "Unknown" ~ calc_sent_lgth_category,
+      #                      TRUE ~ sentlgth),
 
       # Factor race with specified levels
       race = factor(race, levels = c("Unknown",
