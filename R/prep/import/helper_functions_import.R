@@ -37,9 +37,15 @@ fnc_format_citation <- function(text) {
   # Replace double periods with a single period
   text <- gsub("\\.\\.", ".", text, perl = TRUE)
 
+  text <- gsub(
+    "[https://web.archive](https://web.archive).org/web/20240101091645/https:/doc.sd.gov/documents/AdultPopulationNovember30203.pdf",
+    "[https://web.archive.org/web/20240101091645/https:/doc.sd.gov/documents/AdultPopulationNovember30203.pdf](https://web.archive.org/web/20240101091645/https:/doc.sd.gov/documents/AdultPopulationNovember30203.pdf)",
+    text,
+    fixed = TRUE
+  )
+
   return(text)
 }
-
 
 #' Read a Stata File and Add a Year Column
 #'
