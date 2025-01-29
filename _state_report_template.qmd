@@ -96,7 +96,7 @@ div(
 <div id="parole-eligibility-intro" tabindex="0">
 Parole eligibility refers to the point in a person's prison sentence when they become eligible for consideration for release under parole. Often, there is a minimum term a person must serve before becoming parole eligible. Parole is a conditional release, allowing the person to serve the remainder of their sentence in the community under supervision, rather than in prison.  
 </div>
-<div id="parole-eligibility-section" tabindex="0">
+<div id="parole-eligibility-criteria" tabindex="0">
 `r paste(parole_eligibility_criteria, collapse = ", ")` 
 </div><br>
 <div class="divider"></div>
