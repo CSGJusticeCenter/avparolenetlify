@@ -410,6 +410,16 @@ map_percent_download
 saveWidget(map_percent_download, file = "temp.html", selfcontained = TRUE)
 
 # Use webshot to take a screenshot and save it as a PNG
+# May receive this error:
+# Error in `with_random_port()`:
+#   ! Cannot find an available port. Please try again.
+# Caused by error in `startup()`:
+#   ! Failed to start chrome. Error:
+#   Old Headless mode has been removed from the Chrome binary. Please use the new
+#   Headless mode (https://developer.chrome.com/docs/chromium/new-headless) or
+#   the chrome-headless-shell which is a standalone implementation of the old
+#   Headless mode (https://developer.chrome.com/blog/chrome-headless-shell).
+library(webshot2)
 webshot2::webshot(
   url = "temp.html",
   file = file.path("img/map_proj_past_parole_eligibility_2023.png"),

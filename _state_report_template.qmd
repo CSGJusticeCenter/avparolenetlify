@@ -33,7 +33,7 @@ fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualizat
   if (!no_data) {
     div(id = "sentence",
         role = "text", 
-        tabindex = "0", # not working for some reason...
+        tabindex = "0", # not working for some reason...so I've added the sentence to the aria label below.
         cat(sentence))
     div(id = chart_type,
         role = "region",

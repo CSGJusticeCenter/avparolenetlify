@@ -72,7 +72,7 @@ states <- parole_eligibility_table |>
   filter(!state %in% states_national_page_only$state) |>
   pull(state)
 # states <- c("Arkansas", "Georgia", "Colorado", "Hawaii", "Louisiana")
-states <- c("Georgia")
+# states <- c("Georgia")
 log_info("Reading Quarto template...")
 orig_qmd <- read_lines("_state_report_template.qmd")
 
