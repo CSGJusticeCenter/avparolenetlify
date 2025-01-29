@@ -28,8 +28,8 @@ fnc_format_citation <- function(text) {
 
   # Convert URLs into markdown-style links
   text <- gsub(
-    "(https://[a-zA-Z0-9./?=_&%-]+)(?=[.,\\s]|$)", # Regex to capture URLs without trailing period or comma
-    "\\[\\1\\](\\1)",                             # Format as markdown link [url](url)
+    "(https://[a-zA-Z0-9./?=_&%-]+)(?=[.,\\s\\)])", # Regex to capture URLs without trailing period, comma, or parenthesis
+    "\\[\\1\\](\\1)",                                # Format as markdown link [url](url)
     text,
     perl = TRUE
   )

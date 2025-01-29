@@ -168,10 +168,18 @@ fnc_summarize_data <- function(df, count_column) {
     # Filter out missing values and optionally exclude "Unknown" values
     # - Always exclude `NA`.
     # - Exclude "Unknown" unless the column is `race`.
+    # filter(
+    #   !is.na(!!count_column) &                 # Exclude missing values
+    #     (!(quo_name(count_column) != "race" &  # Check column name (string comparison)
+    #          !!count_column == "Unknown"))     # Remove "Unknown" for non-"race" columns
+    # ) |>
     filter(
-      !is.na(!!count_column) &                 # Exclude missing values
-        (!(quo_name(count_column) != "race" &  # Check column name (string comparison)
-             !!count_column == "Unknown"))     # Remove "Unknown" for non-"race" columns
+      !is.na(!!count_column) &                      # Exclude missing values
+        (
+          (quo_name(count_column) == "sentlgth") |  # Include "Unknown" for "sentlgth" and "race"
+            (!(quo_name(count_column) != "race" &   # Check column name (string comparison)
+                 !!count_column == "Unknown"))      # Remove "Unknown" for non-"race" columns
+        )
     ) |>
 
     # Count occurrences of each value in the specified column
@@ -1219,10 +1227,10 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
       round(df1$prop[1], 0),
       " percent of people ", type, " had sentence lengths between ",
       sent_range[1], " and ", sent_range[2], ".")
-    # Replace special case "between < 1 year and NA" with "of less than one year"
+    # Replace special cases where the sentence length is not a range
     sentences <- gsub("between < 1 year and NA", "of less than one year", sentences)
-    # Replace special case "between < 1 year and NA" with "of less than one year"
     sentences <- gsub("between Life, LWOP, Life plus additional years, Death and NA", "of life, life without parole, life plus additional years or death", sentences)
+    sentences <- gsub("between Unknown and NA", "that were missing data", sentences)
   }
   # General case for other variables
   else {
