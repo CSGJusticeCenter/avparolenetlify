@@ -31,9 +31,14 @@ fnc_display_sentence_chart <- function(sentence, chart, chart_type = "visualizat
   
   # Display the sentence and chart if available
   if (!no_data) {
-    cat(sentence)
+    div(id = "sentence",
+        role = "text", 
+        tabindex = "0", # not working for some reason...
+        cat(sentence))
     div(id = chart_type,
-        role = "region", tabindex = "0",
+        role = "region",
+        tabindex = "0",
+        `aria-label`= sentence,
         chart)
   } else {
     # Show "no data" message only once if both are missing
