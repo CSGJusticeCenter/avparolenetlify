@@ -61,7 +61,7 @@ lapply(required_packages, library, character.only = TRUE)
 # [ACTION REQUIRED] Change this to your project path in SharePoint (sp)
 csg_set_project_path(
   project = "AVParole",
-  sp_folder = "C:/Users/mroberts/The Council of State Governments/JC Research - Documents/RES_Parole",
+  sp_folder = "C:/Users/atallaksen/The Council of State Governments/JC Research - Documents/RES_Parole",
   force = TRUE
 )
 

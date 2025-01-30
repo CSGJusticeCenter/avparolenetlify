@@ -499,7 +499,7 @@ if (no_infographic_male == TRUE & no_data_male == TRUE) {
   # Display "No RRI" message
   HTML(paste0(
     "<br><span style='font-weight:bold; color:#49a7a1;'>Men</span> were incarcerated in state prison past their parole eligibility at the same rate as 
-     <span style='font-weight:bold; color:#938ebf;'>Women</span>, when accounting for prison population sizes in ", 
+     <span style='font-weight:bold; color:#938ebf;'>women</span>, when accounting for prison population sizes in ", 
      state_for_report, ".<br>"
   ))
 } else if (no_infographic_male == FALSE & no_data_male == FALSE) {
