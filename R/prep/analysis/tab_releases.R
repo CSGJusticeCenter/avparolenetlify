@@ -202,7 +202,10 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
     hc_yAxis(
       title = list(text = ""),
       max = 1,  # Set maximum value for proportions (100%)
-      labels = list(formatter = JS("function() { return (this.value * 100) + '%'; }"))  # Display as percentages
+      tickInterval = 0.25, # added 2025/02/03 after feedback from Seba, Carl, and Alice.
+      labels = list(enabled = TRUE,
+                    style = list(color = "black"),
+                    formatter = JS("function() { return (this.value * 100) + '%'; }"))  # Display as percentages
     ) |>
     hc_xAxis(categories = unique(df1$rptyear), title = "") |>
     hc_add_theme(base_hc_theme) |>
@@ -233,8 +236,10 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
                                  cursor = "pointer",
                                  borderWidth = 3,
                                  minPointLength = 4)) |>
+    # added 2025/02/04: Footnote after source (based on talk with Seba, Carl, and Alice)
     hc_caption(text = paste0("Source: ", ncrp_source, ", ", min(df1$rptyear), "-",
-                             max(df1$rptyear), " and ", csg_source, "."),
+                             max(df1$rptyear), " and ", csg_source, ".<br>",
+                             "Most people released before their PEY likely had an earlier PEY than our estimated one and were released during that year."),
                y = -40) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
