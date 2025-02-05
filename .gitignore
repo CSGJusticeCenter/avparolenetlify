@@ -22,7 +22,7 @@
 *.Rhistory
 *.csv
 *.mp4
-# *.Rproj # changed 2025/02/04
+*.Rproj
 *.nvp
 *.txt
 *.svg
