@@ -28,4 +28,4 @@ format:
     toc-location: left
 
 execute:
-  freeze: auto
+  freeze: false # auto (commented out 2025/02/06)
