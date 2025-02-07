@@ -1231,6 +1231,8 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
     sentences <- gsub("between < 1 year and NA", "of less than one year", sentences)
     sentences <- gsub("between Life, LWOP, Life plus additional years, Death and NA", "of life, life without parole, life plus additional years or death", sentences)
     sentences <- gsub("between Unknown and NA", "that were missing data", sentences)
+    sentences <- gsub("between >=25 years and NA", "of 25 years or longer", sentences) # added 2025/2/7 to account for 25+
+
   }
   # General case for other variables
   else {
