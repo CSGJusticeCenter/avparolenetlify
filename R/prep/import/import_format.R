@@ -134,9 +134,12 @@ state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/a
     # Combine PB citations, skipping missing ones
     pb_citation = paste0(
       pb_citation_1,
-      ifelse(!is.na(pb_citation_2) & pb_citation_2 != "", "<br><br>", ""),
+      ifelse(!is.na(pb_citation_2) & pb_citation_2 != "", ";", ""), # changed "<br><br>" to ";" 2025/2/10
       ifelse(!is.na(pb_citation_2) & pb_citation_2 != "", pb_citation_2, "")
     ),
+
+    # replace ".;" with ";" 2025/2/10
+    pb_citation = str_replace_all(pb_citation, "\\.;", "; "),
 
     # Add superscript 1 to PB citation
     pb_citation = paste("\u00B9", pb_citation, sep = " "),

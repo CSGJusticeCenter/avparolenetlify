@@ -1219,6 +1219,9 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
       round(df1$prop[1], 0),
       " percent of people ", type, " were between the ages of ",
       age_range[1], " and ", age_range[2], " old.")
+    # Replace special cases where the age is not a range (i.e. 55+)
+    sentences <- gsub("between the ages of 55+ years and NA old", "55 years or older", sentences) # added 2025/2/7 to account for 55+
+
   }
   # Special handling for sentence length variables
   else if (x_var == "sentlgth") {
