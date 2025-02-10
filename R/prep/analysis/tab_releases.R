@@ -314,13 +314,20 @@ all_sentence_pe_proportion_released <- map(.x = states, .f = function(x) {
       # Calculate percentage change in proportions
       prop_change <- (prop_past_parole_latest - prop_past_parole_earliest) / prop_past_parole_earliest * 100
 
-      # Generate sentence based on whether there was an increase or decrease
-      if (prop_change > 0) {
+      # Generate sentence based on whether there was an increase or decrease # added 2025/2/10: or 0% change!
+      if (round(prop_change, 0) > 0) {
         sentence <- paste0(
           # "In ", latest_year, ", ", round(prop_past_parole_latest * 100, 0),
           "In the most recent year of data available, ", round(prop_past_parole_latest * 100, 0),
           " percent of parole-eligible people released in ", x, " were released past their parole eligibility year, ",
           "which is an increase of ", round(prop_change, 0), " percent from ", earliest_year, "."
+        )
+      } else if (round(prop_change, 0) == 0){
+        sentence <- paste0(
+          # "In ", latest_year, ", ", round(prop_past_parole_latest * 100, 0),
+          "In the most recent year of data available, ", round(prop_past_parole_latest * 100, 0),
+          " percent of parole-eligible people released in ", x, " were released past their parole eligibility year, ",
+          "which remains unchanged since ", earliest_year, "."
         )
       } else {
         sentence <- paste0(
