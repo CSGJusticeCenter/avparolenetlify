@@ -26,6 +26,7 @@ format:
     css: styles.css
     toc: true
     toc-location: left
+    link-external-newwindow: true # added 2025/2/12 to open links in new tab
 
 execute:
   freeze: false # auto (commented out 2025/02/06)
