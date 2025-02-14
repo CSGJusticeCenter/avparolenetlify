@@ -125,9 +125,9 @@ state_notes_raw <- read.csv(file.path(sp_data_path, "data/raw/Carl State Notes/a
     # Combine PE citations, skipping missing ones
     pe_citation = paste0(
       pe_citation_1,
-      ifelse(!is.na(pe_citation_2) & pe_citation_2 != "", "<br><br>", ""),
+      ifelse(!is.na(pe_citation_2) & pe_citation_2 != "", "; ", ""), # changed "<br><br>" to ";" 2025/2/10
       ifelse(!is.na(pe_citation_2) & pe_citation_2 != "", pe_citation_2, ""),
-      ifelse(!is.na(pe_citation_3) & pe_citation_3 != "", "<br><br>", ""),
+      ifelse(!is.na(pe_citation_3) & pe_citation_3 != "", "; ", ""), # changed "<br><br>" to ";" 2025/2/10
       ifelse(!is.na(pe_citation_3) & pe_citation_3 != "", pe_citation_3, "")
     ),
 
