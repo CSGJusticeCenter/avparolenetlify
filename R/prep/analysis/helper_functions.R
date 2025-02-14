@@ -1211,6 +1211,9 @@ fnc_generate_columnchart_sentence <- function(state_var, df, x_var, type) {
       nonviolent_prop, " percent for nonviolent offenses. ",
       "The most common offense ", type_word, " among people ", type,
       " were ", top_sentence_final, ".")
+    # Replace special cases where there i 0% violent crimes # added 2025/2/7 to account for 0 percent
+    sentences <- ifelse(stringr::str_starts(sentences, " percent"), paste0((100-nonviolent_prop), sentences), sentences)
+
   }
   # Special handling for age-related variables
   else if (x_var == "ageyrend" | x_var == "agerlse") {
