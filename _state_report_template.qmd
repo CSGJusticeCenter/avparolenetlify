@@ -439,45 +439,58 @@ if (no_infographic_black == TRUE & no_data_black == TRUE) {
   # Display "No Data" message
   no_data_needed_black_individuals <- TRUE
 } else if (no_infographic_black == TRUE & no_data_black == FALSE & no_rri_details_black == FALSE) {
-  # Display "No RRI" message
-  HTML(paste0("<br><span style='font-weight:bold; color:#49a7a1;'>Black, non-Hispanic people</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", state_for_report, ".<br><br>"))
+  # Display "No RRI" message with tabindex for accessibility
+  HTML(paste0("<br><div tabindex='0' role='text'>",
+              "<span style='font-weight:bold; color:#49a7a1;'>Black, non-Hispanic people</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", 
+              state_for_report, 
+              ".</div><br>"))
 } else if (no_infographic_black == FALSE & no_data_black == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_black)
 }
 
 if (no_infographic_black == FALSE & no_data_black == FALSE) {
-  # Render the HTML content separately
-  HTML(state_sentence_pe_rri_black, "<br><br>")
+  # Render the HTML content separately with tabindex for accessibility
+  HTML(paste0("<div tabindex='0' role='text'>", state_sentence_pe_rri_black, "</div><br>"))
 }
 
 if (no_infographic_hispanic == TRUE & no_data_hispanic == TRUE) {
   # Display "No Data" message
   no_data_needed_hispanic_individuals <- TRUE
 } else if (no_infographic_hispanic == TRUE & no_data_hispanic == FALSE & no_rri_details_hispanic == FALSE) {
-  # Display "No RRI" message
-  HTML(paste0("<span style='font-weight:bold; color:#55b4e5;'>Hispanic people</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", state_for_report, ".<br>"))
+  # Display "No RRI" message with tabindex for accessibility
+  HTML(paste0("<div tabindex='0' role='text'>",
+              "<span style='font-weight:bold; color:#55b4e5;'>Hispanic people</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", 
+              state_for_report, 
+              ".</div><br>"))
 } else if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
   # Render the image using knitr::include_graphics()
   knitr::include_graphics(pe_rri_infographic_hispanic)
 }
 if (no_infographic_hispanic == FALSE & no_data_hispanic == FALSE) {
   # Render the HTML content separately
-  HTML(state_sentence_pe_rri_hispanic, "<br>")
+  HTML(paste0("<div tabindex='0' role='text'>", state_sentence_pe_rri_hispanic, "</div><br>"))
 }
 
 # Only process "Other race(s), non-Hispanic" if the state is in the specified list
 if (no_infographic_other == TRUE & no_data_other == TRUE) {
   cat("") # Nothing to output
 } else if (use_other_race == TRUE & no_infographic_other == TRUE & no_data_other == FALSE & no_rri_details_other == FALSE) {
-  HTML(paste0("<br><span style='font-weight:bold; color:#938ebf;'>Non-Hispanic people of other race(s)</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", state_for_report, ".<br>"))
+  HTML(paste0("<div tabindex='0' role='text'>",
+              "<span style='font-weight:bold; color:#938ebf;'>Non-Hispanic people of other race(s)</span> were incarcerated in state prison past their parole eligibility at the same rate as <span style='font-weight:bold; color:#d97d68;'>White people</span>, when accounting for prison population sizes in ", 
+              state_for_report, 
+              ".</div><br>"))
 } else if (use_other_race == TRUE & no_infographic_other == FALSE & no_data_other == FALSE) {
   knitr::include_graphics(pe_rri_infographic_other)
 }
 
 # Render the state sentence
+# if (no_infographic_other == FALSE & no_data_other == FALSE) {
+#   cat(state_sentence_pe_rri_other, "<br>")
+# }
 if (no_infographic_other == FALSE & no_data_other == FALSE) {
-  cat(state_sentence_pe_rri_other, "<br>")
+  # Wrap the output in a focusable div for accessibility
+  cat(paste0("<div tabindex='0' role='text'>", state_sentence_pe_rri_other, "</div><br>"))
 }
 
 # Display "No Data" message if all three groups (Black, Hispanic, Other) have no data
@@ -486,8 +499,11 @@ if ((no_infographic_black == TRUE & no_data_black == TRUE) &
     (!use_other_race | (use_other_race & no_infographic_other == TRUE & no_data_other == TRUE))) {
   no_data_text
 } else {
-  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
+  cat(as.character(div(id = "rri_sourcenotes-text", tabindex = "0", role = "text", ncrp_csg_source_year)))
 }
+# } else {
+#   cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
+# }
 ```
 
 ### Sex
@@ -513,11 +529,13 @@ if (no_infographic_male == TRUE & no_data_male == TRUE) {
   # Display "No Data" message
   no_data_needed_male_individuals <- TRUE
 } else if (no_infographic_male == TRUE & no_data_male == FALSE & no_rri_details_male == FALSE) {
-  # Display "No RRI" message
+  # Display "No RRI" message with tabindex for accessibility
   HTML(paste0(
+    "<div tabindex='0' role='text'>",
     "<br><span style='font-weight:bold; color:#49a7a1;'>Men</span> were incarcerated in state prison past their parole eligibility at the same rate as 
      <span style='font-weight:bold; color:#938ebf;'>women</span>, when accounting for prison population sizes in ", 
-     state_for_report, ".<br>"
+    state_for_report, 
+    ".</div><br>"
   ))
 } else if (no_infographic_male == FALSE & no_data_male == FALSE) {
   # Render the image using knitr::include_graphics()
@@ -525,14 +543,14 @@ if (no_infographic_male == TRUE & no_data_male == TRUE) {
 } 
 
 if (no_infographic_male == FALSE & no_data_male == FALSE) {
-  HTML(state_sentence_pe_rri_male, "<br>")
+  HTML(paste0("<div tabindex='0' role='text'>", state_sentence_pe_rri_male, "</div><br>"))
 }
 
 # Display "No Data" message if no data
 if (no_infographic_male == TRUE & no_data_male == TRUE){
   no_data_text
 } else {
-  cat(as.character(div(id = "rri_sourcenotes-text", br(), ncrp_csg_source_year)))
+  cat(as.character(div(id = "rri_sourcenotes-text", tabindex = "0", role = "text", ncrp_csg_source_year)))
 }
 ```
 

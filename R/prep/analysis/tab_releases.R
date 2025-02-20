@@ -156,28 +156,120 @@ ncrp_releases_filtered_pop <- fnc_filter_pe_population_criteria(
   dont_filter = states_nofilter) |>
   left_join(which_overall_year, by = "state")
 
-# Were people released on or past their eligibility year?
-# Summarize release data by parole eligibility status
-# - Calculate proportions within each group (on parole eligibility vs. past parole eligibility)
 ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
-  filter(estimated_pey_status %in% c("past", "current_year")) |>
+  mutate(
+    estimated_pey_status = case_when(
+      estimated_pey_status == "past" ~ "Past Parole Eligibility",
+      estimated_pey_status == "future" ~ "In or Before Parole Eligibility",
+      estimated_pey_status == "current_year" ~ "In or Before Parole Eligibility",
+      estimated_pey_status == "missing" ~ "Missing Data"
+    )
+  ) |>
+  # filter(estimated_pey_status %in% c("past", "current_year")) |>
   group_by(state, rptyear, year_to_use, estimated_pey_status) |>
   summarise(n = n(), .groups = "drop") |>  # Count the number of releases
   group_by(state, rptyear, year_to_use) |>
   mutate(
-    prop = n / sum(n),  # Calculate proportion of releases for each group
-    estimated_pey_status = case_when(
-      estimated_pey_status == "past" ~ "Past Parole Eligibility",
-      estimated_pey_status == "current_year" ~ "In Parole Eligibility"
-    )
+    prop = n / sum(n)
   ) |>
   filter(rptyear >= 2010 & rptyear <= year_to_use)  # Include data from 2010 onwards up to the year by state
 
 # Extract a list of unique states for iteration
 states <- unique(ncrp_pe_releases_by_year$state)
 
-# VISUALIZATION: Percentage of Parole-Eligible People Released On or Past Their Parole Eligibility Year
-# Generate stacked bar charts for each state
+# Were people released on or past their eligibility year?
+# Summarize release data by parole eligibility status
+# - Calculate proportions within each group (on parole eligibility vs. past parole eligibility)
+# ncrp_pe_releases_by_year <- ncrp_releases_filtered_pop |>
+#   mutate(estimated_pey_status = case_when(
+#     estimated_pey_status == "past" ~ "Past Parole Eligibility",
+#     estimated_pey_status == "future" ~ "In or Before Parole Eligibility",
+#     estimated_pey_status == "current_year" ~ "In or Before Parole Eligibility",
+#     estimated_pey_status == "missing" ~ "Missing Data"
+#   )) |>
+#   # filter(estimated_pey_status %in% c("past", "current_year")) |>
+#   group_by(state, rptyear, year_to_use, estimated_pey_status) |>
+#   summarise(n = n(), .groups = "drop") |>  # Count the number of releases
+#   group_by(state, rptyear, year_to_use) |>
+#   mutate(
+#     prop = n / sum(n)  # Calculate proportion of releases for each group
+#   ) |>
+#   filter(rptyear >= 2010 & rptyear <= year_to_use)  # Include data from 2010 onwards up to the year by state
+#
+# # Extract a list of unique states for iteration
+# states <- unique(ncrp_pe_releases_by_year$state)
+#
+# # VISUALIZATION: Percentage of Parole-Eligible People Released On or Past Their Parole Eligibility Year
+# # Generate stacked bar charts for each state
+# all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
+#   # Filter data for the specific state
+#   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
+#
+#   # Define chart title and accessibility text
+#   title <- "People Released In Parole Eligibility Year vs. Past Parole Eligibility Year"
+#   hc_accessibility_text <- "This stacked bar chart shows the proportion of parole-eligible people released in each year, either on or past their parole eligibility year."
+#
+#   # Download file title
+#   download_title <- paste0(gsub(" ", "_", tolower(title)), "_",
+#                            min(df1$rptyear), "_", max(df1$rptyear))
+#
+#   # Space below chart to accompany logo
+#   bottom_margin_value <- 120
+#
+#   # Create Highcharts stacked bar chart
+#   highcharts <- df1 |>
+#     hchart(
+#       type = "column",  # Stacked column chart
+#       hcaes(x = rptyear, y = prop, group = estimated_pey_status)  # X-axis: year, Y-axis: proportion, Group: status
+#     ) |>
+#     hc_yAxis(
+#       title = list(text = ""),
+#       max = 1,  # Set maximum value for proportions (100%)
+#       tickInterval = 0.25, # added 2025/02/03 after feedback from Seba, Carl, and Alice.
+#       labels = list(enabled = TRUE,
+#                     style = list(color = "black"),
+#                     formatter = JS("function() { return (this.value * 100) + '%'; }"))  # Display as percentages
+#     ) |>
+#     hc_xAxis(categories = unique(df1$rptyear), title = "") |>
+#     hc_add_theme(base_hc_theme) |>
+#     hc_colors(c(color3, color5, darkgray)) |>
+#     hc_legend(enabled = TRUE) |>
+#     # hc_tooltip(formatter = JS("
+#     #   function() {
+#     #     return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+#     #       (this.y * 100).toFixed(0) + '%</b><br/>';
+#     #   }
+#     # ")) |>
+#   #   hc_tooltip(formatter = JS("
+#   #   function() {
+#   #     return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
+#   #       (this.y * 100).toFixed(0) + '%</b> (' + this.point.n + ' people)<br/>';
+#   #   }
+#   # ")) |>
+#     hc_tooltip(formatter = JS("
+#     function() {
+#       return '<b>Released:</b> ' + this.series.name + ' Year<br>' +
+#              '<b>Number of People:</b> ' + this.point.n + '<br>' +
+#              '<b>Percentage of Those Released:</b> ' + (this.y * 100).toFixed(0) + '%';
+#     }
+# ")) |>
+#     hc_title(text = paste0(title, ", ", min(df1$rptyear), "-", max(df1$rptyear))) |>
+#     hc_plotOptions(series = list(stacking = "normal",  # Enable stacking
+#                                  animation = FALSE,
+#                                  cursor = "pointer",
+#                                  borderWidth = 3,
+#                                  minPointLength = 4)) |>
+#     # added 2025/02/04: Footnote after source (based on talk with Seba, Carl, and Alice)
+#     hc_caption(text = paste0("Source: ", ncrp_source, ", ", min(df1$rptyear), "-",
+#                              max(df1$rptyear), " and ", csg_source, ".<br>",
+#                              "Most people released before their PEY likely had an earlier PEY than our estimated one and were released during that year."),
+#                y = -40) |>
+#     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
+#     fnc_add_hc_accessibility(hc_accessibility_text)
+#
+#   return(highcharts)
+# })
+
 all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   # Filter data for the specific state
   df1 <- ncrp_pe_releases_by_year |> filter(state == x)
@@ -190,8 +282,42 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
   download_title <- paste0(gsub(" ", "_", tolower(title)), "_",
                            min(df1$rptyear), "_", max(df1$rptyear))
 
+  # Define legend order (ensuring "Missing Data" is last)
+  legend_order <- c("In or Before Parole Eligibility",
+                    "Past Parole Eligibility",
+                    "Missing Data")
+
+  # Ensure factor levels respect this order
+  df1 <- df1 |> mutate(estimated_pey_status = factor(estimated_pey_status, levels = legend_order))
+
+  # Define colors dynamically
+  color_mapping <- c("In or Before Parole Eligibility" = color3,
+                     "Past Parole Eligibility" = color5,
+                     "Missing Data" = darkgray)
+
+  # Keep only relevant colors based on available categories
+  used_colors <- unname(color_mapping[levels(df1$estimated_pey_status)])
+
+  # Check if "Missing Data" is present in the current state's data
+  include_missing_text <- "Missing Data" %in% df1$estimated_pey_status
+
+  # Generate missing data text only if "Missing Data" is present
+  missing_data_text <- if (include_missing_text) {
+    states_missing_data |>
+      filter(state == x) |>
+      mutate(missing_data_text = ifelse(
+        missing_due_to_rules == 1,
+        "Missing, Possibly Due to Eligibility Rules: This includes individuals for whom parole eligibility information is unavailable and could not be estimated. This could be because, due to the state's eligibility rules, they may have never been eligible, or because other data was also missing, such as admission year or maximum sentence length.",
+        "Missing Data: This includes individuals for whom parole eligibility information is unavailable and could not be estimated due to other missing data, such as admission year or maximum sentence length."
+      )) |>
+      pull(missing_data_text)
+  } else {
+    NULL
+  }
+
   # Space below chart to accompany logo
-  bottom_margin_value <- 120
+  bottom_margin_value <- ifelse(is.null(missing_data_text), 120, 150)
+  y_caption <- ifelse(is.null(missing_data_text), -30, -30)
 
   # Create Highcharts stacked bar chart
   highcharts <- df1 |>
@@ -209,20 +335,8 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
     ) |>
     hc_xAxis(categories = unique(df1$rptyear), title = "") |>
     hc_add_theme(base_hc_theme) |>
-    hc_colors(c(color3, color5)) |>
-    hc_legend(enabled = TRUE) |>
-    # hc_tooltip(formatter = JS("
-    #   function() {
-    #     return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
-    #       (this.y * 100).toFixed(0) + '%</b><br/>';
-    #   }
-    # ")) |>
-  #   hc_tooltip(formatter = JS("
-  #   function() {
-  #     return '<span style=\"color:' + this.series.color + '\">' + this.series.name + '</span>: <b>' +
-  #       (this.y * 100).toFixed(0) + '%</b> (' + this.point.n + ' people)<br/>';
-  #   }
-  # ")) |>
+    hc_colors(used_colors) |>
+    hc_legend(enabled = TRUE, reversed = TRUE) |>
     hc_tooltip(formatter = JS("
     function() {
       return '<b>Released:</b> ' + this.series.name + ' Year<br>' +
@@ -237,10 +351,13 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
                                  borderWidth = 3,
                                  minPointLength = 4)) |>
     # added 2025/02/04: Footnote after source (based on talk with Seba, Carl, and Alice)
-    hc_caption(text = paste0("Source: ", ncrp_source, ", ", min(df1$rptyear), "-",
-                             max(df1$rptyear), " and ", csg_source, ".<br>",
-                             "Most people released before their PEY likely had an earlier PEY than our estimated one and were released during that year."),
-               y = -40) |>
+    hc_caption(
+      text = paste0("Source: ", ncrp_source, ", ", min(df1$rptyear), "-",
+                    max(df1$rptyear), " and ", csg_source, ".<br>",
+                    "Most people released before their PEY likely had an earlier PEY than our estimated one and were released during that year.",
+                    if (!is.null(missing_data_text)) paste0("<br>", missing_data_text)),
+      y = y_caption
+    ) |>
     fnc_add_logo_and_export(download_title, bottom_margin_value) |>
     fnc_add_hc_accessibility(hc_accessibility_text)
 
@@ -250,37 +367,43 @@ all_stackedbar_pe_release <- map(.x = states, .f = function(x) {
 # Assign state names to the list of charts for easy access
 all_stackedbar_pe_release <- setNames(all_stackedbar_pe_release, states)
 
-# Example states:
-# all_stackedbar_pe_release$Alabama
-# all_stackedbar_pe_release$Arkansas
-# all_stackedbar_pe_release$Colorado
-# all_stackedbar_pe_release$Connecticut
+# -30 and 120
+all_stackedbar_pe_release$Colorado
+
+# -10 and 140
 all_stackedbar_pe_release$Georgia
-# all_stackedbar_pe_release$Hawaii ########### look weird
-# all_stackedbar_pe_release$Idaho  ########### look weird
-# all_stackedbar_pe_release$Iowa
-# all_stackedbar_pe_release$Kentucky
-# all_stackedbar_pe_release$Louisiana
-# all_stackedbar_pe_release$Maryland ######### missing data in 2014 and 2015
-# all_stackedbar_pe_release$Massachusetts
-# all_stackedbar_pe_release$Michigan
-# all_stackedbar_pe_release$Mississippi
-# all_stackedbar_pe_release$Missouri
-# all_stackedbar_pe_release$Montana
-# all_stackedbar_pe_release$Nevada
-# all_stackedbar_pe_release$`New Hampshire`
-# all_stackedbar_pe_release$`New Jersey`
-# all_stackedbar_pe_release$`New York`
-# all_stackedbar_pe_release$`North Dakota`
-# all_stackedbar_pe_release$Oklahoma
-# all_stackedbar_pe_release$Pennsylvania
-# all_stackedbar_pe_release$`Rhode Island`
-# all_stackedbar_pe_release$`South Carolina`
-# all_stackedbar_pe_release$`South Dakota`
-# all_stackedbar_pe_release$Tennessee
-# all_stackedbar_pe_release$Texas
-# all_stackedbar_pe_release$`West Virginia`
-# all_stackedbar_pe_release$Wyoming
+
+# Example states:
+all_stackedbar_pe_release$Alabama
+all_stackedbar_pe_release$Arkansas
+all_stackedbar_pe_release$Colorado
+all_stackedbar_pe_release$Connecticut
+all_stackedbar_pe_release$Georgia
+all_stackedbar_pe_release$Hawaii ########### look weird
+all_stackedbar_pe_release$Idaho  ########### look weird
+all_stackedbar_pe_release$Iowa
+all_stackedbar_pe_release$Kentucky
+all_stackedbar_pe_release$Louisiana
+all_stackedbar_pe_release$Maryland ######### missing data in 2014 and 2015
+all_stackedbar_pe_release$Massachusetts
+all_stackedbar_pe_release$Michigan
+all_stackedbar_pe_release$Mississippi
+all_stackedbar_pe_release$Missouri
+all_stackedbar_pe_release$Montana
+all_stackedbar_pe_release$Nevada
+all_stackedbar_pe_release$`New Hampshire`
+all_stackedbar_pe_release$`New Jersey`
+all_stackedbar_pe_release$`New York`
+all_stackedbar_pe_release$`North Dakota`
+all_stackedbar_pe_release$Oklahoma
+all_stackedbar_pe_release$Pennsylvania
+all_stackedbar_pe_release$`Rhode Island`
+all_stackedbar_pe_release$`South Carolina`
+all_stackedbar_pe_release$`South Dakota`
+all_stackedbar_pe_release$Tennessee
+all_stackedbar_pe_release$Texas
+all_stackedbar_pe_release$`West Virginia`
+all_stackedbar_pe_release$Wyoming
 
 # Generate summary sentences describing the proportion of people released past their parole eligibility year
 # "In the most recent year of data available, 76 percent of parole-eligible people

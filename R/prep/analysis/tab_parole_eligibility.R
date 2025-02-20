@@ -2,7 +2,7 @@
 # Project: AV Parole
 # File: tab_parole_eligibility.R
 # Authors: Mari Roberts
-# Last Updated: January 15, 2025 (MAR)
+# Last Updated: February 20, 2025 (MAR)
 # Description:
 #   This script analyzes and visualizes people in prison past parole eligibility.
 #   It prepares data for various demographic and offense-related

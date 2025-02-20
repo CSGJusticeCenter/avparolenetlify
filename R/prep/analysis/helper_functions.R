@@ -1367,8 +1367,8 @@ fnc_create_scatter_charts_by_state <- function(df, group_var, measure, source1, 
 
     # Generate accessibility text for the chart
     accessibility_measure <- ifelse(measure == "average_los", "average length of stay", "average years past parole eligibility")
-    accessibility_text <- paste0("The chart shows the ", accessibility_measure, " for different ",
-                                 group_var, " groups in ", state_name, ".")
+    accessibility_text <- paste0("The chart shows the ", accessibility_measure, " by ",
+                                 group_var, " in the state of ", state_name, ".")
 
     # Set maximum value for scaling
     max_los <- max(df1[[measure]], na.rm = TRUE)
@@ -1505,8 +1505,8 @@ fnc_create_lollipop_chart <- function(df, group_var, value_var, state_name, heig
   y_labels <- as.list(setNames(as.character(df1[[group_var]]), df1$group_num))
 
   # Accessibility text
-  accessibility_text <- paste0("The chart below shows the average ", value_var, " for different ",
-                               group_var, " groups in ", state_name, ".")
+  accessibility_text <- paste0("The chart below shows the average ", value_var, " by ",
+                               group_var, " in the state of ", state_name, ".")
 
   # Prepare line segments for the lollipop chart
   df_lines <- df1 |>
