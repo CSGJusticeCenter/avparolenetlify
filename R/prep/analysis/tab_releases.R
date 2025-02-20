@@ -92,7 +92,7 @@ all_line_releases_by_year <- map(.x = states,  .f = function(x) {
   max_value <- max(df1$total) * 1.1
 
   # Accessibility description for the chart
-  hc_accessibility_text <- paste0("This graph shows the number of releases in ",
+  hc_accessibility_text <- paste0("This graph shows the number of people released in ",
                                   "the state of ", x, " by year.")
 
   # Download file title

@@ -36,7 +36,13 @@ additional_asterisks_combined <- c(
 #------------------------------------------------------------------------------#
 
 # no data text
-no_data_text <- HTML(paste0("<div style='text-align:center;'>
+# no_data_text <- HTML(paste0("<div style='text-align:center;'>
+#                <br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br>
+#                Data is not available. ", state_for_report,
+#                             " submitted incomplete or missing data to the National Corrections Reporting Program in ",
+#                             select_year, ".<br><br>
+#              </div>"))
+no_data_text <- HTML(paste0("<div style='text-align:center;' tabindex='0'>
                <br><span style='font-size:24px; font-weight:bold;'>NO DATA</span><br>
                Data is not available. ", state_for_report,
                             " submitted incomplete or missing data to the National Corrections Reporting Program in ",
