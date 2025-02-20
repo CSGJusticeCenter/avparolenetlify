@@ -192,7 +192,13 @@ fnc_summarize_data <- function(df, count_column) {
       prop_label = paste0(round(prop, 0), "%"), # Format proportion as a percentage string
       n_label = formattable::comma(n, 0)        # Format counts with commas
     ) |>
-    ungroup() # Remove grouping for a flat data frame structure
+    ungroup()
+
+  # Remove states where all data is "Unknown" - NEW
+  df1 <- df1 |>
+    group_by(state, rptyear) |>
+    filter(!(all(!!count_column == "Unknown"))) |>
+    ungroup()
 
   # Return the summarized data frame
   return(df1)

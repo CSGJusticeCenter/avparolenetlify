@@ -268,8 +268,8 @@ all_sentence_population_fbi_index <- all_sentence_population[["fbi_index"]]
 # all_bar_population_sentlgth$Arkansas
 # all_sentence_population_fbi_index$`New York`
 # all_sentence_population_fbi_index$Georgia
-all_sentence_population_sentlgth$`Rhode Island`
-all_sentence_population_sentlgth$Georgia
+all_sentence_population_sentlgth$Idaho
+all_bar_population_sentlgth$Idaho
 
 #------------------------------------------------------------------------------#
 # SAVE DATA
