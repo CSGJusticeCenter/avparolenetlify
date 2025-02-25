@@ -285,25 +285,25 @@ fnc_display_sentence_chart(state_sentence_population_sentlgth, state_bar_populat
 ## Prison Release Trends
 
 ```{r results = 'asis', state_sentence_releases}
-# fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year); br()
-# fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_pe_release)
+fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year); br()
+fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_pe_release)
 # Check if both visualizations have no data
-no_data_1 <- is.null(state_sentence_releases) || is.null(state_line_releases_by_year)
-no_data_2 <- is.null(state_sentence_pe_proportion_released) || is.null(state_stackedbar_pe_release)
-
-if (no_data_1 && no_data_2) {
-  # Display "No Data" only once if both are missing
-  no_data_text
-} else {
-  # Display each visualization only if it has data
-  if (!no_data_1) {
-    fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year)
-    br()
-  }
-  if (!no_data_2) {
-    fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_pe_release)
-  }
-}
+# no_data_1 <- is.null(state_sentence_releases) || is.null(state_line_releases_by_year)
+# no_data_2 <- is.null(state_sentence_pe_proportion_released) || is.null(state_stackedbar_pe_release)
+# 
+# if (no_data_1 && no_data_2) {
+#   # Display "No Data" only once if both are missing
+#   no_data_text
+# } else {
+#   # Display each visualization only if it has data
+#   if (!no_data_1) {
+#     fnc_display_sentence_chart(state_sentence_releases, state_line_releases_by_year)
+#     br()
+#   }
+#   if (!no_data_2) {
+#     fnc_display_sentence_chart(state_sentence_pe_proportion_released, state_stackedbar_pe_release)
+#   }
+# }
 ```
 
 <br>
@@ -742,7 +742,6 @@ Interpret findings with small numbers cautiously, as they may introduce variabil
 :::
 
 </div>
-
 
 
 ---

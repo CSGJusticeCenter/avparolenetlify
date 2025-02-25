@@ -14,7 +14,8 @@ fnc_format_citation <- function(text) {
   patterns <- c(
     "Prison-Release Discretion and Prison Population Size: State Report: [A-Za-z ]+", # 2025/2/7 added space to account for New York, etc.
     "Profiles in Parole Release and Revocation: Examining the Legal Framework in the United States – [A-Za-z ]+", # same as above
-    "Profiles in Parole"
+    "Profiles in Parole",
+    "American Prison-Release Systems: Indeterminacy in Sentencing and the Control of Prison Population Size"
   )
 
   # Apply italic formatting to specific patterns
