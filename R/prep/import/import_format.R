@@ -173,11 +173,14 @@ state_notes <- state_notes_raw |>
 
   # Ensure proper formatting for notes:
   mutate(
-    # Append a period to `matching_note` if missing
-    matching_note = paste0(matching_note, "."),
+    # # Append a period to `matching_note` if missing
+    # matching_note = paste0(matching_note, "."),
+
+    # Determine separator: no space if `rules_note_contd` starts with a superscript
+    sep_char = ifelse(grepl("^⁰|¹|²|³|⁴|⁵|⁶|⁷|⁸|⁹", rules_note_contd), "", " "),
 
     # Combine all imputation methodology details into a single HTML-compatible string
-    rules_note_combined = paste(rules_note, rules_note_contd, sep = " "),
+    rules_note_combined = paste(rules_note, rules_note_contd, sep = sep_char),
     methodology_notes = paste(estimation_note,
                               matching_note,
                               rules_note_combined,
