@@ -429,6 +429,15 @@ webshot2::webshot(
   # cliprect = c(0, 0, 1000, 625)
 )
 
+library(pagedown)
+
+pagedown::chrome_print(
+  input = "temp.html",
+  output = "img/map_proj_past_parole_eligibility_2023.png",
+  format = "png",
+  wait = 1  # Wait time before capturing
+)
+
 #------------------------------------------------------------------------------#
 # Save Data
 #------------------------------------------------------------------------------#
