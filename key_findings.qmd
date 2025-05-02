@@ -1,0 +1,223 @@
+---
+title: "Key Findings"
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+    toc: false
+---
+
+```{r setup, include=FALSE}
+# Setup: Load required libraries, configurations, and datasets.
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+
+# Load configuration file and helper functions
+source("R/config.R")
+source("R/prep/analysis/helper_functions.R")
+
+# Helper function to highlight numbers
+highlight_number <- function(x) {
+  paste0("<span style='background-color: yellow; font-weight: bold;'>", x, "</span>")
+}
+
+# Load necessary data files for analysis
+load(file = paste0(sp_data_path, "/data/analysis/app/ncrp_yearendpop_filtered.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_to_exclude.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_nofilter.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_with_high_missing_race.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_abolished_parole.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/states_use_other_race_eth.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/which_overall_year.rds"))
+```
+
+## Nationally 
+
+**Summary**: 
+
+This section calculates the **average number of years** individuals spent in prison past their parole eligibility year by **race and ethnicity**. The analysis excludes states with unreliable or missing data and states that abolished discretionary parole to ensure results are robust and representative.
+
+**Finding**: 
+
+```{r results='asis'}
+# ---------------------------------------------------------------------------- #
+# Years Spent in Prison Past Parole Eligibility
+# ---------------------------------------------------------------------------- #
+# Combine excluded states
+combined_excluded_states <- unique(c(
+  states_with_high_missing$state,
+  states_with_high_missing_race$state,
+  states_to_exclude
+))
+
+# Remove states that abolished parole
+valid_states <- setdiff(
+  ncrp_yearendpop_filtered$state, 
+  unique(c(combined_excluded_states, states_abolished_parole$state))
+)
+
+# Filter NCRP data to valid states only
+ncrp_yearendpop_filtered <- fnc_filter_pe_population_criteria(
+  data = ncrp_yearendpop_filtered,
+  exclude = states_to_exclude,
+  dont_filter = states_nofilter
+)
+
+# Filter NCRP data to people currently eligible for parole (also past parole eligibility since it's yearend)
+ncrp_past_pe <- ncrp_yearendpop_filtered |>
+  filter(state %in% valid_states, parelig_status == "Current")
+
+# Average time served past PE for people still in prison by race and ethnicity and state
+avg_past_pe_race_by_state <- ncrp_past_pe |>
+  filter(race != "Unknown") |>
+  filter(
+    state %in% states_use_other_race_eth$state |
+      (!state %in% states_use_other_race_eth$state &
+         race %in% c("White, non-Hispanic", "Hispanic, any race", "Black, non-Hispanic"))
+  ) |>
+  mutate(years_to_estimated_pey = abs(years_to_estimated_pey)) |>
+  group_by(state, race, rptyear) |>
+  summarise(
+    avg_years_to_estimated_pey = mean(years_to_estimated_pey, na.rm = TRUE),
+    total_years_past_pe = sum(years_to_estimated_pey, na.rm = TRUE),
+    people = n(),
+    .groups = "drop"
+  ) |>
+  fnc_filter_by_year(which_overall_year)
+
+# Calculate weighted averages
+avg_past_pe_race <- avg_past_pe_race_by_state |>
+  group_by(race) |>
+  summarise(
+    avg_years_to_estimated_pey = sum(avg_years_to_estimated_pey * people, na.rm = TRUE) / sum(people, na.rm = TRUE),
+    total_years_past_pe = sum(total_years_past_pe, na.rm = TRUE),
+    people = sum(people, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Get states used
+included_states <- unique(avg_past_pe_race_by_state$state)
+states_using_2018_data <- avg_past_pe_race_by_state |>
+  filter(rptyear == 2018) |>
+  pull(state) |>
+  unique()
+
+# Generate Text Outputs
+cat("In 2019, ",
+    highlight_number(comma(avg_past_pe_race$people[avg_past_pe_race$race == "White, non-Hispanic"])),
+    "White, non-Hispanic individuals collectively spent",
+    highlight_number(comma(round(avg_past_pe_race$total_years_past_pe[avg_past_pe_race$race == "White, non-Hispanic"], 1))),
+    "years in prison past their parole eligibility year across",
+    highlight_number(length(included_states)), "states, serving an average of",
+    highlight_number(round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "White, non-Hispanic"], 1)),
+    "years beyond parole eligibility.<br><br>")
+
+cat("In 2019, ",
+    highlight_number(comma(avg_past_pe_race$people[avg_past_pe_race$race == "Black, non-Hispanic"])),
+    "Black, non-Hispanic individuals collectively spent",
+    highlight_number(comma(round(avg_past_pe_race$total_years_past_pe[avg_past_pe_race$race == "Black, non-Hispanic"], 1))),
+    "years in prison past their parole eligibility year across",
+    highlight_number(length(included_states)), "states, serving an average of",
+    highlight_number(round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "Black, non-Hispanic"], 1)),
+    "years beyond parole eligibility.<br><br>")
+
+cat("In 2019, ",
+    highlight_number(comma(avg_past_pe_race$people[avg_past_pe_race$race == "Hispanic, any race"])),
+    "Hispanic individuals collectively spent",
+    highlight_number(comma(round(avg_past_pe_race$total_years_past_pe[avg_past_pe_race$race == "Hispanic, any race"], 1))),
+    "years in prison past their parole eligibility year across",
+    highlight_number(length(included_states)), "states, serving an average of",
+    highlight_number(round(avg_past_pe_race$avg_years_to_estimated_pey[avg_past_pe_race$race == "Hispanic, any race"], 1)),
+    "years beyond parole eligibility.<br><br>")
+```
+
+```{r results='asis', echo = FALSE}
+# Add notes for included states and states with abolished parole
+cat("<em style='font-size: 0.9em;'>Note: The following states used 2018 data due to unreliable 2019 data: ",
+    paste(states_using_2018_data, collapse = ", "), "</em><br>")
+
+cat("<em style='font-size: 0.9em;'>Included states (", length(included_states), "):", 
+    paste(included_states, collapse = ", "), "</em><br><br>")
+```
+
+## By Offense
+
+**Summary**: 
+
+This section analyzes the offense types of individuals held past their parole eligibility year, distinguishing between **violent** and **nonviolent offenses**. Nonviolent offenses are further categorized into Property, Drug, and Public Order offenses.
+
+**Finding**: 
+
+```{r results='asis'}
+# Categorize offenses into violent vs. nonviolent, keeping "Unknown" offenses for initial analysis
+ncrp_past_pe_offense_initial <- ncrp_past_pe |>
+  mutate(offense_group = case_when(
+    fbi_index %in% c("Murder or Nonnegligent Manslaughter",
+                     "Negligent Manslaughter",
+                     "Rape or Sexual Assault",
+                     "Robbery",
+                     "Aggravated or Simple Assault",
+                     "Other Violent Offenses") ~ "Violent",
+    fbi_index %in% c("Drug", "Public Order", "Property") ~ "Nonviolent",
+    TRUE ~ fbi_index))
+
+# Filter out "Unknown" offenses for further analysis
+ncrp_past_pe_offense_filtered <- ncrp_past_pe_offense_initial |>
+  filter(offense_group != "Unknown") |>
+  fnc_filter_by_year(which_overall_year)
+
+# Check if each state has all nonviolent offense types (Property, Drug, Public Order)
+states_with_all_offenses <- ncrp_past_pe_offense_filtered |>
+  filter(offense_group == "Nonviolent") |>
+  group_by(state) |>
+  summarise(has_property = any(fbi_index == "Property"),
+            has_drug = any(fbi_index == "Drug"),
+            has_public_order = any(fbi_index == "Public Order"),
+            .groups = "drop") |>
+  filter(has_property & has_drug & has_public_order) |>
+  pull(state)
+
+# Summarize counts for nonviolent offense subcategories
+# Property, Drug, Public Order
+nonviolent_summary <- ncrp_past_pe_offense_filtered |>
+  filter(offense_group == "Nonviolent") |>
+  group_by(fbi_index) |> 
+  summarise(total_people = n(), .groups = "drop")
+
+# Extract counts for subcategories
+property_offense_count <- nonviolent_summary$total_people[nonviolent_summary$fbi_index == "Property"]
+drug_offense_count <- nonviolent_summary$total_people[nonviolent_summary$fbi_index == "Drug"]
+public_order_offense_count <- nonviolent_summary$total_people[nonviolent_summary$fbi_index == "Public Order"]
+
+# Total nonviolent count and states with all offenses
+nonviolent_offense_count <- sum(nonviolent_summary$total_people)
+states_with_nonviolent <- length(states_with_all_offenses)
+
+# Generate output sentence
+cat("Over", highlight_number(comma(nonviolent_offense_count)), 
+    "people held past their parole eligibility year were convicted of nonviolent offenses in", 
+    highlight_number(states_with_nonviolent), "states. Thousands of people who have not committed violent offenses remain incarcerated after their parole eligibility date. This includes approximately",
+    highlight_number(comma(property_offense_count)), "people convicted of property offenses,",
+    highlight_number(comma(drug_offense_count)), "convicted of drug offenses, and",
+    highlight_number(comma(public_order_offense_count)), "convicted of public order offenses.\n\n")
+```
+
+```{r results='asis', echo = FALSE}
+# Add notes for included states and states with abolished parole
+cat("<em style='font-size: 0.9em;'>Note: The following states used 2018 data due to unreliable 2019 data: ",
+    paste(states_using_2018_data, collapse = ", "), "</em><br>")
+
+cat("<em style='font-size: 0.9em;'>Included states (", length(included_states), "):", 
+    paste(included_states, collapse = ", "), "</em><br><br>")
+```
+
+
+
+

@@ -1,0 +1,169 @@
+---
+title: "National Snapshot" 
+format:
+  html:
+    css: styles.css
+    embed-resources: TRUE
+    code-fold: true
+    page-layout: full
+    fig_caption: yes
+    toc: false
+---
+
+<br>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "ragg_png"
+)
+
+# Run configeration file
+source("R/config.R")
+
+# Load saved data and pngs
+load(file = paste0(sp_data_path, "/data/analysis/app/map_percent.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/proj_past_pe_count_rounded.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/proj_past_pe_1_in_x.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table.rds"))
+load(file = paste0(sp_data_path, "/data/analysis/app/parole_eligibility_table_download.rds"))
+```
+
+<div id="body-section">
+
+```{r highlights}
+div(
+  style = "
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start; /* Align all grid items at the top */
+    text-align: center;
+  ",
+  div(id = "national-highlight", formattable::comma(proj_past_pe_count_rounded, digits = 0)),
+  div(
+    id = "national-highlight",
+    img(
+      src = "img/pe_1_in_x.png", 
+      style = "margin: 0 auto; margin-bottom: 10px; max-width: 50%; height: auto; text-align: center;"
+    )
+  ),
+  div(id = "national-highlight", "34"),
+  div(id = "bold-text", HTML("People In Prison Past Parole Eligibility*<br><br>")),
+  div(id = "bold-text", HTML(paste0("1 in ", proj_past_pe_1_in_x, " People Are Incarcerated Past Parole Eligibility**"))),
+  div(id = "bold-text", HTML("States With Discretionary Parole**<br><br>"))
+)
+```
+
+</div>
+<br>
+<!-- HTML code for asterisks notes -->
+<div id ="footnotes-text">
+\*These 2023 projections are conservative estimates based on data submitted from 31 of the 34 states with discretionary parole through the National Corrections Reporting Program (NCRP) and original data requests. When parole eligibility year (PEY) was not reported in NCRP, we used sentencing rules to estimate PEY, opting for the most conservative end of the range (e.g., if individuals are required to serve 25%-75% of their maximum sentence, we used 75% as the PEY). Estimates could not fully account for “good time” credits or time that should be subtracted from a person’s sentence.As a result, the actual number of people held beyond their eligible parole dates is likely higher than our data suggests. Estimates exclude: (1) people incarcerated for parole violations or revocations, (2) people with life sentences, and (3) people with sentences less than one year.<br>
+\*\*Louisiana eliminated discretionary parole in 2024, but it is listed among the paroling states as the majority of the population remains eligible for parole release under the previous system.
+</div>
+<div class="divider"></div>
+<br>
+
+<div id="map-section">
+
+```{r map}
+# Map of Percent of People in Prison Past Parole Eligibility
+map_percent 
+```
+</div>
+
+<!-- HTML code for the download button -->
+<a href="img/map_proj_past_parole_eligibility_2023.png" download="map_proj_past_parole_eligibility_2023.png" class="download-button">
+  Download Map
+</a>
+<br><br>
+
+<div id="body-section">
+<div class="divider"></div>
+
+## Parole Eligibility by State
+
+The table below provides estimates for the percentage and number of incarcerated individuals who are past their parole eligibility date in 30 of the 34 paroling states. It also highlights the number of parole board members for each state.
+
+```{r table}
+# Custom function to create data bars with NA handling
+data_bars_custom <- function(value) {
+  if (is.na(value)) {
+    return("-")
+  }
+  percentage <- percent(value/100)
+  bar <- div(style = list(
+    background = "teal",
+    width = percentage,
+    height = "10px"
+  ))
+  div(style = list(display = "flex", alignItems = "center"), bar,
+      div(style = list(marginLeft = "5px"), percentage)
+      )
+}
+
+# Table of Percent of People in Prison Past Parole Eligibility by State
+reactable(
+  parole_eligibility_table ,
+  pagination = FALSE,
+  searchable = TRUE,
+  defaultSorted = c("proj_pcnt_ppey_rounded", "state"),
+  defaultColDef = colDef(
+    headerStyle = list(fontWeight = "normal", fontSize = "1em"),  # Set header font size
+    style = list(fontSize = "1em"),  # Set cell font size
+    sortable = TRUE,
+    na = "-" 
+  ),
+  columns = list(
+    state = colDef(
+      name = "State", 
+      align = "left", 
+      width = 175
+    ),
+    proj_pcnt_ppey_rounded = colDef(
+      name = "Percentage of People in Prison",
+      align = "left",
+      width = 250,
+      cell = data_bars_custom,
+      defaultSortOrder = "desc"  # Sort descending
+    ),
+    proj_pop_past_pey_rounded = colDef(
+      name = "Number of People", 
+      align = "right",
+      format = colFormat(separators = TRUE)
+      ),
+    members = colDef(
+      name = "Parole Board Members*", 
+      align = "right"
+    )
+  ),
+  columnGroups = list(
+    colGroup(
+      name = "People In Prison Past Parole Eligibility", 
+      columns = c("proj_pcnt_ppey_rounded", "proj_pop_past_pey_rounded")
+    )
+  )
+)
+```
+
+<div id="footnotes-text"><br>
+Source: National Corrections Reporting Program, 2010-2020 and CSG Justice Center estimates. <br>*The number of parole board members includes appointed members and does not include subordinate hearing examiners that many states employ.
+<br></div>
+
+```{r echo=FALSE}
+# Download button for table download
+parole_eligibility_table_download |>
+  download_this(
+    output_name = "parole_eligibility_by_state_2023_estimates",
+    output_extension = ".xlsx",
+    button_label = "Download Table",
+    button_type = "default",
+    has_icon = FALSE,
+    class = "download-button"
+  )  
+```
+
+<br>
+<br>

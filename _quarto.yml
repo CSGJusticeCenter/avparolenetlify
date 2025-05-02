@@ -1,5 +1,7 @@
 project:
   type: website
+  resources:
+    - img/map_proj_past_parole_eligibility_2023.png
 
 website:
   title: "AV Parole Project"
@@ -10,20 +12,21 @@ website:
     type: textbox
   navbar:
     left:
-      - text: "Project Overview"
+      - text: "Home Page"
         href: index.html
-      - text: "National Trends"
+      - text: "National Snapshot"
         href: national_trends.html
       - text: "State Reports"
         href: state_report_links.html
-      - text: "Missing Data"
-        href: missing_data.html
+      - text: "Key Findings (Research Only)"
+        href: key_findings.html
 
 format:
   html:
     css: styles.css
     toc: true
     toc-location: left
+    link-external-newwindow: true # added 2025/2/12 to open links in new tab
 
 execute:
-  freeze: auto
+  freeze: false # auto (commented out 2025/02/06)
